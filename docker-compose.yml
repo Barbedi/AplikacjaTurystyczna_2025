@@ -11,13 +11,11 @@ services:
       - backend
 
   backend:
-    build:
-      context: ./backend
+    build: ./backend
     ports:
-      - "6868:3000"
-    volumes:
-      - ./backend/files:/backend/files
+      - "6868:8080"
     environment:
+      - PORT=8080
       - TZ=Europe/Warsaw
     networks:
       - backend
@@ -29,7 +27,7 @@ services:
     build:
       context: ./frontend
     ports:
-      - "3000:80"
+      - "3000:3000"
     volumes:
       - ./frontend/src:/frontend/src
       - ./frontend/public:/frontend/public
@@ -38,7 +36,7 @@ services:
       - TZ=Europe/Warsaw
     networks:
       - frontend
-
+    command: npm run dev
 volumes:
   postgres_data:
 

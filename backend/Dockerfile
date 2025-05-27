@@ -1,8 +1,15 @@
-FROM node:23.9.0-alpine3.21 AS builder
-RUN apk add --no-cache tzdata
+FROM node:18-alpine
 
-WORKDIR /backend
+WORKDIR /app
+
 COPY package*.json ./
-RUN npm ci --omit-dev
+
+RUN npm install
+
 COPY . .
+
 RUN npm run build
+
+EXPOSE 8080
+
+CMD ["node", "dist/index.js"]

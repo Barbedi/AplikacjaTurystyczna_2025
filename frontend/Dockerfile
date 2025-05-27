@@ -1,8 +1,6 @@
-FROM node:23.9.0-alpine3.21 AS builder
-RUN apk add --no-cache tzdata
+FROM node:24.1.0-alpine AS builder
+
 WORKDIR /frontend
 COPY package*.json ./
-RUN npm ci --omit-dev
+RUN npm install
 COPY . .
-RUN npm run build
-
