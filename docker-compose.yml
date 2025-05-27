@@ -1,12 +1,26 @@
 services:
   postgres:
-    image: postgres:15
+    image: postgis/postgis:15-3.4
     environment:
       POSTGRES_USER: myuser
       POSTGRES_PASSWORD: mypassword
       POSTGRES_DB: mydb
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+    - postgres_data:/var/lib/postgresql/data
+
+    ports:
+      - "5432:5432"
+    networks:
+      - backend
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
     networks:
       - backend
 
@@ -17,6 +31,13 @@ services:
     environment:
       - PORT=8080
       - TZ=Europe/Warsaw
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=myuser
+      - DB_PASS=mypassword
+      - DB_NAME=mydb
+    depends_on:
+      - postgres
     networks:
       - backend
       - frontend

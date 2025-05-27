@@ -1,4 +1,6 @@
 import express from 'express';
+import 'dotenv/config'; // automatyczne wczytanie .env
+
 
 const app = express();
 const port = parseInt(process.env.PORT || '', 10) || 8080;
