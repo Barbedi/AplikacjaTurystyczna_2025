@@ -2,9 +2,9 @@ services:
   postgres:
     image: postgis/postgis:15-3.4
     environment:
-      POSTGRES_USER: myuser
-      POSTGRES_PASSWORD: mypassword
-      POSTGRES_DB: mydb
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: qwerty123!
+      POSTGRES_DB: HikeUp
     volumes:
     - postgres_data:/var/lib/postgresql/data
 
