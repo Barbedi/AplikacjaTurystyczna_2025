@@ -1,1 +1,14 @@
 @import "tailwindcss";
+
+@font-face {
+  font-family: "Lora";
+  src: url(../src/assets/fonts/Lora-Regular.ttf);
+}
+
+@theme {
+  --font-lora: "Lora", sans-serif;
+  --color-primary: #4c95db;
+  --color-secondary: #78b0e5;
+  --color-accent: #796e64;
+  --color-text: #012121;
+}
