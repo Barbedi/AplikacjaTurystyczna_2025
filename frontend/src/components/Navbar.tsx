@@ -9,13 +9,19 @@ const Navbar = () => {
             </a>
             <div className="flex-grow"></div>
             <div className="flex items-center space-x-4 pr-4">
-              <a href="/plan-route" className="text-white text-xl hover:text-gray-300 transition duration-300 hover:border-2 rounded-2xl p-1">
+              <a
+                href="/plan-route"
+                className="text-white text-xl hover:text-gray-300 transition duration-300 hover:border-2 rounded-2xl p-1"
+              >
                 Zaplanuj trase
               </a>
-              <a href="/login" className="text-white text-xl hover:text-gray-300 transition duration-300  hover:border-2 rounded-2xl p-1">
+              <a
+                href="/login"
+                className="text-white text-xl hover:text-gray-300 transition duration-300  hover:border-2 rounded-2xl p-1"
+              >
                 Zaloguj się
               </a>
-              </div>
+            </div>
           </div>
         </nav>
         <div className="flex flex-col items-center justify-center bg-white/60 md:max-w-2/3 md:mx-auto md:max-h-2/4 lg:max-w-2/4 lg:min-h-3/6 rounded-lg shadow-lg lg:mt-44 md:mt-20 p-8">
