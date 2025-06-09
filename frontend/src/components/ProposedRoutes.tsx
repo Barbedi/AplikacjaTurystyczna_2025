@@ -45,11 +45,11 @@ const ProposedRoutes = () => {
           Proponowane trasy
         </h1>
       </div>
-      <div className="flex flex-col sm:flex-row mt-6 w-full px-4 sm:px-0 justify-center items-center gap-4">
+      <div className="flex flex-col md:flex-row mt-6 w-full px-4 sm:px-0 justify-center items-center gap-4">
         {routes.map((route, index) => (
           <div
             key={index}
-            className="flex flex-col w-full sm:w-1/2 xl:w-1/4 h-auto bg-secondary rounded-xl p-6 mx-2 hover:scale-105 transition-transform duration-300 ease-in-out hover:shadow-lg"
+            className="flex flex-col w-full md:w-1/2 xl:w-1/4 h-auto bg-secondary rounded-xl p-6 mx-2 hover:scale-105 transition-transform duration-300 ease-in-out hover:shadow-lg"
           >
             <img className="rounded-xl" src={route.image} alt="" />
             <p className="text-sm sm:text-base md:text-lg mb-2">

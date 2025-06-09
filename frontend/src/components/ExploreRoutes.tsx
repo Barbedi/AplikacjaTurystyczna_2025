@@ -20,7 +20,7 @@ const ExploreRoutes = () => {
             className="p-4  bg-gray-100 hover:scale-105 duration-300 ease-in-out hover:underline decoration-2 "
           >
             <img
-              className="2xl:size-96 xl:size-60 rounded-full"
+              className="2xl:h-xl w-xl xl:size-60 md:size-60 rounded-full"
               src="/assets/img/FullSizeRender.JPG"
               alt=""
             />
