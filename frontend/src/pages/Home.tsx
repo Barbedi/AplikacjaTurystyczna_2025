@@ -1,6 +1,7 @@
 import Navbar from "../components/Navbar";
 import PlanRoute from "../components/PlanRoute";
 import ProposedRoutes from "../components/ProposedRoutes";
+import ExploreRoutes from "../components/ExploreRoutes";
 
 const Home = () => {
   return (
@@ -8,6 +9,7 @@ const Home = () => {
       <Navbar />
       <PlanRoute />
       <ProposedRoutes />
+      <ExploreRoutes />
     </div>
   );
 };
