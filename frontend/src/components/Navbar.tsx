@@ -10,10 +10,13 @@ const images = [
 
 const Navbar = () => {
   const [current, setCurrent] = useState(0);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const next = () => setCurrent((prev) => (prev + 1) % images.length);
   const prev = () =>
     setCurrent((prev) => (prev - 1 + images.length) % images.length);
+
+  const toggleMenu = () => setMenuOpen((prev) => !prev);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -55,7 +58,17 @@ const Navbar = () => {
           <a href="/" className="pl-4 ">
             <span className="font-bold text-white text-4xl">HikeUp</span>
           </a>
-          <div className="flex items-center space-x-4 pr-4 z-0">
+          <button
+            onClick={toggleMenu}
+            className="text-white text-3xl md:hidden pr-4 focus:outline-none"
+          >
+            ☰
+          </button>
+          <div
+            className={`${
+              menuOpen ? "flex" : "hidden"
+            } flex-col md:flex md:flex-row items-center space-y-4 md:space-y-0 md:space-x-4 pr-4 z-0`}
+          >
             <a
               href="/plan-route"
               className="text-white text-xl hover:text-gray-300 transition duration-300 hover:border-2 rounded-2xl p-1"
