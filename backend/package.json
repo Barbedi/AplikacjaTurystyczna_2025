@@ -2,27 +2,36 @@
   "name": "backend",
   "version": "1.0.0",
   "description": " Aplikacja Turystyczna Backend",
-  "main": "index.js",
+  "main": "server.ts",
   "type": "module",
   "scripts": {
-    "lint": "eslint \"{src,test}/**/*.ts\" --fix",
-    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "dev": "nodemon --watch src --ext ts --exec ts-node-dev src/index.ts",
+    "start": "node dist/index.js",
+    "start:nodemon": "nodemon --watch src --exec ts-node src/index.ts",
     "build": "tsc",
-    "start": "node dist/index.js"
+    "lint": "eslint --ext .ts,.tsx,.js,.jsx ./src --report-unused-disable-directives --max-warnings 0",
+    "fix": "eslint --ext .ts,.tsx,.js,.jsx ./src --report-unused-disable-directives --max-warnings 0 --fix",
+    "format": "prettier --write ./src"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
-    "pg": "^8.16.0"
+    "pg": "^8.16.0",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
+    "@types/cookie-parser": "^1.4.9",
+    "@types/cors": "^2.8.19",
     "@types/express": "^5.0.2",
     "@types/node": "^22.15.21",
     "@types/pg": "^8.15.2",
+    "@types/swagger-jsdoc": "^6.0.4",
+    "@types/swagger-ui-express": "^4.1.8",
     "eslint": "^9.27.0",
     "nodemon": "^3.1.10",
     "prettier": "^3.5.3",
