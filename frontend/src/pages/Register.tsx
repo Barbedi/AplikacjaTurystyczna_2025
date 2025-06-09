@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
-const Login = () => {
+const Register = () => {
   return (
     <div className="relative w-full h-screen overflow-hidden bg-[url('/assets/img/FullSizeRender.JPG')] bg-cover bg-center ">
       <a
@@ -14,7 +14,7 @@ const Login = () => {
       <main className="absolute inset-0 flex items-center justify-center z-10 p-4">
         <div className="bg-white/60 rounded-lg shadow-lg p-8 max-w-2xl w-full text-center">
           <h1 className="text-4xl sm:text-5xl font-lora mb-6 text-gray-800">
-            Zaloguj się do HikeUp
+            Zarejestruj się w HikeUp
           </h1>
           <form className="flex flex-col space-y-4">
             <input
@@ -23,17 +23,27 @@ const Login = () => {
               className="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <input
+              type="email"
+              placeholder="Email"
+              className="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <input
               type="password"
               placeholder="Hasło"
               className="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
+            <input
+              type="password"
+              placeholder="Potwierdź hasło"
+              className="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
             <button className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition duration-300">
-              Zaloguj się
+              Zarejestruj się
             </button>
             <p className="text-sm text-gray-700">
-              Nie masz konta?{" "}
-              <a href="/register" className="text-blue-500 hover:underline">
-                Zarejestruj się
+              Masz już konto?{" "}
+              <a href="/login" className="text-blue-500 hover:underline">
+                Zaloguj się
               </a>
             </p>
           </form>
@@ -42,4 +52,4 @@ const Login = () => {
     </div>
   );
 };
-export default Login;
+export default Register;
