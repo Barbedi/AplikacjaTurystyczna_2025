@@ -29,13 +29,11 @@ services:
     ports:
       - "6868:6868"
     environment:
-      - PORT=6868
-      - TZ=Europe/Warsaw
       - DB_HOST=postgres
       - DB_PORT=5432
-      - DB_USER=myuser
-      - DB_PASS=mypassword
-      - DB_NAME=mydb
+      - DB_USER=admin
+      - DB_PASS=qwerty123!
+      - DB_NAME=HikeUp
     depends_on:
       - postgres
     networks:

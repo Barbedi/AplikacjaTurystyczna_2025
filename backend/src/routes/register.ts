@@ -9,7 +9,7 @@ router.post("/", async function (req, res, next) {
     const message = await registerService.registerClient(user);
     res.status(201).json({ message });
   } catch (err: any) {
-    // Sprawdź czy to błąd z kodem statusu (np. 409 dla istniejącego użytkownika)
+    console.error("Błąd w registerClient:", err);
     if (err.statusCode) {
       res.status(err.statusCode).json({ error: err.message });
     } else {

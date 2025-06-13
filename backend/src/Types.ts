@@ -7,8 +7,8 @@ interface ErrInterface {
 interface Users {
   id?: number;
   email: string;
-  password_hash: string;
-  name?: string;
+  password: string;
+  name: string;
   level_of_experience?: string;
   fitness_level?: string;
   created_at?: string;
@@ -25,5 +25,3 @@ export class Err implements ErrInterface {
 }
 
 export type { ErrInterface, Users };
-
-export {};
