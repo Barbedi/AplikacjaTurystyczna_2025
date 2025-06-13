@@ -8,5 +8,6 @@ const pool = new Pool({
   database: process.env['DB_NAME'],
 });
 
-
-export default pool;
+export default {
+  query: (text: string, params?: any[]) => pool.query(text, params),
+};
