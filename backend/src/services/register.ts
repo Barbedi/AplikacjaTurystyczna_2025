@@ -1,6 +1,6 @@
-import db from "../db.js";
+import db from "../db";
 import bcrypt from "bcryptjs";
-import { Err, Users } from "../Types.js";
+import { Err, Users } from "../Types";
 
 async function registerClient(user: Users) {
   const checkQuery = 'SELECT 1 FROM "users" WHERE email = $1';

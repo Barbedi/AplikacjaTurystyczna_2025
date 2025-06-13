@@ -5,7 +5,7 @@ import express, { NextFunction, Request, Response } from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import swaggerUI from "swagger-ui-express";
-import swaggerSpec from "./swagger.js";
+import swaggerSpec from "./swagger";
 import register from "./routes/register.js";
 
 const app = express();

@@ -1,5 +1,5 @@
-import db from "./db.js";
-import { Err } from "./Types.js";
+import db from "./db";
+import { Err } from "./Types";
 
 function getOffset(currentPage = 1, listPerPage: number) {
   return (currentPage - 1) * listPerPage;
