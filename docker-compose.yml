@@ -27,9 +27,9 @@ services:
   backend:
     build: ./backend
     ports:
-      - "6868:8080"
+      - "6868:6868"
     environment:
-      - PORT=8080
+      - PORT=6868
       - TZ=Europe/Warsaw
       - DB_HOST=postgres
       - DB_PORT=5432
