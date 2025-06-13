@@ -1,5 +1,5 @@
-import db from "./db";
-import { Err } from "./Types";
+import db from "./db.js";
+import { Err } from "./Types.js";
 
 function getOffset(currentPage = 1, listPerPage: number) {
   return (currentPage - 1) * listPerPage;
@@ -48,7 +48,7 @@ function getSQLOperator(operator?: string) {
 
 function buildFilterQuery(
   filter: string,
-  startingParamIndex = 1
+  startingParamIndex = 1,
 ): { query: string; queryParams: unknown[] } {
   try {
     const parsed = JSON.parse(filter) as {
@@ -85,9 +85,7 @@ function buildFilterQuery(
   }
 }
 
-function buildSortQuery(
-  sort: string
-): { query: string } {
+function buildSortQuery(sort: string): { query: string } {
   try {
     const parsed = JSON.parse(sort) as { by: string; order?: string };
     if (!parsed.by) return { query: "" };
@@ -106,7 +104,7 @@ function buildQuery(
   offset: number,
   limit: number,
   filter?: string,
-  sort?: string
+  sort?: string,
 ): { query: string; queryParams: unknown[] } {
   let query = `SELECT * FROM "${tableName}"`;
   let queryParams: unknown[] = [];

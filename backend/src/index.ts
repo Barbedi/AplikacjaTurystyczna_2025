@@ -1,4 +1,4 @@
-import app from "./server.js"; // Add `.js` extension for ES module compatibility
+import app from "./server"; 
 
 const port = Number(process.env["PORT"]) || 6868;
 
