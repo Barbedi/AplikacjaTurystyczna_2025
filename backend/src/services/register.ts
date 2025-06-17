@@ -30,7 +30,6 @@ async function registerClient(user: Users) {
   );
 
   return "User registered successfully";
-  console.log("Registering user:", user);
 }
 
 export default {
