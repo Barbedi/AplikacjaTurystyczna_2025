@@ -2,8 +2,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import React, { useState } from "react";
 import logowanieService from "../services/logowanie.service";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const emailInputHandler = async (ev: React.ChangeEvent<HTMLInputElement>) => {
@@ -25,12 +27,12 @@ const Login = () => {
         alert("Wszystkie pola muszą być wypełnione");
         return;
       }
-
       const response = await logowanieService.create({
         email: email,
         password: password,
       });
       if (response.status === 200) {
+        navigate("/dashboard");
         alert("Logowanie przebiegło pomyślnie");
         resetForm();
       } else if (response.status === 401) {
@@ -43,8 +45,7 @@ const Login = () => {
         console.error("Błąd logowania");
         alert("Błąd logowania - sprawdź konsolę");
       }
-    } 
-    catch (error) {
+    } catch (error) {
       console.error("Błąd podczas logowania:", error);
       alert("Wystąpił błąd podczas logowania - sprawdź konsolę");
     }

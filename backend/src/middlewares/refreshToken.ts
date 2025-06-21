@@ -9,7 +9,7 @@ declare module "express-serve-static-core" {
       user: { email: string };
       message: string;
     };
-    user?: { email: string };
+    user?: { email: string; role?: string } | undefined;
   }
 }
 
@@ -28,14 +28,14 @@ export function refreshToken(req: Request, res: Response, next: NextFunction) {
           throw new Err("Invalid refresh token", 403);
         }
 
-        const tokenUser = user as { email: string };
+        const tokenUser = user as { email: string; role: string };
 
         const accessToken = jwt.sign(
-          { email: tokenUser.email },
+          { email: tokenUser.email, role: tokenUser.role }, // dodaj role
           process.env["SECRET_TOKEN"] as string,
           {
             expiresIn: 60000,
-          }
+          },
         );
 
         const cookieOptions = {
@@ -51,8 +51,9 @@ export function refreshToken(req: Request, res: Response, next: NextFunction) {
           message: "Token refreshed successfully",
         };
         req.user = tokenUser;
+        req.user = tokenUser; // ← bardzo ważne
         return next();
-      }
+      },
     );
   } catch (error) {
     next(error);
