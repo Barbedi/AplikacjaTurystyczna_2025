@@ -38,9 +38,14 @@ app.use((_req: Request, res: Response) => {
 });
 
 // Obsługa błędów serwera
-app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
+app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
   console.error(err.stack);
-  res.status(500).json({ message: "Internal Server Error" });
+
+  const statusCode = err.statusCode || 500;
+  const message = err.message || "Internal Server Error";
+
+  res.status(statusCode).json({ message });
 });
+
 
 export default app;

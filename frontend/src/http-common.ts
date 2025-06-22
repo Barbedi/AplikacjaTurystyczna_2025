@@ -8,7 +8,4 @@ export default axios.create({
   withCredentials: true,
 });
 
-console.log(
-  "HTTP client initialized with base URL:",
-  import.meta.env.VITE_CLIENT_API_URL,
-);
+

@@ -1,11 +1,11 @@
 import { createContext } from "react";
-import type { Users } from "../assets/Data";
+import { User } from "../assets/Data";
 
 interface AuthContextProps {
   auth: boolean;
-  user: Users | undefined;
+  user: User | undefined;
   setAuth: React.Dispatch<React.SetStateAction<boolean>>;
-  setUser: React.Dispatch<React.SetStateAction<Users | undefined>>;
+  setUser: React.Dispatch<React.SetStateAction<User | undefined>>;
   checkAuth: () => Promise<boolean>;
   refreshToken: () => Promise<boolean>;
   logout: () => void;

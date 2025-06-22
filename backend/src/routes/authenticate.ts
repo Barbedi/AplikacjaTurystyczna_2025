@@ -83,26 +83,21 @@ const router = express.Router();
  */
 router.get("/", verifyUser, (req, res, next) => {
   try {
-    if (!req.user || typeof req.user !== "object") {
-      throw new Err("User not authenticated", 401);
-    }
+    console.log("📥 /authenticate hit");
+    console.log("req.user:", req.user);
 
-    const user = req.user;
-    const requiredRole = req.query["requiredRole"];
+    const userRole = (req.user as { email: string; role: string }).role;
+    console.log("User role:", userRole);
+    console.log("Required role (query):", req.query["requiredRole"]);
+    requireRole(userRole, req.query["requiredRole"] as string);
 
-    if (requiredRole && !user.role) {
-      throw new Err("User role is missing", 403);
-    }
-
-    if (requiredRole) {
-      requireRole(user.role!, requiredRole as string);
-    }
-
-    res.status(200).json({ auth: true, user });
+    res.status(200).json({ auth: true, user: req.user });
   } catch (error) {
+    console.error("Błąd w /authenticate:", error);
     next(error);
   }
 });
+
 
 /**
  * @openapi
@@ -183,7 +178,7 @@ router.get("/", verifyUser, (req, res, next) => {
  */
 router.post("/refresh", refreshToken, (req, res, next) => {
   try {
-    console.log("Refresh token endpoint hit"); // Log to check if endpoint is reached
+   console.log("📥 /authenticate/refresh hit"); // Log to check if endpoint is reached
     const response = req.response;
 
     if (!response) {
