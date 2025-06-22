@@ -13,6 +13,7 @@ interface Users {
   fitness_level?: string;
   created_at?: string;
   salt?: string;
+  role?: string;
 }
 export class Err implements ErrInterface {
   constructor(message: string, statusCode?: number) {
