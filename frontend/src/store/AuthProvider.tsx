@@ -1,12 +1,12 @@
 import React, { useCallback, useState } from "react";
 import AuthContext from "./auth-context";
 import authenticationService from "../services/authentication.service";
-import type { AxiosResponse } from "axios";
-import type { Users } from "../assets/Data";
+import { AxiosResponse } from "axios";
+import { User } from "../assets/Data";
 
 export interface AuthResponse {
   auth: boolean;
-  user: Users | undefined;
+  user: User | undefined;
 }
 
 interface AuthProviderProps {
@@ -17,7 +17,7 @@ const AuthProvider: React.ComponentType<AuthProviderProps> = ({
   children,
 }: AuthProviderProps) => {
   const [auth, setAuth] = useState<boolean>(false);
-  const [user, setUser] = useState<Users | undefined>(undefined);
+  const [user, setUser] = useState<User | undefined>(undefined);
 
   const refreshToken = useCallback(
     () =>
@@ -40,7 +40,7 @@ const AuthProvider: React.ComponentType<AuthProviderProps> = ({
             resolve(false);
           });
       }),
-    [],
+    []
   );
 
   const checkAuth = useCallback(
@@ -66,7 +66,7 @@ const AuthProvider: React.ComponentType<AuthProviderProps> = ({
             }
           });
       }),
-    [refreshToken],
+    [refreshToken]
   );
 
   const logout = useCallback(() => {

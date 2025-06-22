@@ -1,4 +1,4 @@
-export interface Users {
+interface Users {
   id?: number;
   email: string;
   password: string;
@@ -8,4 +8,11 @@ export interface Users {
   created_at?: string;
   salt?: string;
   role?: string;
+}
+
+interface User {
+  exp: number;
+  iat: number;
+  email: string;
+  role: string;
 }
