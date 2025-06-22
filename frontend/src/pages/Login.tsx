@@ -32,7 +32,7 @@ const Login = () => {
         password: password,
       });
       if (response.status === 200) {
-        navigate("/dashboard");
+        navigate("/");
         alert("Logowanie przebiegło pomyślnie");
         resetForm();
       } else if (response.status === 401) {

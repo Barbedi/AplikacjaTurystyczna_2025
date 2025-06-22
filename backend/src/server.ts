@@ -9,6 +9,7 @@ import swaggerSpec from "./swagger";
 import register from "./routes/register";
 import login from "./routes/login";
 import authenticate from "./routes/authenticate";
+import logout from "./routes/logout";
 
 const app = express();
 
@@ -23,14 +24,14 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerSpec));
-app.use("/register", register);
-app.use("/login", login);
-app.use("/authenticate", authenticate);
 
 app.get("/", (_req: Request, res: Response) => {
   res.json({ message: "Witaj na HikeUP" });
 });
-
+app.use("/register", register);
+app.use("/login", login);
+app.use("/authenticate", authenticate);
+app.use("/logout", logout);
 // Obsługa nieznalezionych endpointów
 app.use((_req: Request, res: Response) => {
   res.status(404).json({ message: "Endpoint not found" });
