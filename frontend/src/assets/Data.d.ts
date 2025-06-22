@@ -1,4 +1,4 @@
-interface Users {
+export interface Users {
   id?: number;
   email: string;
   password: string;
@@ -10,7 +10,7 @@ interface Users {
   role?: string;
 }
 
-interface User {
+export interface User {
   exp: number;
   iat: number;
   email: string;
