@@ -16,7 +16,13 @@ const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
-    checkAuth();
+    (async () => {
+      try {
+        await checkAuth();
+      } catch (error) {
+        console.error("Error during authentication check:", error);
+      }
+    })();
   }, [checkAuth]);
 
   useEffect(() => {

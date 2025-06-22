@@ -25,12 +25,11 @@ export function refreshToken(req: Request, res: Response, next: NextFunction) {
       process.env["REFRESH_SECRET_TOKEN"] as string,
       (err: jwt.VerifyErrors | null, user: string | object | undefined) => {
         if (err) {
-          throw new Err("Invalid refresh token", 403);
+          return next(new Err("Invalid refresh token", 403));
         }
-
         const tokenUser = user as { email: string; role: string };
         if (!tokenUser?.email || !tokenUser?.role) {
-          throw new Err("Invalid token payload", 403);
+          return next(new Err("Invalid token payload", 403));
         }
 
         const accessToken = jwt.sign(
