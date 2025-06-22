@@ -29,6 +29,9 @@ export function refreshToken(req: Request, res: Response, next: NextFunction) {
         }
 
         const tokenUser = user as { email: string; role: string };
+        if (!tokenUser?.email || !tokenUser?.role) {
+          throw new Err("Invalid token payload", 403);
+        }
 
         const accessToken = jwt.sign(
           { email: tokenUser.email, role: tokenUser.role }, // dodaj role
@@ -51,7 +54,6 @@ export function refreshToken(req: Request, res: Response, next: NextFunction) {
           message: "Token refreshed successfully",
         };
         req.user = tokenUser;
-        req.user = tokenUser; // ← bardzo ważne
         return next();
       },
     );

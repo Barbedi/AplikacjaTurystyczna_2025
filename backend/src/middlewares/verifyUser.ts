@@ -8,7 +8,7 @@ declare module "express-serve-static-core" {
     user?:
       | {
           email: string;
-          role?: string; // Dodaj pole role
+          role?: string;
         }
       | undefined;
   }
@@ -19,16 +19,11 @@ export function verifyUser(req: Request, _res: Response, next: NextFunction) {
     const token = req.cookies["jwt"];
     const authHeader = req.headers.authorization;
 
-    console.log("🔐 verifyUser -> Token:", token);
-    console.log("🔐 verifyUser -> Authorization header:", authHeader);
-
     if (!process.env["SECRET_TOKEN"]) {
-      console.error("❌ SECRET_TOKEN is missing");
       return next(new Err("Missing SECRET_TOKEN in environment", 500));
     }
 
     if (!token && !authHeader) {
-      console.warn("⚠️ No JWT or auth header, calling refreshToken()");
       return refreshToken(req, _res, next);
     }
 
@@ -37,11 +32,8 @@ export function verifyUser(req: Request, _res: Response, next: NextFunction) {
       user: string | object | undefined,
     ) => {
       if (err) {
-        console.error("❌ JWT verification error:", err);
         return next(new Err("Forbidden", 403));
       }
-
-      console.log("✅ JWT verified, payload:", user);
 
       if (user && typeof user === "object" && "email" in user) {
         req.user = {
@@ -69,7 +61,6 @@ export function verifyUser(req: Request, _res: Response, next: NextFunction) {
       );
     }
   } catch (error) {
-    console.error("🔴 Catch block in verifyUser:", error);
     return next(new Err("Authentication error", 500));
   }
 }
