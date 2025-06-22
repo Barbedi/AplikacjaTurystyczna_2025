@@ -9,3 +9,10 @@ export interface Users {
   salt?: string;
   role?: string;
 }
+
+export interface User {
+  exp: number;
+  iat: number;
+  email: string;
+  role: string;
+}

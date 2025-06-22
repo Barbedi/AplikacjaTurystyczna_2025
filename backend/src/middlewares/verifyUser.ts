@@ -5,63 +5,53 @@ import { refreshToken } from "./refreshToken";
 
 declare module "express-serve-static-core" {
   interface Request {
-    user?:
-      | {
-          email: string;
-          role?: string;
-        }
-      | undefined;
+   user?:string | object | undefined
   }
 }
 
 export function verifyUser(req: Request, _res: Response, next: NextFunction) {
-  try {
-    const token = req.cookies["jwt"];
-    const authHeader = req.headers.authorization;
+  const token = req.cookies["jwt"];
+  const authHeader = req.headers.authorization;
 
-    if (!process.env["SECRET_TOKEN"]) {
-      return next(new Err("Missing SECRET_TOKEN in environment", 500));
-    }
+  console.log("🔐 verifyUser()");
+  console.log("Token (cookie):", token);
+  console.log("Authorization Header:", authHeader);
 
-    if (!token && !authHeader) {
-      return refreshToken(req, _res, next);
-    }
+  if (!token && !authHeader) {
+    console.log("Brak tokena – próba odświeżenia");
+    refreshToken(req, _res, next);
+  }
 
-    const handleVerification = (
-      err: jwt.VerifyErrors | null,
-      user: string | object | undefined,
-    ) => {
-      if (err) {
-        return next(new Err("Forbidden", 403));
-      }
-
-      if (user && typeof user === "object" && "email" in user) {
-        req.user = {
-          email: (user as any).email,
-          role: (user as any).role,
-        };
+  if (token) {
+    jwt.verify(
+      token,
+      process.env["SECRET_TOKEN"] as string,
+      (err: jwt.VerifyErrors | null, user: string | object | undefined) => {
+        if (err) {
+          console.log("❌ Token invalid:", err.message);
+          const error = new Err("Forbidden", 403);
+          return next(error);
+        }
+        console.log("✅ Token verified:", user);
+        req.user = user;
         return next();
-      } else {
-        return next(new Err("Forbidden", 403));
       }
-    };
+    );
+  } else if (authHeader) {
+    const token = authHeader.split(" ")[1] as string;
+    jwt.verify(
+      token,
+      process.env["SECRET_TOKEN"] as string,
+      (err: jwt.VerifyErrors | null, user: string | object | undefined) => {
+        if (err) {
+          const error = new Err("Forbidden", 403);
+          return next(error);
+        }
 
-    if (token) {
-      jwt.verify(
-        token,
-        process.env["SECRET_TOKEN"] as string,
-        handleVerification,
-      );
-    } else if (authHeader) {
-      const token = authHeader.split(" ")[1] as string;
-      jwt.verify(
-        token,
-        process.env["SECRET_TOKEN"] as string,
-        handleVerification,
-      );
-    }
-  } catch (error) {
-    return next(new Err("Authentication error", 500));
+        req.user = user;
+        return next();
+      }
+    );
   }
 }
 
