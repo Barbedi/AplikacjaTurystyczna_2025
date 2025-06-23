@@ -33,7 +33,8 @@ const Navbar = () => {
   }, []);
 
   const next = () => setCurrent((prev) => (prev + 1) % images.length);
-  const prev = () => setCurrent((prev) => (prev - 1 + images.length) % images.length);
+  const prev = () =>
+    setCurrent((prev) => (prev - 1 + images.length) % images.length);
   const toggleMenu = () => setMenuOpen((prev) => !prev);
 
   const handleLogout = async () => {
@@ -47,7 +48,10 @@ const Navbar = () => {
   return (
     <div className="relative w-full h-screen overflow-hidden">
       {/* Background images slider */}
-      <div className="flex transition-transform duration-700 ease-in-out" style={{ transform: `translateX(-${current * 100}%)` }}>
+      <div
+        className="flex transition-transform duration-700 ease-in-out"
+        style={{ transform: `translateX(-${current * 100}%)` }}
+      >
         {images.map((src, index) => (
           <img
             key={index}
