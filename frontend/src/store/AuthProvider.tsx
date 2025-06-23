@@ -40,7 +40,7 @@ const AuthProvider: React.ComponentType<AuthProviderProps> = ({
             resolve(false);
           });
       }),
-    []
+    [],
   );
 
   const checkAuth = useCallback(
@@ -66,7 +66,7 @@ const AuthProvider: React.ComponentType<AuthProviderProps> = ({
             }
           });
       }),
-    [refreshToken]
+    [refreshToken],
   );
 
   const logout = useCallback(() => {

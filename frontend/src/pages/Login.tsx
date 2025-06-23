@@ -1,5 +1,10 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import {
+  faArrowLeft,
+  faEnvelope,
+  faLock,
+  faChevronRight,
+} from "@fortawesome/free-solid-svg-icons";
 import React, { useState } from "react";
 import logowanieService from "../services/logowanie.service";
 import { useNavigate } from "react-router-dom";
@@ -52,7 +57,7 @@ const Login = () => {
   };
 
   return (
-    <div className="relative w-full h-screen overflow-hidden bg-[url('/assets/img/FullSizeRender.JPG')] bg-cover bg-center ">
+    <div className="relative w-full h-screen overflow-hidden bg-[url('/assets/img/IMG_4048.JPG')] bg-cover bg-center ">
       <a
         href="/"
         className="absolute top-4 left-4 text-black text-lg flex items-center hover:underline z-20 "
@@ -60,42 +65,68 @@ const Login = () => {
         <FontAwesomeIcon icon={faArrowLeft} className="mr-2" />
         Powrót do strony głównej
       </a>
-      <main className="absolute inset-0 flex items-center justify-center z-10 p-4">
-        <div className="bg-white/60 rounded-lg shadow-lg p-8 max-w-2xl w-full text-center">
-          <h1 className="text-4xl sm:text-5xl font-lora mb-6 text-gray-800">
-            Zaloguj się do HikeUp
-          </h1>
-          <form onSubmit={submitHandler} className="flex flex-col space-y-4">
-            <input
-              type="email"
-              id="email"
-              value={email}
-              minLength={3}
-              onInput={emailInputHandler}
-              required
-              placeholder="email"
-              className="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <input
-              type="password"
-              id="password"
-              value={password}
-              minLength={3}
-              onInput={passwordInputHandler}
-              required
-              placeholder="Hasło"
-              className="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <button className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition duration-300">
+
+      <main className="absolute inset-0 flex justify-end z-10">
+        <div className="w-1/2 h-full flex items-center justify-center bg-white/20 backdrop-blur-sm p-8">
+          <div className="rounded-lg p-8 max-w-xl w-full text-center">
+            <h1 className="text-4xl sm:text-6xl font-lora mb-6 text-white justify-start flex ">
               Zaloguj się
-            </button>
-            <p className="text-sm text-gray-700">
-              Nie masz konta?{" "}
-              <a href="/register" className="text-blue-500 hover:underline">
-                Zarejestruj się
-              </a>
-            </p>
-          </form>
+            </h1>
+            <form onSubmit={submitHandler} className="flex flex-col space-y-4">
+              <div className="relative border-b-2 border-white">
+                <input
+                  type="email"
+                  id="email"
+                  value={email}
+                  minLength={3}
+                  onInput={emailInputHandler}
+                  required
+                  placeholder="E-mail"
+                  className="w-full py-4 pr-10 pl-4 rounded-lg border-none bg-transparent placeholder-white text-white focus:outline-none focus:ring-0"
+                />
+                <FontAwesomeIcon
+                  icon={faEnvelope}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white text-lg pointer-events-none"
+                />
+              </div>
+
+              <div className="relative border-b-2 border-white">
+                <input
+                  type="password"
+                  id="password"
+                  value={password}
+                  minLength={3}
+                  onInput={passwordInputHandler}
+                  required
+                  placeholder="Hasło"
+                  className="w-full py-4 px-4 rounded-lg border-none bg-transparent placeholder-white text-white focus:outline-none focus:ring-0"
+                />
+                <FontAwesomeIcon
+                  icon={faLock}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white text-lg pointer-events-none"
+                />
+              </div>
+
+              <div className="flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0 w-full">
+                <button
+                  type="submit"
+                  className="flex-1 relative bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition duration-300 text-base font-medium text-center"
+                >
+                  Zaloguj się
+                  <FontAwesomeIcon
+                    icon={faChevronRight}
+                    className="absolute right-4 top-1/2 -translate-y-1/2"
+                  />
+                </button>
+                <a
+                  href="/register"
+                  className="flex-1 px-6 py-3 rounded-lg border border-white text-white hover:bg-white hover:text-blue-500 transition duration-300 text-base font-medium text-center flex items-center justify-center"
+                >
+                  Zarejestruj się
+                </a>
+              </div>
+            </form>
+          </div>
         </div>
       </main>
     </div>
