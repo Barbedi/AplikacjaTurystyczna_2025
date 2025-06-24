@@ -6,7 +6,7 @@ const regions = [
 
 const ExploreRoutes = () => {
   return (
-    <div className="w-full flex flex-col items-center justify-center  bg-gray-100 py-8">
+    <div className="w-full flex flex-col items-center justify-center   py-8">
       <div className="flex items-center justify-center">
         <h1 className="text-3xl sm:text-4xl text-black font-lora">
           Odkryj Trasy w
@@ -17,7 +17,7 @@ const ExploreRoutes = () => {
           <a
             key={region.name}
             href={region.path}
-            className="p-4  bg-gray-100 hover:scale-105 duration-300 ease-in-out hover:underline decoration-2 "
+            className="p-4   hover:scale-105 duration-300 ease-in-out hover:underline decoration-2 "
           >
             <img
               className="2xl:h-xl w-xl xl:size-60 md:size-60 rounded-full"

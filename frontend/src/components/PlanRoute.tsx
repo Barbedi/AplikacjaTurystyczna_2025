@@ -1,6 +1,6 @@
 const PlanRoute = () => {
   return (
-    <div className="w-full flex items-center justify-center bg-gray-100">
+    <div className="w-full flex items-center justify-center">
       <div className="flex flex-col items-center justify-center w-full max-w-screen-xl bg-secondary mx-4 my-10 py-8 px-6 rounded-3xl">
         <div className="flex flex-col items-center justify-center mt-4">
           <span className="text-4xl sm:text-5xl text-white font-lora">

@@ -39,7 +39,7 @@ const routes = [
 
 const ProposedRoutes = () => {
   return (
-    <div className="w-full flex flex-col items-center justify-center bg-gray-100 py-8">
+    <div className="w-full flex flex-col items-center justify-center  py-8">
       <div className="flex items-center justify-center">
         <h1 className="text-3xl sm:text-4xl text-black font-lora">
           Proponowane trasy
