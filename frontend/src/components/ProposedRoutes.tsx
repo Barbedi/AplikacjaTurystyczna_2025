@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faStar, faArrowRight } from "@fortawesome/free-solid-svg-icons";
+import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 
 const routes = [
   {
@@ -17,20 +17,38 @@ const routes = [
 
 const ProposedRoutes = () => {
   return (
-    <div className="w-full flex flex-row items-center justify-center py-8">
-      <div className="relative flex flex-row items-center text-center mb-8 w-1/3 mx-4">
+    <div className="w-full flex flex-wrap md:flex-nowrap xl:items-start items-center justify-center md:justify-between py-8 px-4 xl:pl-30">
+      <div className="relative w-full md:w-[40%] lg:w-[35%] xl:w-[30%] mx-4 mb-8 group self-start xl:items-center xl:text-center">
         <div className="absolute bg-accent/60 z-0 left-7 top-5 w-full h-full rounded-2xl" />
         <img
-          className="rounded-2xl mr-8 relative z-10"
+          className="rounded-2xl relative z-10 w-full object-cover shadow-2xl  lg:mr-8"
           src="/assets/img/IMG_5962.jpg"
+          alt="Trasa"
         />
       </div>
-      <div className="flex flex-row items-start w-1/3 h-full relative z-10 justify-start mx-4">
-        <h1 className="text-3xl ml-4 mb-4 text-white relative z-10 font-lora">
-          Proponowane trasy
+      <div className="flex flex-col items-start w-full md:w-[50%] lg:w-[55%] xl:w-[60%] self-start font-lora mx-4">
+        <h1 className="text-2xl md:text-3xl xl:text-4xl mb-10 text-white leading-tight">
+          Hala Ornak – Starorobociański Wierch
         </h1>
-        </div>
+
+        <span className="text-white text-lg md:text-xl mb-2">Długość trasy: 12 km</span>
+        <span className="text-white text-lg md:text-xl mb-2">Przewyższenie: 890 m</span>
+        <span className="text-white text-lg md:text-xl mb-2">Liczba komentarzy: 24</span>
+        <span className="text-white text-lg md:text-xl mb-10">Ocena trasy: 4.7 / 5</span>
+
+        <a
+          href="/"
+          className="bg-secondary transition-colors rounded-2xl px-6 py-2 text-xl md:text-2xl text-black font-lora mt-auto flex items-center group"
+        >
+          Planuj trasę
+          <FontAwesomeIcon
+            icon={faChevronRight}
+            className="ml-4 group-hover:translate-x-1 transition-transform duration-300"
+          />
+        </a>
+      </div>
     </div>
   );
 };
+
 export default ProposedRoutes;
