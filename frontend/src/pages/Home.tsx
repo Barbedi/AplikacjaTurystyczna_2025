@@ -1,10 +1,11 @@
 import Navbar from "../components/Navbar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
+import { faMagnifyingGlass,faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import HikingIcon from "@mui/icons-material/Hiking";
 import AssistantPhotoIcon from "@mui/icons-material/AssistantPhoto";
 import FollowTheSignsIcon from "@mui/icons-material/FollowTheSigns";
+import ProposedRoutes from "../components/ProposedRoutes";
 
 const Home = () => {
   return (
@@ -38,7 +39,7 @@ const Home = () => {
           <div className="text-white  text-xl md:text-2xl xl:text-3xl 2xl:text-4xl font-lora mb-12 duration-300 text-wrap md:w-2/5 ">
             Twórz świadome i bezpieczne wyprawy dzięki przemyślanemu planowaniu.
           </div>
-          <div className="flex flex-col md:flex-row items-stretch justify-between font-lora gap-8 w-full">
+          <div className="flex flex-col md:flex-row items-stretch justify-between font-lora lg:gap-8 gap-5 w-full">
           <div className="text-white w-full md:w-1/4 group flex flex-col items-center text-center h-full">
             <HikingIcon
               sx={{ fontSize: 90 }}
@@ -87,13 +88,27 @@ const Home = () => {
               Gotowe? Zapisz trasę i ruszaj na wyprawę z HikeUp!
             </span>
           </div>
-        </div>
-          <div className="flex justify-center items-center my-10 ">
-            <button className="bg-secondary rounded-2xl px-10 py-3 text-2xl font-lora">
+          </div>
+          <div className="flex justify-center group items-center my-10 ">
+            <a href="/" className="bg-secondary rounded-2xl px-10 py-3 text-2xl font-lora ">
               Planuj trase
-            </button>
+              <FontAwesomeIcon
+                icon={faChevronRight}
+                className="ml-4 group-hover:translate-x-1 duration-300 transition-all"
+              />
+            </a>
           </div>
         </div>
+      </div>
+      <div className="flex items-center justify-center max-w-[2330px] mx-auto px-4">
+        <div className="flex flex-col items-center text-center mt-6">
+          <div className="text-white text-3xl md:text-4xl xl:text-5xl 2xl:text-6xl font-lora mb-6 duration-300">
+            Proponowane trasy
+          </div>
+          <div className="flex flex-col items-start font-lora lg:gap-8 gap-5 w-full">
+            <ProposedRoutes />
+          </div>
+        </div>  
       </div>
     </div>
   );
