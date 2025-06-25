@@ -6,25 +6,20 @@ const regions = [
 
 const ExploreRoutes = () => {
   return (
-    <div className="w-full flex flex-col items-center justify-center   py-8">
-      <div className="flex items-center justify-center">
-        <h1 className="text-3xl sm:text-4xl text-black font-lora">
-          Odkryj Trasy w
-        </h1>
-      </div>
-      <div className="mt-4 flex flex-wrap justify-center gap-6 rounded-full  ">
+    <div className="w-full flex flex-col items-center justify-center py-8">
+      <div className="mt-4 flex flex-wrap justify-center gap-6 rounded-full text-white ">
         {regions.map((region) => (
           <a
             key={region.name}
             href={region.path}
-            className="p-4   hover:scale-105 duration-300 ease-in-out hover:underline decoration-2 "
+            className="p-4 hover:scale-105 duration-300 ease-in-out hover:underline decoration-2 "
           >
             <img
               className="2xl:h-xl w-xl xl:size-60 md:size-60 rounded-full"
               src="/assets/img/FullSizeRender.JPG"
               alt=""
             />
-            <h2 className="text-4xl font-lora text-gray-800 flex justify-center items-center mt-3 ">
+            <h2 className="text-4xl font-lora text-white flex justify-center items-center mt-3 ">
               {region.name}
             </h2>
           </a>

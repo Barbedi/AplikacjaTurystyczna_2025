@@ -1,27 +1,27 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 
-const routes = [
-  {
-    image: "/assets/img/IMG_5962.jpg",
-    pasmo: "Tatry",
-    start: "Stacja Metra",
-    end: "Biblioteka Miejska",
-    length: "20 km",
-    time: "9 h",
-    elevation: "1000 m",
-    difficulty: "Średni",
-    rating: 4,
-  }
-];
+// const routes = [
+//   {
+//     image: "/assets/img/IMG_5962.jpg",
+//     pasmo: "Tatry",
+//     start: "Stacja Metra",
+//     end: "Biblioteka Miejska",
+//     length: "20 km",
+//     time: "9 h",
+//     elevation: "1000 m",
+//     difficulty: "Średni",
+//     rating: 4,
+//   },
+// ];
 
 const ProposedRoutes = () => {
   return (
-    <div className="w-full flex flex-wrap md:flex-nowrap xl:items-start items-center justify-center md:justify-between py-8 px-4 xl:pl-30">
+    <div className="w-full flex flex-wrap md:flex-nowrap xl:items-start items-center justify-center md:justify-between py-8 px-4">
       <div className="relative w-full md:w-[40%] lg:w-[35%] xl:w-[30%] mx-4 mb-8 group self-start xl:items-center xl:text-center">
         <div className="absolute bg-accent/60 z-0 left-7 top-5 w-full h-full rounded-2xl" />
         <img
-          className="rounded-2xl relative z-10 w-full object-cover shadow-2xl  lg:mr-8"
+          className="rounded-2xl relative z-10 w-full object-cover shadow-2xl  mr-8"
           src="/assets/img/IMG_5962.jpg"
           alt="Trasa"
         />
@@ -31,10 +31,18 @@ const ProposedRoutes = () => {
           Hala Ornak – Starorobociański Wierch
         </h1>
 
-        <span className="text-white text-lg md:text-xl mb-2">Długość trasy: 12 km</span>
-        <span className="text-white text-lg md:text-xl mb-2">Przewyższenie: 890 m</span>
-        <span className="text-white text-lg md:text-xl mb-2">Liczba komentarzy: 24</span>
-        <span className="text-white text-lg md:text-xl mb-10">Ocena trasy: 4.7 / 5</span>
+        <span className="text-white text-lg md:text-xl mb-2">
+          Długość trasy: 12 km
+        </span>
+        <span className="text-white text-lg md:text-xl mb-2">
+          Przewyższenie: 890 m
+        </span>
+        <span className="text-white text-lg md:text-xl mb-2">
+          Liczba komentarzy: 24
+        </span>
+        <span className="text-white text-lg md:text-xl mb-10">
+          Ocena trasy: 4.7 / 5
+        </span>
 
         <a
           href="/"
