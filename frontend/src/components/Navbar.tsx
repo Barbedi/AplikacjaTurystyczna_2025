@@ -1,6 +1,8 @@
 import { useState, useEffect, useContext } from "react";
 import { NavLink, Link } from "react-router-dom";
 import AuthContext from "../store/auth-context";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUser } from "@fortawesome/free-solid-svg-icons";
 
 const Navbar = () => {
   const { auth, checkAuth, logout } = useContext(AuthContext);
@@ -28,14 +30,14 @@ const Navbar = () => {
 
   return (
     <div className="w-full font-lora px-4 py-3 relative">
-      <div className="flex items-center justify-between max-w-[2400px] mx-auto w-full px-6">
+      <div className="flex items-center justify-between max-w-[2330px] mx-auto w-full px-6">
         <div className="flex-shrink-0 ">
           <Link to="/" className="text-white font-bold text-4xl">
             HikeUp
           </Link>
         </div>
         <div className="hidden md:flex absolute left-1/2 -translate-x-1/2">
-          <nav className="flex space-x-3 text-xl">
+          <nav className="flex space-x-3 2xl:text-2xl text-xl">
             <NavLink
               to="/"
               className={({ isActive }) =>
@@ -51,7 +53,7 @@ const Navbar = () => {
               to="/plan-route"
               className={({ isActive }) =>
                 `text-white py-2 px-4 hover:text-gray-300 ${
-                  isActive ? "border-b-2 border-white" : ""
+                  isActive ? "border-b-2 border-white " : ""
                 }`
               }
               onClick={() => setMenuOpen(false)}
@@ -71,7 +73,7 @@ const Navbar = () => {
             </NavLink>
           </nav>
         </div>
-        <div className="hidden md:flex items-center space-x-4 text-xl flex-shrink-0">
+        <div className="hidden md:flex items-center space-x-4 2xl:text-2xl text-xl flex-shrink-0">
           {auth ? (
             <>
               <NavLink
@@ -92,6 +94,7 @@ const Navbar = () => {
               to="/login"
               className="text-white py-2 px-4 hover:text-gray-300"
             >
+              <FontAwesomeIcon icon={faUser} className="mr-2" />
               Zaloguj się
             </NavLink>
           )}
