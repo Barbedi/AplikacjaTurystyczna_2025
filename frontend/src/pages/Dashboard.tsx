@@ -1,6 +1,8 @@
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthContext from "../store/auth-context"; // lub odpowiednia ścieżka
+import DashboardMenu from "../components/DashboardMenu";
+import MenuBarTop from "../components/MenuBarTop";
 
 const Dashboard = () => {
   const { checkAuth, user } = useContext(AuthContext);
@@ -22,14 +24,18 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen">
-      <h1 className="text-4xl font-bold mb-4">Dashboard</h1>
-      <p className="text-lg">Welcome to the Dashboard!</p>
-      {user && (
-        <p className="mt-4 text-sm text-gray-600">
-          Zalogowany jako: <strong>{user.email}</strong>
-        </p>
-      )}
+    <div className="min-h-screen bg-gradient-to-b from-grad1 to-grad2 pb-24 md:pb-0">
+      <div className="flex flex-row">
+        <div>
+          <DashboardMenu />
+        </div>
+        <div className="w-full">
+  <MenuBarTop />
+</div>
+
+
+      </div>
+
     </div>
   );
 };
