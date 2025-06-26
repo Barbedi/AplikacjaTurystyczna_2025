@@ -25,7 +25,7 @@ const Register = () => {
     setPassword(ev.target.value);
   };
   const confirmPasswordInputHandler = (
-    ev: React.ChangeEvent<HTMLInputElement>
+    ev: React.ChangeEvent<HTMLInputElement>,
   ) => {
     setConfirmPassword(ev.target.value);
   };
@@ -38,7 +38,12 @@ const Register = () => {
   const submitHandler = async (ev: React.FormEvent<HTMLFormElement>) => {
     ev.preventDefault();
     try {
-      if (!name.trim() || !email.trim() || !password.trim() || !confirmPassword.trim()) {
+      if (
+        !name.trim() ||
+        !email.trim() ||
+        !password.trim() ||
+        !confirmPassword.trim()
+      ) {
         alert("Wszystkie pola muszą być wypełnione");
         return;
       }
@@ -48,7 +53,11 @@ const Register = () => {
         return;
       }
 
-      const response = await rejestracjaService.create({ name, email, password });
+      const response = await rejestracjaService.create({
+        name,
+        email,
+        password,
+      });
 
       if (response.status === 201) {
         alert("Rejestracja przebiegła pomyślnie");
@@ -80,7 +89,8 @@ const Register = () => {
               Witaj w serwisie
             </h2>
             <p className="text-xl sm:text-2xl">
-              Dołącz do społeczności odkrywców górskich tras rejestracja zajmie chwilę!
+              Dołącz do społeczności odkrywców górskich tras rejestracja zajmie
+              chwilę!
             </p>
           </div>
         </div>
@@ -157,18 +167,18 @@ const Register = () => {
               <div className="flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0 w-full pt-2">
                 <button
                   type="submit"
-                    className="flex-1 relative bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition duration-300 text-base font-medium"
-                  >
+                  className="flex-1 relative bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition duration-300 text-base font-medium"
+                >
                   Zarejestruj się
                   <FontAwesomeIcon
                     icon={faChevronRight}
-                      className="absolute right-4 top-1/2 -translate-y-1/2"
+                    className="absolute right-4 top-1/2 -translate-y-1/2"
                   />
-                  </button>
-                  <a
-                    href="/login"
-                      className="flex-1 px-6 py-3 rounded-lg  text-white hover:bg-white hover:text-blue-500 transition duration-300 text-base font-medium flex items-center justify-center"
-                  >
+                </button>
+                <a
+                  href="/login"
+                  className="flex-1 px-6 py-3 rounded-lg  text-white hover:bg-white hover:text-blue-500 transition duration-300 text-base font-medium flex items-center justify-center"
+                >
                   Zaloguj się
                 </a>
               </div>
