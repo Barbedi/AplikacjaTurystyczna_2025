@@ -44,16 +44,18 @@ const ProposedRoutes = () => {
           Ocena trasy: 4.7 / 5
         </span>
 
-        <a
-          href="/"
-          className="bg-secondary transition-colors rounded-2xl px-6 py-2 text-xl md:text-2xl text-black font-lora mt-auto flex items-center group"
-        >
-          Planuj trasę
-          <FontAwesomeIcon
-            icon={faChevronRight}
-            className="ml-4 group-hover:translate-x-1 transition-transform duration-300"
-          />
-        </a>
+        <div className="flex justify-center group items-center my-10 ">
+            <a
+              href="/"
+              className="bg-secondary rounded-2xl px-10 py-3 text-2xl font-lora "
+            >
+              Planuj trase
+              <FontAwesomeIcon
+                icon={faChevronRight}
+                className="ml-4 group-hover:translate-x-1 duration-300 transition-all"
+              />
+            </a>
+          </div>
       </div>
     </div>
   );

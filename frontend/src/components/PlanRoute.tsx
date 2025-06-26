@@ -1,81 +1,62 @@
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import HikingIcon from "@mui/icons-material/Hiking";
+import AssistantPhotoIcon from "@mui/icons-material/AssistantPhoto";
+import FollowTheSignsIcon from "@mui/icons-material/FollowTheSigns";
+
+
 const PlanRoute = () => {
   return (
-    <div className="w-full flex items-center justify-center">
-      <div className="flex flex-col items-center justify-center w-full max-w-screen-xl bg-secondary mx-4 my-10 py-8 px-6 rounded-3xl">
-        <div className="flex flex-col items-center justify-center mt-4">
-          <span className="text-4xl sm:text-5xl text-white font-lora">
-            Zaplanuj trasę
-          </span>
-        </div>
-
-        <div className="flex flex-row mt-8">
-          <div className="flex flex-row lg:flex-nowrap flex-wrap justify-center gap-6 mt-6">
-            <div className="flex flex-col w-full sm:w-1/2 xl:w-1/4 h-auto bg-white rounded-xl p-6 mx-2 hover:scale-105 transition-transform duration-300 ease-in-out hover:shadow-lg">
-              <div className="flex flex-col items-center text-center space-y-4">
-                <h1 className="text-3xl sm:text-4xl md:text-5xl font-lora">
-                  1
-                </h1>
-                <h2 className="text-xl sm:text-2xl md:text-3xl font-lora">
-                  Wybierz punkt startowy
-                </h2>
-                <span className="text-base sm:text-lg md:text-xl font-lora">
-                  Kliknij na mapie miejsce lub wpisz miejsce, z którego chcesz
-                  wyruszyć.
-                </span>
-              </div>
+    <div className="flex flex-col md:flex-row items-stretch justify-between font-lora lg:gap-8 gap-5 w-full">
+            <div className="text-white w-full md:w-1/4 group flex flex-col items-center text-center h-full">
+              <HikingIcon
+                sx={{ fontSize: 90 }}
+                className="text-white mb-4 group-hover:animate-bounce duration-300 transition-all"
+              />
+              <h1 className="text-xl md:text-2xl xl:text-3xl 2xl:text-4xl mb-4 duration-300">
+                Wybierz punkt startowy
+              </h1>
+              <span className="text-xl 2xl:text-2xl">
+                Kliknij na mapie miejsce lub wpisz miejsce, z którego chcesz
+                wyruszyć.
+              </span>
             </div>
-            <div className="flex flex-col w-full sm:w-1/2 xl:w-1/4 h-auto bg-white rounded-xl p-6 mx-2 hover:scale-105 transition-transform duration-300 ease-in-out hover:shadow-lg">
-              <div className="flex flex-col items-center text-center space-y-4">
-                <h1 className="text-3xl sm:text-4xl md:text-5xl font-lora">
-                  2
-                </h1>
-                <h2 className="text-xl sm:text-2xl md:text-3xl font-lora">
-                  Dodaj punkt docelowy
-                </h2>
-                <span className="text-base sm:text-lg md:text-xl font-lora">
-                  Wybierz miejsce, do którego chcesz dojść.
-                </span>
-              </div>
+            <div className="text-white w-full md:w-1/4 group flex flex-col items-center text-center h-full">
+              <AssistantPhotoIcon
+                sx={{ fontSize: 90 }}
+                className="text-white mb-4 group-hover:animate-bounce duration-300 transition-all"
+              />
+              <h1 className="text-xl md:text-2xl xl:text-3xl 2xl:text-4xl mb-4 duration-300">
+                Dodaj punkty pośrednie (opcjonalnie)
+              </h1>
+              <span className="text-xl 2xl:text-2xl">
+                Jeśli chcesz, dodaj przystanki lub ciekawe miejsca po drodze.
+              </span>
             </div>
-            <div className="flex flex-col w-full sm:w-1/2 xl:w-1/4 h-auto bg-white rounded-xl p-6 mx-2 hover:scale-105 transition-transform duration-300 ease-in-out hover:shadow-lg">
-              <div className="flex flex-col items-center text-center space-y-4">
-                <h1 className="text-3xl sm:text-4xl md:text-5xl font-lora">
-                  3
-                </h1>
-                <h2 className="text-xl sm:text-2xl md:text-3xl font-lora">
-                  Dodaj punkty pośrednie (opcjonalnie)
-                </h2>
-                <span className="text-base sm:text-lg md:text-xl font-lora">
-                  Jeśli chcesz, dodaj przystanki lub ciekawe miejsca po drodze.
-                </span>
-              </div>
+            <div className="text-white w-full md:w-1/4 group flex flex-col items-center text-center h-full">
+              <FollowTheSignsIcon
+                sx={{ fontSize: 90 }}
+                className="text-white mb-4 group-hover:animate-bounce duration-300 transition-all"
+              />
+              <h1 className="text-xl md:text-2xl xl:text-3xl 2xl:text-4xl mb-4 duration-300">
+                Dodaj punkt docelowy
+              </h1>
+              <span className="text-xl 2xl:text-2xl">
+                Wybierz miejsce, do którego chcesz dojść.
+              </span>
             </div>
-            <div className="flex flex-col w-full sm:w-1/2 xl:w-1/4 h-auto bg-white rounded-xl p-6 mx-2 hover:scale-105 transition-transform duration-300 ease-in-out hover:shadow-lg">
-              <div className="flex flex-col items-center text-center space-y-4">
-                <h1 className="text-3xl sm:text-4xl md:text-5xl font-lora">
-                  4
-                </h1>
-                <h2 className="text-xl sm:text-2xl md:text-3xl font-lora">
-                  Zatwierdź trasę i zapisz plan
-                </h2>
-                <span className="text-base sm:text-lg md:text-xl font-lora">
-                  Gotowe? Zapisz trasę i ruszaj na wyprawę z HikeUp!
-                </span>
-              </div>
+            <div className="text-white w-full md:w-1/4 group flex flex-col items-center text-center h-full">
+              <CheckCircleIcon
+                sx={{ fontSize: 90 }}
+                className="text-white mb-4 group-hover:animate-bounce duration-300 transition-all"
+              />
+              <h1 className="text-xl md:text-2xl xl:text-3xl 2xl:text-4xl mb-4 duration-300">
+                Zatwierdź trasę i zapisz plan
+              </h1>
+              <span className="text-xl 2xl:text-2xl">
+                Gotowe? Zapisz trasę i ruszaj na wyprawę z HikeUp!
+              </span>
             </div>
           </div>
-        </div>
-
-        <div className="flex flex-col mt-10">
-          <a
-            className="bg-white text-black px-6 py-3 text-base sm:text-lg rounded-md hover:scale-105 transition-transform duration-300 ease-in-out hover:shadow-lg"
-            href="/plan-route"
-          >
-            Planuj trasę
-          </a>
-        </div>
-      </div>
-    </div>
   );
 };
 
