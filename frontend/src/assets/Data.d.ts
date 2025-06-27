@@ -16,3 +16,36 @@ export interface User {
   email: string;
   role: string;
 }
+
+export interface CurrentWeather {
+  name: string;
+  main: {
+    temp: number;
+    humidity: number;
+  };
+  weather: {
+    description: string;
+    icon: string;        
+  }[];
+  sys: {
+    sunset: number;
+    sunrise: number;
+  }; 
+  wind: {
+    speed: number;
+  };
+}
+
+export interface ForecastItem {
+  dt: number;
+  dt_txt: string;
+  main: {
+    temp: number;
+  };
+  weather: {
+    main: string;
+    icon: string; 
+    description:string  ;
+  }[];
+}
+
