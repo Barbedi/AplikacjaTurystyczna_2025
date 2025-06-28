@@ -2,7 +2,24 @@ import AuthContext from "../store/auth-context";
 import { useContext, useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
+import {
+  faChevronRight,
+  faChevronLeft,
+  faHouse,
+  faRoute,
+  faCompass,
+  faLocationPinLock,
+  faHeart,
+  faMapLocationDot,
+  faChartSimple,
+  faMountainSun,
+  faRankingStar,
+  faGears,
+  faCircleUser,
+} from "@fortawesome/free-solid-svg-icons";
+import LogoutIcon from "@mui/icons-material/Logout";
+import PermMediaIcon from "@mui/icons-material/PermMedia";
+import RateReviewIcon from "@mui/icons-material/RateReview";
 
 interface DashboardMenuProps {
   isOpen: boolean;
@@ -22,15 +39,14 @@ const DashboardMenu: React.FC<DashboardMenuProps> = ({ isOpen, setIsOpen }) => {
       }
       setLoading(false);
     });
-  }, []);
+  }, [checkAuth, navigate]);
 
   return (
     <div
       className={`relative transition-all duration-300 ${
-        isOpen ? "md:w-70 w-80" : "w-16"
+        isOpen ? "md:w-70 w-80 2xl:w-74" : "w-20"
       } h-screen border-r-2 border-white items-start justify-between  bg-transparent/30 relative`}
     >
-      {/* Menu content */}
       <div className={`p-4 ${!isOpen && "px-2"}`}>
         <div className="flex items-center">
           <img
@@ -47,76 +63,215 @@ const DashboardMenu: React.FC<DashboardMenuProps> = ({ isOpen, setIsOpen }) => {
 
         <div className="flex flex-col md:mt-2 mt-6 w-full space-y-2 md:space-y-1">
           <span className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left">
-          {isOpen && "DASHBOARDS"}
+            <FontAwesomeIcon
+              icon={faHouse}
+              className="mr-2 text-sm 2xl:text-lg"
+            />
+            {isOpen && "DASHBOARDS"}
           </span>
           <button className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl hover:bg-gray-700 transition duration-300">
-            <FontAwesomeIcon icon={faChevronRight} className="mr-2 text-sm" />
-            {isOpen && "Zaplanuj trase"}
+            <div
+              className={`flex items-center ${!isOpen ? "justify-center" : ""}`}
+            >
+              <FontAwesomeIcon
+                icon={faChevronRight}
+                className="mr-2 text-sm 2xl:text-lg"
+              />
+              <FontAwesomeIcon
+                icon={faRoute}
+                className="mr-2 text-sm 2xl:text-lg"
+              />
+              {isOpen && "Zaplanuj trase"}
+            </div>
           </button>
           <button className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl hover:bg-gray-700 transition duration-300">
-            <FontAwesomeIcon icon={faChevronRight} className="mr-2 text-sm" />
-            {isOpen && "Wyszukaj szlaku"}
+            <div
+              className={`flex items-center ${!isOpen ? "justify-center" : ""}`}
+            >
+              <FontAwesomeIcon
+                icon={faChevronRight}
+                className="mr-2  text-sm 2xl:text-lg"
+              />
+              <FontAwesomeIcon
+                icon={faCompass}
+                className="mr-2 text-sm 2xl:text-lg"
+              />
+              {isOpen && "Wyszukaj szlaku"}
+            </div>
           </button>
           <button className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl hover:bg-gray-700 transition duration-300">
-            <FontAwesomeIcon icon={faChevronRight} className="mr-2 text-sm" />
-            {isOpen && "Moje trasy"}
+            <div
+              className={`flex items-center ${!isOpen ? "justify-center" : ""}`}
+            >
+              <FontAwesomeIcon
+                icon={faChevronRight}
+                className="mr-2 text-sm 2xl:text-lg"
+              />
+              <FontAwesomeIcon
+                icon={faLocationPinLock}
+                className="mr-2 text-sm 2xl:text-lg"
+              />
+              {isOpen && "Moje trasy"}
+            </div>
           </button>
           <button className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl hover:bg-gray-700 transition duration-300">
-            <FontAwesomeIcon icon={faChevronRight} className="mr-2 text-sm" />
-            {isOpen && "Ulubione trasy"}
+            <div
+              className={`flex items-center ${!isOpen ? "justify-center" : ""}`}
+            >
+              <FontAwesomeIcon
+                icon={faChevronRight}
+                className="mr-2 text-sm 2xl:text-lg"
+              />
+              <FontAwesomeIcon
+                icon={faHeart}
+                className="mr-2 text-sm 2xl:text-lg"
+              />
+              {isOpen && "Ulubione trasy"}
+            </div>
           </button>
           <button className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl hover:bg-gray-700 transition duration-300">
-            <FontAwesomeIcon icon={faChevronRight} className="mr-2 text-sm" />
-            {isOpen && "Proponowane trasy"}
+            <div
+              className={`flex items-center ${!isOpen ? "justify-center" : ""}`}
+            >
+              <FontAwesomeIcon
+                icon={faChevronRight}
+                className="mr-2 text-sm 2xl:text-lg"
+              />
+              <FontAwesomeIcon
+                icon={faMapLocationDot}
+                className="mr-2 text-sm 2xl:text-lg"
+              />
+              {isOpen && "Proponowane trasy"}
+            </div>
           </button>
         </div>
         <div className="flex flex-col md:mt-2 mt-6 w-full md:space-y-1 space-y-2">
           <span className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left">
-          {isOpen && "Postępy"}
+            <FontAwesomeIcon
+              icon={faChartSimple}
+              className="mr-2 text-sm 2xl:text-lg"
+            />
+            {isOpen && "Postępy"}
           </span>
           <button className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl hover:bg-gray-700 transition duration-300">
-            <FontAwesomeIcon icon={faChevronRight} className="mr-2 text-sm" />
-            {isOpen && "Moje szczyty"}
+            <div
+              className={`flex items-center ${!isOpen ? "justify-center" : ""}`}
+            >
+              <FontAwesomeIcon
+                icon={faChevronRight}
+                className="mr-2 text-sm 2xl:text-lg"
+              />
+              <PermMediaIcon className="mr-2 text-sm 2xl:text-lg" />
+              {isOpen && "Moje szczyty"}
+            </div>
           </button>
           <button className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl hover:bg-gray-700 transition duration-300">
-            <FontAwesomeIcon icon={faChevronRight} className="mr-2 text-sm" />
-            {isOpen && "Korony Gór"}
+            <div
+              className={`flex items-center ${!isOpen ? "justify-center" : ""}`}
+            >
+              <FontAwesomeIcon
+                icon={faChevronRight}
+                className="mr-2 text-sm 2xl:text-lg"
+              />
+              <FontAwesomeIcon
+                icon={faMountainSun}
+                className="mr-2 text-sm 2xl:text-lg"
+              />
+              {isOpen && "Korony Gór"}
+            </div>
           </button>
           <button className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl hover:bg-gray-700 transition duration-300">
-            <FontAwesomeIcon icon={faChevronRight} className="mr-2 text-sm" />
-            {isOpen && "Statystyki"}
+            <div
+              className={`flex items-center ${!isOpen ? "justify-center" : ""}`}
+            >
+              <FontAwesomeIcon
+                icon={faChevronRight}
+                className="mr-2 text-sm 2xl:text-lg"
+              />
+              <FontAwesomeIcon
+                icon={faRankingStar}
+                className="mr-2 text-sm 2xl:text-lg"
+              />
+              {isOpen && "Statystyki"}
+            </div>
           </button>
         </div>
         <div className="flex flex-col md:mt-2 mt-6 w-full md:space-y-1 space-y-2">
           <span className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left">
-          {isOpen && "Ustawienia"} 
+            <FontAwesomeIcon
+              icon={faGears}
+              className="mr-2 text-sm 2xl:text-lg"
+            />
+            {isOpen && "Ustawienia"}
           </span>
           <button className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl hover:bg-gray-700 transition duration-300">
-            <FontAwesomeIcon icon={faChevronRight} className="mr-2 text-sm" />
-            {isOpen && "Moj profil"}
+            <div
+              className={`flex items-center ${!isOpen ? "justify-center" : ""}`}
+            >
+              <FontAwesomeIcon
+                icon={faChevronRight}
+                className="mr-2 text-sm 2xl:text-lg"
+              />
+              <FontAwesomeIcon
+                icon={faCircleUser}
+                className="mr-2 text-sm 2xl:text-lg"
+              />
+              {isOpen && "Moj profil"}
+            </div>
           </button>
           <button className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl hover:bg-gray-700 transition duration-300">
-            <FontAwesomeIcon icon={faChevronRight} className="mr-2 text-sm" />
-            {isOpen && "Moje opinie"}
+            <div
+              className={`flex items-center ${!isOpen ? "justify-center" : ""}`}
+            >
+              <FontAwesomeIcon
+                icon={faChevronRight}
+                className="mr-2 text-sm 2xl:text-lg"
+              />
+              <RateReviewIcon className="mr-2 text-sm 2xl:text-lg" />
+              {isOpen && "Moje opinie"}
+            </div>
           </button>
           <button className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl hover:bg-gray-700 transition duration-300">
-            <FontAwesomeIcon icon={faChevronRight} className="mr-2 text-sm" />
-            {isOpen && "Wyloguj"}
+            <div
+              className={`flex items-center ${!isOpen ? "justify-center" : ""}`}
+            >
+              <FontAwesomeIcon
+                icon={faChevronRight}
+                className="mr-2 text-sm 2xl:text-lg"
+              />
+              <LogoutIcon className="mr-2 text-sm 2xl:text-lg" />
+              {isOpen && "Wyloguj"}
+            </div>
           </button>
         </div>
       </div>
       <div className="absolute bottom-0 w-full md:py-3 py-6">
-        <Link to="/" className="block text-center text-white text-4xl font-bold">
-        {isOpen && "HikeUp"}
+        <Link
+          to="/"
+          className="block text-center text-white text-4xl font-bold"
+        >
+          {isOpen && "HikeUp"}
         </Link>
       </div>
 
       {/* Toggle button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="absolute -right-3 top-4 w-6 h-6 bg-accent text-white rounded-full flex items-center justify-center shadow-lg hover:bg-accent/80 transition-colors"
+        className="absolute -right-5 top-1/2  w-10 h-10 bg-accent text-white rounded-full flex items-center justify-center shadow-lg cursor-pointer transform  transition duration-300"
       >
-        <span className="text-xs">{isOpen ? "‹" : "›"}</span>
+        <span className="text-xs">
+          {isOpen ? (
+            <FontAwesomeIcon
+              icon={faChevronLeft}
+              className="mr-1 text-sm 2xl:text-lg"
+            />
+          ) : (
+            <FontAwesomeIcon
+              icon={faChevronRight}
+              className="mr-2 text-sm 2xl:text-lg"
+            />
+          )}
+        </span>
       </button>
     </div>
   );

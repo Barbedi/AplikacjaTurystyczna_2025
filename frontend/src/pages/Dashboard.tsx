@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import AuthContext from "../store/auth-context"; 
+import AuthContext from "../store/auth-context";
 import DashboardMenu from "../components/DashboardMenu";
 import MenuBarTop from "../components/MenuBarTop";
 import WeatherWidget from "../components/WeatherWidget";
@@ -13,13 +13,13 @@ const Dashboard = () => {
 
   useEffect(() => {
     checkAuth().then((isAuth) => {
-      console.log("Zalogowany?", isAuth); 
+      console.log("Zalogowany?", isAuth);
       if (!isAuth) {
-        navigate("/login"); 
+        navigate("/login");
       }
       setLoading(false);
     });
-  }, []);
+  }, [checkAuth, navigate]);
 
   if (loading) {
     return <p className="text-center mt-10">Sprawdzanie autoryzacji...</p>;
@@ -32,15 +32,12 @@ const Dashboard = () => {
           <DashboardMenu isOpen={isOpen} setIsOpen={setIsOpen} />
         </div>
         <div className="w-full">
-        <MenuBarTop />
+          <MenuBarTop />
           <div className="flex flex-col items-center justify-center mt-4 mx-6">
             <WeatherWidget />
           </div>
+        </div>
       </div>
-
-
-      </div>
-
     </div>
   );
 };

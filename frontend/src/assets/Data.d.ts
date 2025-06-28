@@ -19,18 +19,19 @@ export interface User {
 
 export interface CurrentWeather {
   name: string;
+  dt: number;
   main: {
     temp: number;
     humidity: number;
   };
   weather: {
     description: string;
-    icon: string;        
+    icon: string;
   }[];
   sys: {
     sunset: number;
     sunrise: number;
-  }; 
+  };
   wind: {
     speed: number;
   };
@@ -44,8 +45,7 @@ export interface ForecastItem {
   };
   weather: {
     main: string;
-    icon: string; 
-    description:string  ;
+    icon: string;
+    description: string;
   }[];
 }
-
