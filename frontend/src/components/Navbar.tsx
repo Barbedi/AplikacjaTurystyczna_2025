@@ -50,7 +50,7 @@ const Navbar = () => {
               Strona główna
             </NavLink>
             <NavLink
-              to="/plan-route"
+              to="plan-route"
               className={({ isActive }) =>
                 `text-white py-2 px-4 hover:text-gray-300 ${
                   isActive ? "border-b-2 border-white " : ""

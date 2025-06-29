@@ -1,6 +1,6 @@
-import AuthContext from "../store/auth-context";
+import AuthContext from "../../store/auth-context";
 import { useContext, useEffect, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link,NavLink } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faChevronRight,
@@ -22,14 +22,18 @@ import PermMediaIcon from "@mui/icons-material/PermMedia";
 import RateReviewIcon from "@mui/icons-material/RateReview";
 
 interface DashboardMenuProps {
-  isOpen: boolean;
-  setIsOpen: (isOpen: boolean) => void;
+  title?: string;
+  setTitle?: (title: string) => void;
 }
 
-const DashboardMenu: React.FC<DashboardMenuProps> = ({ isOpen, setIsOpen }) => {
+
+
+
+const DashboardMenu: React.FC<DashboardMenuProps> = ( ) => {
   const { checkAuth, user } = useContext(AuthContext);
   const navigate = useNavigate();
   const [, setLoading] = useState(true);
+  const [isOpen, setIsOpen] = useState(true);
 
   useEffect(() => {
     checkAuth().then((isAuth) => {
@@ -69,7 +73,14 @@ const DashboardMenu: React.FC<DashboardMenuProps> = ({ isOpen, setIsOpen }) => {
             />
             {isOpen && "DASHBOARDS"}
           </span>
-          <button className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl hover:bg-gray-700 transition duration-300">
+            <NavLink
+            to="plan-route"
+            className={({ isActive }) =>
+              `text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl transition duration-300 ${
+              isActive ? "bg-gray-700" : "hover:bg-gray-700"
+              }`
+            }
+            >
             <div
               className={`flex items-center ${!isOpen ? "justify-center" : ""}`}
             >
@@ -83,8 +94,8 @@ const DashboardMenu: React.FC<DashboardMenuProps> = ({ isOpen, setIsOpen }) => {
               />
               {isOpen && "Zaplanuj trase"}
             </div>
-          </button>
-          <button className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl hover:bg-gray-700 transition duration-300">
+          </NavLink>
+          <NavLink to="/" className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl hover:bg-gray-700 transition duration-300">
             <div
               className={`flex items-center ${!isOpen ? "justify-center" : ""}`}
             >
@@ -98,8 +109,8 @@ const DashboardMenu: React.FC<DashboardMenuProps> = ({ isOpen, setIsOpen }) => {
               />
               {isOpen && "Wyszukaj szlaku"}
             </div>
-          </button>
-          <button className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl hover:bg-gray-700 transition duration-300">
+          </NavLink>
+          <NavLink to="/" className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl hover:bg-gray-700 transition duration-300">
             <div
               className={`flex items-center ${!isOpen ? "justify-center" : ""}`}
             >
@@ -113,8 +124,8 @@ const DashboardMenu: React.FC<DashboardMenuProps> = ({ isOpen, setIsOpen }) => {
               />
               {isOpen && "Moje trasy"}
             </div>
-          </button>
-          <button className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl hover:bg-gray-700 transition duration-300">
+          </NavLink>
+          <NavLink to="/" className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl hover:bg-gray-700 transition duration-300">
             <div
               className={`flex items-center ${!isOpen ? "justify-center" : ""}`}
             >
@@ -128,8 +139,8 @@ const DashboardMenu: React.FC<DashboardMenuProps> = ({ isOpen, setIsOpen }) => {
               />
               {isOpen && "Ulubione trasy"}
             </div>
-          </button>
-          <button className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl hover:bg-gray-700 transition duration-300">
+          </NavLink>
+          <NavLink to="/" className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl hover:bg-gray-700 transition duration-300">
             <div
               className={`flex items-center ${!isOpen ? "justify-center" : ""}`}
             >
@@ -143,7 +154,7 @@ const DashboardMenu: React.FC<DashboardMenuProps> = ({ isOpen, setIsOpen }) => {
               />
               {isOpen && "Proponowane trasy"}
             </div>
-          </button>
+          </NavLink>
         </div>
         <div className="flex flex-col md:mt-2 mt-6 w-full md:space-y-1 space-y-2">
           <span className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left">
@@ -153,7 +164,7 @@ const DashboardMenu: React.FC<DashboardMenuProps> = ({ isOpen, setIsOpen }) => {
             />
             {isOpen && "Postępy"}
           </span>
-          <button className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl hover:bg-gray-700 transition duration-300">
+          <NavLink to="/" className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl hover:bg-gray-700 transition duration-300">
             <div
               className={`flex items-center ${!isOpen ? "justify-center" : ""}`}
             >
@@ -164,8 +175,8 @@ const DashboardMenu: React.FC<DashboardMenuProps> = ({ isOpen, setIsOpen }) => {
               <PermMediaIcon className="mr-2 text-sm 2xl:text-lg" />
               {isOpen && "Moje szczyty"}
             </div>
-          </button>
-          <button className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl hover:bg-gray-700 transition duration-300">
+          </NavLink>
+          <NavLink to="/" className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl hover:bg-gray-700 transition duration-300">
             <div
               className={`flex items-center ${!isOpen ? "justify-center" : ""}`}
             >
@@ -179,8 +190,8 @@ const DashboardMenu: React.FC<DashboardMenuProps> = ({ isOpen, setIsOpen }) => {
               />
               {isOpen && "Korony Gór"}
             </div>
-          </button>
-          <button className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl hover:bg-gray-700 transition duration-300">
+          </NavLink>
+          <NavLink to="/" className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl hover:bg-gray-700 transition duration-300">
             <div
               className={`flex items-center ${!isOpen ? "justify-center" : ""}`}
             >
@@ -194,7 +205,7 @@ const DashboardMenu: React.FC<DashboardMenuProps> = ({ isOpen, setIsOpen }) => {
               />
               {isOpen && "Statystyki"}
             </div>
-          </button>
+          </NavLink>
         </div>
         <div className="flex flex-col md:mt-2 mt-6 w-full md:space-y-1 space-y-2">
           <span className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left">
@@ -204,7 +215,7 @@ const DashboardMenu: React.FC<DashboardMenuProps> = ({ isOpen, setIsOpen }) => {
             />
             {isOpen && "Ustawienia"}
           </span>
-          <button className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl hover:bg-gray-700 transition duration-300">
+          <NavLink to="/" className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl hover:bg-gray-700 transition duration-300">
             <div
               className={`flex items-center ${!isOpen ? "justify-center" : ""}`}
             >
@@ -218,8 +229,8 @@ const DashboardMenu: React.FC<DashboardMenuProps> = ({ isOpen, setIsOpen }) => {
               />
               {isOpen && "Moj profil"}
             </div>
-          </button>
-          <button className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl hover:bg-gray-700 transition duration-300">
+          </NavLink>
+          <NavLink to="/" className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl hover:bg-gray-700 transition duration-300">
             <div
               className={`flex items-center ${!isOpen ? "justify-center" : ""}`}
             >
@@ -230,8 +241,8 @@ const DashboardMenu: React.FC<DashboardMenuProps> = ({ isOpen, setIsOpen }) => {
               <RateReviewIcon className="mr-2 text-sm 2xl:text-lg" />
               {isOpen && "Moje opinie"}
             </div>
-          </button>
-          <button className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl hover:bg-gray-700 transition duration-300">
+          </NavLink>
+          <NavLink to="/" className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl hover:bg-gray-700 transition duration-300">
             <div
               className={`flex items-center ${!isOpen ? "justify-center" : ""}`}
             >
@@ -242,7 +253,7 @@ const DashboardMenu: React.FC<DashboardMenuProps> = ({ isOpen, setIsOpen }) => {
               <LogoutIcon className="mr-2 text-sm 2xl:text-lg" />
               {isOpen && "Wyloguj"}
             </div>
-          </button>
+          </NavLink>
         </div>
       </div>
       <div className="absolute bottom-0 w-full md:py-3 py-6">
