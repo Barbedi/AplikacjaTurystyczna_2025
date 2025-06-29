@@ -15,7 +15,7 @@ const ExploreRoutes = () => {
             className="flex flex-col items-center p-4 hover:scale-105 duration-300 ease-in-out hover:underline decoration-2 "
           >
             <img
-              className="xl:w-100 xl:h-100 lg:w-80 lg:h-80 md:w-60 md:h-60 rounded-full object-cover  "
+              className="2xl:w-100 2xl:h-100 xl:w-64 xl:h-64 lg:w-50 lg:h-50 md:w-40 md:h-40 rounded-full object-cover  "
               src="/assets/img/FullSizeRender.JPG"
               alt="Profilowe zdjęcie"
             />

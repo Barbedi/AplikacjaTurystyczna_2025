@@ -12,8 +12,10 @@ const PlanRoute = () => {
       </h1>
 
       {/* Wspólna część UI */}
-      <div className="mb-6">
-        <p className="text-lg">Wybierz punkty trasy i sposób przemieszczania się.</p>
+      <div className="mb-6 ">
+        <p className="text-lg">
+          Wybierz punkty trasy i sposób przemieszczania się.
+        </p>
         {/* Możesz tu dodać inputy, mapę itp. */}
       </div>
 
@@ -33,6 +35,12 @@ const PlanRoute = () => {
           Zaloguj się, aby zapisać trasę i skorzystać z dodatkowych funkcji.
         </p>
       )}
+      <div className="text-center mt-20">
+        <h1 className="text-3xl font-bold mb-4">Planowanie szlaków</h1>
+        <p className="text-gray-500 text-lg">
+          Ta strona jest jeszcze w budowie. Wkrótce będzie dostępna!
+        </p>
+      </div>
     </div>
   );
 };

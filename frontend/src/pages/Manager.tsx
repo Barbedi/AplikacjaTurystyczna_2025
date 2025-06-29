@@ -32,6 +32,6 @@ const Manager = () => {
       </div>
     </div>
   );
-}
+};
 
 export default Manager;

@@ -1,6 +1,6 @@
 import AuthContext from "../../store/auth-context";
 import { useContext, useEffect, useState } from "react";
-import { useNavigate, Link,NavLink } from "react-router-dom";
+import { useNavigate, Link, NavLink } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faChevronRight,
@@ -26,10 +26,7 @@ interface DashboardMenuProps {
   setTitle?: (title: string) => void;
 }
 
-
-
-
-const DashboardMenu: React.FC<DashboardMenuProps> = ( ) => {
+const DashboardMenu: React.FC<DashboardMenuProps> = () => {
   const { checkAuth, user } = useContext(AuthContext);
   const navigate = useNavigate();
   const [, setLoading] = useState(true);
@@ -73,14 +70,14 @@ const DashboardMenu: React.FC<DashboardMenuProps> = ( ) => {
             />
             {isOpen && "DASHBOARDS"}
           </span>
-            <NavLink
+          <NavLink
             to="plan-route"
             className={({ isActive }) =>
               `text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl transition duration-300 ${
-              isActive ? "bg-gray-700" : "hover:bg-gray-700"
+                isActive ? "bg-gray-700" : "hover:bg-gray-700"
               }`
             }
-            >
+          >
             <div
               className={`flex items-center ${!isOpen ? "justify-center" : ""}`}
             >
@@ -95,7 +92,10 @@ const DashboardMenu: React.FC<DashboardMenuProps> = ( ) => {
               {isOpen && "Zaplanuj trase"}
             </div>
           </NavLink>
-          <NavLink to="/" className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl hover:bg-gray-700 transition duration-300">
+          <NavLink
+            to="search-trail"
+            className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl hover:bg-gray-700 transition duration-300"
+          >
             <div
               className={`flex items-center ${!isOpen ? "justify-center" : ""}`}
             >
@@ -110,7 +110,10 @@ const DashboardMenu: React.FC<DashboardMenuProps> = ( ) => {
               {isOpen && "Wyszukaj szlaku"}
             </div>
           </NavLink>
-          <NavLink to="/" className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl hover:bg-gray-700 transition duration-300">
+          <NavLink
+            to="my-routes"
+            className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl hover:bg-gray-700 transition duration-300"
+          >
             <div
               className={`flex items-center ${!isOpen ? "justify-center" : ""}`}
             >
@@ -125,7 +128,10 @@ const DashboardMenu: React.FC<DashboardMenuProps> = ( ) => {
               {isOpen && "Moje trasy"}
             </div>
           </NavLink>
-          <NavLink to="/" className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl hover:bg-gray-700 transition duration-300">
+          <NavLink
+            to="favorite-routes"
+            className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl hover:bg-gray-700 transition duration-300"
+          >
             <div
               className={`flex items-center ${!isOpen ? "justify-center" : ""}`}
             >
@@ -140,7 +146,10 @@ const DashboardMenu: React.FC<DashboardMenuProps> = ( ) => {
               {isOpen && "Ulubione trasy"}
             </div>
           </NavLink>
-          <NavLink to="/" className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl hover:bg-gray-700 transition duration-300">
+          <NavLink
+            to="recommended"
+            className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl hover:bg-gray-700 transition duration-300"
+          >
             <div
               className={`flex items-center ${!isOpen ? "justify-center" : ""}`}
             >
@@ -164,7 +173,10 @@ const DashboardMenu: React.FC<DashboardMenuProps> = ( ) => {
             />
             {isOpen && "Postępy"}
           </span>
-          <NavLink to="/" className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl hover:bg-gray-700 transition duration-300">
+          <NavLink
+            to="my-peaks"
+            className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl hover:bg-gray-700 transition duration-300"
+          >
             <div
               className={`flex items-center ${!isOpen ? "justify-center" : ""}`}
             >
@@ -176,7 +188,10 @@ const DashboardMenu: React.FC<DashboardMenuProps> = ( ) => {
               {isOpen && "Moje szczyty"}
             </div>
           </NavLink>
-          <NavLink to="/" className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl hover:bg-gray-700 transition duration-300">
+          <NavLink
+            to="crown-peaks"
+            className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl hover:bg-gray-700 transition duration-300"
+          >
             <div
               className={`flex items-center ${!isOpen ? "justify-center" : ""}`}
             >
@@ -191,7 +206,10 @@ const DashboardMenu: React.FC<DashboardMenuProps> = ( ) => {
               {isOpen && "Korony Gór"}
             </div>
           </NavLink>
-          <NavLink to="/" className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl hover:bg-gray-700 transition duration-300">
+          <NavLink
+            to="statistics"
+            className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl hover:bg-gray-700 transition duration-300"
+          >
             <div
               className={`flex items-center ${!isOpen ? "justify-center" : ""}`}
             >
@@ -215,7 +233,10 @@ const DashboardMenu: React.FC<DashboardMenuProps> = ( ) => {
             />
             {isOpen && "Ustawienia"}
           </span>
-          <NavLink to="/" className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl hover:bg-gray-700 transition duration-300">
+          <NavLink
+            to="my-profile"
+            className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl hover:bg-gray-700 transition duration-300"
+          >
             <div
               className={`flex items-center ${!isOpen ? "justify-center" : ""}`}
             >
@@ -230,7 +251,10 @@ const DashboardMenu: React.FC<DashboardMenuProps> = ( ) => {
               {isOpen && "Moj profil"}
             </div>
           </NavLink>
-          <NavLink to="/" className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl hover:bg-gray-700 transition duration-300">
+          <NavLink
+            to="recommended"
+            className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl hover:bg-gray-700 transition duration-300"
+          >
             <div
               className={`flex items-center ${!isOpen ? "justify-center" : ""}`}
             >
@@ -242,7 +266,10 @@ const DashboardMenu: React.FC<DashboardMenuProps> = ( ) => {
               {isOpen && "Moje opinie"}
             </div>
           </NavLink>
-          <NavLink to="/" className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl hover:bg-gray-700 transition duration-300">
+          <NavLink
+            to="/"
+            className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl hover:bg-gray-700 transition duration-300"
+          >
             <div
               className={`flex items-center ${!isOpen ? "justify-center" : ""}`}
             >
