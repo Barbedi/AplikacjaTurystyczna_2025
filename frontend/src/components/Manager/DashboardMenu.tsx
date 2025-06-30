@@ -25,7 +25,7 @@ interface DashboardMenuProps {
 }
 
 const DashboardMenu: React.FC<DashboardMenuProps> = () => {
-  const { checkAuth, user } = useContext(AuthContext);
+  const { checkAuth, user,logout } = useContext(AuthContext);
   const navigate = useNavigate();
   const [, setLoading] = useState(true);
   const [isOpen, setIsOpen] = useState(true);
@@ -39,6 +39,14 @@ const DashboardMenu: React.FC<DashboardMenuProps> = () => {
       setLoading(false);
     });
   }, [checkAuth, navigate]);
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
 
   return (
     <div
@@ -67,7 +75,7 @@ const DashboardMenu: React.FC<DashboardMenuProps> = () => {
               icon={faHouse}
               className="mr-2 text-sm 2xl:text-lg"
             />
-            {isOpen && "DASHBOARDS"}
+            {isOpen && "Panel"}
           </span>
           <NavLink
             to="plan-route"
@@ -229,7 +237,7 @@ const DashboardMenu: React.FC<DashboardMenuProps> = () => {
                 icon={faCircleUser}
                 className="mr-2 text-sm 2xl:text-lg"
               />
-              {isOpen && "Moj profil"}
+              {isOpen && "Mój profil"}
             </div>
           </NavLink>
           <NavLink
@@ -247,8 +255,11 @@ const DashboardMenu: React.FC<DashboardMenuProps> = () => {
               {isOpen && "Moje opinie"}
             </div>
           </NavLink>
-          <NavLink
-            to="/"
+          <button
+            onClick={async () => {
+                  await handleLogout();
+                  navigate("/");
+                }}
             className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl hover:bg-gray-700 transition duration-300"
           >
             <div
@@ -257,7 +268,7 @@ const DashboardMenu: React.FC<DashboardMenuProps> = () => {
               <LogoutIcon className="mr-2 text-sm 2xl:text-lg" />
               {isOpen && "Wyloguj"}
             </div>
-          </NavLink>
+          </button>
         </div>
       </div>
       <div className="absolute bottom-0 w-full md:py-3 py-6">

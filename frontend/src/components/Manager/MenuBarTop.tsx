@@ -1,4 +1,5 @@
 import { useLocation,Link } from "react-router-dom";
+import { pathTranslation } from "../../utils/pathTranslation";
 
 const MenuBarTop = () => {
 
@@ -16,12 +17,12 @@ const MenuBarTop = () => {
             {!isLast ? (
               <>
                 <Link to={fullPath} className="text-gray-600 hover:underline">
-                  {part}
+                  {pathTranslation[part]}
                 </Link>
                 <span className="ml-2 text-white">/</span>
               </>
             ) : (
-              <span className="text-white">{part}</span>
+              <span className="text-white">{pathTranslation[part]}</span>
             )}
           </span>
           
