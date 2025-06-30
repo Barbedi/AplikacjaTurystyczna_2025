@@ -63,7 +63,11 @@ const DashboardMenu: React.FC<DashboardMenuProps> = () => {
         </div>
 
         <div className="flex flex-col md:mt-2 mt-6 w-full space-y-2 md:space-y-1">
-          <span className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left">
+          <span className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left uppercase">
+          <FontAwesomeIcon
+                icon={faChevronRight}
+                className="mr-2 text-sm 2xl:text-lg"
+              />
             <FontAwesomeIcon
               icon={faHouse}
               className="mr-2 text-sm 2xl:text-lg"
@@ -82,10 +86,6 @@ const DashboardMenu: React.FC<DashboardMenuProps> = () => {
               className={`flex items-center ${!isOpen ? "justify-center" : ""}`}
             >
               <FontAwesomeIcon
-                icon={faChevronRight}
-                className="mr-2 text-sm 2xl:text-lg"
-              />
-              <FontAwesomeIcon
                 icon={faRoute}
                 className="mr-2 text-sm 2xl:text-lg"
               />
@@ -94,15 +94,15 @@ const DashboardMenu: React.FC<DashboardMenuProps> = () => {
           </NavLink>
           <NavLink
             to="search-trail"
-            className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl hover:bg-gray-700 transition duration-300"
+            className={({ isActive }) =>
+              `text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl transition duration-300 ${
+                isActive ? "bg-gray-700" : "hover:bg-gray-700"
+              }`
+            }
           >
             <div
               className={`flex items-center ${!isOpen ? "justify-center" : ""}`}
             >
-              <FontAwesomeIcon
-                icon={faChevronRight}
-                className="mr-2  text-sm 2xl:text-lg"
-              />
               <FontAwesomeIcon
                 icon={faCompass}
                 className="mr-2 text-sm 2xl:text-lg"
@@ -112,15 +112,15 @@ const DashboardMenu: React.FC<DashboardMenuProps> = () => {
           </NavLink>
           <NavLink
             to="my-routes"
-            className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl hover:bg-gray-700 transition duration-300"
+            className={({ isActive }) =>
+              `text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl transition duration-300 ${
+                isActive ? "bg-gray-700" : "hover:bg-gray-700"
+              }`
+            }
           >
             <div
               className={`flex items-center ${!isOpen ? "justify-center" : ""}`}
             >
-              <FontAwesomeIcon
-                icon={faChevronRight}
-                className="mr-2 text-sm 2xl:text-lg"
-              />
               <FontAwesomeIcon
                 icon={faLocationPinLock}
                 className="mr-2 text-sm 2xl:text-lg"
@@ -130,15 +130,15 @@ const DashboardMenu: React.FC<DashboardMenuProps> = () => {
           </NavLink>
           <NavLink
             to="favorite-routes"
-            className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl hover:bg-gray-700 transition duration-300"
+            className={({ isActive }) =>
+              `text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl transition duration-300 ${
+                isActive ? "bg-gray-700" : "hover:bg-gray-700"
+              }`
+            }
           >
             <div
               className={`flex items-center ${!isOpen ? "justify-center" : ""}`}
             >
-              <FontAwesomeIcon
-                icon={faChevronRight}
-                className="mr-2 text-sm 2xl:text-lg"
-              />
               <FontAwesomeIcon
                 icon={faHeart}
                 className="mr-2 text-sm 2xl:text-lg"
@@ -148,15 +148,15 @@ const DashboardMenu: React.FC<DashboardMenuProps> = () => {
           </NavLink>
           <NavLink
             to="recommended"
-            className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl hover:bg-gray-700 transition duration-300"
+            className={({ isActive }) =>
+              `text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl transition duration-300 ${
+                isActive ? "bg-gray-700" : "hover:bg-gray-700"
+              }`
+            }
           >
             <div
               className={`flex items-center ${!isOpen ? "justify-center" : ""}`}
             >
-              <FontAwesomeIcon
-                icon={faChevronRight}
-                className="mr-2 text-sm 2xl:text-lg"
-              />
               <FontAwesomeIcon
                 icon={faMapLocationDot}
                 className="mr-2 text-sm 2xl:text-lg"
@@ -166,7 +166,11 @@ const DashboardMenu: React.FC<DashboardMenuProps> = () => {
           </NavLink>
         </div>
         <div className="flex flex-col md:mt-2 mt-6 w-full md:space-y-1 space-y-2">
-          <span className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left">
+          <span className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left uppercase">
+          <FontAwesomeIcon
+                icon={faChevronRight}
+                className="mr-2 text-sm 2xl:text-lg"
+              />
             <FontAwesomeIcon
               icon={faChartSimple}
               className="mr-2 text-sm 2xl:text-lg"
@@ -175,30 +179,30 @@ const DashboardMenu: React.FC<DashboardMenuProps> = () => {
           </span>
           <NavLink
             to="my-peaks"
-            className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl hover:bg-gray-700 transition duration-300"
+            className={({ isActive }) =>
+              `text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl transition duration-300 ${
+                isActive ? "bg-gray-700" : "hover:bg-gray-700"
+              }`
+            }
           >
             <div
               className={`flex items-center ${!isOpen ? "justify-center" : ""}`}
             >
-              <FontAwesomeIcon
-                icon={faChevronRight}
-                className="mr-2 text-sm 2xl:text-lg"
-              />
               <PermMediaIcon className="mr-2 text-sm 2xl:text-lg" />
               {isOpen && "Moje szczyty"}
             </div>
           </NavLink>
           <NavLink
             to="crown-peaks"
-            className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl hover:bg-gray-700 transition duration-300"
+            className={({ isActive }) =>
+              `text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl transition duration-300 ${
+                isActive ? "bg-gray-700" : "hover:bg-gray-700"
+              }`
+            }
           >
             <div
               className={`flex items-center ${!isOpen ? "justify-center" : ""}`}
             >
-              <FontAwesomeIcon
-                icon={faChevronRight}
-                className="mr-2 text-sm 2xl:text-lg"
-              />
               <FontAwesomeIcon
                 icon={faMountainSun}
                 className="mr-2 text-sm 2xl:text-lg"
@@ -208,15 +212,15 @@ const DashboardMenu: React.FC<DashboardMenuProps> = () => {
           </NavLink>
           <NavLink
             to="statistics"
-            className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl hover:bg-gray-700 transition duration-300"
+            className={({ isActive }) =>
+              `text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl transition duration-300 ${
+                isActive ? "bg-gray-700" : "hover:bg-gray-700"
+              }`
+            }
           >
             <div
               className={`flex items-center ${!isOpen ? "justify-center" : ""}`}
             >
-              <FontAwesomeIcon
-                icon={faChevronRight}
-                className="mr-2 text-sm 2xl:text-lg"
-              />
               <FontAwesomeIcon
                 icon={faRankingStar}
                 className="mr-2 text-sm 2xl:text-lg"
@@ -226,7 +230,11 @@ const DashboardMenu: React.FC<DashboardMenuProps> = () => {
           </NavLink>
         </div>
         <div className="flex flex-col md:mt-2 mt-6 w-full md:space-y-1 space-y-2">
-          <span className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left">
+          <span className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left uppercase">
+          <FontAwesomeIcon
+                icon={faChevronRight}
+                className="mr-2 text-sm 2xl:text-lg"
+              />
             <FontAwesomeIcon
               icon={faGears}
               className="mr-2 text-sm 2xl:text-lg"
@@ -235,15 +243,15 @@ const DashboardMenu: React.FC<DashboardMenuProps> = () => {
           </span>
           <NavLink
             to="my-profile"
-            className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl hover:bg-gray-700 transition duration-300"
+            className={({ isActive }) =>
+              `text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl transition duration-300 ${
+                isActive ? "bg-gray-700" : "hover:bg-gray-700"
+              }`
+            }
           >
             <div
               className={`flex items-center ${!isOpen ? "justify-center" : ""}`}
             >
-              <FontAwesomeIcon
-                icon={faChevronRight}
-                className="mr-2 text-sm 2xl:text-lg"
-              />
               <FontAwesomeIcon
                 icon={faCircleUser}
                 className="mr-2 text-sm 2xl:text-lg"
@@ -252,16 +260,16 @@ const DashboardMenu: React.FC<DashboardMenuProps> = () => {
             </div>
           </NavLink>
           <NavLink
-            to="recommended"
-            className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl hover:bg-gray-700 transition duration-300"
+            to="my-reviews"
+            className={({ isActive }) =>
+              `text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl transition duration-300 ${
+                isActive ? "bg-gray-700" : "hover:bg-gray-700"
+              }`
+            }
           >
             <div
               className={`flex items-center ${!isOpen ? "justify-center" : ""}`}
             >
-              <FontAwesomeIcon
-                icon={faChevronRight}
-                className="mr-2 text-sm 2xl:text-lg"
-              />
               <RateReviewIcon className="mr-2 text-sm 2xl:text-lg" />
               {isOpen && "Moje opinie"}
             </div>
@@ -273,10 +281,6 @@ const DashboardMenu: React.FC<DashboardMenuProps> = () => {
             <div
               className={`flex items-center ${!isOpen ? "justify-center" : ""}`}
             >
-              <FontAwesomeIcon
-                icon={faChevronRight}
-                className="mr-2 text-sm 2xl:text-lg"
-              />
               <LogoutIcon className="mr-2 text-sm 2xl:text-lg" />
               {isOpen && "Wyloguj"}
             </div>
