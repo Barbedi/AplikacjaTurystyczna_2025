@@ -11,10 +11,8 @@ import {
   faLocationPinLock,
   faHeart,
   faMapLocationDot,
-  faChartSimple,
   faMountainSun,
   faRankingStar,
-  faGears,
   faCircleUser,
 } from "@fortawesome/free-solid-svg-icons";
 import LogoutIcon from "@mui/icons-material/Logout";
@@ -44,14 +42,15 @@ const DashboardMenu: React.FC<DashboardMenuProps> = () => {
 
   return (
     <div
-      className={`relative transition-all duration-300 ${
-        isOpen ? "md:w-70 w-80 2xl:w-74" : "w-20"
-      } h-screen border-r-2 border-white items-start justify-between  bg-transparent/30 relative`}
+    className={`relative h-screen border-r-2 border-white bg-transparent/30 flex flex-col justify-between items-start
+      transition-[width] duration-300 ease-in-out overflow-x-hidden
+      ${isOpen ? "w-80 md:w-72 2xl:w-80" : "w-17"}`}
+    
     >
       <div className={`p-4 ${!isOpen && "px-2"}`}>
         <div className="flex items-center">
           <img
-            className="rounded-full h-10 w-10 object-cover"
+            className="rounded-full h-10 w-10 ml-2 object-cover"
             src="/assets/img/FullSizeRender.JPG"
             alt="user"
           />
@@ -63,11 +62,7 @@ const DashboardMenu: React.FC<DashboardMenuProps> = () => {
         </div>
 
         <div className="flex flex-col md:mt-2 mt-6 w-full space-y-2 md:space-y-1">
-          <span className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left uppercase">
-          <FontAwesomeIcon
-                icon={faChevronRight}
-                className="mr-2 text-sm 2xl:text-lg"
-              />
+          <span className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left uppercase ">
             <FontAwesomeIcon
               icon={faHouse}
               className="mr-2 text-sm 2xl:text-lg"
@@ -166,17 +161,6 @@ const DashboardMenu: React.FC<DashboardMenuProps> = () => {
           </NavLink>
         </div>
         <div className="flex flex-col md:mt-2 mt-6 w-full md:space-y-1 space-y-2">
-          <span className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left uppercase">
-          <FontAwesomeIcon
-                icon={faChevronRight}
-                className="mr-2 text-sm 2xl:text-lg"
-              />
-            <FontAwesomeIcon
-              icon={faChartSimple}
-              className="mr-2 text-sm 2xl:text-lg"
-            />
-            {isOpen && "Postępy"}
-          </span>
           <NavLink
             to="my-peaks"
             className={({ isActive }) =>
@@ -230,17 +214,6 @@ const DashboardMenu: React.FC<DashboardMenuProps> = () => {
           </NavLink>
         </div>
         <div className="flex flex-col md:mt-2 mt-6 w-full md:space-y-1 space-y-2">
-          <span className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left uppercase">
-          <FontAwesomeIcon
-                icon={faChevronRight}
-                className="mr-2 text-sm 2xl:text-lg"
-              />
-            <FontAwesomeIcon
-              icon={faGears}
-              className="mr-2 text-sm 2xl:text-lg"
-            />
-            {isOpen && "Ustawienia"}
-          </span>
           <NavLink
             to="my-profile"
             className={({ isActive }) =>
@@ -298,9 +271,10 @@ const DashboardMenu: React.FC<DashboardMenuProps> = () => {
 
       {/* Toggle button */}
       <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="absolute -right-5 top-1/2  w-10 h-10 bg-accent text-white rounded-full flex items-center justify-center shadow-lg cursor-pointer transform  transition duration-300"
-      >
+  onClick={() => setIsOpen(!isOpen)}
+  className="absolute -right-5 top-1/2 z-50 w-10 h-10 bg-accent text-white rounded-full flex items-center justify-center shadow-lg cursor-pointer transform -translate-y-1/2 transition duration-300"
+>
+
         <span className="text-xs">
           {isOpen ? (
             <FontAwesomeIcon
