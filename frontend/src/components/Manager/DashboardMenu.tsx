@@ -73,7 +73,7 @@ const DashboardMenu: React.FC<DashboardMenuProps> = () => {
           <span className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left uppercase ">
             <FontAwesomeIcon
               icon={faHouse}
-              className="mr-2 text-sm 2xl:text-lg"
+              className="mr-2 text-lg 2xl:text-xl"
             />
             {isOpen && "Panel"}
           </span>
@@ -90,7 +90,7 @@ const DashboardMenu: React.FC<DashboardMenuProps> = () => {
             >
               <FontAwesomeIcon
                 icon={faRoute}
-                className="mr-2 text-sm 2xl:text-lg"
+                className="mr-2 text-lg 2xl:text-xl"
               />
               {isOpen && "Zaplanuj trase"}
             </div>
@@ -108,7 +108,7 @@ const DashboardMenu: React.FC<DashboardMenuProps> = () => {
             >
               <FontAwesomeIcon
                 icon={faCompass}
-                className="mr-2 text-sm 2xl:text-lg"
+                className="mr-2 text-lg 2xl:text-xl"
               />
               {isOpen && "Wyszukaj szlaku"}
             </div>
@@ -126,7 +126,7 @@ const DashboardMenu: React.FC<DashboardMenuProps> = () => {
             >
               <FontAwesomeIcon
                 icon={faLocationPinLock}
-                className="mr-2 text-sm 2xl:text-lg"
+                className="mr-2 text-lg 2xl:text-xl"
               />
               {isOpen && "Moje trasy"}
             </div>
@@ -144,7 +144,7 @@ const DashboardMenu: React.FC<DashboardMenuProps> = () => {
             >
               <FontAwesomeIcon
                 icon={faHeart}
-                className="mr-2 text-sm 2xl:text-lg"
+                className="mr-2 text-lg 2xl:text-xl"
               />
               {isOpen && "Ulubione trasy"}
             </div>
@@ -162,7 +162,7 @@ const DashboardMenu: React.FC<DashboardMenuProps> = () => {
             >
               <FontAwesomeIcon
                 icon={faMapLocationDot}
-                className="mr-2 text-sm 2xl:text-lg"
+                className="mr-2 text-lg 2xl:text-xl"
               />
               {isOpen && "Proponowane trasy"}
             </div>
@@ -197,7 +197,7 @@ const DashboardMenu: React.FC<DashboardMenuProps> = () => {
             >
               <FontAwesomeIcon
                 icon={faMountainSun}
-                className="mr-2 text-sm 2xl:text-lg"
+                className="mr-2 text-lg 2xl:text-xl"
               />
               {isOpen && "Korony Gór"}
             </div>
@@ -215,7 +215,7 @@ const DashboardMenu: React.FC<DashboardMenuProps> = () => {
             >
               <FontAwesomeIcon
                 icon={faRankingStar}
-                className="mr-2 text-sm 2xl:text-lg"
+                className="mr-2 text-lg 2xl:text-xl"
               />
               {isOpen && "Statystyki"}
             </div>
@@ -235,7 +235,7 @@ const DashboardMenu: React.FC<DashboardMenuProps> = () => {
             >
               <FontAwesomeIcon
                 icon={faCircleUser}
-                className="mr-2 text-sm 2xl:text-lg"
+                className="mr-2 text-lg 2xl:text-xl"
               />
               {isOpen && "Mój profil"}
             </div>
@@ -265,7 +265,7 @@ const DashboardMenu: React.FC<DashboardMenuProps> = () => {
             <div
               className={`flex items-center ${!isOpen ? "justify-center" : ""}`}
             >
-              <LogoutIcon className="mr-2 text-sm 2xl:text-lg" />
+              <LogoutIcon className="mr-2 text-lg 2xl:text-xl" />
               {isOpen && "Wyloguj"}
             </div>
           </button>
