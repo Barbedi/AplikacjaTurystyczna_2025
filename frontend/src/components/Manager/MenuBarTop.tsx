@@ -1,8 +1,7 @@
-import { useLocation,Link } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 import { pathTranslation } from "../../utils/pathTranslation";
 
 const MenuBarTop = () => {
-
   const location = useLocation();
   const pathParts = location.pathname.split("/").filter(Boolean); // usuwa pusty string z początku
 
@@ -13,7 +12,10 @@ const MenuBarTop = () => {
         const isLast = index === pathParts.length - 1;
 
         return (
-          <span key={fullPath} className="flex items-center justify-between text-lg">
+          <span
+            key={fullPath}
+            className="flex items-center justify-between text-lg"
+          >
             {!isLast ? (
               <>
                 <Link to={fullPath} className="text-gray-600 hover:underline">
@@ -25,7 +27,6 @@ const MenuBarTop = () => {
               <span className="text-white">{pathTranslation[part]}</span>
             )}
           </span>
-          
         );
       })}
     </div>

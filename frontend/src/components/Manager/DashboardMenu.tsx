@@ -25,7 +25,7 @@ interface DashboardMenuProps {
 }
 
 const DashboardMenu: React.FC<DashboardMenuProps> = () => {
-  const { checkAuth, user,logout } = useContext(AuthContext);
+  const { checkAuth, user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
   const [, setLoading] = useState(true);
   const [isOpen, setIsOpen] = useState(true);
@@ -50,10 +50,9 @@ const DashboardMenu: React.FC<DashboardMenuProps> = () => {
 
   return (
     <div
-    className={`relative h-screen border-r-2 border-white bg-transparent/30 flex flex-col justify-between items-start
+      className={`relative min-h-screen border-r-2 border-white bg-transparent/30 flex flex-col justify-between items-start
       transition-[width] duration-300 ease-in-out overflow-x-hidden
       ${isOpen ? "w-80 md:w-72 2xl:w-80" : "w-17"}`}
-    
     >
       <div className={`p-4 ${!isOpen && "px-2"}`}>
         <div className="flex items-center">
@@ -257,9 +256,9 @@ const DashboardMenu: React.FC<DashboardMenuProps> = () => {
           </NavLink>
           <button
             onClick={async () => {
-                  await handleLogout();
-                  navigate("/");
-                }}
+              await handleLogout();
+              navigate("/");
+            }}
             className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl hover:bg-gray-700 transition duration-300"
           >
             <div
@@ -282,10 +281,9 @@ const DashboardMenu: React.FC<DashboardMenuProps> = () => {
 
       {/* Toggle button */}
       <button
-  onClick={() => setIsOpen(!isOpen)}
-  className="absolute -right-5 top-1/2 z-50 w-10 h-10 bg-accent text-white rounded-full flex items-center justify-center shadow-lg cursor-pointer transform -translate-y-1/2 transition duration-300"
->
-
+        onClick={() => setIsOpen(!isOpen)}
+        className="absolute -right-5 top-1/2 z-50 w-10 h-10 bg-accent text-white rounded-full flex items-center justify-center shadow-lg cursor-pointer transform -translate-y-1/2 transition duration-300"
+      >
         <span className="text-xs">
           {isOpen ? (
             <FontAwesomeIcon

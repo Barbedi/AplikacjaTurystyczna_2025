@@ -23,9 +23,9 @@ const Manager = () => {
         <div>
           <DashboardMenu title={title} setTitle={setTitle} />
         </div>
-        <div className="w-full">
+        <div className="w-full min-h-screen ">
           <MenuBarTop />
-          <div className="flex flex-col items-center justify-center mt-4 mx-6">
+          <div className="flex ">
             <Outlet />
           </div>
         </div>
