@@ -1,9 +1,9 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faArrowLeft,
   faEnvelope,
   faLock,
   faChevronRight,
+  faCircleArrowLeft,
 } from "@fortawesome/free-solid-svg-icons";
 import React, { useState } from "react";
 import logowanieService from "../services/logowanie.service";
@@ -57,10 +57,9 @@ const Login = () => {
     <div className="relative w-full h-screen bg-[url('/assets/img/IMG_4048.JPG')] bg-cover bg-center overflow-hidden">
       <a
         href="/"
-        className="absolute top-4 left-4 text-black text-lg flex items-center hover:underline z-20"
+        className="absolute top-5 left-5 text-white text-2xl flex items-center hover:underline z-20"
       >
-        <FontAwesomeIcon icon={faArrowLeft} className="mr-2" />
-        Powrót do strony głównej
+        <FontAwesomeIcon icon={faCircleArrowLeft} className="mr-2" />
       </a>
 
       <div className="flex h-full z-10">
@@ -113,7 +112,7 @@ const Login = () => {
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white text-lg pointer-events-none"
                 />
               </div>
-              <div className="flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0 w-full pt-2">
+              <div className="flex flex-col sm:flex-row group sm:space-x-4 space-y-4 sm:space-y-0 w-full pt-2">
                 <button
                   type="submit"
                   className="flex-1 relative bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition duration-300 text-base font-medium"
@@ -121,7 +120,7 @@ const Login = () => {
                   Zaloguj się
                   <FontAwesomeIcon
                     icon={faChevronRight}
-                    className="absolute right-4 top-1/2 -translate-y-1/2"
+                    className="absolute group-hover:translate-x-2 right-6 top-1/2 -translate-y-1/2 duration-300 transition-all"
                   />
                 </button>
                 <a
