@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faStar } from "@fortawesome/free-solid-svg-icons";
+import { faStar,faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 
 const opinias = [
   {
@@ -29,6 +29,12 @@ const Reviews = () => {
           </div>
         )}
         <div className="flex flex-col w-full ">
+            {isOpen && <div className="flex justify-end items-end">
+            <FontAwesomeIcon
+                icon={faPenToSquare}
+                className="text-white text-2xl cursor-pointer flex"
+                />
+                </div>}
           {opinias.map((opinia, index) => (
             <div key={index} className="p-4 text-white mb-4">
               <h3 className="text-3xl font-semibold">{opinia.nameRoute}</h3>
