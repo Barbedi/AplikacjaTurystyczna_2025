@@ -19,6 +19,7 @@ export interface UserInfo {
   created_at?: string;
   salt?: string;
   role?: string;
+  profile_image?: string;
 }
 
 export interface User {

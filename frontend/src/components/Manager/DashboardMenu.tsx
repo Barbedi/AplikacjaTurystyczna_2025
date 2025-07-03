@@ -52,8 +52,8 @@ const DashboardMenu: React.FC<DashboardMenuProps> = () => {
     <div
 
       className={`relative min-h-screen border-r-2 border-white bg-transparent/30 flex flex-col justify-between items-start
-      transition-[width] duration-300 ease-in-out overflow-x-hidden
-      ${isOpen ? "w-80 md:w-72 2xl:w-80" : "w-17"}`}
+      transition-[width] duration-300 ease-in-out 
+      ${isOpen ? "w-80 md:w-72 2xl:w-80" : "w-20"}`}
     >
       <div className={`p-4 ${!isOpen && "px-2"}`}>
         <div className="flex items-center">

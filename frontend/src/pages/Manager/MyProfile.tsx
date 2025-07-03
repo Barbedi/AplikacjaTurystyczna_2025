@@ -1,3 +1,4 @@
+import { useContext, useEffect, useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCircleUser,
@@ -6,14 +7,14 @@ import {
   faPersonHiking,
   faPersonRunning,
 } from "@fortawesome/free-solid-svg-icons";
-import { useContext, useEffect } from "react";
-import  AuthContext  from "../../store/auth-context";
-import useGetUsers from "../../hooks/user/useGetUser"; 
-
+import AuthContext from "../../store/auth-context";
+import useGetUsers from "../../hooks/user/useGetUser";
 
 const MyProfile = () => {
-  const { user } = useContext(AuthContext); 
+  const { user } = useContext(AuthContext);
   const { getUserByEmail, usersData, loading } = useGetUsers();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   useEffect(() => {
     if (user?.email) {
@@ -21,25 +22,59 @@ const MyProfile = () => {
     }
   }, [user?.email, getUserByEmail]);
 
-  const currentUser = usersData?.[0][0]; 
+  const currentUser = usersData?.[0][0];
+
+  const handlePhotoClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const imageUrl = URL.createObjectURL(file);
+      setPreviewUrl(imageUrl);
+    }
+  };
 
   return (
     <div className="w-full mx-5 mt-3">
       {loading && <p className="text-white">Ładowanie danych profilu...</p>}
       {!loading && currentUser && (
         <>
-          <div className="flex flex-row items-start justify-center h-auto">
-            <div className="bg-black w-32 h-32 rounded-full flex items-center justify-center mt-4">
-              <FontAwesomeIcon
-                icon={faCircleUser}
-                className="text-[160px] text-white"
-              />
+          <div
+            className="flex flex-row items-start justify-center h-auto cursor-pointer"
+            onClick={handlePhotoClick}
+          >
+            <div className="bg-black w-32 h-32 rounded-full flex items-center justify-center mt-4 overflow-hidden">
+              {previewUrl ? (
+                <img
+                  src={previewUrl}
+                  alt="Podgląd zdjęcia profilowego"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <FontAwesomeIcon
+                  icon={faCircleUser}
+                  className="text-[160px] text-white"
+                />
+              )}
             </div>
           </div>
+
           <div className="flex flex-row items-start justify-center mt-7">
-            <button className="bg-secondary rounded-2xl px-4 py-1 text-xl font-lora text-center cursor-pointer">
+            <button
+              onClick={handlePhotoClick}
+              className="bg-secondary rounded-2xl px-4 py-1 text-xl font-lora text-center cursor-pointer"
+            >
               <span className="text-white">Dodaj zdjęcie</span>
             </button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+              className="hidden"
+            />
           </div>
           <div className="flex flex-row w-full items-start justify-center mt-4 gap-4 ">
             <div className="flex flex-col w-1/2 justify-start items-start border-r border-gray-300 p-4 pb-30">
