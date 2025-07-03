@@ -76,11 +76,11 @@ const Register = () => {
   return (
     <div className="relative w-full h-screen bg-[url('/assets/img/IMG_4048.JPG')] bg-cover bg-center overflow-hidden">
       <a
-              href="/"
-              className="absolute top-5 left-5 text-white text-2xl flex items-center hover:underline z-20"
-            >
-              <FontAwesomeIcon icon={faCircleArrowLeft} className="mr-2" />
-            </a>
+        href="/"
+        className="absolute top-5 left-5 text-white text-2xl flex items-center hover:underline z-20"
+      >
+        <FontAwesomeIcon icon={faCircleArrowLeft} className="mr-2" />
+      </a>
       <div className="flex h-full z-10">
         <div className="hidden sm:flex flex-1 items-end px-6 sm:px-12 pb-[16vh] text-white">
           <div className="max-w-2xl break-words leading-relaxed">
