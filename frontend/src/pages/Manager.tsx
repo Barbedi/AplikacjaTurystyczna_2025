@@ -25,6 +25,7 @@ const Manager = () => {
         </div>
         <div className="w-full min-h-screen ">
           <MenuBarTop />
+
           <div className="flex  justify-center ">
             <Outlet />
           </div>
