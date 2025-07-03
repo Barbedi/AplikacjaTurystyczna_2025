@@ -123,10 +123,7 @@ const MyProfile = () => {
         <div className="flex flex-col w-full justify-start items-start ">
           <span className="text-2xl font-lora text-center text-white mt-3">Aktywność</span>
             <div className="flex flex-col w-full justify-start text-lg items-start mt-4 text-wrap text-white">
-              <p>10:10 02.07.2025 Utworzyles i zapisałes trase “nazwa Trasy” w ulubionych </p>
-              <p>10:10 02.07.2025 Oceniłes trase “Hala Ornak – Starorobociański Wierch” </p>
-              <p>10:10 02.07.2025 Dodałes zdjecie do trasy  “nazwa Trasy” </p>
-              <p className="text-red-600">10:10 02.07.2025 Usunąłeś trase “nazwa Trasy” z ulubionych </p>
+              <p>02.07.2025 Utworzyles i zapisałes trase “nazwa Trasy” w ulubionych </p>
             </div>
           </div>
         </div>
