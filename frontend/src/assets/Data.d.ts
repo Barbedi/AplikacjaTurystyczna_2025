@@ -9,6 +9,17 @@ export interface Users {
   salt?: string;
   role?: string;
 }
+export interface UserInfo {
+  id?: number;
+  email: string;
+  password: string;
+  name: string;
+  level_of_experience?: string;
+  fitness_level?: string;
+  created_at?: string;
+  salt?: string;
+  role?: string;
+}
 
 export interface User {
   exp: number;
@@ -48,4 +59,23 @@ export interface ForecastItem {
     icon: string;
     description: string;
   }[];
+}
+interface Filter {
+  by: string;
+  operator?: string;
+  value: string | string[];
+}
+
+interface Sort {
+  by: string[];
+  order?: string;
+}
+
+interface Err extends Error {
+  response: {
+    status: number;
+    data: {
+      message: string;
+    };
+  };
 }

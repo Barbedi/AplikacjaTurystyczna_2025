@@ -10,6 +10,7 @@ import register from "./routes/register";
 import login from "./routes/login";
 import authenticate from "./routes/authenticate";
 import logout from "./routes/logout";
+import user from "./routes/user";
 
 const app = express();
 
@@ -32,6 +33,7 @@ app.use("/register", register);
 app.use("/login", login);
 app.use("/authenticate", authenticate);
 app.use("/logout", logout);
+app.use("/users", user);
 // Obsługa nieznalezionych endpointów
 app.use((_req: Request, res: Response) => {
   res.status(404).json({ message: "Endpoint not found" });
