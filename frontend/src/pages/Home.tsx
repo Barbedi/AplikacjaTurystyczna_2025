@@ -61,7 +61,7 @@ const Home = () => {
           <div className="text-white text-3xl md:text-4xl xl:text-5xl 2xl:text-6xl font-lora mb-6 duration-300">
             Proponowane trasy
           </div>
-          <div className="flex 2xl:flex-row items-center justify-center font-lora lg:gap-8 gap-5 w-full">
+          <div className="flex flex-col lg:flex-row 2xl:flex-row items-center justify-center font-lora lg:gap-8 gap-5 w-full">
             <ProposedRoutes />
             <ProposedRoutes />
             <ProposedRoutes />
