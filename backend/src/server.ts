@@ -10,6 +10,7 @@ import register from "./routes/register";
 import login from "./routes/login";
 import authenticate from "./routes/authenticate";
 import logout from "./routes/logout";
+import routeTrailRouter from "./routes/routeTrail";
 
 const app = express();
 
@@ -32,6 +33,7 @@ app.use("/register", register);
 app.use("/login", login);
 app.use("/authenticate", authenticate);
 app.use("/logout", logout);
+app.use("/routeTrail", routeTrailRouter);
 // Obsługa nieznalezionych endpointów
 app.use((_req: Request, res: Response) => {
   res.status(404).json({ message: "Endpoint not found" });
@@ -46,6 +48,5 @@ app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
 
   res.status(statusCode).json({ message });
 });
-
 
 export default app;

@@ -8,8 +8,22 @@ import PlanRoute from "../components/PlanRoute";
 import ProposedRoutes from "../components/ProposedRoutes";
 import ExploreRoutes from "../components/ExploreRoutes";
 import Footer from "../components/Footer";
+import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import AuthContext from "../store/auth-context";
 
 const Home = () => {
+  const navigate = useNavigate();
+
+  const { checkAuth } = useContext(AuthContext);
+  const handleClickPlanRoute = async () => {
+    const isAuth = await checkAuth();
+    if (isAuth) {
+      navigate("/dashboard/plan-route");
+    } else {
+      navigate("/login");
+    }
+  };
   return (
     <div className="min-h-screen bg-gradient-to-b from-grad1 to-grad2 pb-24 md:pb-0">
       <Navbar />
@@ -44,7 +58,7 @@ const Home = () => {
           <PlanRoute />
           <div className="flex justify-center group items-center my-10 ">
             <a
-              href="/"
+              onClick={handleClickPlanRoute}
               className="bg-secondary rounded-2xl px-10 py-3 text-2xl font-lora "
             >
               Planuj trase

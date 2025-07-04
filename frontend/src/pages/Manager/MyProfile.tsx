@@ -114,16 +114,21 @@ const MyProfile = () => {
             />
           </div>
           <div className="flex flex-row w-full justify-end items-center gap-4">
-          <button className="bg-secondary rounded-2xl px-4 py-1 text-xl font-lora text-center cursor-pointer justify-end">
-            <span className="text-white">Edytuj</span>
-          </button>
+            <button className="bg-secondary rounded-2xl px-4 py-1 text-xl font-lora text-center cursor-pointer justify-end">
+              <span className="text-white">Edytuj</span>
+            </button>
           </div>
         </div>
         <div className="flex flex-row w-1/2">
-        <div className="flex flex-col w-full justify-start items-start ">
-          <span className="text-2xl font-lora text-center text-white mt-3">Aktywność</span>
+          <div className="flex flex-col w-full justify-start items-start ">
+            <span className="text-2xl font-lora text-center text-white mt-3">
+              Aktywność
+            </span>
             <div className="flex flex-col w-full justify-start text-lg items-start mt-4 text-wrap text-white">
-              <p>02.07.2025 Utworzyles i zapisałes trase “nazwa Trasy” w ulubionych </p>
+              <p>
+                02.07.2025 Utworzyles i zapisałes trase “nazwa Trasy” w
+                ulubionych{" "}
+              </p>
             </div>
           </div>
         </div>
