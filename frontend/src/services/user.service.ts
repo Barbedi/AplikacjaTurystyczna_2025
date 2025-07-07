@@ -61,7 +61,7 @@ class UsersService {
   update = (id: number, data: UserInfo) => {
     if (!id || !data) throw new Error("ID and data are required");
 
-    return http.put(`/users/${id}`, data, { withCredentials: true });
+    return http.patch(`/users/${id}`, data, { withCredentials: true });
   };
 
   updateImg = (id: number, img: string) => {

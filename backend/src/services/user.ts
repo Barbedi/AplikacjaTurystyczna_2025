@@ -3,7 +3,12 @@ import helper from "../helper";
 import config from "../config";
 import { Err } from "../Types";
 
-async function get(page = 1, limit = config.listPerPage, filter?: string, sort?: string) {
+async function get(
+  page = 1,
+  limit = config.listPerPage,
+  filter?: string,
+  sort?: string,
+) {
   const offset = helper.getOffset(page, limit);
   const queryParams: any[] = [];
 
@@ -18,7 +23,7 @@ async function get(page = 1, limit = config.listPerPage, filter?: string, sort?:
   }
   if (sort) {
     const sortQuery = helper.buildSortQuery(sort);
-    query += sortQuery.query; 
+    query += sortQuery.query;
   }
   queryParams.push(limit, offset);
   query += ` LIMIT $${queryParams.length - 1} OFFSET $${queryParams.length}`;
@@ -30,11 +35,10 @@ async function get(page = 1, limit = config.listPerPage, filter?: string, sort?:
     throw new Err("No users found", 404);
   }
 
- const countResult = await db.query(`SELECT COUNT(*) FROM Users`);
-const total = parseInt(countResult.rows[0].count);
-const pages = Math.ceil(total / limit);
-const meta = { page, pages, limit, total };
-
+  const countResult = await db.query(`SELECT COUNT(*) FROM Users`);
+  const total = parseInt(countResult.rows[0].count);
+  const pages = Math.ceil(total / limit);
+  const meta = { page, pages, limit, total };
 
   return {
     data,
@@ -84,22 +88,45 @@ async function getById(id: number) {
   };
 }
 
+async function update(id: number, userInfo: any) {
+  if (!userInfo || !userInfo.email || !userInfo.name) {
+    throw new Err("Email and name are required", 400);
+  }
+  const checkResult = await db.query(`SELECT 1 FROM Users WHERE id = $1`, [id]);
+  if (checkResult.rowCount === 0) {
+    throw new Err("User not found", 404);
+  }
+  const result = await db.query(
+    `UPDATE Users SET email = $1, name = $2, level_of_experience = $3, fitness_level = $4 WHERE id = $5`,
+    [
+      userInfo.email,
+      userInfo.name,
+      userInfo.level_of_experience,
+      userInfo.fitness_level,
+      id,
+    ],
+  );
+  if (result.rowCount === 0) {
+    throw new Err("Failed to update user", 500);
+  }
+  return {
+    message: "Successfully updated user",
+  };
+}
+
 async function updateImg(id: number, profileImage: string) {
   if (!profileImage) {
     throw new Err("Profile image is required", 400);
   }
 
-  const checkResult = await db.query(
-    `SELECT 1 FROM Users WHERE id = $1`,
-    [id]
-  );
+  const checkResult = await db.query(`SELECT 1 FROM Users WHERE id = $1`, [id]);
   if (checkResult.rowCount === 0) {
     throw new Err("User not found", 404);
   }
 
   const result = await db.query(
     `UPDATE Users SET profile_image = $1 WHERE id = $2`,
-    [profileImage, id]
+    [profileImage, id],
   );
 
   if (result.rowCount === 0) {
@@ -111,13 +138,10 @@ async function updateImg(id: number, profileImage: string) {
   };
 }
 
-
-
 export default {
   get,
-    getByEmail,
-    getById,
+  getByEmail,
+  getById,
   updateImg,
-  // Możesz dodać inne metody, takie jak getById, getByEmail, update itp.
-  // Pamiętaj, aby odpowiednio obsłużyć błędy i walidację danych wejściowych.
+  update,
 };

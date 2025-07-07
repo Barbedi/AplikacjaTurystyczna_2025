@@ -5,7 +5,6 @@ import { verifyUser } from "../middlewares/verifyUser";
 import fs from "fs";
 import path from "path";
 
-
 const FILES_DIR = path.join(__dirname, "../files");
 
 if (!fs.existsSync(FILES_DIR)) {
@@ -15,7 +14,7 @@ if (!fs.existsSync(FILES_DIR)) {
 const upload = multer({
   storage: multer.diskStorage({
     destination: function (_req, _file, cb) {
-      cb(null, FILES_DIR); 
+      cb(null, FILES_DIR);
     },
     filename: function (_req, file, cb) {
       const uniqueName = Date.now() + "-" + Math.round(Math.random() * 1e9);
@@ -24,8 +23,6 @@ const upload = multer({
   }),
   limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
 });
-
-
 
 /**
  * @openapi
@@ -127,7 +124,7 @@ router.post(
     } catch (err) {
       next(err);
     }
-  }
+  },
 );
 
 export default router;

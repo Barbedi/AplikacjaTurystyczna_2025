@@ -5,7 +5,7 @@ import { refreshToken } from "./refreshToken";
 
 declare module "express-serve-static-core" {
   interface Request {
-   user?:string | object | undefined
+    user?: string | object | undefined;
   }
 }
 
@@ -35,7 +35,7 @@ export function verifyUser(req: Request, _res: Response, next: NextFunction) {
         console.log("✅ Token verified:", user);
         req.user = user;
         return next();
-      }
+      },
     );
   } else if (authHeader) {
     const token = authHeader.split(" ")[1] as string;
@@ -50,7 +50,7 @@ export function verifyUser(req: Request, _res: Response, next: NextFunction) {
 
         req.user = user;
         return next();
-      }
+      },
     );
   }
 }
