@@ -27,9 +27,10 @@ interface DashboardMenuProps {
 }
 
 const DashboardMenu: React.FC<DashboardMenuProps> = () => {
-  const { checkAuth, user, logout,profileRefreshKey } = useContext(AuthContext);
+  const { checkAuth, user, logout, profileRefreshKey } =
+    useContext(AuthContext);
   const { getUserByEmail, usersData } = useGetUsers();
-const [profileImgUrl, setProfileImgUrl] = useState<string | null>(null);
+  const [profileImgUrl, setProfileImgUrl] = useState<string | null>(null);
 
   const navigate = useNavigate();
   const [, setLoading] = useState(true);
@@ -45,17 +46,17 @@ const [profileImgUrl, setProfileImgUrl] = useState<string | null>(null);
     });
   }, [checkAuth, navigate]);
   useEffect(() => {
-  if (user?.email) {
-    getUserByEmail(user.email);
-  }
-}, [user?.email, getUserByEmail,profileRefreshKey]);
+    if (user?.email) {
+      getUserByEmail(user.email);
+    }
+  }, [user?.email, getUserByEmail, profileRefreshKey]);
 
-useEffect(() => {
-  const currentUser = usersData?.[0]?.[0];
-  if (currentUser?.profile_image) {
-    setProfileImgUrl(filesService.getImgUrl(currentUser.profile_image));
-  }
-}, [usersData]);
+  useEffect(() => {
+    const currentUser = usersData?.[0]?.[0];
+    if (currentUser?.profile_image) {
+      setProfileImgUrl(filesService.getImgUrl(currentUser.profile_image));
+    }
+  }, [usersData]);
 
   const handleLogout = async () => {
     try {
@@ -67,20 +68,17 @@ useEffect(() => {
 
   return (
     <div
-
       className={`relative min-h-screen border-r-2 border-white bg-transparent/30 flex flex-col justify-between items-start
       transition-[width] duration-300 ease-in-out 
       ${isOpen ? "w-80 md:w-72 2xl:w-80" : "w-20"}`}
     >
       <div className={`p-4 ${!isOpen && "px-2"}`}>
         <div className="flex items-center">
-         <img
-  className="rounded-full h-10 w-10 ml-2 object-cover"
-  src={profileImgUrl||undefined}
-  alt="user"
-/>
-
-          
+          <img
+            className="rounded-full h-10 w-10 ml-2 object-cover"
+            src={profileImgUrl || undefined}
+            alt="user"
+          />
           {isOpen && (
             <h2 className="text-white md:text-sm 2xl:text-lg font-bold ml-4">
               {user?.email}

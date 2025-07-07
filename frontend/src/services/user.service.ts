@@ -6,7 +6,7 @@ class UsersService {
     page: number = 1,
     limit?: number,
     filter?: Filter[],
-    sort?: Sort
+    sort?: Sort,
   ) => {
     const params = new URLSearchParams();
 
@@ -67,11 +67,7 @@ class UsersService {
   updateImg = (id: number, img: string) => {
     if (!id || !img) throw new Error("ID and image are required");
 
-    return http.patch(
-      `/users/${id}/img`,
-      { img },
-      { withCredentials: true }
-    );
+    return http.patch(`/users/${id}/img`, { img }, { withCredentials: true });
   };
 
   delete = (id: number) => {

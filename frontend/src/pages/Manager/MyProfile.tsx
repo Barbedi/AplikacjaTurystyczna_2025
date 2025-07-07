@@ -12,7 +12,6 @@ import useGetUsers from "../../hooks/user/useGetUser";
 import useUpdateUser from "../../hooks/user/useUpdateUser";
 import filesService from "../../services/files.service";
 
-
 const MyProfile = () => {
   const { user } = useContext(AuthContext);
   const { getUserByEmail, usersData, loading } = useGetUsers();
@@ -32,7 +31,6 @@ const MyProfile = () => {
   useEffect(() => {
     if (currentUser?.profile_image) {
       setPreviewUrl(filesService.getImgUrl(currentUser.profile_image));
-
     }
   }, [currentUser]);
 
@@ -40,33 +38,34 @@ const MyProfile = () => {
     fileInputRef.current?.click();
   };
 
- const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-  const file = event.target.files?.[0];
-  if (!file || !currentUser?.id) return;
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const file = event.target.files?.[0];
+    if (!file || !currentUser?.id) return;
 
-  // Maksymalny rozmiar pliku (np. 5MB)
-  const maxSize = 5 * 1024 * 1024;
-  if (file.size > maxSize) {
-    console.error("Plik jest zbyt duży. Maksymalny rozmiar to 5MB.");
-    return;
-  }
+    // Maksymalny rozmiar pliku (np. 5MB)
+    const maxSize = 5 * 1024 * 1024;
+    if (file.size > maxSize) {
+      console.error("Plik jest zbyt duży. Maksymalny rozmiar to 5MB.");
+      return;
+    }
 
-  try {
-    const response = await filesService.upload(file);
-    const filename = response.data.file?.filename;
+    try {
+      const response = await filesService.upload(file);
+      const filename = response.data.file?.filename;
 
-    if (!filename) throw new Error("Brak nazwy pliku w odpowiedzi");
+      if (!filename) throw new Error("Brak nazwy pliku w odpowiedzi");
 
-    const imageUrl = filesService.getImgUrl(filename);
-    setPreviewUrl(imageUrl);
+      const imageUrl = filesService.getImgUrl(filename);
+      setPreviewUrl(imageUrl);
 
-    await updateUserImg(currentUser.id, filename);
-    refreshUserProfile(); 
-  } catch (err) {
-    console.error("Błąd podczas przesyłania pliku:", err);
-  }
-};
-
+      await updateUserImg(currentUser.id, filename);
+      refreshUserProfile();
+    } catch (err) {
+      console.error("Błąd podczas przesyłania pliku:", err);
+    }
+  };
 
   return (
     <div className="w-full mx-5 mt-3">
@@ -107,7 +106,6 @@ const MyProfile = () => {
               onChange={handleFileChange}
               className="hidden"
             />
-            
           </div>
           <div className="flex flex-row w-full items-start justify-center mt-4 gap-4 ">
             <div className="flex flex-col w-1/2 justify-start items-start border-r border-gray-300 p-4 pb-30">
@@ -169,7 +167,9 @@ const MyProfile = () => {
                   <option value="advanced">
                     Aktywności 3 - 4 razy w tygodniu
                   </option>
-                  <option value="expert">Aktywności 5 - 6 razy w tygodniu</option>
+                  <option value="expert">
+                    Aktywności 5 - 6 razy w tygodniu
+                  </option>
                   <option value="pro">Aktywności codziennie</option>
                 </select>
                 <FontAwesomeIcon
@@ -197,6 +197,5 @@ const MyProfile = () => {
     </div>
   );
 };
-
 
 export default MyProfile;

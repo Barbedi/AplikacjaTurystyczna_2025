@@ -15,7 +15,7 @@ class FilesService {
               "Content-Type": "multipart/form-data",
             },
             withCredentials: true,
-          }
+          },
         )
         .then((response) => {
           resolve(response);

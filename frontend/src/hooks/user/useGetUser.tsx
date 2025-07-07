@@ -13,7 +13,12 @@ const useGetUsers = () => {
   }, []);
 
   const getAllUsers = useCallback(
-    async (page: number = 1, limit?: number, filter?: Filter[], sort?: Sort) => {
+    async (
+      page: number = 1,
+      limit?: number,
+      filter?: Filter[],
+      sort?: Sort,
+    ) => {
       try {
         setLoading(true);
         const response = await usersService.getAll(page, limit, filter, sort);
@@ -27,7 +32,7 @@ const useGetUsers = () => {
         setLoading(false);
       }
     },
-    [handleError]
+    [handleError],
   );
 
   const getUserById = useCallback(
@@ -45,7 +50,7 @@ const useGetUsers = () => {
         setLoading(false);
       }
     },
-    [handleError]
+    [handleError],
   );
 
   const getUserByEmail = useCallback(
@@ -63,7 +68,7 @@ const useGetUsers = () => {
         setLoading(false);
       }
     },
-    [handleError]
+    [handleError],
   );
 
   return {
