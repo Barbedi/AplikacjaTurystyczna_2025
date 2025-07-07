@@ -6,7 +6,7 @@ declare module "express-serve-static-core" {
   interface Request {
     response?: {
       auth: boolean;
-      user: { email: string;role: string };
+      user: { email: string; role: string };
       message: string;
     };
   }

@@ -19,14 +19,14 @@ const Manager = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-grad1 to-grad2 pb-24 md:pb-0">
-      <div className="flex flex-row">
-        <div>
+      <div className="flex flex-row relative">
+        <div className="relative">
           <DashboardMenu title={title} setTitle={setTitle} />
         </div>
-        <div className="w-full min-h-screen ">
+        <div className="w-full min-h-screen">
           <MenuBarTop />
 
-          <div className="flex  justify-center ">
+          <div className="flex justify-center">
             <Outlet />
           </div>
         </div>

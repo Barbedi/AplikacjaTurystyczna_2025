@@ -98,7 +98,6 @@ router.get("/", verifyUser, (req, res, next) => {
   }
 });
 
-
 /**
  * @openapi
  * /authenticate/refresh:
@@ -178,7 +177,7 @@ router.get("/", verifyUser, (req, res, next) => {
  */
 router.post("/refresh", refreshToken, (req, res, next) => {
   try {
-   console.log("📥 /authenticate/refresh hit"); // Log to check if endpoint is reached
+    console.log("📥 /authenticate/refresh hit"); // Log to check if endpoint is reached
     const response = req.response;
 
     if (!response) {

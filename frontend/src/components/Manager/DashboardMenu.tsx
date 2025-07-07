@@ -18,6 +18,8 @@ import {
 import LogoutIcon from "@mui/icons-material/Logout";
 import PermMediaIcon from "@mui/icons-material/PermMedia";
 import RateReviewIcon from "@mui/icons-material/RateReview";
+import filesService from "../../services/files.service";
+import useGetUsers from "../../hooks/user/useGetUser";
 
 interface DashboardMenuProps {
   title?: string;
@@ -25,7 +27,11 @@ interface DashboardMenuProps {
 }
 
 const DashboardMenu: React.FC<DashboardMenuProps> = () => {
-  const { checkAuth, user, logout } = useContext(AuthContext);
+  const { checkAuth, user, logout, profileRefreshKey } =
+    useContext(AuthContext);
+  const { getUserByEmail, usersData } = useGetUsers();
+  const [profileImgUrl, setProfileImgUrl] = useState<string | null>(null);
+
   const navigate = useNavigate();
   const [, setLoading] = useState(true);
   const [isOpen, setIsOpen] = useState(true);
@@ -39,6 +45,18 @@ const DashboardMenu: React.FC<DashboardMenuProps> = () => {
       setLoading(false);
     });
   }, [checkAuth, navigate]);
+  useEffect(() => {
+    if (user?.email) {
+      getUserByEmail(user.email);
+    }
+  }, [user?.email, getUserByEmail, profileRefreshKey]);
+
+  useEffect(() => {
+    const currentUser = usersData?.[0]?.[0];
+    if (currentUser?.profile_image) {
+      setProfileImgUrl(filesService.getImgUrl(currentUser.profile_image));
+    }
+  }, [usersData]);
 
   const handleLogout = async () => {
     try {
@@ -50,16 +68,15 @@ const DashboardMenu: React.FC<DashboardMenuProps> = () => {
 
   return (
     <div
-
       className={`relative min-h-screen border-r-2 border-white bg-transparent/30 flex flex-col justify-between items-start
-      transition-[width] duration-300 ease-in-out overflow-x-hidden
-      ${isOpen ? "w-80 md:w-72 2xl:w-80" : "w-17"}`}
+      transition-[width] duration-300 ease-in-out 
+      ${isOpen ? "w-80 md:w-72 2xl:w-80" : "w-20"}`}
     >
       <div className={`p-4 ${!isOpen && "px-2"}`}>
         <div className="flex items-center">
           <img
             className="rounded-full h-10 w-10 ml-2 object-cover"
-            src="/assets/img/FullSizeRender.JPG"
+            src={profileImgUrl || undefined}
             alt="user"
           />
           {isOpen && (
