@@ -64,16 +64,6 @@ class UsersService {
     return http.put(`/users/${id}`, data, { withCredentials: true });
   };
 
-  updateRole = (id: number, role: string) => {
-    if (!id || !role) throw new Error("ID and role are required");
-
-    return http.patch(
-      `/users/${id}`,
-      { role },
-      { withCredentials: true }
-    );
-  };
-
   updateImg = (id: number, img: string) => {
     if (!id || !img) throw new Error("ID and image are required");
 

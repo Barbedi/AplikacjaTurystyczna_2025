@@ -41,6 +41,28 @@ router.get("/:email", verifyUser, async (req, res) => {
 }
 );
 
+router.patch("/:id/img", verifyUser, async function (req, res, next) {
+  try {
+    const { id } = req.params;
+    const parsedId = parseInt(id as string, 10);
+    const { img: profileImage } = req.body;
+
+    if (!parsedId || !profileImage) {
+      res.status(400).json({ message: "ID i zdjęcie są wymagane." });
+      return;
+    }
+
+    const { message } = await userService.updateImg(parsedId, profileImage);
+    res.status(200).json({ message });
+    return;
+  } catch (err) {
+    next(err);
+    return;
+  }
+});
+
+
+
 
 
 export default router;

@@ -9,12 +9,15 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import AuthContext from "../../store/auth-context";
 import useGetUsers from "../../hooks/user/useGetUser";
+import useUpdateUser from "../../hooks/user/useUpdateUser";
+import filesService from "../../services/files.service";
 
 const MyProfile = () => {
   const { user } = useContext(AuthContext);
   const { getUserByEmail, usersData, loading } = useGetUsers();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const { updateUserImg } = useUpdateUser();
 
   useEffect(() => {
     if (user?.email) {
@@ -23,18 +26,45 @@ const MyProfile = () => {
   }, [user?.email, getUserByEmail]);
 
   const currentUser = usersData?.[0][0];
+  
+  // Ustawienie zdjęcia profilowego użytkownika po załadowaniu danych
+  useEffect(() => {
+    if (currentUser?.profile_image) {
+      setPreviewUrl(filesService.getImgUrl(currentUser.profile_image));
+
+    }
+  }, [currentUser]);
 
   const handlePhotoClick = () => {
     fileInputRef.current?.click();
   };
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setPreviewUrl(imageUrl);
-    }
-  };
+ const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const file = event.target.files?.[0];
+  if (!file || !currentUser?.id) return;
+
+  // Maksymalny rozmiar pliku (np. 5MB)
+  const maxSize = 5 * 1024 * 1024;
+  if (file.size > maxSize) {
+    console.error("Plik jest zbyt duży. Maksymalny rozmiar to 5MB.");
+    return;
+  }
+
+  try {
+    const response = await filesService.upload(file);
+    const filename = response.data.file?.filename;
+
+    if (!filename) throw new Error("Brak nazwy pliku w odpowiedzi");
+
+    const imageUrl = filesService.getImgUrl(filename);
+    setPreviewUrl(imageUrl);
+
+    await updateUserImg(currentUser.id, filename);
+  } catch (err) {
+    console.error("Błąd podczas przesyłania pliku:", err);
+  }
+};
+
 
   return (
     <div className="w-full mx-5 mt-3">
@@ -75,6 +105,7 @@ const MyProfile = () => {
               onChange={handleFileChange}
               className="hidden"
             />
+            
           </div>
           <div className="flex flex-row w-full items-start justify-center mt-4 gap-4 ">
             <div className="flex flex-col w-1/2 justify-start items-start border-r border-gray-300 p-4 pb-30">
