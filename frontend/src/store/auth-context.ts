@@ -8,6 +8,8 @@ interface AuthContextProps {
   setUser: React.Dispatch<React.SetStateAction<User | undefined>>;
   checkAuth: () => Promise<boolean>;
   refreshToken: () => Promise<boolean>;
+  refreshUserProfile: () => void;
+  profileRefreshKey: number;
   logout: () => void;
 }
 
