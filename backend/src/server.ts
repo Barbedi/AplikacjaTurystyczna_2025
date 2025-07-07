@@ -13,7 +13,7 @@ import logout from "./routes/logout";
 import routeTrailRouter from "./routes/routeTrail";
 import user from "./routes/user";
 import file from "./routes/file";
-
+import shelters from "./routes/shelters";
 
 const app = express();
 
@@ -39,6 +39,7 @@ app.use("/logout", logout);
 app.use("/routeTrail", routeTrailRouter);
 app.use("/users", user);
 app.use("/files", file);
+app.use("/shelters", shelters);
 // Obsługa nieznalezionych endpointów
 app.use((_req: Request, res: Response) => {
   res.status(404).json({ message: "Endpoint not found" });

@@ -26,12 +26,10 @@ router.post("/", async function (req, res) {
 
     if (!response.ok) {
       const errorText = await response.text();
-      res
-        .status(response.status)
-        .json({
-          error: "Błąd odpowiedzi OpenRouteService",
-          details: errorText,
-        });
+      res.status(response.status).json({
+        error: "Błąd odpowiedzi OpenRouteService",
+        details: errorText,
+      });
       return;
     }
 

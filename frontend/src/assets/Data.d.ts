@@ -29,6 +29,17 @@ export interface User {
   role: string;
 }
 
+export interface Shelters {
+  id: number;
+  name: string;
+  description?: string;
+  latitude: number;
+  longitude: number;
+  altitude: number;
+  photo?: string;
+  mountain_range: string;
+}
+
 export interface CurrentWeather {
   name: string;
   dt: number;

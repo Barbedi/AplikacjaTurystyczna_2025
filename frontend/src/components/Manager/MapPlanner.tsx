@@ -10,6 +10,8 @@ import {
 import { useState, useEffect } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import { Shelters } from "../../assets/Data";
+import SheltersMap from "./PopupShelters";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -62,6 +64,7 @@ const MapPlanner = () => {
   const [points, setPoints] = useState<[number, number][]>([]);
   const [hoveredPoint, setHoveredPoint] = useState<number | null>(null);
   const [routeGeoJson, setRouteGeoJson] = useState<null>(null);
+  const [shelters, setShelters] = useState<Shelters[]>([]);
   useEffect(() => {
     const fetchRoute = async () => {
       try {
@@ -87,9 +90,18 @@ const MapPlanner = () => {
     if (points.length >= 2) {
       fetchRoute();
     } else {
-      setRouteGeoJson(null); 
+      setRouteGeoJson(null);
     }
   }, [points]);
+  useEffect(() => {
+    fetch("http://localhost:6868/shelters")
+      .then((res) => res.json())
+      .then((json) => {
+        console.log("Fetched shelters:", json);
+        setShelters(json.data);
+      })
+      .catch(console.error);
+  }, []);
 
   return (
     <div className="w-full h-full flex flex-col">
@@ -133,7 +145,7 @@ const MapPlanner = () => {
             />
           </Overlay>
         </LayersControl>
-
+        <SheltersMap shelters={shelters} setPoints={setPoints} />
         <LocationMarker setPoints={setPoints} />
         <LocationMarkerDelete setPoints={setPoints} />
 

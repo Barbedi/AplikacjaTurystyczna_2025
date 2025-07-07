@@ -28,6 +28,8 @@ services:
     build: ./backend
     ports:
       - "6868:6868"
+    volumes:
+      - ./app/dist/files:/app/dist/files  
     environment:
       - DB_HOST=postgres
       - DB_PORT=5432
