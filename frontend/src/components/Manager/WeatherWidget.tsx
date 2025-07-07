@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { CurrentWeather, ForecastItem } from "../assets/Data";
-import { formatDate, formatTime } from "../utils/format";
-import { weatherTranslation } from "../utils/weatherTranslation";
+import { CurrentWeather, ForecastItem } from "../../assets/Data";
+import { formatDate, formatTime } from "../../utils/format";
+import { weatherTranslation } from "../../utils/weatherTranslation";
 
 const API_KEY = import.meta.env.VITE_OPENWEATHER_API_KEY;
 const CITY = import.meta.env.VITE_WEATHER_CITY;

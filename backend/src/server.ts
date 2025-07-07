@@ -10,8 +10,10 @@ import register from "./routes/register";
 import login from "./routes/login";
 import authenticate from "./routes/authenticate";
 import logout from "./routes/logout";
+import routeTrailRouter from "./routes/routeTrail";
 import user from "./routes/user";
 import file from "./routes/file";
+
 
 const app = express();
 
@@ -34,6 +36,7 @@ app.use("/register", register);
 app.use("/login", login);
 app.use("/authenticate", authenticate);
 app.use("/logout", logout);
+app.use("/routeTrail", routeTrailRouter);
 app.use("/users", user);
 app.use("/files", file);
 // Obsługa nieznalezionych endpointów

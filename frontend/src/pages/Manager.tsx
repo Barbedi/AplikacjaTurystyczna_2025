@@ -18,15 +18,14 @@ const Manager = () => {
   }, [checkAuth, navigate]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-grad1 to-grad2 pb-24 md:pb-0">
-      <div className="flex flex-row relative">
-        <div className="relative">
+    <div className="min-h-screen bg-gradient-to-b from-grad1 to-grad2">
+      <div className="flex flex-row min-h-screen relative">
+        <div className="relative h-auto min-h-screen border-r-2 border-white">
           <DashboardMenu title={title} setTitle={setTitle} />
         </div>
-        <div className="w-full min-h-screen">
+        <div className="flex-1 flex flex-col">
           <MenuBarTop />
-
-          <div className="flex justify-center">
+          <div className="flex-1 p-4">
             <Outlet />
           </div>
         </div>
