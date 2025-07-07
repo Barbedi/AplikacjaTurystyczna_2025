@@ -18,7 +18,11 @@ const AuthProvider: React.ComponentType<AuthProviderProps> = ({
 }: AuthProviderProps) => {
   const [auth, setAuth] = useState<boolean>(false);
   const [user, setUser] = useState<User | undefined>(undefined);
+  const [profileRefreshKey, setProfileRefreshKey] = useState(0);
 
+const refreshUserProfile = () => {
+  setProfileRefreshKey((prev) => prev + 1);
+};
   const refreshToken = useCallback(
     () =>
       new Promise<boolean>((resolve) => {
@@ -85,6 +89,7 @@ const AuthProvider: React.ComponentType<AuthProviderProps> = ({
           console.error("Server error");
         }
       });
+      
   }, []);
 
   return (
@@ -96,6 +101,8 @@ const AuthProvider: React.ComponentType<AuthProviderProps> = ({
         setUser,
         checkAuth,
         refreshToken,
+        refreshUserProfile,
+        profileRefreshKey,
         logout,
       }}
     >

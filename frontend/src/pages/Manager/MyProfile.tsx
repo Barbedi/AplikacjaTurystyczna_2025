@@ -12,12 +12,14 @@ import useGetUsers from "../../hooks/user/useGetUser";
 import useUpdateUser from "../../hooks/user/useUpdateUser";
 import filesService from "../../services/files.service";
 
+
 const MyProfile = () => {
   const { user } = useContext(AuthContext);
   const { getUserByEmail, usersData, loading } = useGetUsers();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const { updateUserImg } = useUpdateUser();
+  const { refreshUserProfile } = useContext(AuthContext);
 
   useEffect(() => {
     if (user?.email) {
@@ -26,8 +28,7 @@ const MyProfile = () => {
   }, [user?.email, getUserByEmail]);
 
   const currentUser = usersData?.[0][0];
-  
-  // Ustawienie zdjęcia profilowego użytkownika po załadowaniu danych
+
   useEffect(() => {
     if (currentUser?.profile_image) {
       setPreviewUrl(filesService.getImgUrl(currentUser.profile_image));
@@ -60,6 +61,7 @@ const MyProfile = () => {
     setPreviewUrl(imageUrl);
 
     await updateUserImg(currentUser.id, filename);
+    refreshUserProfile(); 
   } catch (err) {
     console.error("Błąd podczas przesyłania pliku:", err);
   }
