@@ -62,8 +62,6 @@ const MapPlanner = () => {
   const [points, setPoints] = useState<[number, number][]>([]);
   const [hoveredPoint, setHoveredPoint] = useState<number | null>(null);
   const [routeGeoJson, setRouteGeoJson] = useState<null>(null);
-
-  // 🔁 Wyznacz trasę automatycznie po dodaniu >=2 punktów
   useEffect(() => {
     const fetchRoute = async () => {
       try {
@@ -89,7 +87,7 @@ const MapPlanner = () => {
     if (points.length >= 2) {
       fetchRoute();
     } else {
-      setRouteGeoJson(null); // usuń trasę, jeśli punktów jest za mało
+      setRouteGeoJson(null); 
     }
   }, [points]);
 

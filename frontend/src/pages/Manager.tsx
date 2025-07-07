@@ -25,7 +25,7 @@ const Manager = () => {
         </div>
         <div className="flex-1 flex flex-col">
           <MenuBarTop />
-          <div className="flex-1 p-4">
+          <div className="flex-1 p-4 overflow-x-hidden">
             <Outlet />
           </div>
         </div>

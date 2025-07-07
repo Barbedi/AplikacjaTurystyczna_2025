@@ -302,7 +302,7 @@ const MyProfile = () => {
                   Aktywność
                 </span>
                 <div className="flex flex-col w-full justify-start text-lg items-start mt-4 text-wrap text-white">
-                  <p>
+                  <p className="mx-4">
                     02.07.2025 Utworzyłeś i zapisałeś trasę "nazwa Trasy" w
                     ulubionych{" "}
                   </p>
