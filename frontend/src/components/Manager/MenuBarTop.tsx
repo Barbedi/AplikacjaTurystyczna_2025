@@ -3,7 +3,7 @@ import { pathTranslation } from "../../utils/pathTranslation";
 
 const MenuBarTop = () => {
   const location = useLocation();
-  const pathParts = location.pathname.split("/").filter(Boolean); // usuwa pusty string z początku
+  const pathParts = location.pathname.split("/").filter(Boolean); 
 
   return (
     <div className="w-full px-4 py-5 flex items-center text-white border-b-2 border-white ">

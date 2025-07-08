@@ -29,6 +29,12 @@ export interface User {
   role: string;
 }
 
+export interface PeakCollection {
+  id: number;
+  name: string;
+  description: string;
+}
+
 export interface CurrentWeather {
   name: string;
   dt: number;

@@ -21,6 +21,8 @@ import MyReviews from "./pages/Manager/MyReviews";
 import FavoriteRoutes from "./pages/Manager/FavoriteRoutes";
 import MyProfile from "./pages/Manager/MyProfile";
 import Statistics from "./pages/Manager/Statistics";
+import CrownPolandPage from "./pages/Manager/CrownPolandPage";
+import CrownBeskidPage from "./pages/Manager/CrownBeskidPage";
 
 const router = createBrowserRouter([
   { path: "*", Component: Root, errorElement: <ErrorBoundary /> },
@@ -42,7 +44,12 @@ function Root() {
         <Route path="my-routes" element={<MyRoutes />} />
         <Route path="my-peaks" element={<MyPeaks />} />
         <Route path="my-reviews" element={<MyReviews />} />
-        <Route path="crown-peaks" element={<CrownPeaks />} />
+        <Route path="crown-peaks">
+          <Route index element={<CrownPeaks />} />
+          <Route path="crown-poland" element={<CrownPolandPage />} />
+          <Route path="crown-beskid" element={<CrownBeskidPage/>} />
+        </Route>
+        
         <Route path="recommended" element={<Recommended />} />
         <Route path="favorite-routes" element={<FavoriteRoutes />} />
         <Route path="search-trail" element={<SearchTrail />} />

@@ -10,4 +10,6 @@ export const pathTranslation: Record<string, string> = {
   "favorite-routes": "Ulubione trasy",
   "search-trail": "Wyszukaj szlaku",
   statistics: "Statystyki",
+  "crown-poland": "Korona Gór Polski",
+  "crown-beskid": "Korona Beskidu Sadeckiego",
 };
