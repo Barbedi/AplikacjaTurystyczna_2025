@@ -6,10 +6,11 @@ import { faHouseFlag, faChevronRight } from "@fortawesome/free-solid-svg-icons";
 
 interface SheltersMapProps {
   shelters: Shelters[];
-  setPoints: React.Dispatch<React.SetStateAction<[number, number][]>>;
+  addPointAtStart: (point: [number, number]) => void;
+  addPointAtEnd: (point: [number, number]) => void;
 }
 
-const SheltersMap: React.FC<SheltersMapProps> = ({ shelters, setPoints }) => {
+const SheltersMap: React.FC<SheltersMapProps> = ({ shelters, addPointAtStart, addPointAtEnd }) => {
   return (
     <>
       {shelters.map((shelter) => (
@@ -45,10 +46,7 @@ const SheltersMap: React.FC<SheltersMapProps> = ({ shelters, setPoints }) => {
               <button
                 type="button"
                 onClick={() =>
-                  setPoints((prev) => [
-                    [shelter.latitude, shelter.longitude],
-                    ...prev,
-                  ])
+                  addPointAtStart([shelter.latitude, shelter.longitude])
                 }
                 className=" text-black rounded-md transition cursor-pointer w-full text-start p-0.5"
               >
@@ -57,10 +55,7 @@ const SheltersMap: React.FC<SheltersMapProps> = ({ shelters, setPoints }) => {
               </button>
               <button
                 onClick={() =>
-                  setPoints((prev) => [
-                    [shelter.latitude, shelter.longitude],
-                    ...prev,
-                  ])
+                  addPointAtEnd([shelter.latitude, shelter.longitude])
                 }
                 type="button"
                 className="text-black rounded-md transition cursor-pointer w-full text-start  p-0.5"
