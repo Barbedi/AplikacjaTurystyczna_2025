@@ -13,6 +13,7 @@ import logout from "./routes/logout";
 import routeTrailRouter from "./routes/routeTrail";
 import user from "./routes/user";
 import file from "./routes/file";
+import peaks from "./routes/peaks";
 
 
 const app = express();
@@ -39,6 +40,7 @@ app.use("/logout", logout);
 app.use("/routeTrail", routeTrailRouter);
 app.use("/users", user);
 app.use("/files", file);
+app.use("/peaks", peaks);
 // Obsługa nieznalezionych endpointów
 app.use((_req: Request, res: Response) => {
   res.status(404).json({ message: "Endpoint not found" });

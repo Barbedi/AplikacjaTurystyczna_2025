@@ -6,7 +6,7 @@ const CrownPeaks = () => {
     <div className="flex flex-col lg:flex-row items-center justify-center h-[90vh] lg:-mt-7.5 mx-auto gap-12 p-9">
       <div
        onClick={() => navigate("crown-poland")}
-       className="bg-white shadow-md rounded-2xl flex flex-col lg:w-1/3 md:w-1/2 bg-[url('/assets/img/IMG_2341.jpg')] relative bg-cover bg-center bg-no-repeat h-[75vh] hover:scale-105 transition-all duration-300 cursor-pointer">
+       className="bg-white shadow-lg rounded-2xl flex flex-col lg:w-1/3 md:w-1/2 bg-[url('/assets/img/IMG_2341.jpg')] relative bg-cover bg-center bg-no-repeat h-[75vh] hover:scale-105 transition-all duration-300 cursor-pointer">
         <div className="absolute top-1/3 left-0 right-0 p-5 m-5 rounded-2xl bg-accent/50 text-center">
           <h2 className="text-white text-4xl font-lora">
             Korona Gór
@@ -22,7 +22,7 @@ const CrownPeaks = () => {
       </div>
       <div 
       onClick={() => navigate("crown-beskid")}
-      className="bg-white shadow-md rounded-2xl flex flex-col w-1/3 bg-[url('/assets/img/IMG_4048.JPG')] relative bg-cover bg-center bg-no-repeat h-[75vh] hover:scale-105 transition-all duration-300 cursor-pointer">
+      className="bg-white shadow-lg rounded-2xl flex flex-col w-1/3 bg-[url('/assets/img/IMG_4048.JPG')] relative bg-cover bg-center bg-no-repeat h-[75vh] hover:scale-105 transition-all duration-300 cursor-pointer">
         <div className="absolute top-1/3 left-0 right-0 p-5 m-5 rounded-2xl bg-accent/60">
           <h2 className="text-white text-4xl font-lora text-center">
             Korona Beskidu Sądeckiego
