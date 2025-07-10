@@ -10,7 +10,11 @@ interface SheltersMapProps {
   addPointAtEnd: (point: [number, number]) => void;
 }
 
-const SheltersMap: React.FC<SheltersMapProps> = ({ shelters, addPointAtStart, addPointAtEnd }) => {
+const SheltersMap: React.FC<SheltersMapProps> = ({
+  shelters,
+  addPointAtStart,
+  addPointAtEnd,
+}) => {
   return (
     <>
       {shelters.map((shelter) => (

@@ -16,7 +16,7 @@ router.post("/", async function (req, res) {
         body: JSON.stringify({
           coordinates: points.map(([lat, lng]: [number, number]) => [lng, lat]),
         }),
-      }
+      },
     );
 
     if (!response.ok) {
@@ -31,13 +31,19 @@ router.post("/", async function (req, res) {
     const data = await response.json();
 
     const routeCoords: number[][] = data.features[0].geometry.coordinates;
-    const locations = routeCoords.map(([lng, lat]) => ({ latitude: lat, longitude: lng }));
+    const locations = routeCoords.map(([lng, lat]) => ({
+      latitude: lat,
+      longitude: lng,
+    }));
 
-    const elevationResponse = await fetch("https://api.open-elevation.com/api/v1/lookup", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ locations }),
-    });
+    const elevationResponse = await fetch(
+      "https://api.open-elevation.com/api/v1/lookup",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ locations }),
+      },
+    );
 
     if (!elevationResponse.ok) {
       res.json(data);
@@ -46,7 +52,11 @@ router.post("/", async function (req, res) {
 
     const elevationData = await elevationResponse.json();
     const coordsWithElevation = elevationData.results.map(
-      ({ longitude, latitude, elevation }: any) => [longitude, latitude, elevation]
+      ({ longitude, latitude, elevation }: any) => [
+        longitude,
+        latitude,
+        elevation,
+      ],
     );
 
     data.features[0].geometry.coordinates = coordsWithElevation;

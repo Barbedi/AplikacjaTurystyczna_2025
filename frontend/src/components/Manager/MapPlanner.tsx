@@ -17,14 +17,22 @@ import PlannerDashboard from "./PlannerDashboard";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
-  iconRetinaUrl: new URL("leaflet/dist/images/marker-icon-2x.png", import.meta.url).href,
+  iconRetinaUrl: new URL(
+    "leaflet/dist/images/marker-icon-2x.png",
+    import.meta.url,
+  ).href,
   iconUrl: new URL("leaflet/dist/images/marker-icon.png", import.meta.url).href,
-  shadowUrl: new URL("leaflet/dist/images/marker-shadow.png", import.meta.url).href,
+  shadowUrl: new URL("leaflet/dist/images/marker-shadow.png", import.meta.url)
+    .href,
 });
 
 const { BaseLayer } = LayersControl;
 
-const LocationMarker = ({ addPoint }: { addPoint: (point: [number, number]) => void }) => {
+const LocationMarker = ({
+  addPoint,
+}: {
+  addPoint: (point: [number, number]) => void;
+}) => {
   useMapEvents({
     click(e) {
       addPoint([e.latlng.lat, e.latlng.lng]);
@@ -33,7 +41,11 @@ const LocationMarker = ({ addPoint }: { addPoint: (point: [number, number]) => v
   return null;
 };
 
-const LocationMarkerDelete = ({ removePointByCoordinates }: { removePointByCoordinates: (lat: number, lng: number) => void }) => {
+const LocationMarkerDelete = ({
+  removePointByCoordinates,
+}: {
+  removePointByCoordinates: (lat: number, lng: number) => void;
+}) => {
   useMapEvents({
     contextmenu(e) {
       removePointByCoordinates(e.latlng.lat, e.latlng.lng);
@@ -80,16 +92,21 @@ const MapPlanner = () => {
     }
   }, [points]);
 
-  const addPoint = (newPoint: [number, number]) => setPoints(prev => [...prev, newPoint]);
-  const removePoint = (indexToRemove: number) => setPoints(prev => prev.filter((_, i) => i !== indexToRemove));
+  const addPoint = (newPoint: [number, number]) =>
+    setPoints((prev) => [...prev, newPoint]);
+  const removePoint = (indexToRemove: number) =>
+    setPoints((prev) => prev.filter((_, i) => i !== indexToRemove));
   const removePointByCoordinates = (lat: number, lng: number) =>
-    setPoints(prev =>
-      prev.filter(([pointLat, pointLng]) =>
-        Math.abs(pointLat - lat) > 1e-6 || Math.abs(pointLng - lng) > 1e-6
-      )
+    setPoints((prev) =>
+      prev.filter(
+        ([pointLat, pointLng]) =>
+          Math.abs(pointLat - lat) > 1e-6 || Math.abs(pointLng - lng) > 1e-6,
+      ),
     );
-  const addPointAtStart = (newPoint: [number, number]) => setPoints(prev => [newPoint, ...prev]);
-  const addPointAtEnd = (newPoint: [number, number]) => setPoints(prev => [...prev, newPoint]);
+  const addPointAtStart = (newPoint: [number, number]) =>
+    setPoints((prev) => [newPoint, ...prev]);
+  const addPointAtEnd = (newPoint: [number, number]) =>
+    setPoints((prev) => [...prev, newPoint]);
 
   return (
     <div className="w-full h-full flex flex-col">
@@ -116,7 +133,9 @@ const MapPlanner = () => {
           addPointAtEnd={addPointAtEnd}
         />
         <LocationMarker addPoint={addPoint} />
-        <LocationMarkerDelete removePointByCoordinates={removePointByCoordinates} />
+        <LocationMarkerDelete
+          removePointByCoordinates={removePointByCoordinates}
+        />
 
         {points.map((pos, idx) => (
           <Marker
