@@ -3,20 +3,32 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faChevronLeft,
   faChevronRight,
-  faMapMarkedAlt,
   faDownload,
-  faChartLine,
+  faMountain,
+  faList,
+  faMapLocationDot,
+  faHeartCircleCheck,
+  faTrash,
 } from "@fortawesome/free-solid-svg-icons";
+import { routeTrail } from "../../assets/Data";
+import ElevationProfile from "./ElevationProfile";
 
 interface PlannerDashboardProps {
   visible: boolean;
+  points: [number, number][];
+  route: routeTrail | null;
+  onHoverPoint?: (lat: number, lng: number) => void;
 }
 
-const PlannerDashboard: React.FC<PlannerDashboardProps> = ({ visible }) => {
+const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
+  visible,
+  points,
+  route,
+  onHoverPoint,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
 
   if (!visible) return null;
-
   return (
     <>
       <button
@@ -28,44 +40,52 @@ const PlannerDashboard: React.FC<PlannerDashboardProps> = ({ visible }) => {
 
       <div
         className={`fixed top-0 right-0 bg-white/20 backdrop-blur-lg shadow-2xl h-screen rounded-l-2xl transition-transform duration-300 ease-in-out z-[1000]
-        ${isOpen ? "translate-x-0 w-80 p-4" : "translate-x-full w-0 p-0"} overflow-hidden`}
+        ${isOpen ? "translate-x-0 w-120 p-4" : "translate-x-full w-0 p-0"} overflow-hidden`}
       >
         <div className="p-4 text-gray-800 text-sm">
-          {/* Nagłówek */}
           <h2 className="text-2xl font-bold mb-4">Opcje trasy</h2>
+          <div className="mb-4 w-full flex flex-row items-start justify-between">
+            <div className="flex flex-col flex-1">
+              <label className="text-lg font-semibold mb-2">Nazwa trasy</label>
+              <input
+                type="text"
+                placeholder="Wprowadź nazwę trasy"
+                defaultValue="Moja trasa"
+                className="bg-transparent text-gray-700 text-sm outline-none w-1/2"
+              />
+            </div>
 
-          {/* Sekcja: Punkty trasy */}
-          <h2 className="text-lg font-semibold mb-2">Punkty trasy:</h2>
+            <FontAwesomeIcon
+              icon={faHeartCircleCheck}
+              title="Zapisz trasę w profilu"
+              className="text-black text-2xl cursor-pointer"
+            />
+            <FontAwesomeIcon
+              icon={faDownload}
+              title="Pobierz trase"
+              className="text-black text-2xl cursor-pointer ml-2"
+            />
+            <FontAwesomeIcon
+              icon={faTrash}
+              title="Wyczyść trasę"
+              className="text-black text-2xl cursor-pointer ml-2"
+            />
+          </div>
+          <h2 className="text-lg font-semibold mb-2">
+            <FontAwesomeIcon icon={faMapLocationDot} /> Punkty trasy:
+          </h2>
           <ol className="list-decimal pl-5 mb-4 space-y-1">
-            <li>
-              Punkt początkowy:{" "}
-              <input
-                type="text"
-                value="49.12345, 19.12345"
-                readOnly
-                className="bg-transparent text-gray-700 text-sm outline-none w-full"
-              />
-            </li>
-            <li>
-              Punkt pośredni:{" "}
-              <input
-                type="text"
-                value="49.23456, 19.23456"
-                readOnly
-                className="bg-transparent text-gray-700 text-sm outline-none w-full"
-              />
-            </li>
-            <li>
-              Punkt końcowy:{" "}
-              <input
-                type="text"
-                value="49.34567, 19.34567"
-                readOnly
-                className="bg-transparent text-gray-700 text-sm outline-none w-full"
-              />
-            </li>
+            {points.map(([lat, lng], idx) => (
+              <li key={idx}>
+                <input
+                  type="text"
+                  readOnly
+                  value={`${lat.toFixed(5)}, ${lng.toFixed(5)}`}
+                  className="bg-transparent text-gray-700 text-sm outline-none w-full"
+                />
+              </li>
+            ))}
           </ol>
-
           <div className="mb-4">
             <label className="block text-sm font-medium mb-1">Typ trasy</label>
             <select className="w-full p-2 rounded-md  text-sm  focus:outline-none ">
@@ -77,39 +97,62 @@ const PlannerDashboard: React.FC<PlannerDashboardProps> = ({ visible }) => {
             </select>
           </div>
 
-          <h2 className="text-lg font-semibold mb-2">Podsumowanie:</h2>
+          <h2 className="text-lg font-semibold mb-2">
+            <FontAwesomeIcon icon={faList} /> Podsumowanie:
+          </h2>
           <div className="mb-4 space-y-1">
             <p>
-              <strong>Długość trasy:</strong> 7.8 km
+              <strong>Długość trasy:</strong>
+              {route
+                ? (
+                    route.features[0].properties.summary.distance / 1000
+                  ).toFixed(2)
+                : "0"}{" "}
+              km
             </p>
             <p>
-              <strong>Czas przejścia:</strong> 2h 30min
+              <strong>Czas przejścia:</strong>{" "}
+              {route
+                ? `${Math.floor(route.features[0].properties.summary.duration / 3600)} h ${Math.floor((route.features[0].properties.summary.duration % 3600) / 60)} min`
+                : "0 h 0 min"}
             </p>
             <p>
-              <strong>Przewyższenie:</strong> 450 m
+              <strong>Przewyższenie:</strong>{" "}
+              {route
+                ? `${
+                    Math.max(
+                      ...route.features[0].geometry.coordinates
+                        .map((c) => c[2])
+                        .filter(
+                          (elev) => typeof elev === "number" && !isNaN(elev),
+                        ),
+                    ) -
+                    Math.min(
+                      ...route.features[0].geometry.coordinates
+                        .map((c) => c[2])
+                        .filter(
+                          (elev) => typeof elev === "number" && !isNaN(elev),
+                        ),
+                    )
+                  } m`
+                : "0 m"}
             </p>
           </div>
-
-          <h2 className="text-lg font-semibold mb-2">Akcje:</h2>
-          <div className="flex flex-col gap-2 mb-4">
-            <button className="flex items-center hover:text-blue-600">
-              <FontAwesomeIcon icon={faMapMarkedAlt} className="mr-2" />
-              Zapisz trasę w profilu
-            </button>
-            <button className="flex items-center hover:text-purple-600">
-              <FontAwesomeIcon icon={faDownload} className="mr-2" />
-              Pobierz GPX
-            </button>
-            <button className="flex items-center hover:text-green-600">
-              <FontAwesomeIcon icon={faChartLine} className="mr-2" />
-              Pokaż profil wysokości
-            </button>
+          <h2 className="text-lg font-semibold mb-2">
+            <FontAwesomeIcon icon={faMountain} /> Wykres wysokości
+          </h2>
+          <div className="mb-4 space-y-1">
+            <ElevationProfile
+              route={route}
+              onHoverPoint={(hoverLat, hoverLng) => {
+                if (!isNaN(hoverLat) && !isNaN(hoverLng)) {
+                  onHoverPoint?.(hoverLat, hoverLng);
+                } else {
+                  onHoverPoint?.(NaN, NaN);
+                }
+              }}
+            />
           </div>
-
-          {/* Sekcja: Inne */}
-          <button className="text-red-500 hover:underline text-sm mt-2">
-            Wyczyść trasę
-          </button>
         </div>
       </div>
     </>

@@ -39,6 +39,39 @@ export interface Shelters {
   photo?: string;
   mountain_range: string;
 }
+interface routeTrail {
+  type: string;
+  features: {
+    type: string;
+    geometry: {
+      coordinates: number[][][];
+    };
+    properties: {
+      id: string;
+      summary: {
+        distance: number;
+        duration: number;
+      };
+      segments: {
+        distance: number;
+        duration: number;
+        steps: {
+          distance: number;
+          duration: number;
+          type: number;
+          instruction: string;
+          name?: string;
+          way_points: number[];
+        }[];
+      }[];
+      elevation: number[];
+    };
+    geometry: {
+      type: string;
+      coordinates: number[][];
+    };
+  }[];
+}
 
 export interface CurrentWeather {
   name: string;

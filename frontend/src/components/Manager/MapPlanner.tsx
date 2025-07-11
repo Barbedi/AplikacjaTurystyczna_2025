@@ -60,6 +60,7 @@ const MapPlanner = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [routeGeoJson, setRouteGeoJson] = useState<any>(null);
   const [shelters, setShelters] = useState<Shelters[]>([]);
+  const [hoverPoint, setHoverPoint] = useState<[number, number] | null>(null);
 
   useEffect(() => {
     fetch("http://localhost:6868/shelters")
@@ -164,8 +165,33 @@ const MapPlanner = () => {
             style={{ color: "red", weight: 4 }}
           />
         )}
+        {hoverPoint && (
+          <Marker
+            position={hoverPoint}
+            icon={L.icon({
+              iconUrl: "https://cdn-icons-png.flaticon.com/512/684/684908.png",
+              iconSize: [25, 25],
+            })}
+          ></Marker>
+        )}
       </MapContainer>
-      <PlannerDashboard visible={points.length >= 2} />
+      <PlannerDashboard
+        visible={points.length >= 2}
+        points={points}
+        route={routeGeoJson}
+        onHoverPoint={(lat, lng) => {
+          if (
+            typeof lat === "number" &&
+            typeof lng === "number" &&
+            !isNaN(lat) &&
+            !isNaN(lng)
+          ) {
+            setHoverPoint([lat, lng]);
+          } else {
+            setHoverPoint(null);
+          }
+        }}
+      />
     </div>
   );
 };
