@@ -13,11 +13,11 @@ class PeaksService {
   update = (id: string, data:Peaks) => {
     return httpCommon.put(`/peaks/${id}`, data);
   };
-  getCrownPoland = () => {
-    return httpCommon.get("/peaks/crown-poland");
+  getCrownPoland = (page: number = 1) => {
+    return httpCommon.get(`/peaks/crown-poland?page=${page}`);
   };
-  getCrownBeskid = () => {
-    return httpCommon.get("/peaks/crown-beskid");
+  getCrownBeskid = (page: number = 1) => {
+    return httpCommon.get(`/peaks/crown-beskid?page=${page}`);
   };
 
 }

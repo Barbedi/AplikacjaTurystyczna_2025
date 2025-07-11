@@ -36,7 +36,10 @@ export interface PeakCollection {
   name: string;
   description: string;
 }
-
+interface PageData {
+  page: number;
+  pages: number;
+}
 export interface Peaks {
   id: number;
   name: string;

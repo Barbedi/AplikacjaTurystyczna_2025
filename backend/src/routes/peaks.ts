@@ -40,105 +40,6 @@ router.get("/", async (_req, res, next) => {
 
 /**
  * @swagger
- * /peaks/{id}:
- *   get:
- *     summary: Get peak by ID
- *     tags:
- *       - Peaks
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *         description: ID of the peak to retrieve
- *     responses:
- *       200:
- *         description: Peak details
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Peak'
- *       404:
- *         description: Peak not found
- *       500: 
- *         description: Server error
- */
-
-
-/**
- * @swagger
- * /peaks/{id}:
- *   patch:
- *     summary: Update peak information
- *     tags:
- *       - Peaks
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *         description: ID of the peak to update
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               name:
- *                 type: string
- *               elevation:
- *                 type: number
- *               region:
- *                 type: string
- *               latitude:
- *                 type: number
- *               longitude:
- *                 type: number
- *               verified:
- *                 type: boolean
- *     responses:
- *       200:
- *         description: Peak updated successfully
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Peak'
- *       400:
- *         description: Invalid ID or request body
- *       404:
- *         description: Peak not found
- *       500:
- *         description: Server error
- */
-
-
-router.patch("/:id", async (req, res, next) => {
-  try {
-    const parsedId = parseInt(req.params.id, 10);
-    if (isNaN(parsedId)) {
-      throw new Err("Invalid ID", 400);
-    }
-
-    const peakInfo = req.body;
-    const result = await peaksService.updatePeak(parsedId, peakInfo);
-    res.status(200).json(result);
-  } catch (error) {
-    if (error instanceof Err) {
-      res.status(error.statusCode || 500).json({ message: error.message });
-    } else {
-      next(error);
-    }
-  }
-});
-
-
-
-
-/**
- * @swagger
  * /peaks/crown-poland:
  *   get:
  *     summary: Get all peaks from the Crown of Poland collection
@@ -158,9 +59,13 @@ router.patch("/:id", async (req, res, next) => {
  *       500:
  *         description: Server error
  */
-router.get("/crown-poland", async (_req, res, next) => {
+router.get("/crown-poland", async (req, res, next) => {
   try {
-    const result = await peaksService.getPeaksByCollectionId(1);
+    const { page, limit } = req.query;
+    const parsedPage = page ? parseInt(page as string) : undefined;
+    const parsedLimit = limit ? parseInt(limit as string) : undefined;
+
+    const result = await peaksService.getPeaksByCollectionId(1, parsedPage, parsedLimit);
     res.status(200).json(result);
   } catch (error) {
     if (error instanceof Err) {
@@ -170,10 +75,6 @@ router.get("/crown-poland", async (_req, res, next) => {
     }
   }
 });
-
-
-
-
 
 /**
  * @swagger
@@ -196,9 +97,13 @@ router.get("/crown-poland", async (_req, res, next) => {
  *       500:
  *         description: Server error
  */
-router.get("/crown-beskid", async (_req, res, next) => {
+router.get("/crown-beskid",async (req, res, next) => {
   try {
-    const result = await peaksService.getPeaksByCollectionId(2);
+    const { page, limit } = req.query;
+    const parsedPage = page ? parseInt(page as string) : undefined;
+    const parsedLimit = limit ? parseInt(limit as string) : undefined;
+
+    const result = await peaksService.getPeaksByCollectionId(2, parsedPage, parsedLimit);
     res.status(200).json(result);
   } catch (error) {
     if (error instanceof Err) {
@@ -209,6 +114,44 @@ router.get("/crown-beskid", async (_req, res, next) => {
   }
 });
 
+// GET pojedynczy peak po ID - MUSI być na końcu, żeby nie przechwytywał /crown-poland itp.
+router.get("/:id", async (req, res, next) => {
+  try {
+    const parsedId = parseInt(req.params.id, 10);
+    if (isNaN(parsedId)) {
+      throw new Err("Invalid ID", 400);
+    }
+
+    const result = await peaksService.getPeakById(parsedId);
+    res.status(200).json(result);
+  }
+  catch (error) {
+    if (error instanceof Err) {
+      res.status(error.statusCode || 500).json({ message: error.message });
+    } else {
+      next(error);
+    }
+  }
+});
+
+router.patch("/:id", async (req, res, next) => {
+  try {
+    const parsedId = parseInt(req.params.id, 10);
+    if (isNaN(parsedId)) {
+      throw new Err("Invalid ID", 400);
+    }
+
+    const peakInfo = req.body;
+    const result = await peaksService.updatePeak(parsedId, peakInfo);
+    res.status(200).json(result);
+  } catch (error) {
+    if (error instanceof Err) {
+      res.status(error.statusCode || 500).json({ message: error.message });
+    } else {
+      next(error);
+    }
+  }
+});
 
 export default router;
 

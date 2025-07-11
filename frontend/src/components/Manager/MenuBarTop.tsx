@@ -5,11 +5,29 @@ const MenuBarTop = () => {
   const location = useLocation();
   const pathParts = location.pathname.split("/").filter(Boolean); 
 
+  const getDisplayName = (part: string, index: number) => {
+    if (/^\d+$/.test(part)) {
+      // Jeśli poprzednia część to "crown-poland" lub "crown-beskid", wyświetl "Szczyt #ID"
+      if (index > 0 && (pathParts[index - 1] === "crown-poland" || pathParts[index - 1] === "crown-beskid")) {
+        return `Szczyt #${part}`;
+      }
+      // Jeśli poprzednia część to "edit-peak", wyświetl "Szczyt #ID" (dla kompatybilności wstecznej)
+      if (index > 0 && pathParts[index - 1] === "edit-peak") {
+        return `Szczyt #${part}`;
+      }
+      // W innych przypadkach po prostu wyświetl ID
+      return `ID: ${part}`;
+    }
+    // Dla normalnych części ścieżki użyj tłumaczenia lub oryginalnej nazwy
+    return pathTranslation[part] || part;
+  };
+
   return (
     <div className="w-full px-4 py-5 flex items-center text-white border-b-2 border-white ">
       {pathParts.map((part, index) => {
         const fullPath = "/" + pathParts.slice(0, index + 1).join("/");
         const isLast = index === pathParts.length - 1;
+        const displayName = getDisplayName(part, index);
 
         return (
           <span
@@ -19,12 +37,12 @@ const MenuBarTop = () => {
             {!isLast ? (
               <>
                 <Link to={fullPath} className="text-gray-600 hover:underline">
-                  {pathTranslation[part]}
+                  {displayName}
                 </Link>
                 <span className="ml-2 text-white">/</span>
               </>
             ) : (
-              <span className="text-white">{pathTranslation[part]}</span>
+              <span className="text-white">{displayName}</span>
             )}
           </span>
         );
