@@ -59,12 +59,12 @@ const Home = () => {
           <div className="flex justify-center group items-center my-10 ">
             <a
               onClick={handleClickPlanRoute}
-              className="bg-secondary rounded-2xl px-10 py-3 text-2xl font-lora "
+              className="bg-secondary rounded-2xl px-10 py-3 text-2xl font-lora cursor-pointer"
             >
               Planuj trase
               <FontAwesomeIcon
                 icon={faChevronRight}
-                className="ml-4 group-hover:translate-x-1 duration-300 transition-all"
+                className="ml-4 group-hover:translate-x-1 duration-300 transition-all "
               />
             </a>
           </div>

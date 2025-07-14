@@ -6,10 +6,15 @@ import {
   LayersControl,
   Tooltip,
   GeoJSON,
+  useMap,
 } from "react-leaflet";
 import { useState, useEffect } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import { Shelters,Peaks,RoutePoint } from "../../assets/Data";
+import SheltersMap from "./PopupShelters";
+import PlannerDashboard from "./PlannerDashboard";
+import PeaksMap from "./PopupPeaks";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -23,60 +28,98 @@ L.Icon.Default.mergeOptions({
     .href,
 });
 
-const { BaseLayer, Overlay } = LayersControl;
+const { BaseLayer } = LayersControl;
 
 const LocationMarker = ({
-  setPoints,
+  addPoint,
 }: {
-  setPoints: React.Dispatch<React.SetStateAction<[number, number][]>>;
+  addPoint: (point: [number, number]) => void;
 }) => {
   useMapEvents({
     click(e) {
-      setPoints((prev) => [...prev, [e.latlng.lat, e.latlng.lng]]);
+      addPoint([e.latlng.lat, e.latlng.lng]);
     },
   });
   return null;
 };
 
 const LocationMarkerDelete = ({
-  setPoints,
+  removePointByCoordinates,
 }: {
-  setPoints: React.Dispatch<React.SetStateAction<[number, number][]>>;
+  removePointByCoordinates: (lat: number, lng: number) => void;
 }) => {
   useMapEvents({
     contextmenu(e) {
-      setPoints((prev) =>
-        prev.filter(
-          ([lat, lng]) =>
-            Math.abs(lat - e.latlng.lat) > 1e-6 ||
-            Math.abs(lng - e.latlng.lng) > 1e-6,
-        ),
-      );
+      removePointByCoordinates(e.latlng.lat, e.latlng.lng);
     },
   });
+  return null;
+};
 
+// Nowy komponent do monitorowania zoom
+const ZoomHandler = ({ onZoomChange }: { onZoomChange: (zoom: number) => void }) => {
+  const map = useMap();
+  
+  useEffect(() => {
+    const handleZoom = () => {
+      onZoomChange(map.getZoom());
+    };
+    
+    map.on('zoomend', handleZoom);
+    handleZoom(); // Wywołaj od razu dla aktualnego zoom
+    
+    return () => {
+      map.off('zoomend', handleZoom);
+    };
+  }, [map, onZoomChange]);
+  
   return null;
 };
 
 const MapPlanner = () => {
-  const [points, setPoints] = useState<[number, number][]>([]);
+  const [points, setPoints] = useState<RoutePoint[]>([]);
   const [hoveredPoint, setHoveredPoint] = useState<number | null>(null);
-  const [routeGeoJson, setRouteGeoJson] = useState<null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [routeGeoJson, setRouteGeoJson] = useState<any>(null);
+  const [shelters, setShelters] = useState<Shelters[]>([]);
+  const [hoverPoint, setHoverPoint] = useState<[number, number] | null>(null);
+  const [peaks, setPeaks] = useState<Peaks[]>([]);
+  const [currentZoom, setCurrentZoom] = useState<number>(12); // Nowy state dla zoom
+
+  // Konfiguracja poziomów zoom
+  const ZOOM_LEVELS = {
+    PEAKS: 11,      // Pokaż szczyty od zoom 11
+    SHELTERS: 12,   // Pokaż schroniska od zoom 12
+    DETAILS: 14     // Pokaż szczegóły od zoom 14
+  };
+
   useEffect(() => {
-    const fetchRoute = async () => {
+    fetch("http://localhost:6868/shelters")
+      .then((res) => res.json())
+      .then((json) => setShelters(json.data))
+      .catch(console.error);
+  }, []);
+  useEffect(() => {
+    fetch("http://localhost:6868/peaks")
+      .then((res) => res.json())
+      .then((json) => setPeaks(json.data))
+      .catch(console.error);
+  }, []);
+
+
+  useEffect(() => {
+    const fetchRoute = async (pointsToUse: RoutePoint[]) => {
       try {
+        // Konwertuj RoutePoint na [lat, lng] dla API
+        const coordinates = pointsToUse.map(p => p.coordinates);
+        
         const response = await fetch("http://localhost:6868/routeTrail", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ points }),
+          body: JSON.stringify({ points: coordinates }),
         });
 
-        if (!response.ok) {
-          const err = await response.json();
-          console.warn("Błąd ORS:", err.error || "nieznany");
-          return;
-        }
-
+        if (!response.ok) return;
         const data = await response.json();
         setRouteGeoJson(data);
       } catch (err) {
@@ -85,11 +128,41 @@ const MapPlanner = () => {
     };
 
     if (points.length >= 2) {
-      fetchRoute();
+      fetchRoute(points);
     } else {
-      setRouteGeoJson(null); 
+      setRouteGeoJson(null);
     }
   }, [points]);
+
+  const addPoint = (newPoint: [number, number]) =>
+    setPoints((prev) => [...prev, {
+      coordinates: newPoint,
+      type: 'custom'
+    }]);
+  const removePoint = (indexToRemove: number) =>
+    setPoints((prev) => prev.filter((_, i) => i !== indexToRemove));
+  const removePointByCoordinates = (lat: number, lng: number) =>
+    setPoints((prev) =>
+      prev.filter(
+        (point) =>
+          Math.abs(point.coordinates[0] - lat) > 1e-6 || 
+          Math.abs(point.coordinates[1] - lng) > 1e-6,
+      ),
+    );
+  const addPointAtStart = (newPoint: RoutePoint) =>
+    setPoints((prev) => [newPoint, ...prev]);
+  const addPointM = (newPoint: RoutePoint) =>
+    setPoints((prev) => {
+      if (prev.length === 0) return [newPoint];
+      if (prev.length === 1) return [...prev, newPoint];
+      return [...prev.slice(0, -1), newPoint, prev[prev.length - 1]];
+    });
+  const addPointAtEnd = (newPoint: RoutePoint) =>
+    setPoints((prev) => [...prev, newPoint]);
+
+  const handleZoomChange = (zoom: number) => {
+    setCurrentZoom(zoom);
+  };
 
   return (
     <div className="w-full h-full flex flex-col">
@@ -99,6 +172,8 @@ const MapPlanner = () => {
         scrollWheelZoom
         className="w-full h-full"
       >
+        <ZoomHandler onZoomChange={handleZoomChange} />
+        
         <LayersControl position="topright">
           <BaseLayer checked name="MapTiler Outdoor">
             <TileLayer
@@ -108,61 +183,94 @@ const MapPlanner = () => {
               zoomOffset={-1}
             />
           </BaseLayer>
-
-          <Overlay name="Szlaki turystyczne (Waymarked Trails)">
-            <TileLayer
-              url="https://tile.waymarkedtrails.org/hiking/{z}/{x}/{y}.png"
-              attribution="&copy; Waymarked Trails"
-              opacity={0.8}
-            />
-          </Overlay>
-          <Overlay name="Cieniowanie terenu (hillshade)">
-            <TileLayer
-              url="https://api.maptiler.com/tiles/hillshade/{z}/{x}/{y}.webp?key=rhB0XJ5Y8vgPLieD126O"
-              attribution="&copy; MapTiler"
-              tileSize={512}
-              opacity={0.35}
-            />
-          </Overlay>
-          <Overlay name="Kontury wysokości (contours)">
-            <TileLayer
-              url="https://api.maptiler.com/tiles/contours-v2/{z}/{x}/{y}.pbf?key=rhB0XJ5Y8vgPLieD126O"
-              attribution="&copy; MapTiler"
-              tileSize={512}
-              opacity={0.5}
-            />
-          </Overlay>
         </LayersControl>
 
-        <LocationMarker setPoints={setPoints} />
-        <LocationMarkerDelete setPoints={setPoints} />
+        {/* Pokaż schroniska tylko gdy zoom >= 12 */}
+        {currentZoom >= ZOOM_LEVELS.SHELTERS && (
+          <SheltersMap
+            shelters={shelters}
+            addPointAtStart={addPointAtStart}
+            addPointAtEnd={addPointAtEnd}
+          />
+        )}
 
-        {points.map((pos, idx) => (
-          <Marker
-            key={idx}
-            position={pos}
-            eventHandlers={{
-              mouseover: () => setHoveredPoint(idx),
-              mouseout: () => setHoveredPoint(null),
-              contextmenu: () => {
-                setPoints(points.filter((_, i) => i !== idx));
-              },
-            }}
-          >
-            {hoveredPoint === idx && (
-              <Tooltip permanent direction="top" offset={[0, -30]}>
-                Kliknij prawym przyciskiem, aby usunąć
-                <br />
-                {`Współrzędne: ${pos[0].toFixed(5)}, ${pos[1].toFixed(5)}`}
-              </Tooltip>
-            )}
-          </Marker>
-        ))}
+        {/* Pokaż szczyty tylko gdy zoom >= 11 */}
+        {currentZoom >= ZOOM_LEVELS.PEAKS && (
+          <PeaksMap
+            peaks={peaks}
+            addPointAtStart={addPointAtStart}
+            addPointM={addPointM}
+            addPointAtEnd={addPointAtEnd}
+          />
+        )}
+
+        <LocationMarker addPoint={addPoint} />
+        <LocationMarkerDelete
+          removePointByCoordinates={removePointByCoordinates}
+        />
+
+        {points.map((point, idx) => {
+          const [lat, lng] = point.coordinates;
+          return (
+            <Marker
+              key={idx}
+              position={[lat, lng]}
+              eventHandlers={{
+                mouseover: () => setHoveredPoint(idx),
+                mouseout: () => setHoveredPoint(null),
+                contextmenu: () => removePoint(idx),
+              }}
+            >
+              {hoveredPoint === idx && (
+                <Tooltip permanent direction="top" offset={[0, -30]}>
+                  Kliknij prawym przyciskiem, aby usunąć
+                  <br />
+                  {point.name 
+                    ? `${point.name} (${lat.toFixed(5)}, ${lng.toFixed(5)})`
+                    : `Współrzędne: ${lat.toFixed(5)}, ${lng.toFixed(5)}`
+                  }
+                </Tooltip>
+              )}
+            </Marker>
+          );
+        })}
 
         {routeGeoJson && (
-          <GeoJSON data={routeGeoJson} style={{ color: "red", weight: 4 }} />
+          <GeoJSON
+            key={JSON.stringify(routeGeoJson)}
+            data={routeGeoJson}
+            style={{ color: "red", weight: 4 }}
+          />
+        )}
+        
+        {hoverPoint && (
+          <Marker
+            position={hoverPoint}
+            icon={L.icon({
+              iconUrl: "https://cdn-icons-png.flaticon.com/512/684/684908.png",
+              iconSize: [25, 25],
+            })}
+          />
         )}
       </MapContainer>
+
+      <PlannerDashboard
+        visible={points.length >= 2}
+        points={points}
+        route={routeGeoJson}
+        onHoverPoint={(lat, lng) => {
+          if (
+            typeof lat === "number" &&
+            typeof lng === "number" &&
+            !isNaN(lat) &&
+            !isNaN(lng)
+          ) {
+            setHoverPoint([lat, lng]);
+          } else {
+            setHoverPoint(null);
+          }
+        }}
+      />
     </div>
   );
 };
