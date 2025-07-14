@@ -8,12 +8,14 @@ interface SheltersMapProps {
   shelters: Shelters[];
   addPointAtStart: (point: RoutePoint) => void;
   addPointAtEnd: (point: RoutePoint) => void;
+  addPointM: (point: RoutePoint) => void;
 }
 
 const SheltersMap: React.FC<SheltersMapProps> = ({
   shelters,
   addPointAtStart,
   addPointAtEnd,
+  addPointM,
 }) => {
   return (
     <>
@@ -59,6 +61,20 @@ const SheltersMap: React.FC<SheltersMapProps> = ({
                 className=" text-black rounded-md transition cursor-pointer w-full text-start p-0.5"
               >
                 Ustaw jako początek trasy
+                <FontAwesomeIcon icon={faChevronRight} className="ml-2" />
+              </button>
+              <button
+                type="button"
+                onClick={() =>
+                  addPointM({
+                    coordinates: [shelter.latitude, shelter.longitude],
+                    name: shelter.name,
+                    type: 'shelter'
+                  })
+                }
+                className=" text-black rounded-md transition cursor-pointer w-full text-start p-0.5"
+              >
+                Ustaw punkt pośredni trasy
                 <FontAwesomeIcon icon={faChevronRight} className="ml-2" />
               </button>
               <button

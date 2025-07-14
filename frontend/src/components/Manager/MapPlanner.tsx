@@ -84,13 +84,14 @@ const MapPlanner = () => {
   const [shelters, setShelters] = useState<Shelters[]>([]);
   const [hoverPoint, setHoverPoint] = useState<[number, number] | null>(null);
   const [peaks, setPeaks] = useState<Peaks[]>([]);
-  const [currentZoom, setCurrentZoom] = useState<number>(12); // Nowy state dla zoom
+  const [currentZoom, setCurrentZoom] = useState<number>(12); 
+  const [routeType, setRouteType] = useState<'one-way' | 'loop' | 'back-and-forth'>('one-way');
 
-  // Konfiguracja poziomów zoom
+  
   const ZOOM_LEVELS = {
-    PEAKS: 11,      // Pokaż szczyty od zoom 11
-    SHELTERS: 12,   // Pokaż schroniska od zoom 12
-    DETAILS: 14     // Pokaż szczegóły od zoom 14
+    PEAKS: 11,      
+    SHELTERS: 12,   
+    DETAILS: 14     
   };
 
   useEffect(() => {
@@ -108,31 +109,40 @@ const MapPlanner = () => {
 
 
   useEffect(() => {
-    const fetchRoute = async (pointsToUse: RoutePoint[]) => {
-      try {
-        // Konwertuj RoutePoint na [lat, lng] dla API
-        const coordinates = pointsToUse.map(p => p.coordinates);
-        
-        const response = await fetch("http://localhost:6868/routeTrail", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ points: coordinates }),
-        });
+  const fetchRoute = async (pointsToUse: RoutePoint[]) => {
+    try {
+      let coordinates = pointsToUse.map(p => p.coordinates);
 
-        if (!response.ok) return;
-        const data = await response.json();
-        setRouteGeoJson(data);
-      } catch (err) {
-        console.error("Błąd sieci:", err);
+      if (routeType === 'loop' && pointsToUse.length >= 3) {
+        // Dodaj pierwszy punkt na koniec, tworząc pętlę
+        coordinates = [...coordinates, coordinates[0]];
+      } else if (routeType === 'back-and-forth') {
+        // Dodaj trasę powrotną (bez duplikatu ostatniego punktu)
+        const reverse = [...coordinates].reverse().slice(1);
+        coordinates = [...coordinates, ...reverse];
       }
-    };
 
-    if (points.length >= 2) {
-      fetchRoute(points);
-    } else {
-      setRouteGeoJson(null);
+      const response = await fetch("http://localhost:6868/routeTrail", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ points: coordinates }),
+      });
+
+      if (!response.ok) return;
+      const data = await response.json();
+      setRouteGeoJson(data);
+    } catch (err) {
+      console.error("Błąd sieci:", err);
     }
-  }, [points]);
+  };
+
+  if (points.length >= 2) {
+    fetchRoute(points);
+  } else {
+    setRouteGeoJson(null);
+  }
+}, [points, routeType]);
+
 
   const addPoint = (newPoint: [number, number]) =>
     setPoints((prev) => [...prev, {
@@ -184,17 +194,14 @@ const MapPlanner = () => {
             />
           </BaseLayer>
         </LayersControl>
-
-        {/* Pokaż schroniska tylko gdy zoom >= 12 */}
         {currentZoom >= ZOOM_LEVELS.SHELTERS && (
           <SheltersMap
             shelters={shelters}
             addPointAtStart={addPointAtStart}
             addPointAtEnd={addPointAtEnd}
+            addPointM={addPointM}
           />
         )}
-
-        {/* Pokaż szczyty tylko gdy zoom >= 11 */}
         {currentZoom >= ZOOM_LEVELS.PEAKS && (
           <PeaksMap
             peaks={peaks}
@@ -270,6 +277,8 @@ const MapPlanner = () => {
             setHoverPoint(null);
           }
         }}
+        onRemovePoint={removePoint}
+        onRouteTypeChange={(type) => setRouteType(type)}
       />
     </div>
   );
