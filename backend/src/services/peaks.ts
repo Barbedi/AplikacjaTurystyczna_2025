@@ -2,6 +2,7 @@ import db from "../db";
 import { Err, Peaks } from "../Types";
 import helper from "../helper";
 
+
 async function getPeaks() {
   const query = `
     SELECT id, name, elevation, region, latitude, longitude, verified
@@ -46,6 +47,7 @@ async function updatePeak(id: number, peakInfo: Peaks) {
   }
 
   const query = `
+
     UPDATE peaks
     SET name = $1, elevation = $2, region = $3, latitude = $4, longitude = $5, verified = $6
     WHERE id = $7

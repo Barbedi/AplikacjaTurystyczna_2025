@@ -36,13 +36,13 @@ export function refreshToken(req: Request, res: Response, next: NextFunction) {
           { email: tokenUser.email, role: tokenUser.role }, // dodaj role
           process.env["SECRET_TOKEN"] as string,
           {
-            expiresIn: 60000,
+            expiresIn: 86400, // 24 godziny (jak w login.ts)
           },
         );
 
         const cookieOptions = {
           httpOnly: true,
-          expires: new Date(Date.now() + 60000),
+          expires: new Date(Date.now() + 86400 * 1000), // 24 godziny w milisekundach
         };
 
         res.cookie("jwt", accessToken, cookieOptions);

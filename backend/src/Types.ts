@@ -15,6 +15,13 @@ interface Users {
   salt?: string;
   role?: string;
 }
+
+interface PeakCollection {
+  id: number;
+  name: string;
+  description: string;
+}
+
  interface Peaks {
   id: number;
   name: string;
@@ -34,4 +41,7 @@ export class Err implements ErrInterface {
   stack?: string;
 }
 
-export type { ErrInterface,Peaks, Users };
+
+export type { ErrInterface, Users , PeakCollection, Peaks };
+
+

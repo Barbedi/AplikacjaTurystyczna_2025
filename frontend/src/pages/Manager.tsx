@@ -12,7 +12,7 @@ const Manager = () => {
   useEffect(() => {
     checkAuth().then((auth) => {
       if (!auth) {
-        navigate("/logowanie");
+        navigate("/login");
       }
     });
   }, [checkAuth, navigate]);
