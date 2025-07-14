@@ -2,14 +2,14 @@ import db from "../db";
 import { Err, Peaks } from "../Types";
 import helper from "../helper";
 
-async function getPeaks(page = 1, limit = 8) {
-  if (page < 1 || limit < 1) {
-    throw new Err("Invalid page or limit", 400);
-  }
-   const offset = helper.getOffset(page, limit);
-  const { query, queryParams } = helper.buildQuery("Peaks", offset, limit);
-  const result = await db.query(query, queryParams);
-  const totalPages = await helper.getPages("Peaks", limit);
+
+async function getPeaks() {
+  const query = `
+    SELECT id, name, elevation, region, latitude, longitude, verified
+    FROM peaks
+    ORDER BY elevation DESC
+  `;
+  const result = await db.query(query);
 
   const rows = helper.emptyOrRows(result.rows);
   if (rows.length === 0) {
@@ -17,16 +17,14 @@ async function getPeaks(page = 1, limit = 8) {
   }
   return {
     data: rows,
-    message: "Successfully fetched peaks",
-    totalPages,
-    page,
-    limit,
+    message: "Successfully fetched all peaks",
+    total: rows.length,
   };
 }
 async function getPeakById(id: number) {
   const query = `
     SELECT id, name, elevation, region, latitude, longitude, verified
-    FROM Peaks
+    FROM peaks
     WHERE id = $1
     LIMIT 1;
   `;
@@ -49,7 +47,8 @@ async function updatePeak(id: number, peakInfo: Peaks) {
   }
 
   const query = `
-    UPDATE Peaks
+
+    UPDATE peaks
     SET name = $1, elevation = $2, region = $3, latitude = $4, longitude = $5, verified = $6
     WHERE id = $7
     RETURNING id, name, elevation, region, latitude, longitude, verified;

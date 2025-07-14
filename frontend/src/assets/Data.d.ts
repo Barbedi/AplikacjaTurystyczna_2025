@@ -30,6 +30,72 @@ export interface User {
   email: string;
   role: string;
 }
+export interface Peaks{
+  id: number;
+  name: string;
+  elevation: number;
+  region: string;
+  latitude: number;
+  longitude: number;
+  verified: boolean;
+}
+export interface RoutePoint {
+  coordinates: [number, number];
+  name?: string;
+  type?: 'peak' | 'shelter' | 'custom';
+  id?: number;
+}
+
+export interface RouteInfo {
+  name: string;
+  type: 'one-way' | 'loop' | 'back-and-forth';
+  points: RoutePoint[];
+  description?: string;
+}
+
+export interface Shelters {
+  id: number;
+  name: string;
+  description?: string;
+  latitude: number;
+  longitude: number;
+  altitude: number;
+  photo?: string;
+  mountain_range: string;
+}
+interface routeTrail {
+  type: string;
+  features: {
+    type: string;
+    geometry: {
+      coordinates: number[][][];
+    };
+    properties: {
+      id: string;
+      summary: {
+        distance: number;
+        duration: number;
+      };
+      segments: {
+        distance: number;
+        duration: number;
+        steps: {
+          distance: number;
+          duration: number;
+          type: number;
+          instruction: string;
+          name?: string;
+          way_points: number[];
+        }[];
+      }[];
+      elevation: number[];
+    };
+    geometry: {
+      type: string;
+      coordinates: number[][];
+    };
+  }[];
+}
 
 export interface PeakCollection {
   id: number;

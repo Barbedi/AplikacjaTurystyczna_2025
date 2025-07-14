@@ -15,6 +15,7 @@ interface Users {
   salt?: string;
   role?: string;
 }
+
 interface PeakCollection {
   id: number;
   name: string;
@@ -28,7 +29,7 @@ interface PeakCollection {
   region: string;
   latitude: number;
   longitude: number;
-  verified: boolean;
+  verified?: boolean;
 }
 export class Err implements ErrInterface {
   constructor(message: string, statusCode?: number) {
@@ -40,4 +41,7 @@ export class Err implements ErrInterface {
   stack?: string;
 }
 
+
 export type { ErrInterface, Users , PeakCollection, Peaks };
+
+
