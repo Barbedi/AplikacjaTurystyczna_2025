@@ -36,9 +36,13 @@ const AuthProvider: React.ComponentType<AuthProviderProps> = ({
             }
           })
           .catch((error) => {
-            if (error.response.status === 401) {
-              console.error("Unauthorized");
-            } else if (error.response.status === 500) {
+            console.log("❌ Refresh token failed:", error.response?.status, error.response?.data);
+            // Gdy refresh token nie działa, wyloguj użytkownika
+            setAuth(false);
+            setUser(undefined);
+            if (error.response?.status === 401) {
+              console.error("Refresh token expired - logging out");
+            } else if (error.response?.status === 500) {
               console.error("Internal Server error");
             }
             resolve(false);
@@ -60,13 +64,26 @@ const AuthProvider: React.ComponentType<AuthProviderProps> = ({
             }
           })
           .catch((error) => {
+            console.log("❌ Auth check failed:", error.response?.status, error.response?.data);
             if (error.response) {
               if (error.response.status === 401) {
+                console.log("🔄 Trying refresh token...");
                 refreshToken().then((result) => resolve(result));
               } else if (error.response.status === 500) {
                 console.error("Internal server error");
                 resolve(false);
+              } else {
+                // Inne błędy - wyloguj
+                setAuth(false);
+                setUser(undefined);
+                resolve(false);
               }
+            } else {
+              // Brak odpowiedzi (serwer wyłączony) - wyloguj
+              console.log("🚫 No response from server - logging out");
+              setAuth(false);
+              setUser(undefined);
+              resolve(false);
             }
           });
       }),
@@ -74,19 +91,25 @@ const AuthProvider: React.ComponentType<AuthProviderProps> = ({
   );
 
   const logout = useCallback(() => {
+    console.log("🚪 Logging out...");
     authenticationService
       .logout()
       .then((response) => {
         if (response.status === 200) {
+          console.log("✅ Logout successful");
           setAuth(false);
           setUser(undefined);
         }
       })
       .catch((error) => {
-        if (error.response.status === 401) {
-          console.error("Unauthorized");
-        } else if (error.response.status === 500) {
-          console.error("Server error");
+        console.log("❌ Logout error:", error.response?.status);
+        // Nawet jeśli logout się nie powiódł, wyczyść stan lokalny
+        setAuth(false);
+        setUser(undefined);
+        if (error.response?.status === 401) {
+          console.error("Unauthorized during logout");
+        } else if (error.response?.status === 500) {
+          console.error("Server error during logout");
         }
       });
   }, []);

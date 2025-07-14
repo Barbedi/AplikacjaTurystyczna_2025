@@ -1,3 +1,5 @@
+
+
 export interface Users {
   id?: number;
   email: string;
@@ -93,6 +95,25 @@ interface routeTrail {
       coordinates: number[][];
     };
   }[];
+}
+
+export interface PeakCollection {
+  id: number;
+  name: string;
+  description: string;
+}
+interface PageData {
+  page: number;
+  pages: number;
+}
+export interface Peaks {
+  id: number;
+  name: string;
+  elevation: number;
+  region: string;
+  latitude: number;
+  longitude: number;
+  verified: boolean;
 }
 
 export interface CurrentWeather {
