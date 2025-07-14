@@ -1,6 +1,6 @@
 import React from "react";
 import { CircleMarker, Popup } from "react-leaflet";
-import { Shelters,RoutePoint } from "../../assets/Data";
+import { Shelters, RoutePoint } from "../../assets/Data";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHouseFlag, faChevronRight } from "@fortawesome/free-solid-svg-icons";
 
@@ -55,7 +55,7 @@ const SheltersMap: React.FC<SheltersMapProps> = ({
                   addPointAtStart({
                     coordinates: [shelter.latitude, shelter.longitude],
                     name: shelter.name,
-                    type: 'shelter'
+                    type: "shelter",
                   })
                 }
                 className=" text-black rounded-md transition cursor-pointer w-full text-start p-0.5"
@@ -69,7 +69,7 @@ const SheltersMap: React.FC<SheltersMapProps> = ({
                   addPointM({
                     coordinates: [shelter.latitude, shelter.longitude],
                     name: shelter.name,
-                    type: 'shelter'
+                    type: "shelter",
                   })
                 }
                 className=" text-black rounded-md transition cursor-pointer w-full text-start p-0.5"
@@ -82,7 +82,7 @@ const SheltersMap: React.FC<SheltersMapProps> = ({
                   addPointAtEnd({
                     coordinates: [shelter.latitude, shelter.longitude],
                     name: shelter.name,
-                    type: 'shelter'
+                    type: "shelter",
                   })
                 }
                 type="button"

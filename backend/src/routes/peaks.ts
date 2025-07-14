@@ -33,7 +33,7 @@ router.get("/", async (_req, res, next) => {
     if (error instanceof Err) {
       res.status(error.statusCode || 500).json({ message: error.message });
     } else {
-      next(error); 
+      next(error);
     }
   }
 });
@@ -65,7 +65,11 @@ router.get("/crown-poland", async (req, res, next) => {
     const parsedPage = page ? parseInt(page as string) : undefined;
     const parsedLimit = limit ? parseInt(limit as string) : undefined;
 
-    const result = await peaksService.getPeaksByCollectionId(1, parsedPage, parsedLimit);
+    const result = await peaksService.getPeaksByCollectionId(
+      1,
+      parsedPage,
+      parsedLimit,
+    );
     res.status(200).json(result);
   } catch (error) {
     if (error instanceof Err) {
@@ -97,13 +101,17 @@ router.get("/crown-poland", async (req, res, next) => {
  *       500:
  *         description: Server error
  */
-router.get("/crown-beskid",async (req, res, next) => {
+router.get("/crown-beskid", async (req, res, next) => {
   try {
     const { page, limit } = req.query;
     const parsedPage = page ? parseInt(page as string) : undefined;
     const parsedLimit = limit ? parseInt(limit as string) : undefined;
 
-    const result = await peaksService.getPeaksByCollectionId(2, parsedPage, parsedLimit);
+    const result = await peaksService.getPeaksByCollectionId(
+      2,
+      parsedPage,
+      parsedLimit,
+    );
     res.status(200).json(result);
   } catch (error) {
     if (error instanceof Err) {
@@ -124,8 +132,7 @@ router.get("/:id", async (req, res, next) => {
 
     const result = await peaksService.getPeakById(parsedId);
     res.status(200).json(result);
-  }
-  catch (error) {
+  } catch (error) {
     if (error instanceof Err) {
       res.status(error.statusCode || 500).json({ message: error.message });
     } else {
@@ -186,5 +193,3 @@ export default router;
  *           type: boolean
  *           example: true
  */
-
-

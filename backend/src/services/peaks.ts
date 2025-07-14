@@ -2,7 +2,6 @@ import db from "../db";
 import { Err, Peaks } from "../Types";
 import helper from "../helper";
 
-
 async function getPeaks() {
   const query = `
     SELECT id, name, elevation, region, latitude, longitude, verified
@@ -62,7 +61,7 @@ async function updatePeak(id: number, peakInfo: Peaks) {
     peakInfo.verified,
     id,
   ];
-  
+
   const result = await db.query(query, values);
   const rows = result.rows;
 
@@ -75,7 +74,11 @@ async function updatePeak(id: number, peakInfo: Peaks) {
     message: "Successfully updated peak",
   };
 }
-async function getPeaksByCollectionId(collectionId: number, page = 1, limit = 7) {
+async function getPeaksByCollectionId(
+  collectionId: number,
+  page = 1,
+  limit = 7,
+) {
   if (page < 1 || limit < 1) {
     throw new Err("Invalid page or limit", 400);
   }
@@ -110,12 +113,9 @@ async function getPeaksByCollectionId(collectionId: number, page = 1, limit = 7)
   };
 }
 
-
-
-
 export default {
-    getPeaks,
-    getPeakById,
-    updatePeak,
-    getPeaksByCollectionId,
-    };
+  getPeaks,
+  getPeakById,
+  updatePeak,
+  getPeaksByCollectionId,
+};

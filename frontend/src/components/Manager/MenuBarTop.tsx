@@ -3,12 +3,16 @@ import { pathTranslation } from "../../utils/pathTranslation";
 
 const MenuBarTop = () => {
   const location = useLocation();
-  const pathParts = location.pathname.split("/").filter(Boolean); 
+  const pathParts = location.pathname.split("/").filter(Boolean);
 
   const getDisplayName = (part: string, index: number) => {
     if (/^\d+$/.test(part)) {
       // Jeśli poprzednia część to "crown-poland" lub "crown-beskid", wyświetl "Szczyt #ID"
-      if (index > 0 && (pathParts[index - 1] === "crown-poland" || pathParts[index - 1] === "crown-beskid")) {
+      if (
+        index > 0 &&
+        (pathParts[index - 1] === "crown-poland" ||
+          pathParts[index - 1] === "crown-beskid")
+      ) {
         return `Szczyt #${part}`;
       }
       // Jeśli poprzednia część to "edit-peak", wyświetl "Szczyt #ID" (dla kompatybilności wstecznej)

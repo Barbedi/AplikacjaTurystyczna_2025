@@ -11,7 +11,7 @@ import {
 import { useState, useEffect } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { Shelters,Peaks,RoutePoint } from "../../assets/Data";
+import { Shelters, Peaks, RoutePoint } from "../../assets/Data";
 import SheltersMap from "./PopupShelters";
 import PlannerDashboard from "./PlannerDashboard";
 import PeaksMap from "./PopupPeaks";
@@ -57,22 +57,26 @@ const LocationMarkerDelete = ({
 };
 
 // Nowy komponent do monitorowania zoom
-const ZoomHandler = ({ onZoomChange }: { onZoomChange: (zoom: number) => void }) => {
+const ZoomHandler = ({
+  onZoomChange,
+}: {
+  onZoomChange: (zoom: number) => void;
+}) => {
   const map = useMap();
-  
+
   useEffect(() => {
     const handleZoom = () => {
       onZoomChange(map.getZoom());
     };
-    
-    map.on('zoomend', handleZoom);
+
+    map.on("zoomend", handleZoom);
     handleZoom(); // Wywołaj od razu dla aktualnego zoom
-    
+
     return () => {
-      map.off('zoomend', handleZoom);
+      map.off("zoomend", handleZoom);
     };
   }, [map, onZoomChange]);
-  
+
   return null;
 };
 
@@ -84,14 +88,15 @@ const MapPlanner = () => {
   const [shelters, setShelters] = useState<Shelters[]>([]);
   const [hoverPoint, setHoverPoint] = useState<[number, number] | null>(null);
   const [peaks, setPeaks] = useState<Peaks[]>([]);
-  const [currentZoom, setCurrentZoom] = useState<number>(12); 
-  const [routeType, setRouteType] = useState<'one-way' | 'loop' | 'back-and-forth'>('one-way');
+  const [currentZoom, setCurrentZoom] = useState<number>(12);
+  const [routeType, setRouteType] = useState<
+    "one-way" | "loop" | "back-and-forth"
+  >("one-way");
 
-  
   const ZOOM_LEVELS = {
-    PEAKS: 11,      
-    SHELTERS: 12,   
-    DETAILS: 14     
+    PEAKS: 11,
+    SHELTERS: 12,
+    DETAILS: 14,
   };
 
   useEffect(() => {
@@ -107,55 +112,56 @@ const MapPlanner = () => {
       .catch(console.error);
   }, []);
 
-
   useEffect(() => {
-  const fetchRoute = async (pointsToUse: RoutePoint[]) => {
-    try {
-      let coordinates = pointsToUse.map(p => p.coordinates);
+    const fetchRoute = async (pointsToUse: RoutePoint[]) => {
+      try {
+        let coordinates = pointsToUse.map((p) => p.coordinates);
 
-      if (routeType === 'loop' && pointsToUse.length >= 3) {
-        // Dodaj pierwszy punkt na koniec, tworząc pętlę
-        coordinates = [...coordinates, coordinates[0]];
-      } else if (routeType === 'back-and-forth') {
-        // Dodaj trasę powrotną (bez duplikatu ostatniego punktu)
-        const reverse = [...coordinates].reverse().slice(1);
-        coordinates = [...coordinates, ...reverse];
+        if (routeType === "loop" && pointsToUse.length >= 3) {
+          // Dodaj pierwszy punkt na koniec, tworząc pętlę
+          coordinates = [...coordinates, coordinates[0]];
+        } else if (routeType === "back-and-forth") {
+          // Dodaj trasę powrotną (bez duplikatu ostatniego punktu)
+          const reverse = [...coordinates].reverse().slice(1);
+          coordinates = [...coordinates, ...reverse];
+        }
+
+        const response = await fetch("http://localhost:6868/routeTrail", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ points: coordinates }),
+        });
+
+        if (!response.ok) return;
+        const data = await response.json();
+        setRouteGeoJson(data);
+      } catch (err) {
+        console.error("Błąd sieci:", err);
       }
+    };
 
-      const response = await fetch("http://localhost:6868/routeTrail", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ points: coordinates }),
-      });
-
-      if (!response.ok) return;
-      const data = await response.json();
-      setRouteGeoJson(data);
-    } catch (err) {
-      console.error("Błąd sieci:", err);
+    if (points.length >= 2) {
+      fetchRoute(points);
+    } else {
+      setRouteGeoJson(null);
     }
-  };
-
-  if (points.length >= 2) {
-    fetchRoute(points);
-  } else {
-    setRouteGeoJson(null);
-  }
-}, [points, routeType]);
-
+  }, [points, routeType]);
 
   const addPoint = (newPoint: [number, number]) =>
-    setPoints((prev) => [...prev, {
-      coordinates: newPoint,
-      type: 'custom'
-    }]);
+    setPoints((prev) => [
+      ...prev,
+      {
+        coordinates: newPoint,
+        type: "custom",
+      },
+    ]);
   const removePoint = (indexToRemove: number) =>
     setPoints((prev) => prev.filter((_, i) => i !== indexToRemove));
   const removePointByCoordinates = (lat: number, lng: number) =>
     setPoints((prev) =>
       prev.filter(
         (point) =>
-          Math.abs(point.coordinates[0] - lat) > 1e-6 || 
+          Math.abs(point.coordinates[0] - lat) > 1e-6 ||
           Math.abs(point.coordinates[1] - lng) > 1e-6,
       ),
     );
@@ -183,7 +189,7 @@ const MapPlanner = () => {
         className="w-full h-full"
       >
         <ZoomHandler onZoomChange={handleZoomChange} />
-        
+
         <LayersControl position="topright">
           <BaseLayer checked name="MapTiler Outdoor">
             <TileLayer
@@ -232,10 +238,9 @@ const MapPlanner = () => {
                 <Tooltip permanent direction="top" offset={[0, -30]}>
                   Kliknij prawym przyciskiem, aby usunąć
                   <br />
-                  {point.name 
+                  {point.name
                     ? `${point.name} (${lat.toFixed(5)}, ${lng.toFixed(5)})`
-                    : `Współrzędne: ${lat.toFixed(5)}, ${lng.toFixed(5)}`
-                  }
+                    : `Współrzędne: ${lat.toFixed(5)}, ${lng.toFixed(5)}`}
                 </Tooltip>
               )}
             </Marker>
@@ -249,7 +254,7 @@ const MapPlanner = () => {
             style={{ color: "red", weight: 4 }}
           />
         )}
-        
+
         {hoverPoint && (
           <Marker
             position={hoverPoint}

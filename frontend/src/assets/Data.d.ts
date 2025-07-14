@@ -1,5 +1,3 @@
-
-
 export interface Users {
   id?: number;
   email: string;
@@ -24,13 +22,40 @@ export interface UserInfo {
   profile_image?: string;
 }
 
+export interface Trails {
+  id: number;
+  name: string;
+  description: string;
+  difficulty: string;
+  length_km: number;
+  elevation_gain: number;
+  region: string;
+  route_type: "one-way" | "loop" | "back-and-forth";
+  geometry: {
+    type: string;
+    coordinates: number[][];
+  };
+  created_by: string;
+  created_at: string;
+}
+
+export interface TrailPoint {
+  id: number;
+  trail_id: number;
+  lat: number;
+  lng: number;
+  elevation?: number;
+  name?: string;
+  point_order: number;
+}
+
 export interface User {
   exp: number;
   iat: number;
   email: string;
   role: string;
 }
-export interface Peaks{
+export interface Peaks {
   id: number;
   name: string;
   elevation: number;
@@ -42,13 +67,13 @@ export interface Peaks{
 export interface RoutePoint {
   coordinates: [number, number];
   name?: string;
-  type?: 'peak' | 'shelter' | 'custom';
+  type?: "peak" | "shelter" | "custom";
   id?: number;
 }
 
 export interface RouteInfo {
   name: string;
-  type: 'one-way' | 'loop' | 'back-and-forth';
+  type: "one-way" | "loop" | "back-and-forth";
   points: RoutePoint[];
   description?: string;
 }

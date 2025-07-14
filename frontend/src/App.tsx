@@ -56,7 +56,7 @@ function Root() {
             <Route path=":id" element={<EditCrownPage />} />
           </Route>
         </Route>
-        
+
         <Route path="recommended" element={<Recommended />} />
         <Route path="favorite-routes" element={<FavoriteRoutes />} />
         <Route path="search-trail" element={<SearchTrail />} />

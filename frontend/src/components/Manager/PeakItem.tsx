@@ -2,12 +2,16 @@ import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit } from "@fortawesome/free-solid-svg-icons";
 import VerifiedIcon from "@mui/icons-material/Verified";
-import { Peaks,PageData } from "../../assets/Data";
+import { Peaks, PageData } from "../../assets/Data";
 import Pagination from "../Pagination";
 import { useSearchParams, useNavigate, useLocation } from "react-router-dom";
 
 interface PeakItemProps {
-  fetchPeaks: (page?: number) => Promise<{ data: { data: Peaks[], totalPages: number, page: number, limit: number } }>;
+  fetchPeaks: (
+    page?: number,
+  ) => Promise<{
+    data: { data: Peaks[]; totalPages: number; page: number; limit: number };
+  }>;
 }
 
 const PeakItem = ({ fetchPeaks }: PeakItemProps) => {
@@ -38,7 +42,6 @@ const PeakItem = ({ fetchPeaks }: PeakItemProps) => {
       .finally(() => setLoading(false));
   }, [fetchPeaks, pageData.page]);
 
-  
   useEffect(() => {
     const currentPage = parseInt(searchParams.get("page") || "1");
     if (pageData.page !== currentPage) {
@@ -47,16 +50,18 @@ const PeakItem = ({ fetchPeaks }: PeakItemProps) => {
   }, [pageData.page, searchParams, setSearchParams]);
 
   if (loading) {
-    return <div className="text-white text-center mt-5">Ładowanie szczytów...</div>;
+    return (
+      <div className="text-white text-center mt-5">Ładowanie szczytów...</div>
+    );
   }
 
   const editPeak = async (peaks: Peaks) => {
     // Sprawdź aktualną ścieżkę, żeby określić, czy jesteśmy w crown-poland czy crown-beskid
     const currentPath = location.pathname;
-    
-    if (currentPath.includes('crown-poland')) {
+
+    if (currentPath.includes("crown-poland")) {
       navigate(`/dashboard/crown-peaks/crown-poland/${peaks.id}`);
-    } else if (currentPath.includes('crown-beskid')) {
+    } else if (currentPath.includes("crown-beskid")) {
       navigate(`/dashboard/crown-peaks/crown-beskid/${peaks.id}`);
     } else {
       // Fallback - jeśli nie można określić, użyj starą metodę
@@ -71,12 +76,21 @@ const PeakItem = ({ fetchPeaks }: PeakItemProps) => {
           key={peak.id}
           className="flex flex-row items-start justify-start w-full m-1 p-5 bg-accent rounded-2xl shadow-lg transition-transform duration-300 hover:scale-105"
         >
-          <span className="flex-1 text-lg font-lora text-white">{peak.name}</span>
-          <span className="flex-1 text-lg font-lora text-white">{peak.elevation} m n.p.m.</span>
-          <span className="flex-1 text-lg font-lora text-white">{peak.region}</span>
+          <span className="flex-1 text-lg font-lora text-white">
+            {peak.name}
+          </span>
+          <span className="flex-1 text-lg font-lora text-white">
+            {peak.elevation} m n.p.m.
+          </span>
+          <span className="flex-1 text-lg font-lora text-white">
+            {peak.region}
+          </span>
           <span className="flex-1 text-lg font-lora text-white">
             {peak.verified ? (
-              <VerifiedIcon className="text-green-500" titleAccess="Zweryfikowane" />
+              <VerifiedIcon
+                className="text-green-500"
+                titleAccess="Zweryfikowane"
+              />
             ) : (
               "Nie"
             )}
@@ -97,7 +111,6 @@ const PeakItem = ({ fetchPeaks }: PeakItemProps) => {
         className="mt-5"
       />
     </div>
-    
   );
 };
 
