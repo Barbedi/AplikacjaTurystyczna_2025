@@ -1,13 +1,13 @@
 import React from "react";
 import { CircleMarker, Popup } from "react-leaflet";
-import { Shelters } from "../../assets/Data";
+import { Shelters,RoutePoint } from "../../assets/Data";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHouseFlag, faChevronRight } from "@fortawesome/free-solid-svg-icons";
 
 interface SheltersMapProps {
   shelters: Shelters[];
-  addPointAtStart: (point: [number, number]) => void;
-  addPointAtEnd: (point: [number, number]) => void;
+  addPointAtStart: (point: RoutePoint) => void;
+  addPointAtEnd: (point: RoutePoint) => void;
 }
 
 const SheltersMap: React.FC<SheltersMapProps> = ({
@@ -50,7 +50,11 @@ const SheltersMap: React.FC<SheltersMapProps> = ({
               <button
                 type="button"
                 onClick={() =>
-                  addPointAtStart([shelter.latitude, shelter.longitude])
+                  addPointAtStart({
+                    coordinates: [shelter.latitude, shelter.longitude],
+                    name: shelter.name,
+                    type: 'shelter'
+                  })
                 }
                 className=" text-black rounded-md transition cursor-pointer w-full text-start p-0.5"
               >
@@ -59,7 +63,11 @@ const SheltersMap: React.FC<SheltersMapProps> = ({
               </button>
               <button
                 onClick={() =>
-                  addPointAtEnd([shelter.latitude, shelter.longitude])
+                  addPointAtEnd({
+                    coordinates: [shelter.latitude, shelter.longitude],
+                    name: shelter.name,
+                    type: 'shelter'
+                  })
                 }
                 type="button"
                 className="text-black rounded-md transition cursor-pointer w-full text-start  p-0.5"

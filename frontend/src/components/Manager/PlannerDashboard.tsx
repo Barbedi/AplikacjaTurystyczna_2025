@@ -10,14 +10,16 @@ import {
   faHeartCircleCheck,
   faTrash,
 } from "@fortawesome/free-solid-svg-icons";
-import { routeTrail } from "../../assets/Data";
+import { routeTrail,RoutePoint } from "../../assets/Data";
 import ElevationProfile from "./ElevationProfile";
+
 
 interface PlannerDashboardProps {
   visible: boolean;
-  points: [number, number][];
+  points: RoutePoint[];
   route: routeTrail | null;
   onHoverPoint?: (lat: number, lng: number) => void;
+  onRemovePoint?: (index: number) => void; 
 }
 
 const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
@@ -25,6 +27,7 @@ const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
   points,
   route,
   onHoverPoint,
+  onRemovePoint,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -75,16 +78,33 @@ const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
             <FontAwesomeIcon icon={faMapLocationDot} /> Punkty trasy:
           </h2>
           <ol className="list-decimal pl-5 mb-4 space-y-1">
-            {points.map(([lat, lng], idx) => (
-              <li key={idx}>
-                <input
-                  type="text"
-                  readOnly
-                  value={`${lat.toFixed(5)}, ${lng.toFixed(5)}`}
-                  className="bg-transparent text-gray-700 text-sm outline-none w-full"
-                />
-              </li>
-            ))}
+            {points.map((point, idx) => {
+              const [lat, lng] = point.coordinates;
+              const displayName = point.name 
+                ? `${point.name} (${lat.toFixed(5)}, ${lng.toFixed(5)})`
+                : `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+              
+              return (
+                <li key={idx} className="flex items-center justify-between">
+                  <div className="flex-1">
+                    <input
+                      type="text"
+                      readOnly
+                      value={displayName}
+                      className="bg-transparent text-gray-700 text-sm outline-none w-full"
+                      title={point.name ? `Współrzędne: ${lat.toFixed(5)}, ${lng.toFixed(5)}` : undefined}
+                    />
+                  </div>
+                  <button
+                    className="ml-2 text-red-500 hover:text-red-700 text-sm"
+                    onClick={() => onRemovePoint?.(idx)}
+                    title="Usuń punkt"
+                  >
+                    <FontAwesomeIcon icon={faTrash} />
+                  </button>
+                </li>
+              );
+            })}
           </ol>
           <div className="mb-4">
             <label className="block text-sm font-medium mb-1">Typ trasy</label>

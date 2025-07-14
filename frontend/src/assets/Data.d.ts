@@ -28,6 +28,28 @@ export interface User {
   email: string;
   role: string;
 }
+export interface Peaks{
+  id: number;
+  name: string;
+  elevation: number;
+  region: string;
+  latitude: number;
+  longitude: number;
+  verified: boolean;
+}
+export interface RoutePoint {
+  coordinates: [number, number];
+  name?: string;
+  type?: 'peak' | 'shelter' | 'custom';
+  id?: number;
+}
+
+export interface RouteInfo {
+  name: string;
+  type: 'one-way' | 'loop' | 'back-and-forth';
+  points: RoutePoint[];
+  description?: string;
+}
 
 export interface Shelters {
   id: number;
