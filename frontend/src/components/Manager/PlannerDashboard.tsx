@@ -9,31 +9,43 @@ import {
   faMapLocationDot,
   faHeartCircleCheck,
   faTrash,
+  faCheck,
+  faXmark,
 } from "@fortawesome/free-solid-svg-icons";
-import { routeTrail, RoutePoint } from "../../assets/Data";
+import { routeTrail, RoutePoint, Trails } from "../../assets/Data";
 import ElevationProfile from "./ElevationProfile";
 import TrailsService from "../../services/trails.service";
 import AuthContext from "../../store/auth-context";
 import useGetUsers from "../../hooks/user/useGetUser";
+import { useNavigate } from "react-router-dom";
 
 interface PlannerDashboardProps {
   visible: boolean;
   points: RoutePoint[];
   route: routeTrail | null;
+  editingTrail?: Trails | null;
+  isEditing?: boolean;
   onHoverPoint?: (lat: number, lng: number) => void;
   onRemovePoint?: (index: number) => void;
   onRouteTypeChange?: (type: "one-way" | "loop" | "back-and-forth") => void;
+  onTrailUpdated?: (updatedTrail: Trails) => void;
+  onCancelEdit?: () => void;
 }
 
 const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
   visible,
   points,
   route,
+  editingTrail,
+  isEditing = false,
   onHoverPoint,
   onRemovePoint,
   onRouteTypeChange,
+  onTrailUpdated,
+  onCancelEdit,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
   const [routeType, setRouteType] = useState<
     "one-way" | "loop" | "back-and-forth"
   >("one-way");
@@ -47,6 +59,14 @@ const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
       getUserByEmail(user.email);
     }
   }, [user?.email, getUserByEmail]);
+
+  useEffect(() => {
+    if (editingTrail && isEditing) {
+      setName(editingTrail.name || "");
+      setRouteType(editingTrail.route_type);
+      setRegion(editingTrail.region as "Tatry" | "Beskid Sądecki");
+    }
+  }, [editingTrail, isEditing]);
 
   const currentUser = usersData?.[0]?.[0];
 
@@ -65,7 +85,6 @@ const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
     setRegion(region);
   };
 
-  if (!visible) return null;
   const handleSaveTrail = async () => {
     if (!route) return;
 
@@ -93,10 +112,11 @@ const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
         ? Math.max(...elevations) - Math.min(...elevations)
         : 0;
 
-    const trail = {
+    const trailData = {
+      id: editingTrail?.id || 0,
       name: name || "Moja trasa",
-      description: "",
-      difficulty: "",
+      description: editingTrail?.description || "",
+      difficulty: editingTrail?.difficulty || "",
       length_km: +(summary.distance / 1000).toFixed(2),
       elevation_gain: Math.round(elevationGain),
       region: region,
@@ -108,15 +128,42 @@ const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
       created_by: currentUser?.id?.toString() || "1",
     };
 
+    const pointsData = points.map((p, idx) => ({
+      coordinates: p.coordinates,
+      name: p.name,
+      point_order: idx,
+    })) as RoutePoint[];
+
     try {
-      const res = await TrailsService.createTrail(trail);
-      alert("Trasa zapisana pomyślnie!");
-      console.log("Trail created:", res.data);
+      let res;
+      if (isEditing && editingTrail?.id) {
+        res = await TrailsService.updateTrail(editingTrail.id, {
+          ...trailData,
+          points: pointsData,
+        });
+        alert("Trasa zaktualizowana pomyślnie!");
+        navigate(`/dashboard/my-routes/${editingTrail.id}`);
+        console.log("Trail updated:", res.data);
+
+        if (onTrailUpdated && res.data) {
+          onTrailUpdated(res.data);
+        }
+      } else {
+        res = await TrailsService.createTrail({
+          ...trailData,
+          points: pointsData,
+        });
+        alert("Trasa zapisana pomyślnie!");
+        console.log("Trail created:", res.data);
+      }
     } catch (err) {
       console.error("Błąd zapisu trasy:", err);
       alert("Wystąpił błąd przy zapisie trasy.");
     }
   };
+
+  if (!visible) return null;
+
   return (
     <>
       <button
@@ -148,11 +195,19 @@ const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
             </div>
 
             <FontAwesomeIcon
-              icon={faHeartCircleCheck}
+              icon={isEditing ? faCheck : faHeartCircleCheck}
               className="text-black text-2xl cursor-pointer ml-2"
               onClick={handleSaveTrail}
-              title="Zapisz trasę w profilu"
+              title={isEditing ? "Zaktualizuj trasę" : "Zapisz trasę w profilu"}
             />
+            {isEditing && (
+              <FontAwesomeIcon
+                icon={faXmark}
+                className="text-black text-2xl cursor-pointer ml-2"
+                onClick={onCancelEdit}
+                title="Anuluj edycję"
+              />
+            )}
             <FontAwesomeIcon
               icon={faDownload}
               title="Pobierz trasę"

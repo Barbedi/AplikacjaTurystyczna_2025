@@ -7,9 +7,7 @@ import Pagination from "../Pagination";
 import { useSearchParams, useNavigate, useLocation } from "react-router-dom";
 
 interface PeakItemProps {
-  fetchPeaks: (
-    page?: number,
-  ) => Promise<{
+  fetchPeaks: (page?: number) => Promise<{
     data: { data: Peaks[]; totalPages: number; page: number; limit: number };
   }>;
 }

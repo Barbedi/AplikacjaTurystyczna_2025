@@ -47,6 +47,16 @@ interface Trails {
   };
   created_by: string;
   created_at: string;
+  points?: TrailPoint[];
+}
+
+interface TrailPoint {
+  id: number;
+  trail_id: number;
+  lat: number;
+  lng: number;
+  name?: string;
+  point_order: number;
 }
 export class Err implements ErrInterface {
   constructor(message: string, statusCode?: number) {
@@ -58,4 +68,4 @@ export class Err implements ErrInterface {
   stack?: string;
 }
 
-export type { ErrInterface, Users, PeakCollection, Peaks, Trails };
+export type { ErrInterface, Users, PeakCollection, Peaks, Trails, TrailPoint };

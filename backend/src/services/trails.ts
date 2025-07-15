@@ -1,47 +1,65 @@
 import db from "../db";
-import {Err, Trails } from "../Types";
+import { Err, Trails } from "../Types";
 import helper from "../helper";
+import TrailPointsService from "./trailsPoint";
 
 class TrailsService {
   // Pobierz wszystkie trasy
   async getAllTrails(): Promise<Trails[]> {
     const result = await db.query(
-      "SELECT * FROM trails ORDER BY created_at DESC",
+      "SELECT *, ST_AsGeoJSON(geometry) as geometry FROM trails ORDER BY created_at DESC",
     );
-    return result.rows;
+    return result.rows.map((row) => ({
+      ...row,
+      geometry: row.geometry ? JSON.parse(row.geometry) : null,
+    }));
   }
 
-  // Pobierz trasę po ID
   async getTrailById(id: number): Promise<Trails | null> {
-    const result = await db.query("SELECT * FROM trails WHERE id = $1", [id]);
-    return result.rows[0] || null;
+    const result = await db.query(
+      "SELECT *, ST_AsGeoJSON(geometry) as geometry FROM trails WHERE id = $1",
+      [id],
+    );
+    if (result.rows[0]) {
+      const row = result.rows[0];
+      const points = await TrailPointsService.getPointsByTrailId(id);
+
+      return {
+        ...row,
+        geometry: row.geometry ? JSON.parse(row.geometry) : null,
+        points: points || [],
+      };
+    }
+    return null;
   }
 
-  async getTrailsByUser(
-    userId: string,
-    page=1,
-    limit=7
-  ) {
+  async getTrailsByUser(userId: string, page = 1, limit = 7) {
     if (page < 1 || limit < 1) {
       throw new Err("Invalid page or limit", 400);
     }
-    const offset= helper.getOffset(page, limit);
+    const offset = helper.getOffset(page, limit);
     const query = `
-      SELECT * FROM trails
+      SELECT *, ST_AsGeoJSON(geometry) as geometry FROM trails
       WHERE created_by = $1
       ORDER BY created_at DESC
       LIMIT $2 OFFSET $3
     `;
     const result = await db.query(query, [userId, limit, offset]);
-    
+
     const countQuery = `
       SELECT COUNT(*) FROM trails WHERE created_by = $1
     `;
     const countResult = await db.query(countQuery, [userId]);
     const totalCount = parseInt(countResult.rows[0].count, 10);
     const totalPages = Math.ceil(totalCount / limit);
+
+    const trails = result.rows.map((row) => ({
+      ...row,
+      geometry: row.geometry ? JSON.parse(row.geometry) : null,
+    }));
+
     return {
-      data: result.rows,
+      data: trails,
       message: `Successfully fetched trails for user ${userId}`,
       totalPages,
       page,
@@ -112,7 +130,7 @@ class TrailsService {
          geometry = COALESCE(ST_GeomFromGeoJSON($9), geometry),
          created_by = COALESCE($10, created_by)
        WHERE id = $1
-       RETURNING *`,
+       RETURNING *, ST_AsGeoJSON(geometry) as geometry`,
       [
         id,
         name,
@@ -127,7 +145,17 @@ class TrailsService {
       ],
     );
 
-    return result.rows[0] || null;
+    if (result.rows[0]) {
+      const row = result.rows[0];
+      const points = await TrailPointsService.getPointsByTrailId(id);
+
+      return {
+        ...row,
+        geometry: row.geometry ? JSON.parse(row.geometry) : null,
+        points: points || [],
+      };
+    }
+    return null;
   }
 
   // Usuń trasę

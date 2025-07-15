@@ -37,17 +37,17 @@ export interface Trails {
   };
   created_by: string;
   created_at: string;
+  points?: TrailPoint[];
 }
 
 // Typ dla nowej trasy bez ID i created_at
-export type NewTrail = Omit<Trails, "id" | "created_at">;
+export type NewTrail = Omit<Trails, "id" | "created_at" | "points">;
 
 export interface TrailPoint {
   id: number;
   trail_id: number;
   lat: number;
   lng: number;
-  elevation?: number;
   name?: string;
   point_order: number;
 }

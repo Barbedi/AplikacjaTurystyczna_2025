@@ -6,15 +6,17 @@ import {
   LayersControl,
   Tooltip,
   GeoJSON,
-  useMap,
 } from "react-leaflet";
 import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { Shelters, Peaks, RoutePoint } from "../../assets/Data";
+import { Shelters, Peaks, RoutePoint, Trails } from "../../assets/Data";
 import SheltersMap from "./PopupShelters";
 import PlannerDashboard from "./PlannerDashboard";
 import PeaksMap from "./PopupPeaks";
+import ZoomHandler from "./ZoomHandler";
+import trailsService from "../../services/trails.service";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -42,7 +44,6 @@ const LocationMarker = ({
   });
   return null;
 };
-
 const LocationMarkerDelete = ({
   removePointByCoordinates,
 }: {
@@ -56,31 +57,8 @@ const LocationMarkerDelete = ({
   return null;
 };
 
-// Nowy komponent do monitorowania zoom
-const ZoomHandler = ({
-  onZoomChange,
-}: {
-  onZoomChange: (zoom: number) => void;
-}) => {
-  const map = useMap();
-
-  useEffect(() => {
-    const handleZoom = () => {
-      onZoomChange(map.getZoom());
-    };
-
-    map.on("zoomend", handleZoom);
-    handleZoom(); // Wywołaj od razu dla aktualnego zoom
-
-    return () => {
-      map.off("zoomend", handleZoom);
-    };
-  }, [map, onZoomChange]);
-
-  return null;
-};
-
 const MapPlanner = () => {
+  const { id: trailId } = useParams<{ id: string }>();
   const [points, setPoints] = useState<RoutePoint[]>([]);
   const [hoveredPoint, setHoveredPoint] = useState<number | null>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -89,15 +67,61 @@ const MapPlanner = () => {
   const [hoverPoint, setHoverPoint] = useState<[number, number] | null>(null);
   const [peaks, setPeaks] = useState<Peaks[]>([]);
   const [currentZoom, setCurrentZoom] = useState<number>(12);
+  const navigate = useNavigate();
   const [routeType, setRouteType] = useState<
     "one-way" | "loop" | "back-and-forth"
   >("one-way");
+  const [editingTrail, setEditingTrail] = useState<Trails | null>(null);
+  const [, setIsLoadingTrail] = useState<boolean>(false);
 
   const ZOOM_LEVELS = {
     PEAKS: 11,
     SHELTERS: 12,
     DETAILS: 14,
   };
+
+  // Załaduj trasę do edycji jeśli jest trailId
+  useEffect(() => {
+    if (trailId) {
+      setIsLoadingTrail(true);
+      trailsService
+        .getTrailById(parseInt(trailId))
+        .then((response) => {
+          const trail = response.data;
+          setEditingTrail(trail);
+          setRouteType(trail.route_type);
+
+          if (trail.points && trail.points.length > 0) {
+            const routePoints: RoutePoint[] = trail.points
+              .sort((a, b) => a.point_order - b.point_order)
+              .map((point) => ({
+                coordinates: [point.lat, point.lng],
+                name: point.name || `Punkt ${point.point_order + 1}`,
+                type: "custom",
+                id: point.id,
+              }));
+            setPoints(routePoints);
+            console.log("Załadowano punkty z bazy:", routePoints);
+          } else if (trail.geometry?.coordinates) {
+            const routePoints: RoutePoint[] = trail.geometry.coordinates.map(
+              (coord: number[], index: number) => ({
+                coordinates: [coord[1], coord[0]],
+                type: "custom",
+                name: `Punkt ${index + 1}`,
+              }),
+            );
+            setPoints(routePoints);
+            console.log("Konwertowano geometrię na punkty:", routePoints);
+          }
+        })
+        .catch((error) => {
+          console.error("Error loading trail for edit:", error);
+        })
+        .finally(() => {
+          setIsLoadingTrail(false);
+        });
+    }
+  }, [trailId]);
 
   useEffect(() => {
     fetch("http://localhost:6868/shelters")
@@ -118,10 +142,8 @@ const MapPlanner = () => {
         let coordinates = pointsToUse.map((p) => p.coordinates);
 
         if (routeType === "loop" && pointsToUse.length >= 3) {
-          // Dodaj pierwszy punkt na koniec, tworząc pętlę
           coordinates = [...coordinates, coordinates[0]];
         } else if (routeType === "back-and-forth") {
-          // Dodaj trasę powrotną (bez duplikatu ostatniego punktu)
           const reverse = [...coordinates].reverse().slice(1);
           coordinates = [...coordinates, ...reverse];
         }
@@ -176,8 +198,37 @@ const MapPlanner = () => {
   const addPointAtEnd = (newPoint: RoutePoint) =>
     setPoints((prev) => [...prev, newPoint]);
 
-  const handleZoomChange = (zoom: number) => {
-    setCurrentZoom(zoom);
+  const handleTrailUpdated = (updatedTrail: Trails) => {
+    setEditingTrail(updatedTrail);
+
+    if (updatedTrail.points && updatedTrail.points.length > 0) {
+      const routePoints: RoutePoint[] = updatedTrail.points
+        .sort((a, b) => a.point_order - b.point_order)
+        .map((point) => ({
+          coordinates: [point.lat, point.lng],
+          name: point.name || `Punkt ${point.point_order + 1}`,
+          type: "custom",
+          id: point.id,
+        }));
+      setPoints(routePoints);
+      console.log("Zaktualizowano punkty po edycji:", routePoints);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    if (editingTrail && editingTrail.points && editingTrail.points.length > 0) {
+      const originalPoints: RoutePoint[] = editingTrail.points
+        .sort((a, b) => a.point_order - b.point_order)
+        .map((point) => ({
+          coordinates: [point.lat, point.lng],
+          name: point.name || `Punkt ${point.point_order + 1}`,
+          type: "custom",
+          id: point.id,
+        }));
+      setPoints(originalPoints);
+      setRouteType(editingTrail.route_type);
+      navigate(`/dashboard/my-routes`);
+    }
   };
 
   return (
@@ -188,7 +239,7 @@ const MapPlanner = () => {
         scrollWheelZoom
         className="w-full h-full"
       >
-        <ZoomHandler onZoomChange={handleZoomChange} />
+        <ZoomHandler onZoomChange={setCurrentZoom} />
 
         <LayersControl position="topright">
           <BaseLayer checked name="MapTiler Outdoor">
@@ -270,6 +321,8 @@ const MapPlanner = () => {
         visible={points.length >= 2}
         points={points}
         route={routeGeoJson}
+        editingTrail={editingTrail}
+        isEditing={!!trailId}
         onHoverPoint={(lat, lng) => {
           if (
             typeof lat === "number" &&
@@ -284,6 +337,8 @@ const MapPlanner = () => {
         }}
         onRemovePoint={removePoint}
         onRouteTypeChange={(type) => setRouteType(type)}
+        onTrailUpdated={handleTrailUpdated}
+        onCancelEdit={handleCancelEdit}
       />
     </div>
   );

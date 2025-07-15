@@ -1,5 +1,5 @@
 import http from "../http-common";
-import { Trails, NewTrail, TrailsResponse } from "../assets/Data";
+import { Trails, NewTrail, TrailsResponse, RoutePoint } from "../assets/Data";
 
 class TrailsService {
   getTrails = () => {
@@ -11,14 +11,19 @@ class TrailsService {
   };
 
   getTrailsByUser = (userId: string, page: number = 1) => {
-    return http.get<TrailsResponse>(`/trails/user/${userId}?page=${page}`, { withCredentials: true });
+    return http.get<TrailsResponse>(`/trails/user/${userId}?page=${page}`, {
+      withCredentials: true,
+    });
   };
 
-  createTrail = (trail: NewTrail) => {
+  createTrail = (trail: NewTrail & { points?: RoutePoint[] }) => {
     return http.post("/trails", trail, { withCredentials: true });
   };
 
-  updateTrail = (id: number, trail: Trails) => {
+  updateTrail = (
+    id: number,
+    trail: Partial<Omit<Trails, "points">> & { points?: RoutePoint[] },
+  ) => {
     return http.patch(`/trails/${id}`, trail, { withCredentials: true });
   };
 
