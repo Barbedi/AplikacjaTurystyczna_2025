@@ -39,6 +39,9 @@ export interface Trails {
   created_at: string;
 }
 
+// Typ dla nowej trasy bez ID i created_at
+export type NewTrail = Omit<Trails, "id" | "created_at">;
+
 export interface TrailPoint {
   id: number;
   trail_id: number;
@@ -120,6 +123,15 @@ interface routeTrail {
       coordinates: number[][];
     };
   }[];
+}
+
+// Typ dla odpowiedzi z paginacją
+export interface TrailsResponse {
+  data: Trails[];
+  message: string;
+  totalPages: number;
+  page: number;
+  limit: number;
 }
 
 export interface PeakCollection {

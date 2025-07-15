@@ -1,8 +1,5 @@
 import http from "../http-common";
-import { Trails } from "../assets/Data";
-
-// Typ dla nowej trasy bez ID i created_at
-type NewTrail = Omit<Trails, "id" | "created_at">;
+import { Trails, NewTrail, TrailsResponse } from "../assets/Data";
 
 class TrailsService {
   getTrails = () => {
@@ -11,6 +8,10 @@ class TrailsService {
 
   getTrailById = (id: number) => {
     return http.get<Trails>(`/trails/${id}`, { withCredentials: true });
+  };
+
+  getTrailsByUser = (userId: string, page: number = 1) => {
+    return http.get<TrailsResponse>(`/trails/user/${userId}?page=${page}`, { withCredentials: true });
   };
 
   createTrail = (trail: NewTrail) => {

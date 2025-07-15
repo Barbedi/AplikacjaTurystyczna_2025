@@ -17,8 +17,25 @@ router.get("/", async (_req, res, next) => {
     }
   }
 });
+// Pobierz trasy utworzone przez użytkownika
+router.get("/user/:userId", async (req, res, next) => {
+  try {
+    const {page, limit} = req.query;
+   const parsedPage = page ? parseInt(page as string) : undefined;
+    const parsedLimit = limit ? parseInt(limit as string) : undefined;
+    const userId = req.params.userId;
+    const result = await TrailsService.getTrailsByUser(userId, parsedPage, parsedLimit);
+    res.status(200).json(result);
+  } catch (error) {
+    if (error instanceof Err) {
+      res.status(error.statusCode || 500).json({ message: error.message });
+    } else {
+      next(error);
+    }
+  }
+});
 
-// Pobierz trasę po ID
+
 router.get("/:id", async (req, res, next) => {
   try {
     const parsedId = parseInt(req.params.id, 10);

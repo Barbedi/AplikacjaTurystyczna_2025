@@ -7,7 +7,6 @@ const MenuBarTop = () => {
 
   const getDisplayName = (part: string, index: number) => {
     if (/^\d+$/.test(part)) {
-      // Jeśli poprzednia część to "crown-poland" lub "crown-beskid", wyświetl "Szczyt #ID"
       if (
         index > 0 &&
         (pathParts[index - 1] === "crown-poland" ||
@@ -19,7 +18,10 @@ const MenuBarTop = () => {
       if (index > 0 && pathParts[index - 1] === "edit-peak") {
         return `Szczyt #${part}`;
       }
-      // W innych przypadkach po prostu wyświetl ID
+      if (index > 0 && pathParts[index - 1] === "my-routes") {
+        return `Trasa #${part}`;
+      }
+      // Dla innych przypadków, zwróć ID
       return `ID: ${part}`;
     }
     // Dla normalnych części ścieżki użyj tłumaczenia lub oryginalnej nazwy

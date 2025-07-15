@@ -1,5 +1,6 @@
 import db from "../db";
-import { Trails } from "../Types";
+import {Err, Trails } from "../Types";
+import helper from "../helper";
 
 class TrailsService {
   // Pobierz wszystkie trasy
@@ -14,6 +15,38 @@ class TrailsService {
   async getTrailById(id: number): Promise<Trails | null> {
     const result = await db.query("SELECT * FROM trails WHERE id = $1", [id]);
     return result.rows[0] || null;
+  }
+
+  async getTrailsByUser(
+    userId: string,
+    page=1,
+    limit=7
+  ) {
+    if (page < 1 || limit < 1) {
+      throw new Err("Invalid page or limit", 400);
+    }
+    const offset= helper.getOffset(page, limit);
+    const query = `
+      SELECT * FROM trails
+      WHERE created_by = $1
+      ORDER BY created_at DESC
+      LIMIT $2 OFFSET $3
+    `;
+    const result = await db.query(query, [userId, limit, offset]);
+    
+    const countQuery = `
+      SELECT COUNT(*) FROM trails WHERE created_by = $1
+    `;
+    const countResult = await db.query(countQuery, [userId]);
+    const totalCount = parseInt(countResult.rows[0].count, 10);
+    const totalPages = Math.ceil(totalCount / limit);
+    return {
+      data: result.rows,
+      message: `Successfully fetched trails for user ${userId}`,
+      totalPages,
+      page,
+      limit,
+    };
   }
 
   // Utwórz nową trasę
@@ -51,12 +84,10 @@ class TrailsService {
     return result.rows[0];
   }
 
-  // Aktualizuj trasę
   async updateTrail(
     id: number,
     trail: Partial<Omit<Trails, "id" | "created_at">>,
   ): Promise<Trails | null> {
-    // Tutaj można rozbudować, aby dynamicznie generować UPDATE, na razie prosty przykład:
     const {
       name,
       description,

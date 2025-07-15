@@ -56,7 +56,6 @@ const PeakItem = ({ fetchPeaks }: PeakItemProps) => {
   }
 
   const editPeak = async (peaks: Peaks) => {
-    // Sprawdź aktualną ścieżkę, żeby określić, czy jesteśmy w crown-poland czy crown-beskid
     const currentPath = location.pathname;
 
     if (currentPath.includes("crown-poland")) {
@@ -64,7 +63,6 @@ const PeakItem = ({ fetchPeaks }: PeakItemProps) => {
     } else if (currentPath.includes("crown-beskid")) {
       navigate(`/dashboard/crown-peaks/crown-beskid/${peaks.id}`);
     } else {
-      // Fallback - jeśli nie można określić, użyj starą metodę
       navigate(`/dashboard/crown-peaks/edit-peak/${peaks.id}`);
     }
   };
