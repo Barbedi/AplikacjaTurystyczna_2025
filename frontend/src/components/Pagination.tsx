@@ -28,7 +28,7 @@ const Pagination: React.FC<PaginationProps> = ({
 
   const pagesArray = Array.from(
     { length: pageData.pages },
-    (_, index) => index + 1
+    (_, index) => index + 1,
   );
 
   const pageChangeHandler = (page: number) => {
@@ -66,7 +66,9 @@ const Pagination: React.FC<PaginationProps> = ({
             className={`page-item ${page === pageData.page ? "text-white" : "cursor-pointer"}`}
             onClick={() => pageChangeHandler(page)}
           >
-            <span className={`page-link px-3 py-1 border rounded ${page === pageData.page ? "bg-accent border-accent text-white" : "border-white text-white bg-white/30"}`}>
+            <span
+              className={`page-link px-3 py-1 border rounded ${page === pageData.page ? "bg-accent border-accent text-white" : "border-white text-white bg-white/30"}`}
+            >
               {page}
             </span>
           </li>

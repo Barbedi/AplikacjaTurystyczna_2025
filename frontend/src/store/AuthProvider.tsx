@@ -36,7 +36,11 @@ const AuthProvider: React.ComponentType<AuthProviderProps> = ({
             }
           })
           .catch((error) => {
-            console.log("❌ Refresh token failed:", error.response?.status, error.response?.data);
+            console.log(
+              "❌ Refresh token failed:",
+              error.response?.status,
+              error.response?.data,
+            );
             // Gdy refresh token nie działa, wyloguj użytkownika
             setAuth(false);
             setUser(undefined);
@@ -64,7 +68,11 @@ const AuthProvider: React.ComponentType<AuthProviderProps> = ({
             }
           })
           .catch((error) => {
-            console.log("❌ Auth check failed:", error.response?.status, error.response?.data);
+            console.log(
+              "❌ Auth check failed:",
+              error.response?.status,
+              error.response?.data,
+            );
             if (error.response) {
               if (error.response.status === 401) {
                 console.log("🔄 Trying refresh token...");
