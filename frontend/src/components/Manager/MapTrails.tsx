@@ -16,15 +16,15 @@ const { BaseLayer } = LayersControl;
 
 interface MapTrailsProps {
   trail?: Trails;
+  hoverPoint?: [number, number] | null;
 }
 
-const MapTrails = ({ trail }: MapTrailsProps) => {
+const MapTrails = ({ trail, hoverPoint }: MapTrailsProps) => {
   const [points] = useState<RoutePoint[]>([]);
   const [hoveredPoint, setHoveredPoint] = useState<number | null>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [routeGeoJson, setRouteGeoJson] = useState<any>(null);
   const [, setCurrentZoom] = useState<number>(12);
-  const [hoverPoint] = useState<[number, number] | null>(null);
   const [mapRef, setMapRef] = useState<L.Map | null>(null);
 
   useEffect(() => {

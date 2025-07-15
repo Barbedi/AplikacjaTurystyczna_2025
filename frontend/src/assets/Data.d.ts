@@ -38,6 +38,7 @@ export interface Trails {
   created_by: string;
   created_at: string;
   points?: TrailPoint[];
+  duration_minutes?: number; 
 }
 
 // Typ dla nowej trasy bez ID i created_at

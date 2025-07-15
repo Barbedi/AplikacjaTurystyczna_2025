@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit } from "@fortawesome/free-solid-svg-icons";
+import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import VerifiedIcon from "@mui/icons-material/Verified";
 import { Peaks, PageData } from "../../assets/Data";
 import Pagination from "../Pagination";
@@ -93,10 +93,10 @@ const PeakItem = ({ fetchPeaks }: PeakItemProps) => {
           </span>
           <span className="flex-1 text-lg font-lora text-white">
             <FontAwesomeIcon
-              icon={faEdit}
+              icon={faChevronRight}
               onClick={() => editPeak(peak)}
               className="text-white cursor-pointer text-lg"
-              title="Edytuj"
+              title="Zobacz szczegóły"
             />
           </span>
         </div>

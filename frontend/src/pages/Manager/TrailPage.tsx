@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { Trails } from "../../assets/Data";
 import trailsService from "../../services/trails.service";
 import MapTrails from "../../components/Manager/MapTrails";
+import ElevationProfile from "../../components/Manager/ElevationProfile";
 
 const emptyTrail: Trails = {
   id: 0,
@@ -19,10 +20,12 @@ const emptyTrail: Trails = {
   },
   created_by: "",
   created_at: new Date().toISOString(),
+  duration_minutes: 0,
 };
 
 const EditTrailPage = () => {
   const [trail, setTrail] = useState<Trails>(emptyTrail);
+  const [hoverPoint, setHoverPoint] = useState<[number, number] | null>(null);
   const { id } = useParams<{ id: string }>();
 
   useEffect(() => {
@@ -49,16 +52,14 @@ const EditTrailPage = () => {
           <span className="text-lg font-lora text-white mb-2">
             Region: {trail.region}
           </span>
-          <span className="text-lg font-lora text-white mb-2">Opis:</span>
-          <p className="text-white mb-2">{trail.description}</p>
           <span className="text-lg font-lora text-white mb-2">
             Długość: {trail.length_km} km
           </span>
           <span className="text-lg font-lora text-white mb-2">
-            Zysk wysokości: {trail.elevation_gain} m
+           Czas przejścia: {Math.floor(trail.duration_minutes as number / 60)} h {trail.duration_minutes as number% 60} min
           </span>
           <span className="text-lg font-lora text-white mb-2">
-            Trudność: {trail.difficulty}
+            Przewyższenie: {trail.elevation_gain} m
           </span>
           <span className="text-lg font-lora text-white mb-2">
             Typ trasy: {trail.route_type}
@@ -66,10 +67,39 @@ const EditTrailPage = () => {
           <span className="text-lg font-lora text-white mb-2">
             Data utworzenia: {new Date(trail.created_at).toLocaleDateString()}
           </span>
+          {trail.geometry.coordinates.length > 0 && (
+            <ElevationProfile
+              route={{
+                type: "FeatureCollection",
+                features: [{
+                  type: "Feature",
+                  geometry: {
+                    coordinates: [trail.geometry.coordinates] as number[][][]
+                  },
+                  properties: {
+                    id: trail.id.toString(),
+                    summary: {
+                      distance: trail.length_km * 1000,
+                      duration: 0
+                    },
+                    segments: [],
+                    elevation: trail.geometry.coordinates.map(coord => coord[2] || 0)
+                  }
+                }]
+              }}
+              onHoverPoint={(hoverLat, hoverLng) => {
+                if (!isNaN(hoverLat) && !isNaN(hoverLng)) {
+                  setHoverPoint([hoverLat, hoverLng]);
+                } else {
+                  setHoverPoint(null);
+                }
+              }}
+            />
+          )}
         </div>
         <div className="flex flex-col items-start justify-start w-1/2 p-4">
           <div className="w-full h-96 border border-gray-300 rounded-lg overflow-hidden">
-            <MapTrails trail={trail} />
+            <MapTrails trail={trail} hoverPoint={hoverPoint} />
           </div>
         </div>
       </div>

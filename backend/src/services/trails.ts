@@ -79,12 +79,13 @@ class TrailsService {
       route_type,
       geometry,
       created_by,
+      duration_minutes,
     } = trail;
 
     const result = await db.query(
       `INSERT INTO trails 
-       (name, description, difficulty, length_km, elevation_gain, region, route_type, geometry, created_by)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,ST_GeomFromGeoJSON($8),$9)
+       (name, description, difficulty, length_km, elevation_gain, region, route_type, geometry, created_by, duration_minutes)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,ST_GeomFromGeoJSON($8),$9,$10)
        RETURNING *`,
       [
         name,
@@ -96,6 +97,7 @@ class TrailsService {
         route_type,
         JSON.stringify(geometry),
         created_by,
+        duration_minutes,
       ],
     );
 
@@ -116,6 +118,7 @@ class TrailsService {
       route_type,
       geometry,
       created_by,
+      duration_minutes,
     } = trail;
 
     const result = await db.query(
@@ -128,7 +131,8 @@ class TrailsService {
          region = COALESCE($7, region),
          route_type = COALESCE($8, route_type),
          geometry = COALESCE(ST_GeomFromGeoJSON($9), geometry),
-         created_by = COALESCE($10, created_by)
+         created_by = COALESCE($10, created_by),
+         duration_minutes = COALESCE($11, duration_minutes)
        WHERE id = $1
        RETURNING *, ST_AsGeoJSON(geometry) as geometry`,
       [
@@ -142,6 +146,7 @@ class TrailsService {
         route_type,
         geometry ? JSON.stringify(geometry) : null,
         created_by,
+        duration_minutes
       ],
     );
 

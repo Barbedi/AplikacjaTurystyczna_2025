@@ -126,6 +126,9 @@ const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
         coordinates: coordinates,
       },
       created_by: currentUser?.id?.toString() || "1",
+      duration_minutes: Math.round(
+        summary.duration / 60,
+      )
     };
 
     const pointsData = points.map((p, idx) => ({

@@ -13,7 +13,7 @@ const CrownPolandPage = () => {
         <span className="flex-1 text-xl font-lora text-white">
           Zweryfikowane
         </span>
-        <span className="flex-1 text-xl font-lora text-white">Edycja</span>
+        <span className="flex-1 text-xl font-lora text-white">Akcja</span>
       </div>
       <div className="flex flex-col items-start justify-start w-full">
         <PeakItem fetchPeaks={PeaksService.getCrownPoland} />
