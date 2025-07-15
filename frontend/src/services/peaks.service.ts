@@ -1,5 +1,5 @@
 import httpCommon from "../http-common";
-import  { Peaks } from "../assets/Data";
+import { Peaks } from "../assets/Data";
 
 class PeaksService {
   getAll = () => {
@@ -10,7 +10,7 @@ class PeaksService {
     return httpCommon.get(`/peaks/${id}`);
   };
 
-  update = (id: string, data:Peaks) => {
+  update = (id: string, data: Peaks) => {
     return httpCommon.put(`/peaks/${id}`, data);
   };
   getCrownPoland = (page: number = 1) => {
@@ -19,6 +19,5 @@ class PeaksService {
   getCrownBeskid = (page: number = 1) => {
     return httpCommon.get(`/peaks/crown-beskid?page=${page}`);
   };
-
 }
 export default new PeaksService();

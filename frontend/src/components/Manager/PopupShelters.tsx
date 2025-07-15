@@ -1,6 +1,6 @@
 import React from "react";
 import { CircleMarker, Popup } from "react-leaflet";
-import { Shelters,RoutePoint } from "../../assets/Data";
+import { Shelters, RoutePoint } from "../../assets/Data";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHouseFlag, faChevronRight } from "@fortawesome/free-solid-svg-icons";
 
@@ -8,12 +8,14 @@ interface SheltersMapProps {
   shelters: Shelters[];
   addPointAtStart: (point: RoutePoint) => void;
   addPointAtEnd: (point: RoutePoint) => void;
+  addPointM: (point: RoutePoint) => void;
 }
 
 const SheltersMap: React.FC<SheltersMapProps> = ({
   shelters,
   addPointAtStart,
   addPointAtEnd,
+  addPointM,
 }) => {
   return (
     <>
@@ -53,7 +55,7 @@ const SheltersMap: React.FC<SheltersMapProps> = ({
                   addPointAtStart({
                     coordinates: [shelter.latitude, shelter.longitude],
                     name: shelter.name,
-                    type: 'shelter'
+                    type: "shelter",
                   })
                 }
                 className=" text-black rounded-md transition cursor-pointer w-full text-start p-0.5"
@@ -62,11 +64,25 @@ const SheltersMap: React.FC<SheltersMapProps> = ({
                 <FontAwesomeIcon icon={faChevronRight} className="ml-2" />
               </button>
               <button
+                type="button"
+                onClick={() =>
+                  addPointM({
+                    coordinates: [shelter.latitude, shelter.longitude],
+                    name: shelter.name,
+                    type: "shelter",
+                  })
+                }
+                className=" text-black rounded-md transition cursor-pointer w-full text-start p-0.5"
+              >
+                Ustaw punkt pośredni trasy
+                <FontAwesomeIcon icon={faChevronRight} className="ml-2" />
+              </button>
+              <button
                 onClick={() =>
                   addPointAtEnd({
                     coordinates: [shelter.latitude, shelter.longitude],
                     name: shelter.name,
-                    type: 'shelter'
+                    type: "shelter",
                   })
                 }
                 type="button"

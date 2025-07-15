@@ -1,5 +1,3 @@
-
-
 export interface Users {
   id?: number;
   email: string;
@@ -24,13 +22,44 @@ export interface UserInfo {
   profile_image?: string;
 }
 
+export interface Trails {
+  id: number;
+  name: string;
+  description: string;
+  difficulty: string;
+  length_km: number;
+  elevation_gain: number;
+  region: string;
+  route_type: "one-way" | "loop" | "back-and-forth";
+  geometry: {
+    type: string;
+    coordinates: number[][];
+  };
+  created_by: string;
+  created_at: string;
+  points?: TrailPoint[];
+  duration_minutes?: number; 
+}
+
+// Typ dla nowej trasy bez ID i created_at
+export type NewTrail = Omit<Trails, "id" | "created_at" | "points">;
+
+export interface TrailPoint {
+  id: number;
+  trail_id: number;
+  lat: number;
+  lng: number;
+  name?: string;
+  point_order: number;
+}
+
 export interface User {
   exp: number;
   iat: number;
   email: string;
   role: string;
 }
-export interface Peaks{
+export interface Peaks {
   id: number;
   name: string;
   elevation: number;
@@ -42,13 +71,13 @@ export interface Peaks{
 export interface RoutePoint {
   coordinates: [number, number];
   name?: string;
-  type?: 'peak' | 'shelter' | 'custom';
+  type?: "peak" | "shelter" | "custom";
   id?: number;
 }
 
 export interface RouteInfo {
   name: string;
-  type: 'one-way' | 'loop' | 'back-and-forth';
+  type: "one-way" | "loop" | "back-and-forth";
   points: RoutePoint[];
   description?: string;
 }
@@ -95,6 +124,15 @@ interface routeTrail {
       coordinates: number[][];
     };
   }[];
+}
+
+// Typ dla odpowiedzi z paginacją
+export interface TrailsResponse {
+  data: Trails[];
+  message: string;
+  totalPages: number;
+  page: number;
+  limit: number;
 }
 
 export interface PeakCollection {

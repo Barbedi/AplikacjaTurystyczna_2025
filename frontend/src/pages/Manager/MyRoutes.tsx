@@ -1,10 +1,19 @@
+import TrailPeak from "../../components/Manager/TrailPeak";
+
 const MyRoutes = () => {
   return (
-    <div className="text-center mt-20">
-      <h1 className="text-3xl text-white font-bold mb-4">Moje trasy</h1>
-      <p className="text-gray-500 text-lg">
-        Ta strona jest jeszcze w budowie. Wkrótce będzie dostępna!
-      </p>
+    <div className="flex flex-col max-w-6xl text-center items-center justify-center w-full mx-auto mt-3 gap-y-1">
+      <div className="flex flex-row items-start justify-start w-full mx-4 p-3 border-b-2 border-white">
+        <span className="flex-1 text-xl font-lora text-white">Nazwa trasy</span>
+        <span className="flex-1 text-xl font-lora text-white">Pasmo</span>
+        <span className="flex-1 text-xl font-lora text-white">
+          Data utworzenia
+        </span>
+        <span className="flex-1 text-xl font-lora text-white">Akcja</span>
+      </div>
+      <div className="flex flex-col items-start justify-start w-full">
+        <TrailPeak />
+      </div>
     </div>
   );
 };

@@ -22,7 +22,7 @@ interface PeakCollection {
   description: string;
 }
 
- interface Peaks {
+interface Peaks {
   id: number;
   name: string;
   elevation: number;
@@ -30,6 +30,34 @@ interface PeakCollection {
   latitude: number;
   longitude: number;
   verified?: boolean;
+}
+
+interface Trails {
+  id: number;
+  name: string;
+  description: string;
+  difficulty: string;
+  length_km: number;
+  elevation_gain: number;
+  region: string;
+  route_type: "one-way" | "loop" | "back-and-forth";
+  geometry: {
+    type: string;
+    coordinates: number[][];
+  };
+  created_by: string;
+  created_at: string;
+  points?: TrailPoint[];
+  duration_minutes: number; // Optional field for duration in minutes
+}
+
+interface TrailPoint {
+  id: number;
+  trail_id: number;
+  lat: number;
+  lng: number;
+  name?: string;
+  point_order: number;
 }
 export class Err implements ErrInterface {
   constructor(message: string, statusCode?: number) {
@@ -41,7 +69,4 @@ export class Err implements ErrInterface {
   stack?: string;
 }
 
-
-export type { ErrInterface, Users , PeakCollection, Peaks };
-
-
+export type { ErrInterface, Users, PeakCollection, Peaks, Trails, TrailPoint };

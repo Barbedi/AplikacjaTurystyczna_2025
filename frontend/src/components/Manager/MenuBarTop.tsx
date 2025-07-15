@@ -3,19 +3,25 @@ import { pathTranslation } from "../../utils/pathTranslation";
 
 const MenuBarTop = () => {
   const location = useLocation();
-  const pathParts = location.pathname.split("/").filter(Boolean); 
+  const pathParts = location.pathname.split("/").filter(Boolean);
 
   const getDisplayName = (part: string, index: number) => {
     if (/^\d+$/.test(part)) {
-      // Jeśli poprzednia część to "crown-poland" lub "crown-beskid", wyświetl "Szczyt #ID"
-      if (index > 0 && (pathParts[index - 1] === "crown-poland" || pathParts[index - 1] === "crown-beskid")) {
+      if (
+        index > 0 &&
+        (pathParts[index - 1] === "crown-poland" ||
+          pathParts[index - 1] === "crown-beskid")
+      ) {
         return `Szczyt #${part}`;
       }
       // Jeśli poprzednia część to "edit-peak", wyświetl "Szczyt #ID" (dla kompatybilności wstecznej)
       if (index > 0 && pathParts[index - 1] === "edit-peak") {
         return `Szczyt #${part}`;
       }
-      // W innych przypadkach po prostu wyświetl ID
+      if (index > 0 && pathParts[index - 1] === "my-routes") {
+        return `Trasa #${part}`;
+      }
+      // Dla innych przypadków, zwróć ID
       return `ID: ${part}`;
     }
     // Dla normalnych części ścieżki użyj tłumaczenia lub oryginalnej nazwy

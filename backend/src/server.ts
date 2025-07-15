@@ -15,7 +15,8 @@ import user from "./routes/user";
 import file from "./routes/file";
 import shelters from "./routes/shelters";
 import peaks from "./routes/peaks";
-
+import trails from "./routes/trails";
+import trailsPoint from "./routes/trailsPoint";
 
 const app = express();
 
@@ -43,6 +44,8 @@ app.use("/users", user);
 app.use("/files", file);
 app.use("/shelters", shelters);
 app.use("/peaks", peaks);
+app.use("/trails", trails);
+app.use("/trailsPoint", trailsPoint);
 // Obsługa nieznalezionych endpointów
 app.use((_req: Request, res: Response) => {
   res.status(404).json({ message: "Endpoint not found" });
