@@ -30,6 +30,7 @@ interface Peaks {
   latitude: number;
   longitude: number;
   verified?: boolean;
+  image_filename?: string; 
 }
 
 interface Trails {

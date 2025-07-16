@@ -4,7 +4,6 @@ import {
   CartesianGrid,
   XAxis,
   YAxis,
-  Legend,
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
@@ -70,20 +69,22 @@ const ElevationProfile: React.FC<ElevationData> = ({ route, onHoverPoint }) => {
 
   return (
     <div className="w-full h-64">
-      <ResponsiveContainer width="100%" height="100%">
+      <ResponsiveContainer width="100%" height="90%">
         <LineChart
           data={elevationData}
           onMouseMove={handleMouseMove}
           onMouseLeave={handleMouseLeave}
-          margin={{ top: 10, bottom: 10, left: 0, right: 10 }}
+          margin={{ top: 10, bottom: 0, left: 0, right: 10 }}
         >
-          <CartesianGrid strokeDasharray="3 3" />
+          <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.2)" />
           <XAxis
             dataKey="distance"
             type="number"
             domain={[0, totalDistanceKm]}
             tickFormatter={(value) => `${value} km`}
             name="Dystans"
+            tick={{ fill: 'white', fontSize: 12 }}
+           
           />
           <YAxis
             dataKey="elevation"
@@ -91,12 +92,18 @@ const ElevationProfile: React.FC<ElevationData> = ({ route, onHoverPoint }) => {
             domain={["dataMin", "dataMax"]}
             tickFormatter={(value) => `${value} m`}
             name="Wysokość"
+            tick={{ fill: 'white', fontSize: 12 }}
           />
           <Tooltip
-            formatter={(value: number) => `${value} m`}
+            formatter={(value: number) => [`${value} m`, 'Wysokość']}
             labelFormatter={(label: number) => `Dystans: ${label} km`}
+            contentStyle={{
+              backgroundColor: 'rgba(0,0,0,0.8)',
+              border: '1px solid rgba(255,255,255,0.3)',
+              borderRadius: '8px',
+              color: 'white'
+            }}
           />
-          <Legend />
           <Line
             type="monotone"
             dataKey="elevation"
@@ -104,6 +111,7 @@ const ElevationProfile: React.FC<ElevationData> = ({ route, onHoverPoint }) => {
             strokeWidth={2}
             dot={false}
             name="Wysokość"
+            activeDot={{ r: 6, fill: '#9333ea' }}
           />
         </LineChart>
       </ResponsiveContainer>

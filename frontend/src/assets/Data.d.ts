@@ -67,6 +67,7 @@ export interface Peaks {
   latitude: number;
   longitude: number;
   verified: boolean;
+  image_filename: string;
 }
 export interface RoutePoint {
   coordinates: [number, number];

@@ -46,27 +46,48 @@ const EditTrailPage = () => {
 
   return (
     <div className="flex flex-col max-w-6xl text-center items-center justify-center w-full mx-auto mt-3 gap-y-4">
-      <div className="text-3xl font-bold text-white mb-4">{trail.name}</div>
+      <div className="text-3xl font-bold text-white mb-4 underline">{trail.name}</div>
       <div className="flex flex-row items-start justify-center w-full max-w-6xl">
         <div className="flex flex-col items-start justify-start w-1/2 p-4">
-          <span className="text-lg font-lora text-white mb-2">
-            Region: {trail.region}
-          </span>
-          <span className="text-lg font-lora text-white mb-2">
-            Długość: {trail.length_km} km
-          </span>
-          <span className="text-lg font-lora text-white mb-2">
-           Czas przejścia: {Math.floor(trail.duration_minutes as number / 60)} h {trail.duration_minutes as number% 60} min
-          </span>
-          <span className="text-lg font-lora text-white mb-2">
-            Przewyższenie: {trail.elevation_gain} m
-          </span>
-          <span className="text-lg font-lora text-white mb-2">
-            Typ trasy: {trail.route_type}
-          </span>
-          <span className="text-lg font-lora text-white mb-2">
-            Data utworzenia: {new Date(trail.created_at).toLocaleDateString()}
-          </span>
+          <div className="w-full  bg-white/10 backdrop-blur-lg rounded-lg p-4 border border-white/20">
+            <h3 className="text-xl font-lora text-white mb-3 border-b border-white/20 pb-2">
+              Informacje o trasie
+            </h3>
+            <div className="space-y-3">
+              <div className="flex items-center">
+                <span className="text-white/70 font-medium w-1/4">Region:</span>
+                <span className="text-white font-lora ml-5">{trail.region}</span>
+              </div>
+              <div className="flex items-center">
+                <span className="text-white/70 font-medium w-1/4">Długość:</span>
+                <span className="text-white font-lora ml-5">{trail.length_km} km</span>
+              </div>
+              <div className="flex items-center">
+                <span className="text-white/70 font-medium w-1/4">Czas przejścia:</span>
+                <span className="text-white font-lora ml-5">
+                  {Math.floor(trail.duration_minutes as number / 60)} h {trail.duration_minutes as number % 60} min
+                </span>
+              </div>
+              <div className="flex items-center">
+                <span className="text-white/70 font-medium w-1/4">Przewyższenie:</span>
+                <span className="text-white font-lora ml-5">{trail.elevation_gain} m</span>
+              </div>
+              <div className="flex items-center">
+                <span className="text-white/70 font-medium w-1/4">Typ trasy:</span>
+                <span className="text-white font-lora ml-5">{trail.route_type}</span>
+              </div>
+              <div className=" flex items-center">
+                <span className="text-white/70 font-medium w-1/4">Data utworzenia:</span>
+                <span className="text-white font-lora ml-5">
+                  {new Date(trail.created_at).toLocaleDateString()}
+                </span>
+              </div>
+            </div>
+         
+          <div className="w-full  rounded-lg pt-4  ">
+            <h3 className="text-xl block font-lora text-white mb-3 border-b border-white/20 pb-2">
+              Wykres wysokości
+            </h3>
           {trail.geometry.coordinates.length > 0 && (
             <ElevationProfile
               route={{
@@ -87,23 +108,29 @@ const EditTrailPage = () => {
                   }
                 }]
               }}
-              onHoverPoint={(hoverLat, hoverLng) => {
-                if (!isNaN(hoverLat) && !isNaN(hoverLng)) {
-                  setHoverPoint([hoverLat, hoverLng]);
-                } else {
-                  setHoverPoint(null);
-                }
-              }}
+              // onHoverPoint={(hoverLat, hoverLng) => {
+              //   if (!isNaN(hoverLat) && !isNaN(hoverLng)) {
+              //     setHoverPoint([hoverLat, hoverLng]);
+              //   } else {
+              //     setHoverPoint(null);
+              //   }
+              // }}
             />
-          )}
+          )} 
+          </div>
+          </div>
         </div>
         <div className="flex flex-col items-start justify-start w-1/2 p-4">
-          <div className="w-full h-96 border border-gray-300 rounded-lg overflow-hidden">
+        <div className="w-full mb-6 rounded-lg p-4 ">
+            <h3 className="text-xl block font-lora text-white mb-3 pb-2">Lokalizacja</h3>
+          <div className="w-full h-96 border  rounded-lg overflow-hidden border-white/20 shadow-lg">
             <MapTrails trail={trail} hoverPoint={hoverPoint} />
           </div>
         </div>
+        </div>
       </div>
     </div>
+    
   );
 };
 

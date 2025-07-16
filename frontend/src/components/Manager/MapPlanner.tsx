@@ -79,8 +79,6 @@ const MapPlanner = () => {
     SHELTERS: 12,
     DETAILS: 14,
   };
-
-  // Załaduj trasę do edycji jeśli jest trailId
   useEffect(() => {
     if (trailId) {
       setIsLoadingTrail(true);
@@ -232,7 +230,7 @@ const MapPlanner = () => {
   };
 
   return (
-    <div className="w-full h-full flex flex-col">
+    <div className="w-full h-full flex flex-col rounded-lg overflow-hidden border border-white/20 shadow-lg">
       <MapContainer
         center={[49.29, 19.95]}
         zoom={12}
