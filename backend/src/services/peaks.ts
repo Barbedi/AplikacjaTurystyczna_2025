@@ -77,7 +77,7 @@ async function updatePeak(id: number, peakInfo: Peaks) {
 async function getPeaksByCollectionId(
   collectionId: number,
   page = 1,
-  limit = 7,
+  limit = 6,
 ) {
   if (page < 1 || limit < 1) {
     throw new Err("Invalid page or limit", 400);

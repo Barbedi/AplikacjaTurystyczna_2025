@@ -14,54 +14,77 @@ const opinias = [
 const Reviews = () => {
   const [isOpen, setIsOpen] = useState(false);
   return (
-    <div className="w-full h-full flex justify-center items-center">
+    <div className="w-full">
       <div
         onClick={() => setIsOpen(!isOpen)}
-        className={`flex flex-row bg-accent/60 rounded-lg shadow-lg p-2 mt-5 justify-center items-center cursor-pointer transition-all duration-300 ease-in-out ${isOpen ? "h-full" : "h-15 w-full"}`}
+        className={`flex ${isOpen ? 'flex-col' : 'flex-row'} bg-white/10 backdrop-blur-lg rounded-lg shadow-lg p-4 mt-5 cursor-pointer transition-all duration-300 ease-in-out border border-white/20 hover:bg-white/15 w-full`}
       >
-        {isOpen && (
-          <div className="flex flex-row items-start mx-2">
-            <img
-              className="w-sm h-35 object-cover rounded-lg"
-              src="/assets/img/IMG_5962.jpg"
-              alt="Trasa"
-            />
-          </div>
-        )}
-        <div className="flex flex-col w-full ">
-          {isOpen && (
-            <div className="flex justify-end items-end">
-              <FontAwesomeIcon
-                icon={faPenToSquare}
-                className="text-white text-2xl cursor-pointer flex"
-              />
-            </div>
-          )}
+        <div className={`flex ${isOpen ? 'flex-row w-full' : 'flex-col w-full'}`}>
           {opinias.map((opinia, index) => (
-            <div key={index} className="p-4 text-white mb-4">
-              <h3 className="text-3xl font-semibold">{opinia.nameRoute}</h3>
-              {isOpen && (
-                <p className="mt-2 text-md text-start">
-                  Data: {new Date(opinia.date).toLocaleDateString()}
-                </p>
+            <div key={index} className="text-white w-full">
+              <div className="flex items-center justify-between">
+                <h3 className="text-2xl font-lora text-white font-semibold">{opinia.nameRoute}</h3>
+                {isOpen && (
+                  <FontAwesomeIcon
+                    icon={faPenToSquare}
+                    className="text-white/70 hover:text-white text-xl cursor-pointer transition-colors"
+                  />
+                )}
+              </div>
+              
+              {!isOpen && (
+                <div className="flex items-center justify-between mt-2">
+                  <div className="flex items-center gap-2">
+                    <div className="flex">
+                      {[...Array(5)].map((_, i) => (
+                        <FontAwesomeIcon
+                          key={i}
+                          icon={faStar}
+                          className={`text-xs ${i < opinia.rating ? "text-yellow-400" : "text-white/30"}`}
+                        />
+                      ))}
+                    </div>
+                    <span className="text-white/70 text-sm">{opinia.rating}/5</span>
+                  </div>
+                  <span className="text-white/60 text-sm">Kliknij aby rozwinąć</span>
+                </div>
               )}
+
               {isOpen && (
-                <p className="mt-2 text-md text-start mr-2">
-                  Ocena trasy: {opinia.rating}
-                  {[...Array(5)].map((_, i) => (
-                    <FontAwesomeIcon
-                      key={i}
-                      icon={faStar}
-                      className={`ml-1 text-white ${i < opinia.rating ? "text-yellow-500" : "text-gray-400"}`}
+                <div className="flex gap-6 mt-4 w-full">
+                  <div className="flex-shrink-0">
+                    <img
+                      className="w-40 h-40 object-cover rounded-lg border border-white/20"
+                      src="/assets/img/IMG_5962.jpg"
+                      alt="Trasa"
                     />
-                  ))}
-                </p>
-              )}
-              {isOpen && (
-                <p className="mt-2 text-md text-start">Dodany komentarz:</p>
-              )}
-              {isOpen && (
-                <p className="mt-2 text-md text-center">{opinia.comment}</p>
+                  </div>
+                  
+                  <div className="flex-1 space-y-3">
+                    <p className="text-sm text-white/70">
+                      <span className="font-medium">Data:</span> {new Date(opinia.date).toLocaleDateString('pl-PL')}
+                    </p>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-white/70 font-medium">Ocena trasy:</span>
+                      <span className="text-white font-medium">{opinia.rating}</span>
+                      <div className="flex">
+                        {[...Array(5)].map((_, i) => (
+                          <FontAwesomeIcon
+                            key={i}
+                            icon={faStar}
+                            className={`text-sm ${i < opinia.rating ? "text-yellow-400" : "text-white/30"}`}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-sm text-white/70 font-medium mb-2">Komentarz:</p>
+                      <p className="text-white p-4  leading-relaxed">
+                        {opinia.comment}
+                      </p>
+                    </div>
+                  </div>
+                </div>
               )}
             </div>
           ))}

@@ -70,7 +70,7 @@ const PeakItem = ({ fetchPeaks }: PeakItemProps) => {
       {peaks.map((peak) => (
         <div
           key={peak.id}
-          className="flex flex-row items-start justify-start w-full m-1 p-5 bg-accent rounded-2xl shadow-lg transition-transform duration-300 hover:scale-105"
+          className=" flex bg-white/10 backdrop-blur-lg rounded-lg shadow-lg p-4 mt-5 transition-all duration-300 ease-in-out border border-white/20 hover:bg-white/20 hover:border-white/40 hover:shadow-xl w-full"
         >
           <span className="flex-1 text-lg font-lora text-white">
             {peak.name}
