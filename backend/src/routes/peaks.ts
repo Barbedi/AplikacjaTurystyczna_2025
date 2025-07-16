@@ -160,6 +160,59 @@ router.patch("/:id", async (req, res, next) => {
   }
 });
 
+/**
+ * @swagger
+ * /peaks/{id}/image:
+ *   put:
+ *     summary: Update peak image
+ *     tags:
+ *       - Peaks
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: Peak ID
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               image_filename:
+ *                 type: string
+ *                 example: "1642147800123-456789.jpg"
+ *     responses:
+ *       200:
+ *         description: Peak image updated successfully
+ *       404:
+ *         description: Peak not found
+ *       500:
+ *         description: Server error
+ */
+router.patch("/:id/image", async (req, res, next) => {
+  try {
+    const peakId = parseInt(req.params.id);
+    const { image_filename } = req.body;
+
+    if (!image_filename) {
+      res.status(400).json({ message: "Image filename is required" });
+      return;
+    }
+
+    const result = await peaksService.updatePeakImage(peakId, image_filename);
+    res.status(200).json(result);
+  } catch (error) {
+    if (error instanceof Err) {
+      res.status(error.statusCode || 500).json({ message: error.message });
+    } else {
+      next(error);
+    }
+  }
+});
+
 export default router;
 
 /**

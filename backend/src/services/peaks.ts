@@ -4,7 +4,7 @@ import helper from "../helper";
 
 async function getPeaks() {
   const query = `
-    SELECT id, name, elevation, region, latitude, longitude, verified
+    SELECT id, name, elevation, region, latitude, longitude, verified, image_filename
     FROM peaks
     ORDER BY elevation DESC
   `;
@@ -22,7 +22,7 @@ async function getPeaks() {
 }
 async function getPeakById(id: number) {
   const query = `
-    SELECT id, name, elevation, region, latitude, longitude, verified
+    SELECT id, name, elevation, region, latitude, longitude, verified, image_filename
     FROM peaks
     WHERE id = $1
     LIMIT 1;
@@ -74,6 +74,26 @@ async function updatePeak(id: number, peakInfo: Peaks) {
     message: "Successfully updated peak",
   };
 }
+async function updatePeakImage(id: number, imageFilename: string) {
+  const query = `
+    UPDATE peaks
+    SET image_filename = $1
+    WHERE id = $2
+    RETURNING id, name, elevation, region, latitude, longitude, verified, image_filename;
+  `;
+
+  const result = await db.query(query, [imageFilename, id]);
+  const rows = result.rows;
+
+  if (rows.length === 0) {
+    throw new Err("Peak not found", 404);
+  }
+
+  return {
+    data: rows[0],
+    message: "Successfully updated peak image",
+  };
+}
 async function getPeaksByCollectionId(
   collectionId: number,
   page = 1,
@@ -86,7 +106,7 @@ async function getPeaksByCollectionId(
   const offset = helper.getOffset(page, limit);
 
   const query = `
-    SELECT p.id, p.name, p.elevation, p.region, p.latitude, p.longitude, p.verified
+    SELECT p.id, p.name, p.elevation, p.region, p.latitude, p.longitude, p.verified, p.image_filename
     FROM peaks p
     JOIN peak_collection_peaks pcp ON p.id = pcp.peak_id
     WHERE pcp.collection_id = $1
@@ -117,5 +137,6 @@ export default {
   getPeaks,
   getPeakById,
   updatePeak,
+  updatePeakImage,
   getPeaksByCollectionId,
 };

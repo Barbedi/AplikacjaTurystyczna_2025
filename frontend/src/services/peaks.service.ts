@@ -13,6 +13,10 @@ class PeaksService {
   update = (id: string, data: Peaks) => {
     return httpCommon.put(`/peaks/${id}`, data);
   };
+
+  updateImage = (id: string, imageFilename: string) => {
+    return httpCommon.patch(`/peaks/${id}/image`, { image_filename: imageFilename });
+  };
   getCrownPoland = (page: number = 1) => {
     return httpCommon.get(`/peaks/crown-poland?page=${page}`);
   };

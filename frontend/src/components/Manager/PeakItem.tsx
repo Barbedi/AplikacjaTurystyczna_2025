@@ -23,7 +23,6 @@ const PeakItem = ({ fetchPeaks }: PeakItemProps) => {
     pages: 1,
   });
 
-  // Pobierz dane dla aktualnej strony
   useEffect(() => {
     setLoading(true);
     fetchPeaks(pageData.page)

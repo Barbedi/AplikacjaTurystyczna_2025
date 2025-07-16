@@ -2,6 +2,7 @@ import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Peaks } from "../../assets/Data";
 import peaksService from "../../services/peaks.service";
+import filesService from "../../services/files.service";
 import MapTrails from "../../components/Manager/MapTrails";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar,faMountainSun } from "@fortawesome/free-solid-svg-icons";
@@ -25,15 +26,30 @@ const EditCrownPage = () => {
   const [imagePreview, setImagePreview] = useState<string>("");
   const { id } = useParams<{ id: string }>();
 
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       setSelectedImage(file);
+      
       const reader = new FileReader();
       reader.onload = () => {
         setImagePreview(reader.result as string);
       };
       reader.readAsDataURL(file);
+
+      try {
+        const response = await filesService.uploadPeakImage(file);
+        const filename = response.data.file?.filename;
+        
+        if (filename && id) {
+          await peaksService.updateImage(id, filename);
+          
+          const peakResponse = await peaksService.getById(id);
+          setPeak(peakResponse.data.data);
+        }
+      } catch (error) {
+        console.error("Błąd podczas uploadowania zdjęcia:", error);
+      }
     }
   };
 
@@ -58,7 +74,12 @@ const EditCrownPage = () => {
     peaksService
       .getById(id)
       .then((response) => {
-        setPeak(response.data.data);
+        const peakData = response.data.data;
+        setPeak(peakData);
+        if (peakData.image_filename) {
+          const imageUrl = filesService.getPeakImgUrl(peakData.image_filename);
+          setImagePreview(imageUrl);
+        }
       })
       .catch((error) => {
         console.error("Error fetching peak data:", error);
