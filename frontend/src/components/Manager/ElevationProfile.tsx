@@ -83,8 +83,7 @@ const ElevationProfile: React.FC<ElevationData> = ({ route, onHoverPoint }) => {
             domain={[0, totalDistanceKm]}
             tickFormatter={(value) => `${value} km`}
             name="Dystans"
-            tick={{ fill: 'white', fontSize: 12 }}
-           
+            tick={{ fill: "white", fontSize: 12 }}
           />
           <YAxis
             dataKey="elevation"
@@ -92,16 +91,16 @@ const ElevationProfile: React.FC<ElevationData> = ({ route, onHoverPoint }) => {
             domain={["dataMin", "dataMax"]}
             tickFormatter={(value) => `${value} m`}
             name="Wysokość"
-            tick={{ fill: 'white', fontSize: 12 }}
+            tick={{ fill: "white", fontSize: 12 }}
           />
           <Tooltip
-            formatter={(value: number) => [`${value} m`, 'Wysokość']}
+            formatter={(value: number) => [`${value} m`, "Wysokość"]}
             labelFormatter={(label: number) => `Dystans: ${label} km`}
             contentStyle={{
-              backgroundColor: 'rgba(0,0,0,0.8)',
-              border: '1px solid rgba(255,255,255,0.3)',
-              borderRadius: '8px',
-              color: 'white'
+              backgroundColor: "rgba(0,0,0,0.8)",
+              border: "1px solid rgba(255,255,255,0.3)",
+              borderRadius: "8px",
+              color: "white",
             }}
           />
           <Line
@@ -111,7 +110,7 @@ const ElevationProfile: React.FC<ElevationData> = ({ route, onHoverPoint }) => {
             strokeWidth={2}
             dot={false}
             name="Wysokość"
-            activeDot={{ r: 6, fill: '#9333ea' }}
+            activeDot={{ r: 6, fill: "#9333ea" }}
           />
         </LineChart>
       </ResponsiveContainer>

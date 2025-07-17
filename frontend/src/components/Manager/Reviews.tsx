@@ -17,13 +17,17 @@ const Reviews = () => {
     <div className="w-full">
       <div
         onClick={() => setIsOpen(!isOpen)}
-        className={`flex ${isOpen ? 'flex-col' : 'flex-row'} bg-white/10 backdrop-blur-lg rounded-lg shadow-lg p-4 mt-5 cursor-pointer transition-all duration-300 ease-in-out border border-white/20 hover:bg-white/15 w-full`}
+        className={`flex ${isOpen ? "flex-col" : "flex-row"} bg-white/10 backdrop-blur-lg rounded-lg shadow-lg p-4 mt-5 cursor-pointer transition-all duration-300 ease-in-out border border-white/20 hover:bg-white/15 w-full`}
       >
-        <div className={`flex ${isOpen ? 'flex-row w-full' : 'flex-col w-full'}`}>
+        <div
+          className={`flex ${isOpen ? "flex-row w-full" : "flex-col w-full"}`}
+        >
           {opinias.map((opinia, index) => (
             <div key={index} className="text-white w-full">
               <div className="flex items-center justify-between">
-                <h3 className="text-2xl font-lora text-white font-semibold">{opinia.nameRoute}</h3>
+                <h3 className="text-2xl font-lora text-white font-semibold">
+                  {opinia.nameRoute}
+                </h3>
                 {isOpen && (
                   <FontAwesomeIcon
                     icon={faPenToSquare}
@@ -31,7 +35,7 @@ const Reviews = () => {
                   />
                 )}
               </div>
-              
+
               {!isOpen && (
                 <div className="flex items-center justify-between mt-2">
                   <div className="flex items-center gap-2">
@@ -44,9 +48,13 @@ const Reviews = () => {
                         />
                       ))}
                     </div>
-                    <span className="text-white/70 text-sm">{opinia.rating}/5</span>
+                    <span className="text-white/70 text-sm">
+                      {opinia.rating}/5
+                    </span>
                   </div>
-                  <span className="text-white/60 text-sm">Kliknij aby rozwinąć</span>
+                  <span className="text-white/60 text-sm">
+                    Kliknij aby rozwinąć
+                  </span>
                 </div>
               )}
 
@@ -59,14 +67,19 @@ const Reviews = () => {
                       alt="Trasa"
                     />
                   </div>
-                  
+
                   <div className="flex-1 space-y-3">
                     <p className="text-sm text-white/70">
-                      <span className="font-medium">Data:</span> {new Date(opinia.date).toLocaleDateString('pl-PL')}
+                      <span className="font-medium">Data:</span>{" "}
+                      {new Date(opinia.date).toLocaleDateString("pl-PL")}
                     </p>
                     <div className="flex items-center gap-2">
-                      <span className="text-sm text-white/70 font-medium">Ocena trasy:</span>
-                      <span className="text-white font-medium">{opinia.rating}</span>
+                      <span className="text-sm text-white/70 font-medium">
+                        Ocena trasy:
+                      </span>
+                      <span className="text-white font-medium">
+                        {opinia.rating}
+                      </span>
                       <div className="flex">
                         {[...Array(5)].map((_, i) => (
                           <FontAwesomeIcon
@@ -78,7 +91,9 @@ const Reviews = () => {
                       </div>
                     </div>
                     <div>
-                      <p className="text-sm text-white/70 font-medium mb-2">Komentarz:</p>
+                      <p className="text-sm text-white/70 font-medium mb-2">
+                        Komentarz:
+                      </p>
                       <p className="text-white p-4  leading-relaxed">
                         {opinia.comment}
                       </p>

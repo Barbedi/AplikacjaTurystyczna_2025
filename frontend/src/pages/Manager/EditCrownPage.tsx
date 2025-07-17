@@ -5,7 +5,7 @@ import peaksService from "../../services/peaks.service";
 import filesService from "../../services/files.service";
 import MapTrails from "../../components/Manager/MapTrails";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faStar,faMountainSun } from "@fortawesome/free-solid-svg-icons";
+import { faStar, faMountainSun } from "@fortawesome/free-solid-svg-icons";
 
 const emptyPeak: Peaks = {
   id: 0,
@@ -26,11 +26,13 @@ const EditCrownPage = () => {
   const [imagePreview, setImagePreview] = useState<string>("");
   const { id } = useParams<{ id: string }>();
 
-  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const file = event.target.files?.[0];
     if (file) {
       setSelectedImage(file);
-      
+
       const reader = new FileReader();
       reader.onload = () => {
         setImagePreview(reader.result as string);
@@ -40,10 +42,10 @@ const EditCrownPage = () => {
       try {
         const response = await filesService.uploadPeakImage(file);
         const filename = response.data.file?.filename;
-        
+
         if (filename && id) {
           await peaksService.updateImage(id, filename);
-          
+
           const peakResponse = await peaksService.getById(id);
           setPeak(peakResponse.data.data);
         }
@@ -88,7 +90,10 @@ const EditCrownPage = () => {
 
   return (
     <div className="flex flex-col max-w-6xl text-center items-center justify-center w-full mx-auto mt-3 gap-y-4">
-      <div className="text-4xl font-lora text-white mb-4 underline"><FontAwesomeIcon icon={faMountainSun} className="mr-2"/>{peak.name}</div>
+      <div className="text-4xl font-lora text-white mb-4 underline">
+        <FontAwesomeIcon icon={faMountainSun} className="mr-2" />
+        {peak.name}
+      </div>
       <div className="flex flex-row items-start justify-start w-full max-w-6xl p-4">
         <div className="flex flex-col items-start justify-start mb-4 w-1/2">
           <div className="w-full mb-6 bg-white/10 backdrop-blur-lg rounded-lg p-4 border border-white/20">
@@ -101,18 +106,22 @@ const EditCrownPage = () => {
                 <span className="text-white font-lora ml-2">{peak.region}</span>
               </div>
               <div className="flex items-center">
-                <span className="text-white/70 font-medium w-20">Wysokość:</span>
+                <span className="text-white/70 font-medium w-20">
+                  Wysokość:
+                </span>
                 <span className="text-yellow-400 font-lora ml-2 font-semibold">
                   {peak.elevation} m n.p.m.
                 </span>
               </div>
               <div className="flex items-center">
                 <span className="text-white/70 font-medium w-20">Status:</span>
-                <span className={`ml-2 px-2 py-1 rounded-full text-xs font-medium ${
-                  peak.verified 
-                    ? "bg-green-500/20 text-green-300 border border-green-500/30" 
-                    : "bg-orange-500/20 text-orange-300 border border-orange-500/30"
-                }`}>
+                <span
+                  className={`ml-2 px-2 py-1 rounded-full text-xs font-medium ${
+                    peak.verified
+                      ? "bg-green-500/20 text-green-300 border border-green-500/30"
+                      : "bg-orange-500/20 text-orange-300 border border-orange-500/30"
+                  }`}
+                >
                   {peak.verified ? "Zweryfikowany" : "Niezweryfikowany"}
                 </span>
               </div>
@@ -121,9 +130,7 @@ const EditCrownPage = () => {
           <div className="w-full">
             <h3 className="text-xl font-lora text-white mb-3">Lokalizacja</h3>
             <div className="w-full h-64 rounded-lg overflow-hidden border border-white/20 shadow-lg">
-              <MapTrails
-                hoverPoint={[peak.latitude, peak.longitude]}
-              />
+              <MapTrails hoverPoint={[peak.latitude, peak.longitude]} />
             </div>
           </div>
         </div>
@@ -148,7 +155,9 @@ const EditCrownPage = () => {
                 />
               ) : (
                 <div className="flex flex-col items-center justify-center h-full text-white/60 backdrop-blur-lg">
-                  <span className="text-lg font-lora mb-2">Dodaj zdjęcie szczytu</span>
+                  <span className="text-lg font-lora mb-2">
+                    Dodaj zdjęcie szczytu
+                  </span>
                   <span className="text-sm">Kliknij aby wybrać plik</span>
                 </div>
               )}

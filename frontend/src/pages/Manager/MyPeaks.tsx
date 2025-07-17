@@ -1,10 +1,19 @@
+import MyPeaksAdd from "../../components/Manager/MyPeaksAdd";
+import MyPeaksUser from "../../components/Manager/MyPeaksUser";
+
 const MyPeaks = () => {
   return (
-    <div className="text-center mt-20">
-      <h1 className="text-3xl text-white font-bold mb-4">Moje szczyty</h1>
-      <p className="text-gray-500 text-lg">
-        Ta strona jest jeszcze w budowie. Wkrótce będzie dostępna!
-      </p>
+    <div className="text-center mt-5 mx-4 flex flex-col items-center justify-center">
+      <MyPeaksAdd />
+      <div className="w-full mt-3">
+        <div className="flex items-center justify-center gap-3 mb-2">
+          <h1 className="text-2xl font-lora text-white">Moje Szczyty</h1>
+        </div>
+        <div className="grid grid-cols-4 gap-4 mt-4">
+          <MyPeaksUser />
+          {/* limit 12 */}
+        </div>
+      </div>
     </div>
   );
 };

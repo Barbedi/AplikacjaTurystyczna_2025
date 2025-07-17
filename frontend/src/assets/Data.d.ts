@@ -38,7 +38,13 @@ export interface Trails {
   created_by: string;
   created_at: string;
   points?: TrailPoint[];
-  duration_minutes?: number; 
+  duration_minutes?: number;
+}
+export interface UserPeak {
+  peak_id: number;
+  peak_name: string;
+  user_id: number;
+  visited_at: string;
 }
 
 // Typ dla nowej trasy bez ID i created_at
@@ -59,6 +65,15 @@ export interface User {
   email: string;
   role: string;
 }
+export interface UserPeaks {
+  id: number;
+  user_id: number;
+  peak_id: number;
+  visited_at: string;
+  photo_url?: string;
+  description?: string;
+}
+
 export interface Peaks {
   id: number;
   name: string;
@@ -153,6 +168,8 @@ export interface Peaks {
   latitude: number;
   longitude: number;
   verified: boolean;
+  description?: string;
+  image_filename?: string;
 }
 
 export interface CurrentWeather {
