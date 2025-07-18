@@ -45,7 +45,7 @@ export interface UserPeak {
   peak_name: string;
   user_id: number;
   visited_at: string;
-  times_visited: number;  
+  times_visited: number;
   last_visited: string;
   description?: string;
   photo_url?: string;
