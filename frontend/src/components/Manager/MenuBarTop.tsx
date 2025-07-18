@@ -26,10 +26,12 @@ const MenuBarTop = () => {
       if (index > 0 && pathParts[index - 1] === "my-peaks") {
         return `Szczyt #${part}`;
       }
-      // Dla innych przypadków, zwróć ID
+      if (index > 0 && pathParts[index - 1] === "edit-route") {
+        return ` #${part}`;
+      }
       return `ID: ${part}`;
     }
-    // Dla normalnych części ścieżki użyj tłumaczenia lub oryginalnej nazwy
+   
     return pathTranslation[part] || part;
   };
 

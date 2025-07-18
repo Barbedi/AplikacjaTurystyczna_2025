@@ -13,6 +13,7 @@ export const pathTranslation: Record<string, string> = {
   "crown-poland": "Korona Gór Polski",
   "crown-beskid": "Korona Beskidu Sądeckiego",
   "edit-peak": "Edytuj szczyt",
+  "edit-route": "Edytuj trasę",
   manager: "Manager",
   explore: "Odkrywaj",
   home: "Strona główna",

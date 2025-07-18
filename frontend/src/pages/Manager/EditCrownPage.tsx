@@ -34,6 +34,7 @@ const EditCrownPage = () => {
   const [hoveredStar, setHoveredStar] = useState<number>(0);
   const [, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>("");
+  const [userImagePreview, setUserImagePreview] = useState<string>("");
   const { user } = useContext(AuthContext);
   const { getUserByEmail, usersData } = useGetUsers();
   const { id } = useParams<{ id: string }>();
@@ -50,9 +51,10 @@ const EditCrownPage = () => {
 
   const currentUser = usersData?.[0]?.[0];
 
+  // Fetch user peak data (only for My Peaks)
   useEffect(() => {
     const fetchMyPeak = async () => {
-      if (!currentUser?.id || !id) return;
+      if (!currentUser?.id || !id || !isMyPeak) return;
 
       try {
         const response = await userpeaksService.getUserPeakById(currentUser.id, parseInt(id));
@@ -64,8 +66,9 @@ const EditCrownPage = () => {
           visitedAt: userPeakData.visited_at,
         });
 
+        // Set user image preview separately from general peak image
         if (userPeakData.photo_url) {
-          setImagePreview(filesService.getPeakImgUrl(userPeakData.photo_url));
+          setUserImagePreview(filesService.getPeakImgUrl(userPeakData.photo_url));
         }
 
         if (userPeakData.rating) {
@@ -77,7 +80,7 @@ const EditCrownPage = () => {
     };
 
     fetchMyPeak();
-  }, [currentUser?.id, id]);
+  }, [currentUser?.id, id, isMyPeak]);
 
   const handleImageUpload = async (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -88,7 +91,11 @@ const EditCrownPage = () => {
 
       const reader = new FileReader();
       reader.onload = () => {
-        setImagePreview(reader.result as string);
+        if (isCrownPeak) {
+          setImagePreview(reader.result as string);
+        } else if (isMyPeak) {
+          setUserImagePreview(reader.result as string);
+        }
       };
       reader.readAsDataURL(file);
 
@@ -97,10 +104,17 @@ const EditCrownPage = () => {
         const filename = response.data.file?.filename;
 
         if (filename && id) {
-          await peaksService.updateImage(id, filename);
-
-          const peakResponse = await peaksService.getById(id);
-          setPeak(peakResponse.data.data);
+          if (isCrownPeak) {
+            // Update crown peak image
+            await peaksService.updateImage(id, filename);
+            const peakResponse = await peaksService.getById(id);
+            setPeak(peakResponse.data.data);
+          } else if (isMyPeak && currentUser?.id) {
+            // Update user peak image - you'll need to implement this in your service
+            // For now, just update the local state
+            setMyPeak(prev => prev ? { ...prev, photoUrl: filename } : null);
+            console.log(`User peak image updated: ${filename}`);
+          }
         }
       } catch (error) {
         console.error("Błąd podczas uploadowania zdjęcia:", error);
@@ -120,30 +134,35 @@ const EditCrownPage = () => {
     setHoveredStar(0);
   };
 
+  // Fetch general peak data
   useEffect(() => {
-    if (!id) {
-      console.error("ID is not provided");
-      return;
-    }
+    const fetchPeakData = async () => {
+      if (!id) {
+        console.error("ID is not provided");
+        return;
+      }
 
-    peaksService
-      .getById(id)
-      .then((response) => {
+      try {
+        const response = await peaksService.getById(id);
         const peakData = response.data.data;
         setPeak(peakData);
-        if (peakData.image_filename) {
+        
+        // Only set image preview for crown peaks
+        if (isCrownPeak && peakData.image_filename) {
           const imageUrl = filesService.getPeakImgUrl(peakData.image_filename);
           setImagePreview(imageUrl);
         }
-      })
-      .catch((error) => {
+      } catch (error) {
         console.error("Error fetching peak data:", error);
-      });
-  }, [id]);
+      }
+    };
+
+    fetchPeakData();
+  }, [id, isCrownPeak]);
 
   return (
     <div className="flex flex-col max-w-6xl text-center items-center justify-center w-full mx-auto mt-3 gap-y-4">
-      <div className="text-4xl font-lora text-white mb-4 underline">
+      <div className="text-4xl font-lora text-white  underline">
         <FontAwesomeIcon icon={faMountainSun} className="mr-2" />
         {peak.name}
       </div>
@@ -239,40 +258,21 @@ const EditCrownPage = () => {
                 <h3 className="text-xl font-lora text-white mb-3 border-b border-white/20 pb-2 mt-4">
                   Twoje zdjęcia
                 </h3>
-                <div className="grid grid-cols-2 gap-3 mt-4">
+                <div className="grid grid-cols-1 max-h-1/2  gap-3 mt-4">
                   {myPeak?.photoUrl && (
-                    <div className="aspect-square rounded-lg overflow-hidden border border-white/30">
+                    <div className=" rounded-lg overflow-hidden border border-white/30">
                       <img
-                        src={filesService.getPeakImgUrl(myPeak.photoUrl)}
+                        src={userImagePreview || filesService.getPeakImgUrl(myPeak.photoUrl)}
                         alt="Twoje zdjęcie szczytu"
                         className="w-full h-full object-cover"
                       />
                     </div>
                   )}
-                  <div className="aspect-square bg-white/5 backdrop-blur-lg rounded-lg flex items-center justify-center border-2 border-dashed border-white/30 hover:border-white/50 hover:bg-white/10 transition-all cursor-pointer">
-                    <input
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      id="add-user-image"
-                      onChange={handleImageUpload}
-                    />
-                    <label
-                      htmlFor="add-user-image"
-                      className="w-30 h-30 flex flex-col items-center justify-center cursor-pointer"
-                    >
-                      <FontAwesomeIcon
-                        icon={faMountainSun}
-                        className="text-white/40 text-4xl mb-2"
-                      />
-                      <span className="text-sm text-white/60 font-medium">
-                        {myPeak?.photoUrl ? "Zmień zdjęcie" : "Dodaj nowe zdjęcie"}
-                      </span>
-                      <span className="text-xs text-white/40 mt-1">
-                        Kliknij aby wybrać plik
-                      </span>
-                    </label>
-                  </div>
+                  {!myPeak?.photoUrl && (
+                    <div className="flex items-center justify-center w-full h-64 bg-white/10 backdrop-blur-lg rounded-lg border border-white/20">
+                      <span className="text-white/60">Nie dodano jeszcze zdjęcia</span>
+                    </div>
+                  )}
                 </div>
               </div>
               )}
@@ -293,6 +293,7 @@ const EditCrownPage = () => {
               Twój komentarz
             </label>
             <textarea
+              readOnly
               value={myPeak?.description || ""}
               className="w-full h-24 p-3 bg-white/20 backdrop-blur-lg shadow-lg text-white rounded-lg placeholder-white/60 border border-white/20 focus:border-white/40 outline-none"
               placeholder="Podziel się swoimi wrażeniami ze szczytu..."
