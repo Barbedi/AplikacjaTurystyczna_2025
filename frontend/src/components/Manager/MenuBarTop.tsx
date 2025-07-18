@@ -6,11 +6,13 @@ const MenuBarTop = () => {
   const pathParts = location.pathname.split("/").filter(Boolean);
 
   const getDisplayName = (part: string, index: number) => {
+    
     if (/^\d+$/.test(part)) {
       if (
         index > 0 &&
         (pathParts[index - 1] === "crown-poland" ||
-          pathParts[index - 1] === "crown-beskid")
+          pathParts[index - 1] === "crown-beskid" ||
+          pathParts[index - 1] === "peak")
       ) {
         return `Szczyt #${part}`;
       }
@@ -21,10 +23,15 @@ const MenuBarTop = () => {
       if (index > 0 && pathParts[index - 1] === "my-routes") {
         return `Trasa #${part}`;
       }
-      // Dla innych przypadków, zwróć ID
+      if (index > 0 && pathParts[index - 1] === "my-peaks") {
+        return `Szczyt #${part}`;
+      }
+      if (index > 0 && pathParts[index - 1] === "edit-route") {
+        return ` #${part}`;
+      }
       return `ID: ${part}`;
     }
-    // Dla normalnych części ścieżki użyj tłumaczenia lub oryginalnej nazwy
+   
     return pathTranslation[part] || part;
   };
 

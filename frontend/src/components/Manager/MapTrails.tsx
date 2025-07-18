@@ -97,7 +97,7 @@ const MapTrails = ({ trail, hoverPoint }: MapTrailsProps) => {
   return (
     <div className="w-full h-full flex flex-col rounded-lg overflow-hidden border border-white/20 shadow-lg">
       <MapContainer
-        key={hoverPoint ? `${hoverPoint[0]}-${hoverPoint[1]}` : 'default'}
+        key={hoverPoint ? `${hoverPoint[0]}-${hoverPoint[1]}` : "default"}
         center={getMapCenter()}
         zoom={hoverPoint ? 14 : 12}
         scrollWheelZoom

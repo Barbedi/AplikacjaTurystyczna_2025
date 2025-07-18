@@ -7,16 +7,12 @@ class FilesService {
       const form = new FormData();
       form.append("file", file);
       http
-        .post(
-          "/files/uploadProfile",
-          form,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-            withCredentials: true,
+        .post("/files/uploadProfile", form, {
+          headers: {
+            "Content-Type": "multipart/form-data",
           },
-        )
+          withCredentials: true,
+        })
         .then((response) => {
           resolve(response);
         })
@@ -30,16 +26,12 @@ class FilesService {
       const form = new FormData();
       form.append("file", file);
       http
-        .post(
-          "/files/upload/peaks",
-          form,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-            withCredentials: true,
+        .post("/files/upload/peaks", form, {
+          headers: {
+            "Content-Type": "multipart/form-data",
           },
-        )
+          withCredentials: true,
+        })
         .then((response) => {
           resolve(response);
         })

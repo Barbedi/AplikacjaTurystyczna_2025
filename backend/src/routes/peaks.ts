@@ -4,6 +4,7 @@ import { Err } from "../Types";
 
 const router = express.Router();
 
+
 /**
  * @swagger
  * /peaks:
@@ -122,7 +123,131 @@ router.get("/crown-beskid", async (req, res, next) => {
   }
 });
 
-// GET pojedynczy peak po ID - MUSI być na końcu, żeby nie przechwytywał /crown-poland itp.
+/**
+ * @swagger
+ * /peaks/search:
+ *   get:
+ *     summary: Search peaks by name
+ *     tags:
+ *       - Peaks
+ *     parameters:
+ *       - name: query
+ *         in: query
+ *         required: true
+ *         description: Search term
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: List of peaks matching the search term
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Peak'
+ *       400:
+ *         description: Missing query parameter
+ *       500:
+ *         description: Server error
+ */
+router.get("/search", async (req, res, next) => {
+  try {
+    const query = req.query["query"] as string;
+    if (!query) {
+      throw new Err("Query parameter 'query' is required", 400);
+    }
+
+    const result = await peaksService.searchPeaks(query);
+    res.status(200).json(result);
+  } catch (error) {
+    if (error instanceof Err) {
+      res.status(error.statusCode || 500).json({ message: error.message });
+    } else {
+      next(error);
+    }
+  }
+});
+
+router.post("/", async (req, res, next) => {
+  try {
+    const peakInfo = req.body;
+    const result = await peaksService.createPeak(peakInfo);
+    res.status(201).json(result);
+  } catch (error) {
+    if (error instanceof Err) {
+      res.status(error.statusCode || 500).json({ message: error.message });
+    } else {
+      next(error);
+    }
+  }
+});
+
+router.post("/:id/users", async (req, res, next) => {
+  try {
+    const peakId = parseInt(req.params.id);
+    const { user_id, description, photo_url } = req.body;
+
+    if (!user_id) {
+      res.status(400).json({ message: "User ID is required" });
+      return;
+    }
+
+    const result = await peaksService.addPeakUsers(peakId, user_id, description, photo_url);
+    res.status(201).json(result);
+  } catch (error) {
+    if (error instanceof Err) {
+      res.status(error.statusCode || 500).json({ message: error.message });
+    } else {
+      next(error);
+    }
+  }
+});
+
+router.get("/users/:userId", async (req, res, next) => {
+  try {
+    const { page, limit } = req.query;
+    const parsedPage = page ? parseInt(page as string) : undefined;
+    const parsedLimit = limit ? parseInt(limit as string) : undefined;
+    const userId = parseInt(req.params.userId);
+    if (isNaN(userId)) {
+      throw new Err("Invalid User ID", 400);
+    }
+
+    const result = await peaksService.getPeakByUserId(
+      userId,
+      parsedPage,
+      parsedLimit,
+    );
+    res.status(200).json(result);
+  } catch (error) {
+    if (error instanceof Err) {
+      res.status(error.statusCode || 500).json({ message: error.message });
+    } else {
+      next(error);
+    }
+  }
+});
+
+router.get("/:id/users/:userId", async (req, res, next) => {
+  try {
+    const peakId = parseInt(req.params.id);
+    const userId = parseInt(req.params.userId);
+    if (isNaN(peakId) || isNaN(userId)) {
+      throw new Err("Invalid ID", 400);
+    }
+
+    const result = await peaksService.getUserPeakById(userId, peakId);
+    res.status(200).json(result);
+  } catch (error) {
+    if (error instanceof Err) {
+      res.status(error.statusCode || 500).json({ message: error.message });
+    } else {
+      next(error);
+    }
+  }
+});
+
 router.get("/:id", async (req, res, next) => {
   try {
     const parsedId = parseInt(req.params.id, 10);
@@ -212,6 +337,7 @@ router.patch("/:id/image", async (req, res, next) => {
     }
   }
 });
+
 
 export default router;
 

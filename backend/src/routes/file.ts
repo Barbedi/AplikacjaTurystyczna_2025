@@ -24,13 +24,13 @@ const upload = multer({
     destination: function (req, _file, cb) {
       const uploadType = (req as any).uploadType as string;
       let destinationDir = FILES_DIR;
-      
-      if (uploadType === 'profile') {
+
+      if (uploadType === "profile") {
         destinationDir = PROFILES_DIR;
-      } else if (uploadType === 'peaks') {
+      } else if (uploadType === "peaks") {
         destinationDir = PEAKS_DIR;
       }
-      
+
       cb(null, destinationDir);
     },
     filename: function (_req, file, cb) {
@@ -40,7 +40,6 @@ const upload = multer({
   }),
   limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
 });
-
 
 /**
  * @openapi
@@ -73,7 +72,7 @@ router.get("/:file", async function (req, res, next) {
   try {
     const filename = req.params.file;
     const filePath = path.join(PROFILES_DIR, filename);
-    
+
     if (fs.existsSync(filePath)) {
       res.sendFile(filePath);
     } else {
@@ -138,7 +137,7 @@ router.post(
   "/uploadProfile",
   verifyUser,
   (req, _res, next) => {
-    (req as any).uploadType = 'profile';
+    (req as any).uploadType = "profile";
     next();
   },
   upload.single("file"),
@@ -155,12 +154,11 @@ router.post(
   },
 );
 
-
 router.post(
   "/upload/peaks",
   verifyUser,
   (req, _res, next) => {
-    (req as any).uploadType = 'peaks';
+    (req as any).uploadType = "peaks";
     next();
   },
   upload.single("file"),
@@ -170,10 +168,10 @@ router.post(
         res.status(400).json({ message: "No file uploaded" });
         return;
       }
-      
-      res.status(200).json({ 
+
+      res.status(200).json({
         file: req.file,
-        message: "Peak image uploaded successfully."
+        message: "Peak image uploaded successfully.",
       });
     } catch (err) {
       next(err);
@@ -211,7 +209,7 @@ router.get("/peaks/:file", async function (req, res, next) {
   try {
     const filename = req.params.file;
     const filePath = path.join(PEAKS_DIR, filename);
-    
+
     if (fs.existsSync(filePath)) {
       res.sendFile(filePath);
     } else {
@@ -221,8 +219,5 @@ router.get("/peaks/:file", async function (req, res, next) {
     next(err);
   }
 });
-
-
- 
 
 export default router;
