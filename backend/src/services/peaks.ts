@@ -1,5 +1,5 @@
 import db from "../db";
-import { Err, Peaks } from "../Types";
+import { Err, Peaks, } from "../Types";
 import helper from "../helper";
 
 // Pobieranie wszystkich szczytów
@@ -31,16 +31,18 @@ async function getPeakByUserId(userId: number, page = 1, limit = 12) {
   }
   const offset = helper.getOffset(page, limit);
   const query = `
-    SELECT 
-      p.id AS peak_id,
-      p.name AS peak_name,
-      up.user_id,
-      up.visited_at
-    FROM peaks p
-    JOIN user_peaks up ON p.id = up.peak_id
-    WHERE up.user_id = $1
-    ORDER BY p.elevation DESC
-    LIMIT $2 OFFSET $3;
+  SELECT DISTINCT ON (p.id)
+  p.id AS peak_id,
+  p.name AS peak_name,
+  up.visited_at AS last_visited,
+  up.description,
+  up.photo_url,
+  COUNT(*) OVER (PARTITION BY p.id) AS times_visited
+FROM peaks p
+JOIN user_peaks up ON p.id = up.peak_id
+WHERE up.user_id = $1
+ORDER BY p.id, up.visited_at DESC
+LIMIT $2 OFFSET $3
   `;
   const result = await db.query(query, [userId, limit, offset]);
   const rows = helper.emptyOrRows(result.rows);
@@ -53,6 +55,32 @@ async function getPeakByUserId(userId: number, page = 1, limit = 12) {
     message: "Successfully fetched peaks for user",
     page,
     limit,
+  };
+}
+
+
+async function getUserPeakById(userId: number,peakId: number) {
+  if (!userId) {
+    throw new Err("User ID is required", 400);
+  }
+  const query = `
+    SELECT p.id, p.name, p.elevation, p.region, p.latitude, p.longitude, p.verified, p.image_filename,
+           up.visited_at, up.description, up.photo_url
+    FROM peaks p
+    JOIN user_peaks up ON p.id = up.peak_id
+    WHERE up.user_id = $1 AND p.id = $2
+    ORDER BY up.visited_at DESC;
+  `;
+  const result = await db.query(query, [userId, peakId]);
+  const rows = helper.emptyOrRows(result.rows);
+  
+  if (rows.length === 0) {
+    throw new Err("No peaks found for this user", 404);
+  }
+
+  return {
+    data: rows[0],
+    message: "Successfully fetched peak for user",
   };
 }
 
@@ -90,16 +118,16 @@ async function createPeak(peakInfo: Peaks) {
 }
 
 // Dodawanie szczytu do użytkownika
-async function addPeakUsers(peakId: number, userId: number) {
-  if (!peakId || !userId) {
-    throw new Err("Peak ID and User ID are required", 400);
+async function addPeakUsers(peakId: number, userId: number, description?: string, photoUrl?: string) {
+  if (!userId) {
+    throw new Err("User ID is required", 400);
   }
   const query = `
     INSERT INTO user_peaks (peak_id, user_id, visited_at, description, photo_url)
     VALUES ($1, $2, NOW(), $3, $4)
     RETURNING id, peak_id, user_id, visited_at, description, photo_url;
   `;
-  const values = [peakId, userId, null, null];
+  const values = [peakId, userId, description || null, photoUrl || null];
   const result = await db.query(query, values);
   const rows = result.rows;
 
@@ -260,4 +288,5 @@ export default {
   updatePeakImage,
   getPeaksByCollectionId,
   searchPeaks,
+  getUserPeakById
 };

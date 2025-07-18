@@ -1,11 +1,15 @@
-import { useParams } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useParams,useLocation } from "react-router-dom";
+import { useState, useEffect,useContext  } from "react";
 import { Peaks } from "../../assets/Data";
 import peaksService from "../../services/peaks.service";
+import userpeaksService from "../../services/userpeaks.service";
 import filesService from "../../services/files.service";
 import MapTrails from "../../components/Manager/MapTrails";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar, faMountainSun } from "@fortawesome/free-solid-svg-icons";
+import { formatDate } from "../../utils/format";
+import useGetUsers from "../../hooks/user/useGetUser";
+import AuthContext from "../../store/auth-context";
 
 const emptyPeak: Peaks = {
   id: 0,
@@ -20,11 +24,60 @@ const emptyPeak: Peaks = {
 
 const EditCrownPage = () => {
   const [peak, setPeak] = useState<Peaks>(emptyPeak);
+  const [myPeak, setMyPeak] = useState<{
+    description?: string;
+    photoUrl?: string;
+    visitedAt?: string;
+  } | null>(null);
+
   const [rating, setRating] = useState<number>(0);
   const [hoveredStar, setHoveredStar] = useState<number>(0);
   const [, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>("");
+  const { user } = useContext(AuthContext);
+  const { getUserByEmail, usersData } = useGetUsers();
   const { id } = useParams<{ id: string }>();
+  const location = useLocation();
+  const pathname = location.pathname;
+
+  const isCrownPeak = pathname.includes('/crown-peaks/');
+  const isMyPeak = pathname.includes('/my-peaks/');
+  useEffect(() => {
+    if (user?.email) {
+      getUserByEmail(user.email);
+    }
+  }, [user?.email, getUserByEmail]);
+
+  const currentUser = usersData?.[0]?.[0];
+
+  useEffect(() => {
+    const fetchMyPeak = async () => {
+      if (!currentUser?.id || !id) return;
+
+      try {
+        const response = await userpeaksService.getUserPeakById(currentUser.id, parseInt(id));
+        const userPeakData = response.data.data;
+
+        setMyPeak({
+          description: userPeakData.description,
+          photoUrl: userPeakData.photo_url,
+          visitedAt: userPeakData.visited_at,
+        });
+
+        if (userPeakData.photo_url) {
+          setImagePreview(filesService.getPeakImgUrl(userPeakData.photo_url));
+        }
+
+        if (userPeakData.rating) {
+          setRating(userPeakData.rating);
+        }
+      } catch (error) {
+        console.error("Error fetching user peak data:", error);
+      }
+    };
+
+    fetchMyPeak();
+  }, [currentUser?.id, id]);
 
   const handleImageUpload = async (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -115,6 +168,7 @@ const EditCrownPage = () => {
               </div>
               <div className="flex items-center">
                 <span className="text-white/70 font-medium w-20">Status:</span>
+                 {isCrownPeak && (
                 <span
                   className={`ml-2 px-2 py-1 rounded-full text-xs font-medium ${
                     peak.verified
@@ -124,7 +178,22 @@ const EditCrownPage = () => {
                 >
                   {peak.verified ? "Zweryfikowany" : "Niezweryfikowany"}
                 </span>
+                 )}
+                {isMyPeak && (
+                <span
+                  className={`ml-2 px-2 py-1 rounded-full text-xs font-medium bg-green-500/20 text-green-300 border border-green-500/30
+                  `}
+                >
+                  {"Zdobyty"}
+                </span>
+                )}
               </div>
+              {isMyPeak && (
+              <div className="flex items-center">
+                <span className="text-white/70 font-medium w-20">Data:</span>
+                <span className="text-white font-lora ml-2">{myPeak?.visitedAt ? formatDate(myPeak.visitedAt) : "Nieznana"}</span>
+              </div>
+              )}
             </div>
           </div>
           <div className="w-full">
@@ -135,6 +204,7 @@ const EditCrownPage = () => {
           </div>
         </div>
         <div className="flex flex-col items-center justify-start w-1/2 ml-4">
+        {isCrownPeak && (
           <div className="w-full mb-4">
             <input
               type="file"
@@ -163,6 +233,50 @@ const EditCrownPage = () => {
               )}
             </label>
           </div>
+        )}
+        {isMyPeak && (
+              <div className="w-full mb-4">
+                <h3 className="text-xl font-lora text-white mb-3 border-b border-white/20 pb-2 mt-4">
+                  Twoje zdjęcia
+                </h3>
+                <div className="grid grid-cols-2 gap-3 mt-4">
+                  {myPeak?.photoUrl && (
+                    <div className="aspect-square rounded-lg overflow-hidden border border-white/30">
+                      <img
+                        src={filesService.getPeakImgUrl(myPeak.photoUrl)}
+                        alt="Twoje zdjęcie szczytu"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  )}
+                  <div className="aspect-square bg-white/5 backdrop-blur-lg rounded-lg flex items-center justify-center border-2 border-dashed border-white/30 hover:border-white/50 hover:bg-white/10 transition-all cursor-pointer">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      id="add-user-image"
+                      onChange={handleImageUpload}
+                    />
+                    <label
+                      htmlFor="add-user-image"
+                      className="w-30 h-30 flex flex-col items-center justify-center cursor-pointer"
+                    >
+                      <FontAwesomeIcon
+                        icon={faMountainSun}
+                        className="text-white/40 text-4xl mb-2"
+                      />
+                      <span className="text-sm text-white/60 font-medium">
+                        {myPeak?.photoUrl ? "Zmień zdjęcie" : "Dodaj nowe zdjęcie"}
+                      </span>
+                      <span className="text-xs text-white/40 mt-1">
+                        Kliknij aby wybrać plik
+                      </span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+              )}
+        {isCrownPeak && (
           <div className="w-full mb-4">
             <label className="block text-lg font-lora text-white mb-2">
               Dodaj Komentarz
@@ -172,6 +286,20 @@ const EditCrownPage = () => {
               placeholder="Podziel się swoimi wrażeniami ze szczytu..."
             />
           </div>
+        )}
+        {isMyPeak && (
+          <div className="w-full mb-4">
+            <label className="block text-lg font-lora text-white mb-2">
+              Twój komentarz
+            </label>
+            <textarea
+              value={myPeak?.description || ""}
+              className="w-full h-24 p-3 bg-white/20 backdrop-blur-lg shadow-lg text-white rounded-lg placeholder-white/60 border border-white/20 focus:border-white/40 outline-none"
+              placeholder="Podziel się swoimi wrażeniami ze szczytu..."
+            />
+          </div>
+        )}
+        {isCrownPeak && (
           <div className="w-full">
             <label className="block text-lg font-lora text-white mb-2">
               Oceń szczyt:
@@ -196,6 +324,7 @@ const EditCrownPage = () => {
               </span>
             </div>
           </div>
+        )}
         </div>
       </div>
     </div>

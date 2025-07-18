@@ -4,6 +4,7 @@ import { Err } from "../Types";
 
 const router = express.Router();
 
+
 /**
  * @swagger
  * /peaks:
@@ -185,14 +186,14 @@ router.post("/", async (req, res, next) => {
 router.post("/:id/users", async (req, res, next) => {
   try {
     const peakId = parseInt(req.params.id);
-    const { user_id } = req.body;
+    const { user_id, description, photo_url } = req.body;
 
     if (!user_id) {
       res.status(400).json({ message: "User ID is required" });
       return;
     }
 
-    const result = await peaksService.addPeakUsers(peakId, user_id);
+    const result = await peaksService.addPeakUsers(peakId, user_id, description, photo_url);
     res.status(201).json(result);
   } catch (error) {
     if (error instanceof Err) {
@@ -218,6 +219,25 @@ router.get("/users/:userId", async (req, res, next) => {
       parsedPage,
       parsedLimit,
     );
+    res.status(200).json(result);
+  } catch (error) {
+    if (error instanceof Err) {
+      res.status(error.statusCode || 500).json({ message: error.message });
+    } else {
+      next(error);
+    }
+  }
+});
+
+router.get("/:id/users/:userId", async (req, res, next) => {
+  try {
+    const peakId = parseInt(req.params.id);
+    const userId = parseInt(req.params.userId);
+    if (isNaN(peakId) || isNaN(userId)) {
+      throw new Err("Invalid ID", 400);
+    }
+
+    const result = await peaksService.getUserPeakById(userId, peakId);
     res.status(200).json(result);
   } catch (error) {
     if (error instanceof Err) {
@@ -317,6 +337,7 @@ router.patch("/:id/image", async (req, res, next) => {
     }
   }
 });
+
 
 export default router;
 

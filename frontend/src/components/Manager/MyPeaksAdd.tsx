@@ -10,6 +10,7 @@ import userpeaksService from "../../services/userpeaks.service";
 import { Peaks } from "../../assets/Data";
 import AuthContext from "../../store/auth-context";
 import useGetUsers from "../../hooks/user/useGetUser";
+import filesService from "../../services/files.service";
 
 const MyPeaksAdd = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -20,6 +21,8 @@ const MyPeaksAdd = () => {
   const { user } = useContext(AuthContext);
   const { getUserByEmail, usersData } = useGetUsers();
   const [userId, setUserId] = useState<number | null>(null);
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [selectedFileName, setSelectedFileName] = useState<string>("");
 
   const [formData, setFormData] = useState({
     name: "",
@@ -28,6 +31,7 @@ const MyPeaksAdd = () => {
     longitude: "",
     region: "",
     description: "",
+    photo_url: "",
   });
 
   useEffect(() => {
@@ -99,14 +103,20 @@ const MyPeaksAdd = () => {
           elevation: details.elevation?.toString() || "",
           latitude: details.latitude?.toString() || "",
           longitude: details.longitude?.toString() || "",
-          region: details.region || "",
+          region: details.region || "", 
           description: details.description || "",
+          photo_url: details.photo_url || "",
         });
+        if (details.image_filename) {
+          setSelectedFileName(details.image_filename);
+        }
       }
     });
   };
   const clearForm = () => {
     setSearchTerm("");
+    setSelectedImage(null);
+    setSelectedFileName("");
     setFormData({
       name: "",
       elevation: "",
@@ -114,6 +124,7 @@ const MyPeaksAdd = () => {
       longitude: "",
       region: "",
       description: "",
+      photo_url: "",
     });
   };
   const handleInputChange = (
@@ -130,46 +141,75 @@ const MyPeaksAdd = () => {
       setSearchTerm(value);
     }
   };
-
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const file = e.target.files?.[0];
+  if (file) {
+    setSelectedImage(file);
+    setSelectedFileName(file.name);
+  }
+};
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    try {
-      let peakId: number | null = null;
+  try {
+    let peakId: number | null = null;
 
-      const existingPeak = results.find((peak) => peak.name === formData.name);
+    const existingPeak = results.find((peak) => peak.name === formData.name);
 
-      if (existingPeak) {
-        peakId = existingPeak.id;
-      } else {
-        const newPeak: Partial<Peaks> = {
-          ...formData,
-          elevation: parseFloat(formData.elevation),
-          latitude: parseFloat(formData.latitude),
-          longitude: parseFloat(formData.longitude),
-          verified: false,
-        };
-        const response = await peaksService.create(newPeak);
-        if (!response || !response.data || !response.data.data) {
-          alert("Wystąpił błąd podczas dodawania szczytu. Spróbuj ponownie.");
-          return;
-        }
-        peakId = response.data.data.id;
+    if (existingPeak) {
+      peakId = existingPeak.id;
+    } else {
+      const newPeak: Partial<Peaks> = {
+        name: formData.name,
+        elevation: parseFloat(formData.elevation),
+        latitude: parseFloat(formData.latitude),
+        longitude: parseFloat(formData.longitude),
+        region: formData.region,
+        verified: false,
+      };
+
+      const response = await peaksService.create(newPeak);
+      if (!response?.data?.data) {
+        alert("Błąd podczas tworzenia szczytu.");
+        return;
       }
-      if (peakId && userId) {
-        await userpeaksService.addPeakUsers(peakId, userId);
-        alert("Szczyt został dodany pomyślnie!");
-        clearForm();
-      } else if (peakId && !userId) {
-        alert(
-          "Nie można dodać szczytu - brak ID użytkownika. Sprawdź, czy jesteś zalogowany.",
-        );
-      }
-    } catch (error) {
-      console.error("Error adding peak:", error);
-      alert("Wystąpił błąd podczas dodawania szczytu. Spróbuj ponownie.");
+
+      peakId = response.data.data.id;
     }
-  };
+
+    if (!userId || !peakId) {
+      alert("Brakuje ID użytkownika lub szczytu.");
+      return;
+    }
+
+    let uploadedFilename: string | null = null;
+
+    // Upload zdjęcia jeśli jest
+    if (selectedImage) {
+      const uploadRes = await filesService.uploadPeakImage(selectedImage);
+      uploadedFilename = uploadRes.data?.file?.filename;
+
+      if (!uploadedFilename) {
+        console.error("Nie udało się uzyskać nazwy pliku.");
+        return;
+      }
+    }
+    await userpeaksService.addPeakUsers(
+      peakId,
+      userId,
+      formData.description,
+      uploadedFilename ?? ""
+    );
+
+    alert("Szczyt dodany pomyślnie!");
+    clearForm();
+  } catch (error) {
+    console.error("Błąd dodawania szczytu:", error);
+    alert("Wystąpił błąd.");
+  }
+};
+
+
 
   return (
     <div className="flex-col justify-center items-center bg-white/10 backdrop-blur-lg border-solid border-1 border-white/20 w-full rounded-lg shadow-xl mx-auto transition-all duration-300 overflow-hidden">
@@ -276,12 +316,29 @@ const MyPeaksAdd = () => {
               className="w-full mb-4 p-3 text-white bg-white/5 rounded-md focus:border-none outline-0 transition-all min-h-[100px]"
             />
 
-            <div className="w-full mb-4 p-3 text-white bg-white/5 rounded-md flex items-center justify-center cursor-pointer hover:bg-white/10 transition-all">
-              <span className="flex items-center">
-                <FontAwesomeIcon icon={faCamera} className="mr-2" />
-                Dodaj zdjęcie
-              </span>
-            </div>
+            <label 
+              htmlFor="image-upload" 
+              className="w-full mb-4 p-3 text-white bg-white/5 rounded-md flex items-center justify-center cursor-pointer hover:bg-white/10 transition-all"
+            >
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+                className="hidden"
+                id="image-upload"
+              />
+              {selectedFileName ? (
+                <span className="flex items-center text-green-300">
+                  <FontAwesomeIcon icon={faCamera} className="mr-2" />
+                  {selectedFileName}
+                </span>
+              ) : (
+                <span className="flex items-center">
+                  <FontAwesomeIcon icon={faCamera} className="mr-2" />
+                  Dodaj zdjęcie
+                </span>
+              )}
+            </label>
           </div>
         </div>
 

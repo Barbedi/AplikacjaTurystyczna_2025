@@ -45,6 +45,10 @@ export interface UserPeak {
   peak_name: string;
   user_id: number;
   visited_at: string;
+  times_visited: number;  
+  last_visited: string;
+  description?: string;
+  photo_url?: string;
 }
 
 // Typ dla nowej trasy bez ID i created_at

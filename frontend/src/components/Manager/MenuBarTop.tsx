@@ -6,11 +6,13 @@ const MenuBarTop = () => {
   const pathParts = location.pathname.split("/").filter(Boolean);
 
   const getDisplayName = (part: string, index: number) => {
+    
     if (/^\d+$/.test(part)) {
       if (
         index > 0 &&
         (pathParts[index - 1] === "crown-poland" ||
-          pathParts[index - 1] === "crown-beskid")
+          pathParts[index - 1] === "crown-beskid" ||
+          pathParts[index - 1] === "peak")
       ) {
         return `Szczyt #${part}`;
       }
@@ -20,6 +22,9 @@ const MenuBarTop = () => {
       }
       if (index > 0 && pathParts[index - 1] === "my-routes") {
         return `Trasa #${part}`;
+      }
+      if (index > 0 && pathParts[index - 1] === "my-peaks") {
+        return `Szczyt #${part}`;
       }
       // Dla innych przypadków, zwróć ID
       return `ID: ${part}`;

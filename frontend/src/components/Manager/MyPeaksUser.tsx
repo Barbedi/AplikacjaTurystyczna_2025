@@ -6,12 +6,14 @@ import useGetUsers from "../../hooks/user/useGetUser";
 import AuthContext from "../../store/auth-context";
 import { UserPeak } from "../../assets/Data";
 import { formatDate } from "../../utils/format";
+import { useNavigate } from "react-router-dom";
 
 const MyPeaksUser = () => {
   const { user } = useContext(AuthContext);
   const [myPeaks, setMyPeaks] = useState<UserPeak[]>([]);
   const [loading, setLoading] = useState(true);
   const { getUserByEmail, usersData } = useGetUsers();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (user?.email) {
@@ -61,14 +63,22 @@ const MyPeaksUser = () => {
         className="flex flex-col items-center justify-center w-full p-4 bg-white/10 backdrop-blur-lg rounded-lg shadow-md mb-3 "
       >
         <h2 className="text-lg font-lora text-white">
-          <FontAwesomeIcon icon={faCrown} className="text-yellow-500" /> Szczyt
+          <span className="relative inline-block">
+            <FontAwesomeIcon title="Ilość zdobyć" className="text-yellow-500 text-2xl" icon={faCrown} />
+            <span className="absolute top-2 left-1.5 text-white font-bold text-xs rounded-full w-4 h-4 flex items-center justify-center">
+              {peak.times_visited}
+            </span>
+          </span> Szczyt
           zdobyty!
         </h2>
         <h3 className="text-md font-lora text-white">{peak.peak_name}</h3>
         <p className="text-sm text-gray-300">
-          Data: {formatDate(peak.visited_at)}
+          Data: {formatDate(peak.last_visited)}
         </p>
-        <a className="mt-2 px-3 py-1 rounded-full text-xs font-medium bg-purple-500/20 text-purple-300 border border-purple-500/30 hover:bg-purple-500/40 transition-all duration-200 cursor-pointer">
+        <a
+          onClick={() => navigate(`/dashboard/my-peaks/${peak.peak_id}`)}
+          className="mt-2 px-3 py-1 rounded-full text-xs font-medium bg-purple-500/20 text-purple-300 border border-purple-500/30 hover:bg-purple-500/40 transition-all duration-200 cursor-pointer"
+        >
           Zobacz więcej
         </a>
       </div>
