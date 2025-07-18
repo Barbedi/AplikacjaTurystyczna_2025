@@ -30,6 +30,15 @@ interface Peaks {
   latitude: number;
   longitude: number;
   verified?: boolean;
+  image_filename?: string;
+}
+interface UserPeaks {
+  id: number;
+  user_id: number;
+  peak_id: number;
+  visited_at: string;
+  photo_url?: string;
+  description?: string;
 }
 
 interface Trails {
@@ -69,4 +78,12 @@ export class Err implements ErrInterface {
   stack?: string;
 }
 
-export type { ErrInterface, Users, PeakCollection, Peaks, Trails, TrailPoint };
+export type {
+  ErrInterface,
+  Users,
+  PeakCollection,
+  Peaks,
+  Trails,
+  TrailPoint,
+  UserPeaks,
+};

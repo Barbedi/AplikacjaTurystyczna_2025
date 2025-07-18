@@ -146,7 +146,7 @@ class TrailsService {
         route_type,
         geometry ? JSON.stringify(geometry) : null,
         created_by,
-        duration_minutes
+        duration_minutes,
       ],
     );
 

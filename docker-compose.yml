@@ -29,7 +29,9 @@ services:
     ports:
       - "6868:6868"
     volumes:
-      - ./app/dist/files:/app/dist/files  
+      - ./app/dist/files:/app/dist/files
+      - ./app/dist/files/profiles:/app/dist/files/profiles
+      - ./app/dist/files/verifications:/app/dist/files/verifications  
     environment:
       - DB_HOST=postgres
       - DB_PORT=5432

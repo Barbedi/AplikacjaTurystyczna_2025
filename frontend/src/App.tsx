@@ -48,7 +48,10 @@ function Root() {
           <Route index element={<MyRoutes />} />
           <Route path=":id" element={<EditTrailPage />} />
         </Route>
-        <Route path="my-peaks" element={<MyPeaks />} />
+        <Route path="my-peaks">
+          <Route index element={<MyPeaks />} />
+          <Route path=":id" element={<EditCrownPage />} />
+        </Route>
         <Route path="my-reviews" element={<MyReviews />} />
         <Route path="crown-peaks">
           <Route index element={<CrownPeaks />} />

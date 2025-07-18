@@ -37,7 +37,7 @@ const MapTrails = ({ trail, hoverPoint }: MapTrailsProps) => {
   }, [trail]);
 
   useEffect(() => {
-    if (mapRef && routeGeoJson && trail?.geometry?.coordinates) {
+    if (mapRef && routeGeoJson && trail?.geometry?.coordinates && !hoverPoint) {
       const coords = trail.geometry.coordinates;
       if (coords.length > 0) {
         const bounds = L.latLngBounds(
@@ -46,7 +46,7 @@ const MapTrails = ({ trail, hoverPoint }: MapTrailsProps) => {
         mapRef.fitBounds(bounds, { padding: [20, 20] });
       }
     }
-  }, [mapRef, routeGeoJson, trail]);
+  }, [mapRef, routeGeoJson, trail, hoverPoint]);
 
   const formatGeometryToGeoJSON = (geometry: unknown) => {
     try {
@@ -73,6 +73,9 @@ const MapTrails = ({ trail, hoverPoint }: MapTrailsProps) => {
   };
 
   const getMapCenter = (): [number, number] => {
+    if (hoverPoint) {
+      return hoverPoint;
+    }
     if (trail?.geometry?.coordinates && trail.geometry.coordinates.length > 0) {
       const coords = trail.geometry.coordinates;
       let totalLat = 0;
@@ -92,10 +95,11 @@ const MapTrails = ({ trail, hoverPoint }: MapTrailsProps) => {
   };
 
   return (
-    <div className="w-full h-full flex flex-col">
+    <div className="w-full h-full flex flex-col rounded-lg overflow-hidden border border-white/20 shadow-lg">
       <MapContainer
+        key={hoverPoint ? `${hoverPoint[0]}-${hoverPoint[1]}` : "default"}
         center={getMapCenter()}
-        zoom={12}
+        zoom={hoverPoint ? 14 : 12}
         scrollWheelZoom
         className="w-full h-full"
         ref={setMapRef}
