@@ -38,6 +38,13 @@ class TrailsService {
     return http.patch(`/trails/${id}`, trail, { withCredentials: true });
   };
 
+  updateTrailPhotos = (
+    id: number,
+    photos: { image_name: string; created_at: string }[],
+  ) => {
+    return http.patch(`/trails/${id}/photos`, photos, { withCredentials: true });
+  };
+
   deleteTrail = (id: number) => {
     return http.delete(`/trails/${id}`, { withCredentials: true });
   };

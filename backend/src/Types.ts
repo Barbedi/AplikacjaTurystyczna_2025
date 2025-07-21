@@ -46,6 +46,13 @@ interface FavoriteTrails {
   added_at: string;
 }
 
+interface Photo {
+  id: number;
+  trail_id: number;
+  image_name: string;
+  created_at: string;
+}
+
 interface Trails {
   id: number;
   name: string;
@@ -62,6 +69,7 @@ interface Trails {
   created_by: string;
   created_at: string;
   points?: TrailPoint[];
+  photos?: Photo[];
   duration_minutes: number;
   public: boolean;
 }
@@ -93,4 +101,5 @@ export type {
   TrailPoint,
   UserPeaks,
   FavoriteTrails,
+  Photo,
 };

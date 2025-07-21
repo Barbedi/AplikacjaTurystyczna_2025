@@ -72,11 +72,13 @@ class TrailsService {
     if (result.rows[0]) {
       const row = result.rows[0];
       const points = await TrailPointsService.getPointsByTrailId(id);
+      const photos = await this.getTrailPhotos(id);
 
       return {
         ...row,
         geometry: row.geometry ? JSON.parse(row.geometry) : null,
         points: points || [],
+        photos: photos || [],
       };
     }
     return null;
@@ -215,6 +217,39 @@ class TrailsService {
   // Usuń trasę
   async deleteTrail(id: number): Promise<void> {
     await db.query("DELETE FROM trails WHERE id = $1", [id]);
+  }
+
+  // Update trail photos
+  async updateTrailPhotos(
+    trailId: number,
+    photos: { image_name: string; created_at: string }[]
+  ) {
+    // First check if the trail exists
+    const trailCheck = await db.query("SELECT id FROM trails WHERE id = $1", [trailId]);
+    if (trailCheck.rowCount === 0) {
+      throw new Err("Trail not found", 404);
+    }
+
+    // Process each photo
+    const insertPromises = photos.map(async (photo) => {
+      const result = await db.query(
+        "INSERT INTO photos (trail_id, image_name, created_at) VALUES ($1, $2, $3) RETURNING *",
+        [trailId, photo.image_name, photo.created_at]
+      );
+      return result.rows[0];
+    });
+
+    // Wait for all inserts to complete
+    const insertedPhotos = await Promise.all(insertPromises);
+    
+    // Return the inserted photos
+    return insertedPhotos;
+  }
+
+  // Get photos for a trail
+  async getTrailPhotos(trailId: number) {
+    const result = await db.query("SELECT * FROM photos WHERE trail_id = $1", [trailId]);
+    return result.rows;
   }
 }
 

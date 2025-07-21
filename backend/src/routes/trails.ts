@@ -94,6 +94,24 @@ router.get("/:id", async (req, res, next) => {
   }
 });
 
+// Get photos for a trail
+router.get("/:id/photos", async (req, res, next) => {
+  try {
+    const parsedId = parseInt(req.params.id, 10);
+    if (isNaN(parsedId)) {
+      throw new Err("Nieprawidłowe ID", 400);
+    }
+    const photos = await TrailsService.getTrailPhotos(parsedId);
+    res.status(200).json(photos);
+  } catch (error) {
+    if (error instanceof Err) {
+      res.status(error.statusCode || 500).json({ message: error.message });
+    } else {
+      next(error);
+    }
+  }
+});
+
 router.post("/", async (req, res, next) => {
   try {
     const { points, ...trailData } = req.body;
@@ -171,6 +189,30 @@ router.delete("/:id", async (req, res, next) => {
 
     await TrailsService.deleteTrail(parsedId);
     res.status(204).send();
+  } catch (error) {
+    if (error instanceof Err) {
+      res.status(error.statusCode || 500).json({ message: error.message });
+    } else {
+      next(error);
+    }
+  }
+});
+
+// Route to update trail photos
+router.patch("/:id/photos", async (req, res, next) => {
+  try {
+    const parsedId = parseInt(req.params.id, 10);
+    if (isNaN(parsedId)) {
+      throw new Err("Nieprawidłowe ID", 400);
+    }
+
+    const photos = req.body;
+    if (!Array.isArray(photos)) {
+      throw new Err("Nieprawidłowy format danych zdjęć", 400);
+    }
+
+    const result = await TrailsService.updateTrailPhotos(parsedId, photos);
+    res.status(200).json({ message: "Photos updated successfully", data: result });
   } catch (error) {
     if (error instanceof Err) {
       res.status(error.statusCode || 500).json({ message: error.message });
