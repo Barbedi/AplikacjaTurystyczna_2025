@@ -14,6 +14,55 @@ class TrailsService {
       geometry: row.geometry ? JSON.parse(row.geometry) : null,
     }));
   }
+  async getTrailsByPublic(page = 1, limit = 7) {
+    if (page < 1 || limit < 1) {
+      throw new Err("Invalid page or limit", 400);
+    }
+    const offset = helper.getOffset(page, limit);
+    
+    const query = `
+      SELECT *, ST_AsGeoJSON(geometry) as geometry FROM trails 
+      WHERE is_public = true 
+      ORDER BY created_at DESC
+      LIMIT $1 OFFSET $2
+    `;
+    const result = await db.query(query, [limit, offset]);
+
+    const countQuery = `
+      SELECT COUNT(*) FROM trails WHERE is_public = true
+    `;
+    const countResult = await db.query(countQuery);
+    const totalCount = parseInt(countResult.rows[0].count, 10);
+    const totalPages = Math.ceil(totalCount / limit);
+
+    const trails = result.rows.map((row) => ({
+      ...row,
+      geometry: row.geometry ? JSON.parse(row.geometry) : null,
+    }));
+
+    return {
+      data: trails,
+      message: "Successfully fetched public trails",
+      totalPages,
+      page,
+      limit,
+    };
+  }
+
+  async getRandomPublicTrails(limit = 3): Promise<Trails[]> {
+    const query = `
+      SELECT *, ST_AsGeoJSON(geometry) as geometry FROM trails 
+      WHERE is_public = true 
+      ORDER BY RANDOM()
+      LIMIT $1
+    `;
+    const result = await db.query(query, [limit]);
+
+    return result.rows.map((row) => ({
+      ...row,
+      geometry: row.geometry ? JSON.parse(row.geometry) : null,
+    }));
+  }
 
   async getTrailById(id: number): Promise<Trails | null> {
     const result = await db.query(

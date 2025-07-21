@@ -6,6 +6,17 @@ class TrailsService {
     return http.get<Trails[]>("/trails", { withCredentials: true });
   };
 
+  getTrailsByPublic = (page: number = 1) => {
+    return http.get<TrailsResponse>(`/trails?page=${page}`, {
+      withCredentials: true,
+    });
+  };
+
+  getRandomTrails = (limit: number = 3) => {
+    return http.get<Trails[]>(`/trails/random?limit=${limit}`, {
+      withCredentials: true,
+    });
+  };
   getTrailById = (id: number) => {
     return http.get<Trails>(`/trails/${id}`, { withCredentials: true });
   };

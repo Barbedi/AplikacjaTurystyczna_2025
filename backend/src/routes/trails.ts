@@ -5,7 +5,25 @@ import { Err } from "../Types";
 
 const router = express.Router();
 
-router.get("/", async (_req, res, next) => {
+router.get("/", async (req, res, next) => {
+  try {
+    const { page, limit } = req.query;
+    const parsedPage = page ? parseInt(page as string) : 1;
+    const parsedLimit = limit ? parseInt(limit as string) : 7;
+    
+    const result = await TrailsService.getTrailsByPublic(parsedPage, parsedLimit);
+    res.status(200).json(result);
+  } catch (error) {
+    if (error instanceof Err) {
+      res.status(error.statusCode || 500).json({ message: error.message });
+    } else {
+      next(error);
+    }
+  }
+});
+
+// Route for getting all trails (admin use)
+router.get("/all", async (_req, res, next) => {
   try {
     const result = await TrailsService.getAllTrails();
     res.status(200).json(result);
@@ -17,6 +35,24 @@ router.get("/", async (_req, res, next) => {
     }
   }
 });
+
+// Route for getting random public trails
+router.get("/random", async (req, res, next) => {
+  try {
+    const { limit } = req.query;
+    const parsedLimit = limit ? parseInt(limit as string) : 3;
+    
+    const result = await TrailsService.getRandomPublicTrails(parsedLimit);
+    res.status(200).json(result);
+  } catch (error) {
+    if (error instanceof Err) {
+      res.status(error.statusCode || 500).json({ message: error.message });
+    } else {
+      next(error);
+    }
+  }
+});
+
 router.get("/user/:userId", async (req, res, next) => {
   try {
     const { page, limit } = req.query;

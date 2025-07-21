@@ -57,7 +57,8 @@ interface Trails {
   created_by: string;
   created_at: string;
   points?: TrailPoint[];
-  duration_minutes: number; // Optional field for duration in minutes
+  duration_minutes: number;
+  public: boolean;
 }
 
 interface TrailPoint {

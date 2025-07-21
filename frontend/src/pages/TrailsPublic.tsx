@@ -1,9 +1,12 @@
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { Trails } from "../../assets/Data";
-import trailsService from "../../services/trails.service";
-import MapTrails from "../../components/Manager/MapTrails";
-import ElevationProfile from "../../components/Manager/ElevationProfile";
+import { Trails } from "../assets/Data";
+import trailsService from "../services/trails.service";
+import MapTrails from "../components/Manager/MapTrails";
+import ElevationProfile from "../components/Manager/ElevationProfile";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCircleArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import { useNavigate } from "react-router-dom";
 
 const emptyTrail: Trails = {
   id: 0,
@@ -23,10 +26,14 @@ const emptyTrail: Trails = {
   duration_minutes: 0,
 };
 
-const EditTrailPage = () => {
+const TrailsPublic =() => {
+  const navigate = useNavigate();
   const [trail, setTrail] = useState<Trails>(emptyTrail);
   const [hoverPoint, ] = useState<[number, number] | null>(null);
   const { id } = useParams<{ id: string }>();
+  const handleBackClick = () => {
+    navigate(-1);
+  };
 
   useEffect(() => {
     if (!id) {
@@ -45,8 +52,15 @@ const EditTrailPage = () => {
   }, [id]);
 
   return (
-    <div className="flex flex-col max-w-6xl text-center items-center justify-center w-full mx-auto mt-3 gap-y-4">
+    <div className="min-h-screen bg-linear-to-b from-grad1 to-grad2 pb-24 md:pb-0">
+    <div className="flex flex-col max-w-6xl text-center items-center justify-center w-full mx-auto pt-3  gap-y-4">
       <div className="text-3xl font-bold text-white mb-4 underline">
+         <FontAwesomeIcon
+          icon={faCircleArrowLeft}
+          className="text-white cursor-pointer absolute left-4 top-4 "
+          title="Powrót"
+          onClick={handleBackClick}
+        />
         {trail.name}
       </div>
       <div className="flex flex-row items-start justify-center w-full max-w-6xl">
@@ -159,7 +173,9 @@ const EditTrailPage = () => {
         </div>
       </div>
     </div>
+    </div>
   );
 };
 
-export default EditTrailPage;
+
+export default TrailsPublic;
