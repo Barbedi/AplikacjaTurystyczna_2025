@@ -60,38 +60,34 @@ router.post("/", async function (req, res, next) {
   const { email, password } = req.body;
 
   try {
-    const { email: id, userRole } = await loginService.fetchClient(
-      email,
-      password,
-    );
+    
+    const { id: userId, email: userEmail, userRole } = await loginService.fetchClient(email, password);
 
     const token = jwt.sign(
-      { email: id, role: userRole },
+      { id: userId, email: userEmail, role: userRole },
       process.env["SECRET_TOKEN"] as string,
       { expiresIn: 86400 },
     );
 
     const refreshToken = jwt.sign(
-      { email: id, role: userRole },
+      { id: userId, email: userEmail, role: userRole },
       process.env["REFRESH_SECRET_TOKEN"] as string,
-      { expiresIn: 60 * 60 * 24 * 365 }, // 1 rok
+      { expiresIn: 60 * 60 * 24 * 365 },
     );
 
-    // Ustawienie tokenów w nagłówkach
     res.set({
       Authorization: `Bearer ${token}`,
       "Refresh-Token": `Bearer ${refreshToken}`,
     });
 
-    // Ustawienie tokenów jako ciasteczek
     res.cookie("jwt", token, {
-      expires: new Date(Date.now() + 60000), // 1 minuta
+      expires: new Date(Date.now() + 60000),
       httpOnly: true,
       secure: false,
     });
 
     res.cookie("refreshJwt", refreshToken, {
-      expires: new Date(Date.now() + 604800000), // 7 dni
+      expires: new Date(Date.now() + 604800000),
       httpOnly: true,
       secure: false,
     });
@@ -99,7 +95,8 @@ router.post("/", async function (req, res, next) {
     res.status(200).json({
       auth: true,
       user: {
-        email: id,
+        id: userId,
+        email: userEmail,
         role: userRole,
       },
     });
@@ -107,5 +104,6 @@ router.post("/", async function (req, res, next) {
     next(err);
   }
 });
+
 
 export default router;

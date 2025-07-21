@@ -1,12 +1,15 @@
 import { useParams } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { Trails } from "../assets/Data";
 import trailsService from "../services/trails.service";
+import favouriteTrailsService from "../services/favouriteTrails.service";
 import MapTrails from "../components/Manager/MapTrails";
 import ElevationProfile from "../components/Manager/ElevationProfile";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircleArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import { faCircleArrowLeft,faHeart } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
+import useGetUsers from "../hooks/user/useGetUser";
+import AuthContext from "../store/auth-context";
 
 const emptyTrail: Trails = {
   id: 0,
@@ -27,10 +30,18 @@ const emptyTrail: Trails = {
 };
 
 const TrailsPublic =() => {
+  const { user } = useContext(AuthContext);
   const navigate = useNavigate();
   const [trail, setTrail] = useState<Trails>(emptyTrail);
   const [hoverPoint, ] = useState<[number, number] | null>(null);
   const { id } = useParams<{ id: string }>();
+  const { getUserByEmail, usersData } = useGetUsers();
+  useEffect(() => {
+    if (user?.email) {
+      getUserByEmail(user.email);
+    }
+  }, [user?.email, getUserByEmail]);
+  const currentUser = usersData?.[0][0];
   const handleBackClick = () => {
     navigate(-1);
   };
@@ -50,6 +61,26 @@ const TrailsPublic =() => {
         console.error("Error fetching trail data:", error);
       });
   }, [id]);
+  const handleFavoriteClick = async () => {
+  if (!user) {
+    alert("Musisz być zalogowany, aby dodać trasę do ulubionych.");
+    return;
+  }
+
+  try {
+    await favouriteTrailsService.addFavouriteTrail(trail.id);
+    alert("Trasa została dodana do ulubionych!");
+  } catch (error: any) {
+    if (error.response?.status === 401 || error.response?.status === 403) {
+      alert("Nie jesteś zalogowany. Odśwież stronę lub zaloguj się ponownie.");
+    } else if (error.response?.status === 400) {
+      alert("Ta trasa już jest w Twoich ulubionych.");
+    } else {
+      alert("Wystąpił błąd podczas dodawania trasy do ulubionych.");
+    }
+    console.error("Błąd:", error);
+  }
+};
 
   return (
     <div className="min-h-screen bg-linear-to-b from-grad1 to-grad2 pb-24 md:pb-0">
@@ -62,6 +93,12 @@ const TrailsPublic =() => {
           onClick={handleBackClick}
         />
         {trail.name}
+        <FontAwesomeIcon
+          icon={faHeart}
+          className="text-white cursor-pointer absolute right-4 top-4 hover:text-red-500"
+          title="Ulubione"
+          onClick={handleFavoriteClick}
+        />
       </div>
       <div className="flex flex-row items-start justify-center w-full max-w-6xl">
         <div className="flex flex-col items-start justify-start w-1/2 p-4">
@@ -107,14 +144,6 @@ const TrailsPublic =() => {
                 </span>
                 <span className="text-white font-lora ml-5">
                   {trail.route_type}
-                </span>
-              </div>
-              <div className=" flex items-center">
-                <span className="text-white/70 font-medium w-1/4">
-                  Data utworzenia:
-                </span>
-                <span className="text-white font-lora ml-5">
-                  {new Date(trail.created_at).toLocaleDateString()}
                 </span>
               </div>
             </div>

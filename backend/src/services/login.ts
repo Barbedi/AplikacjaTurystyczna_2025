@@ -39,6 +39,7 @@ async function fetchClient(email: string, userInputPassword: string) {
 
   return {
     response: { statusCode: 200 },
+    id: user.id,
     email,
     userRole: user.role,
   };

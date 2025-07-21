@@ -40,6 +40,11 @@ export interface Trails {
   points?: TrailPoint[];
   duration_minutes?: number;
 }
+export interface FavoriteTrails {
+  user_id: number;
+  trail_id: number;
+  added_at: string;
+}
 export interface UserPeak {
   peak_id: number;
   peak_name: string;
