@@ -8,7 +8,6 @@ import ElevationProfile from "../components/Manager/ElevationProfile";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleArrowLeft,faHeart } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
-import useGetUsers from "../hooks/user/useGetUser";
 import AuthContext from "../store/auth-context";
 
 const emptyTrail: Trails = {
@@ -35,13 +34,7 @@ const TrailsPublic =() => {
   const [trail, setTrail] = useState<Trails>(emptyTrail);
   const [hoverPoint, ] = useState<[number, number] | null>(null);
   const { id } = useParams<{ id: string }>();
-  const { getUserByEmail, usersData } = useGetUsers();
-  useEffect(() => {
-    if (user?.email) {
-      getUserByEmail(user.email);
-    }
-  }, [user?.email, getUserByEmail]);
-  const currentUser = usersData?.[0][0];
+ 
   const handleBackClick = () => {
     navigate(-1);
   };
@@ -70,6 +63,7 @@ const TrailsPublic =() => {
   try {
     await favouriteTrailsService.addFavouriteTrail(trail.id);
     alert("Trasa została dodana do ulubionych!");
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     if (error.response?.status === 401 || error.response?.status === 403) {
       alert("Nie jesteś zalogowany. Odśwież stronę lub zaloguj się ponownie.");

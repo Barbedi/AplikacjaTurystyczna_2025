@@ -74,7 +74,10 @@ function Root() {
           <Route index element={<Recommended />} />
           <Route path=":id" element={<EditTrailPage />} />
         </Route>
-        <Route path="favorite-routes" element={<FavoriteRoutes />} />
+        <Route path="favorite-routes">
+          <Route index element={<FavoriteRoutes />} />
+          <Route path=":id" element={<EditTrailPage />} />
+        </Route>
         <Route path="search-trail" element={<SearchTrail />} />
         <Route path="statistics" element={<Statistics />} />
       </Route>

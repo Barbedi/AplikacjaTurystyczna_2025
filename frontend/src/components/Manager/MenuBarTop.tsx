@@ -32,6 +32,9 @@ const MenuBarTop = () => {
       if (index > 0 && pathParts[index - 1] === "recommended") {
         return `Trasa #${part}`;
       }
+      if (index > 0 && pathParts[index - 1] === "favorite-routes") {
+        return `Trasa #${part}`;
+      }
 
       return `ID: ${part}`;
     }
