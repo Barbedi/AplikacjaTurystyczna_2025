@@ -40,7 +40,7 @@ class FilesService {
         });
     });
 
-    uploadTrailImage = (file: File) =>
+  uploadTrailImage = (file: File) =>
     new Promise<AxiosResponse>((resolve, reject) => {
       const form = new FormData();
       form.append("file", file);

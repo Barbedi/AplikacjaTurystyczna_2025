@@ -1,6 +1,5 @@
 import db from "../db";
-import { Err,FavoriteTrails } from "../Types";
-
+import { Err, FavoriteTrails } from "../Types";
 
 async function addFavouriteTrail(userId: number, trailId: number) {
   const query = `
@@ -8,13 +7,13 @@ async function addFavouriteTrail(userId: number, trailId: number) {
     VALUES ($1, $2, NOW())
     RETURNING *
   `;
-  
+
   const result = await db.query(query, [userId, trailId]);
-  
+
   if (result.rowCount === 0) {
     throw new Err("Failed to add favorite trail", 500);
   }
-  
+
   return result.rows[0] as FavoriteTrails;
 }
 async function getFavouriteTrails(userId: number) {
@@ -24,13 +23,13 @@ async function getFavouriteTrails(userId: number) {
     JOIN trails t ON ft.trail_id = t.id
     WHERE ft.user_id = $1
   `;
-  
+
   const result = await db.query(query, [userId]);
-  
+
   if (result.rowCount === 0) {
     throw new Err("No favorite trails found", 404);
   }
-  
+
   return result.rows as FavoriteTrails[];
 }
 async function removeFavouriteTrail(userId: number, trailId: number) {
@@ -39,10 +38,13 @@ async function removeFavouriteTrail(userId: number, trailId: number) {
     WHERE user_id = $1 AND trail_id = $2
     RETURNING *
   `;
-  
+
   const result = await db.query(query, [userId, trailId]);
   if (result.rowCount === 0) {
-    throw new Err("Failed to remove favorite trail or trail not in favorites", 404);
+    throw new Err(
+      "Failed to remove favorite trail or trail not in favorites",
+      404,
+    );
   }
   return result.rows[0] as FavoriteTrails;
 }

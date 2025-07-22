@@ -1,13 +1,10 @@
 import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronRight,faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faChevronRight, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FavoriteTrails, Trails } from "../../assets/Data";
 import { useNavigate } from "react-router-dom";
 import favouriteTrailsService from "../../services/favouriteTrails.service";
 import trailsService from "../../services/trails.service";
-
-
-
 
 const FavouriteTrailPropose = () => {
   const navigate = useNavigate();
@@ -21,8 +18,8 @@ const FavouriteTrailPropose = () => {
 
         const fullTrailResponses = await Promise.all(
           favouriteList.map((fav: FavoriteTrails) =>
-            trailsService.getTrailById(fav.trail_id)
-          )
+            trailsService.getTrailById(fav.trail_id),
+          ),
         );
 
         const fullTrails = fullTrailResponses.map((res) => res.data);
@@ -35,22 +32,23 @@ const FavouriteTrailPropose = () => {
     fetchFavouriteTrails();
   }, []);
 
-    const handleTrailClick = (trailId: number) => {
-        navigate(`/dashboard/favorite-routes/${trailId}`);
-    };
+  const handleTrailClick = (trailId: number) => {
+    navigate(`/dashboard/favorite-routes/${trailId}`);
+  };
 
-    const handleRemoveFavourite = async (trailId: number) => {
-        try {
-            await favouriteTrailsService.removeFavouriteTrail(trailId);
-            setTrails((prevTrails) => prevTrails.filter(trail => trail.id !== trailId));
-        } catch (error) {
-            console.error("Error removing favourite trail:", error);
-        }
-    };
+  const handleRemoveFavourite = async (trailId: number) => {
+    try {
+      await favouriteTrailsService.removeFavouriteTrail(trailId);
+      setTrails((prevTrails) =>
+        prevTrails.filter((trail) => trail.id !== trailId),
+      );
+    } catch (error) {
+      console.error("Error removing favourite trail:", error);
+    }
+  };
 
-
-    return (
-        <div className="flex flex-col items-center justify-center w-full mt-5 mx-auto">
+  return (
+    <div className="flex flex-col items-center justify-center w-full mt-5 mx-auto">
       {trails.map((trail) => (
         <div
           key={trail.id}
@@ -67,24 +65,22 @@ const FavouriteTrailPropose = () => {
           </span>
           <span className="flex-1 text-lg font-lora text-white cursor-pointer">
             <FontAwesomeIcon
-                onClick={() => handleTrailClick(trail.id)}
+              onClick={() => handleTrailClick(trail.id)}
               icon={faChevronRight}
               className="text-white cursor-pointer text-lg mr-6"
               title="Zobacz szczegóły"
             />
             <FontAwesomeIcon
-                onClick={() => handleRemoveFavourite(trail.id)}
+              onClick={() => handleRemoveFavourite(trail.id)}
               icon={faTrash}
               className="text-white cursor-pointer text-lg"
               title="Usuń z ulubionych"
             />
-            
           </span>
         </div>
       ))}
-      
     </div>
-    );
+  );
 };
 
 export default FavouriteTrailPropose;

@@ -9,7 +9,7 @@ class FavouriteTrailsService {
     return httpCommon.post(
       `/favourite-trails`,
       { trail_id: trailId },
-      { withCredentials: true }
+      { withCredentials: true },
     );
   };
 

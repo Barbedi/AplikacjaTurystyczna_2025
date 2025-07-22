@@ -7,20 +7,20 @@ import { useNavigate } from "react-router-dom";
 
 const ProposedRoutes = () => {
   const navigate = useNavigate();
-   const [trails, setTrails] = useState<Trails[]>([]);
-      useEffect(() => {
-          const fetchTrails = async () => {
-              try {
-                  const response = await trailsService.getRandomTrails(3);
-                  setTrails(response.data);
-              } catch (error) {
-                  console.error("Error fetching trails:", error);
-              }
-          };
-  
-          fetchTrails();
-      }, []);
-          
+  const [trails, setTrails] = useState<Trails[]>([]);
+  useEffect(() => {
+    const fetchTrails = async () => {
+      try {
+        const response = await trailsService.getRandomTrails(3);
+        setTrails(response.data);
+      } catch (error) {
+        console.error("Error fetching trails:", error);
+      }
+    };
+
+    fetchTrails();
+  }, []);
+
   const handleTrailClick = (trailId: number) => {
     navigate(`trails/${trailId}`);
   };
@@ -40,24 +40,24 @@ const ProposedRoutes = () => {
             <h1 className="text-xl md:text-2xl xl:text-3xl font-lora leading-tight mb-4">
               {trail.name}
             </h1>
-        <div className="w-1/2 border-t border-white mb-4"></div>
-        <p className="text-md mb-6 flex-grow">
-          {trail.description || "Brak opisu trasy."}
-        </p>
-        <div className="mt-auto">
-          <a
-            onClick={() => handleTrailClick(trail.id)}
-            className="bg-secondary rounded-2xl px-8 py-2 text-black text-2xl font-lora cursor-pointer inline-block"
-          >
-            Zobacz trasę
-            <FontAwesomeIcon
-              icon={faChevronRight}
-              className="ml-4 group-hover:translate-x-2 font-lora mt-1 duration-300 transition-all"
-            />
-          </a>
+            <div className="w-1/2 border-t border-white mb-4"></div>
+            <p className="text-md mb-6 flex-grow">
+              {trail.description || "Brak opisu trasy."}
+            </p>
+            <div className="mt-auto">
+              <a
+                onClick={() => handleTrailClick(trail.id)}
+                className="bg-secondary rounded-2xl px-8 py-2 text-black text-2xl font-lora cursor-pointer inline-block"
+              >
+                Zobacz trasę
+                <FontAwesomeIcon
+                  icon={faChevronRight}
+                  className="ml-4 group-hover:translate-x-2 font-lora mt-1 duration-300 transition-all"
+                />
+              </a>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
       ))}
     </>
   );

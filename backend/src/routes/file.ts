@@ -160,6 +160,34 @@ router.post(
   },
 );
 
+/**
+ * @openapi
+ * /files/upload/peaks:
+ *   post:
+ *     tags:
+ *       - Files
+ *     summary: Upload a peak image
+ *     security:
+ *       - cookieAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               file:
+ *                 type: string
+ *                 format: binary
+ *           responses:
+ *             200:
+ *               description: Successfully uploaded peak image
+ *             400:
+ *               description: Bad request
+ *             500:
+ *               description: Internal server error
+ */
+
 router.post(
   "/upload/peaks",
   verifyUser,

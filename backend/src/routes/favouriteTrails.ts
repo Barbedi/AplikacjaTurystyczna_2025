@@ -3,7 +3,6 @@ const router = express.Router();
 import { verifyUser } from "../middlewares/verifyUser";
 import favouriteTrailsService from "../services/favouriteTrails";
 
-
 /**
  * @openapi
  * /favourite-trails:
@@ -32,12 +31,20 @@ import favouriteTrailsService from "../services/favouriteTrails";
  */
 router.post("/", verifyUser, async (req, res, next) => {
   const { trail_id } = req.body;
-   
+
   const userId = (req.user as { id: number }).id;
 
   try {
-    const result = await favouriteTrailsService.addFavouriteTrail(userId, trail_id);
-    res.status(200).json({ message: "Trail added to favourites successfully.", data: result });
+    const result = await favouriteTrailsService.addFavouriteTrail(
+      userId,
+      trail_id,
+    );
+    res
+      .status(200)
+      .json({
+        message: "Trail added to favourites successfully.",
+        data: result,
+      });
   } catch (error) {
     next(error);
   }
@@ -60,7 +67,6 @@ router.post("/", verifyUser, async (req, res, next) => {
  */
 
 router.get("/", verifyUser, async (req, res, next) => {
-  
   const userId = (req.user as { id: number }).id;
 
   try {
@@ -96,24 +102,31 @@ router.get("/", verifyUser, async (req, res, next) => {
  *         description: Trail not found in user's favorites.
  */
 router.delete("/:trailId", verifyUser, async (req, res, next) => {
-  if (!req.user || typeof req.user !== 'object' || !('id' in req.user)) {
-    return next(new Error('User authentication failed'));
+  if (!req.user || typeof req.user !== "object" || !("id" in req.user)) {
+    return next(new Error("User authentication failed"));
   }
-  
+
   const userId = (req.user as { id: number }).id;
   const trailId = parseInt(req.params["trailId"] || "0", 10);
-  
+
   if (!trailId) {
-    return next(new Error('Invalid trail ID'));
+    return next(new Error("Invalid trail ID"));
   }
 
   try {
-    const result = await favouriteTrailsService.removeFavouriteTrail(userId, trailId);
-    res.status(200).json({ message: "Trail removed from favourites successfully.", data: result });
+    const result = await favouriteTrailsService.removeFavouriteTrail(
+      userId,
+      trailId,
+    );
+    res
+      .status(200)
+      .json({
+        message: "Trail removed from favourites successfully.",
+        data: result,
+      });
   } catch (error) {
     next(error);
   }
 });
 
-
-export default router;  
+export default router;

@@ -1,5 +1,5 @@
 import db from "../db";
-import { Err, Peaks, } from "../Types";
+import { Err, Peaks } from "../Types";
 import helper from "../helper";
 
 // Pobieranie wszystkich szczytów
@@ -58,8 +58,7 @@ LIMIT $2 OFFSET $3
   };
 }
 
-
-async function getUserPeakById(userId: number,peakId: number) {
+async function getUserPeakById(userId: number, peakId: number) {
   if (!userId) {
     throw new Err("User ID is required", 400);
   }
@@ -73,7 +72,7 @@ async function getUserPeakById(userId: number,peakId: number) {
   `;
   const result = await db.query(query, [userId, peakId]);
   const rows = helper.emptyOrRows(result.rows);
-  
+
   if (rows.length === 0) {
     throw new Err("No peaks found for this user", 404);
   }
@@ -118,7 +117,12 @@ async function createPeak(peakInfo: Peaks) {
 }
 
 // Dodawanie szczytu do użytkownika
-async function addPeakUsers(peakId: number, userId: number, description?: string, photoUrl?: string) {
+async function addPeakUsers(
+  peakId: number,
+  userId: number,
+  description?: string,
+  photoUrl?: string,
+) {
   if (!userId) {
     throw new Err("User ID is required", 400);
   }
@@ -288,5 +292,5 @@ export default {
   updatePeakImage,
   getPeaksByCollectionId,
   searchPeaks,
-  getUserPeakById
+  getUserPeakById,
 };

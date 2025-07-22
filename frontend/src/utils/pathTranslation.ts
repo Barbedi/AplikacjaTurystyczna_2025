@@ -17,5 +17,5 @@ export const pathTranslation: Record<string, string> = {
   manager: "Manager",
   explore: "Odkrywaj",
   home: "Strona główna",
-  "peak": "Szczyt"
+  peak: "Szczyt",
 };

@@ -5,32 +5,28 @@ import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { Trails } from "../../assets/Data";
 import { useNavigate } from "react-router-dom";
 
-
-
-
 const TrailPropose = () => {
-    const navigate = useNavigate();
-    const [trails, setTrails] = useState<Trails[]>([]);
-    useEffect(() => {
-        const fetchTrails = async () => {
-            try {
-                const response = await trailsService.getTrailsByPublic();
-                setTrails(response.data.data);
-            } catch (error) {
-                console.error("Error fetching trails:", error);
-            }
-        };
-
-        fetchTrails();
-    }, []);
-
-    const handleTrailClick = (trailId: number) => {
-        navigate(`/dashboard/recommended/${trailId}`);
+  const navigate = useNavigate();
+  const [trails, setTrails] = useState<Trails[]>([]);
+  useEffect(() => {
+    const fetchTrails = async () => {
+      try {
+        const response = await trailsService.getTrailsByPublic();
+        setTrails(response.data.data);
+      } catch (error) {
+        console.error("Error fetching trails:", error);
+      }
     };
 
+    fetchTrails();
+  }, []);
 
-    return (
-        <div className="flex flex-col items-center justify-center w-full mt-5 mx-auto">
+  const handleTrailClick = (trailId: number) => {
+    navigate(`/dashboard/recommended/${trailId}`);
+  };
+
+  return (
+    <div className="flex flex-col items-center justify-center w-full mt-5 mx-auto">
       {trails.map((trail) => (
         <div
           key={trail.id}
@@ -47,7 +43,7 @@ const TrailPropose = () => {
           </span>
           <span className="flex-1 text-lg font-lora text-white cursor-pointer">
             <FontAwesomeIcon
-                onClick={() => handleTrailClick(trail.id)}
+              onClick={() => handleTrailClick(trail.id)}
               icon={faChevronRight}
               className="text-white cursor-pointer text-lg"
               title="Zobacz szczegóły"
@@ -55,9 +51,8 @@ const TrailPropose = () => {
           </span>
         </div>
       ))}
-      
     </div>
-    );
+  );
 };
 
 export default TrailPropose;

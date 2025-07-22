@@ -103,7 +103,7 @@ const MyPeaksAdd = () => {
           elevation: details.elevation?.toString() || "",
           latitude: details.latitude?.toString() || "",
           longitude: details.longitude?.toString() || "",
-          region: details.region || "", 
+          region: details.region || "",
           description: details.description || "",
           photo_url: details.photo_url || "",
         });
@@ -142,74 +142,72 @@ const MyPeaksAdd = () => {
     }
   };
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-  const file = e.target.files?.[0];
-  if (file) {
-    setSelectedImage(file);
-    setSelectedFileName(file.name);
-  }
-};
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedImage(file);
+      setSelectedFileName(file.name);
+    }
+  };
   const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  try {
-    let peakId: number | null = null;
+    try {
+      let peakId: number | null = null;
 
-    const existingPeak = results.find((peak) => peak.name === formData.name);
+      const existingPeak = results.find((peak) => peak.name === formData.name);
 
-    if (existingPeak) {
-      peakId = existingPeak.id;
-    } else {
-      const newPeak: Partial<Peaks> = {
-        name: formData.name,
-        elevation: parseFloat(formData.elevation),
-        latitude: parseFloat(formData.latitude),
-        longitude: parseFloat(formData.longitude),
-        region: formData.region,
-        verified: false,
-      };
+      if (existingPeak) {
+        peakId = existingPeak.id;
+      } else {
+        const newPeak: Partial<Peaks> = {
+          name: formData.name,
+          elevation: parseFloat(formData.elevation),
+          latitude: parseFloat(formData.latitude),
+          longitude: parseFloat(formData.longitude),
+          region: formData.region,
+          verified: false,
+        };
 
-      const response = await peaksService.create(newPeak);
-      if (!response?.data?.data) {
-        alert("Błąd podczas tworzenia szczytu.");
+        const response = await peaksService.create(newPeak);
+        if (!response?.data?.data) {
+          alert("Błąd podczas tworzenia szczytu.");
+          return;
+        }
+
+        peakId = response.data.data.id;
+      }
+
+      if (!userId || !peakId) {
+        alert("Brakuje ID użytkownika lub szczytu.");
         return;
       }
 
-      peakId = response.data.data.id;
-    }
+      let uploadedFilename: string | null = null;
 
-    if (!userId || !peakId) {
-      alert("Brakuje ID użytkownika lub szczytu.");
-      return;
-    }
+      // Upload zdjęcia jeśli jest
+      if (selectedImage) {
+        const uploadRes = await filesService.uploadPeakImage(selectedImage);
+        uploadedFilename = uploadRes.data?.file?.filename;
 
-    let uploadedFilename: string | null = null;
-
-    // Upload zdjęcia jeśli jest
-    if (selectedImage) {
-      const uploadRes = await filesService.uploadPeakImage(selectedImage);
-      uploadedFilename = uploadRes.data?.file?.filename;
-
-      if (!uploadedFilename) {
-        console.error("Nie udało się uzyskać nazwy pliku.");
-        return;
+        if (!uploadedFilename) {
+          console.error("Nie udało się uzyskać nazwy pliku.");
+          return;
+        }
       }
+      await userpeaksService.addPeakUsers(
+        peakId,
+        userId,
+        formData.description,
+        uploadedFilename ?? "",
+      );
+
+      alert("Szczyt dodany pomyślnie!");
+      clearForm();
+    } catch (error) {
+      console.error("Błąd dodawania szczytu:", error);
+      alert("Wystąpił błąd.");
     }
-    await userpeaksService.addPeakUsers(
-      peakId,
-      userId,
-      formData.description,
-      uploadedFilename ?? ""
-    );
-
-    alert("Szczyt dodany pomyślnie!");
-    clearForm();
-  } catch (error) {
-    console.error("Błąd dodawania szczytu:", error);
-    alert("Wystąpił błąd.");
-  }
-};
-
-
+  };
 
   return (
     <div className="flex-col justify-center items-center bg-white/10 backdrop-blur-lg border-solid border-1 border-white/20 w-full rounded-lg shadow-xl mx-auto transition-all duration-300 overflow-hidden">
@@ -316,8 +314,8 @@ const MyPeaksAdd = () => {
               className="w-full mb-4 p-3 text-white bg-white/5 rounded-md focus:border-none outline-0 transition-all min-h-[100px]"
             />
 
-            <label 
-              htmlFor="image-upload" 
+            <label
+              htmlFor="image-upload"
               className="w-full mb-4 p-3 text-white bg-white/5 rounded-md flex items-center justify-center cursor-pointer hover:bg-white/10 transition-all"
             >
               <input

@@ -19,7 +19,7 @@ class TrailsService {
       throw new Err("Invalid page or limit", 400);
     }
     const offset = helper.getOffset(page, limit);
-    
+
     const query = `
       SELECT *, ST_AsGeoJSON(geometry) as geometry FROM trails 
       WHERE is_public = true 
@@ -219,13 +219,25 @@ class TrailsService {
     await db.query("DELETE FROM trails WHERE id = $1", [id]);
   }
 
+  // Usuń zdjęcie trasy
+  async deleteTrailPhoto(id: number, photoName: string): Promise<void> {
+    const result = await db.query(
+      "DELETE FROM photos WHERE trail_id = $1 AND image_name = $2 RETURNING *",
+      [id, photoName],
+    );
+    if (result.rowCount === 0) {
+      throw new Err("Photo not found", 404);
+    }
+  }
   // Update trail photos
   async updateTrailPhotos(
     trailId: number,
-    photos: { image_name: string; created_at: string }[]
+    photos: { image_name: string; created_at: string }[],
   ) {
     // First check if the trail exists
-    const trailCheck = await db.query("SELECT id FROM trails WHERE id = $1", [trailId]);
+    const trailCheck = await db.query("SELECT id FROM trails WHERE id = $1", [
+      trailId,
+    ]);
     if (trailCheck.rowCount === 0) {
       throw new Err("Trail not found", 404);
     }
@@ -234,21 +246,23 @@ class TrailsService {
     const insertPromises = photos.map(async (photo) => {
       const result = await db.query(
         "INSERT INTO photos (trail_id, image_name, created_at) VALUES ($1, $2, $3) RETURNING *",
-        [trailId, photo.image_name, photo.created_at]
+        [trailId, photo.image_name, photo.created_at],
       );
       return result.rows[0];
     });
 
     // Wait for all inserts to complete
     const insertedPhotos = await Promise.all(insertPromises);
-    
+
     // Return the inserted photos
     return insertedPhotos;
   }
 
   // Get photos for a trail
   async getTrailPhotos(trailId: number) {
-    const result = await db.query("SELECT * FROM photos WHERE trail_id = $1", [trailId]);
+    const result = await db.query("SELECT * FROM photos WHERE trail_id = $1", [
+      trailId,
+    ]);
     return result.rows;
   }
 }

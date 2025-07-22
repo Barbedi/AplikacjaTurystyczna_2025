@@ -6,7 +6,6 @@ const MenuBarTop = () => {
   const pathParts = location.pathname.split("/").filter(Boolean);
 
   const getDisplayName = (part: string, index: number) => {
-    
     if (/^\d+$/.test(part)) {
       if (
         index > 0 &&
@@ -38,7 +37,7 @@ const MenuBarTop = () => {
 
       return `ID: ${part}`;
     }
-   
+
     return pathTranslation[part] || part;
   };
 

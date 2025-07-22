@@ -60,8 +60,11 @@ router.post("/", async function (req, res, next) {
   const { email, password } = req.body;
 
   try {
-    
-    const { id: userId, email: userEmail, userRole } = await loginService.fetchClient(email, password);
+    const {
+      id: userId,
+      email: userEmail,
+      userRole,
+    } = await loginService.fetchClient(email, password);
 
     const token = jwt.sign(
       { id: userId, email: userEmail, role: userRole },
@@ -104,6 +107,5 @@ router.post("/", async function (req, res, next) {
     next(err);
   }
 });
-
 
 export default router;
