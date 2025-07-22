@@ -9,6 +9,7 @@ import {
   faSave,
   faTimes,
   faGear,
+  faRoute,
 } from "@fortawesome/free-solid-svg-icons";
 import AuthContext from "../../store/auth-context";
 import useGetUsers from "../../hooks/user/useGetUser";
@@ -54,7 +55,6 @@ const MyProfile = () => {
     const file = event.target.files?.[0];
     if (!file || !currentUser?.id) return;
 
-    // Maksymalny rozmiar pliku (np. 5MB)
     const maxSize = 5 * 1024 * 1024;
     if (file.size > maxSize) {
       console.error("Plik jest zbyt duży. Maksymalny rozmiar to 5MB.");
@@ -119,198 +119,257 @@ const MyProfile = () => {
   };
 
   return (
-    <div className="w-full mx-5 mt-3">
-      {loading && <p className="text-white">Ładowanie danych profilu...</p>}
+    <div className="w-full max-w-6xl mx-auto px-4 md:px-6 mt-8">
       {!loading && currentUser && (
-        <>
-          <div
-            className="flex flex-row items-start justify-center h-auto cursor-pointer"
-            onClick={handlePhotoClick}
-          >
-            <div className="bg-black w-32 h-32 rounded-full flex items-center justify-center mt-4 overflow-hidden">
-              {previewUrl ? (
-                <img
-                  src={previewUrl}
-                  alt="Podgląd zdjęcia profilowego"
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <FontAwesomeIcon
-                  icon={faCircleUser}
-                  className="text-[160px] text-white"
-                />
-              )}
-            </div>
-          </div>
+        <div className="">
+          <div className=" px-6 relative">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-8">
+              <div className="flex flex-col md:flex-row items-center gap-6">
+                <div
+                  className="group cursor-pointer relative"
+                  onClick={handlePhotoClick}
+                >
+                  <div className="w-32 h-32 rounded-full shadow-lg ring-4 ring-white/20 overflow-hidden">
+                    {previewUrl ? (
+                      <img
+                        src={previewUrl}
+                        alt="Zdjęcie profilowe"
+                        className="w-full h-full object-cover transition duration-300 group-hover:opacity-80"
+                      />
+                    ) : (
+                      <div className="bg-white/10 w-full h-full flex items-center justify-center">
+                        <FontAwesomeIcon
+                          icon={faCircleUser}
+                          className="text-7xl text-white/80"
+                        />
+                      </div>
+                    )}
+                  </div>
+                  <div className="absolute inset-0 rounded-full flex items-center justify-center bg-black/30 opacity-0 group-hover:opacity-100 transition duration-300">
+                    <span className="text-white text-sm font-medium">
+                      Zmień zdjęcie
+                    </span>
+                  </div>
+                </div>
 
-          <div className="flex flex-row items-start justify-center mt-7 gap-2">
-            <button
-              onClick={handlePhotoClick}
-              className="bg-secondary rounded-2xl px-4 py-1 text-xl font-lora text-center cursor-pointer"
-            >
-              <span className="text-white">Dodaj zdjęcie</span>
-            </button>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              onChange={handleFileChange}
-              className="hidden"
-            />
-          </div>
-          <div className="flex flex-row w-full items-start justify-center mt-4 gap-4 ">
-            <div className="flex flex-col w-1/2 justify-start items-start border-r border-gray-300 p-4 pb-30">
-              <div className="flex flex-row w-full items-end justify-end space-x-2">
-                {!editMode && (
-                  <button onClick={handleEditMode}>
-                    <FontAwesomeIcon
-                      icon={faGear}
-                      className="text-2xl text-white cursor-pointer"
-                    />
+                <div className="text-center md:text-left">
+                  <h1 className="text-3xl font-lora font-bold text-white">
+                    {currentUser.name || "Użytkownik HikeUp"}
+                  </h1>
+                  <p className="text-white/70 mt-1">{currentUser.email}</p>
+                </div>
+              </div>
+
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+                className="hidden"
+              />
+
+              <div className="flex gap-2">
+                {!editMode ? (
+                  <button
+                    onClick={handleEditMode}
+                    className="bg-white/20 hover:bg-white/30 transition duration-300 text-white px-4 py-2 rounded-lg flex items-center gap-2"
+                  >
+                    <FontAwesomeIcon icon={faGear} />
+                    <span>Edytuj profil</span>
                   </button>
-                )}
-                {editMode && (
-                  <>
-                    <button onClick={handleSaveChanges} disabled={isSaving}>
-                      <FontAwesomeIcon
-                        icon={faSave}
-                        className="text-2xl text-white hover:text-green-700 cursor-pointer "
-                      />
+                ) : (
+                  <div className="flex gap-2">
+                    <button
+                      onClick={handleSaveChanges}
+                      disabled={isSaving}
+                      className="bg-green-600/80 hover:bg-green-600 transition duration-300 text-white px-4 py-2 rounded-lg flex items-center gap-2"
+                    >
+                      <FontAwesomeIcon icon={faSave} />
+                      <span>{isSaving ? "Zapisywanie..." : "Zapisz"}</span>
                     </button>
-                    <button onClick={handleCancelEdit}>
-                      <FontAwesomeIcon
-                        icon={faTimes}
-                        className="text-2xl text-red-700 cursor-pointer"
-                      />
+                    <button
+                      onClick={handleCancelEdit}
+                      className="bg-red-600/80 hover:bg-red-600 transition duration-300 text-white px-4 py-2 rounded-lg flex items-center gap-2"
+                    >
+                      <FontAwesomeIcon icon={faTimes} />
+                      <span>Anuluj</span>
                     </button>
-                  </>
+                  </div>
                 )}
-              </div>
-              <div className="flex flex-col w-full relative border-b-2 border-white">
-                <FontAwesomeIcon
-                  icon={faUser}
-                  className="absolute -left-2 top-1/2 transform -translate-y-1/2 text-white text-lg pointer-events-none"
-                />
-                <input
-                  type="text"
-                  id="name"
-                  value={editMode ? editedUser?.name : currentUser.name}
-                  onChange={handleInputChange}
-                  readOnly={!editMode}
-                  className={`w-full py-4 ml-4 border-none ${editMode ? "bg-[rgba(255,255,255,0.1)]" : "bg-transparent"} text-white placeholder-white ${
-                    editMode ? "focus:outline-white" : "focus:outline-none"
-                  } ${editMode ? "border-b-2 border-blue-500" : ""}`}
-                />
-              </div>
-              <div className="flex flex-col w-full relative border-b-2 border-white">
-                <input
-                  type="email"
-                  id="email"
-                  value={currentUser.email}
-                  readOnly
-                  className="w-full py-4 ml-4 border-none bg-transparent text-white placeholder-white focus:outline-none"
-                />
-                <FontAwesomeIcon
-                  icon={faEnvelope}
-                  className="absolute -left-2 top-1/2 transform -translate-y-1/2 text-white text-lg pointer-events-none"
-                />
-              </div>
-              <div className="flex flex-col w-full relative border-b-2 border-white">
-                <select
-                  id="level_of_experience"
-                  disabled={!editMode}
-                  className={`w-full py-4 ml-4 border-none ${editMode ? "bg-[rgba(255,255,255,0.1)]" : "bg-transparent"} text-white ${
-                    editMode
-                      ? "focus:outline-white cursor-pointer"
-                      : "focus:outline-none"
-                  } appearance-none`}
-                  value={
-                    editMode
-                      ? editedUser?.level_of_experience
-                      : currentUser.level_of_experience
-                  }
-                  onChange={handleInputChange}
-                >
-                  <option className="bg-accent" value="">
-                    Wybierz poziom doświadczenia
-                  </option>
-                  <option className="bg-accent" value="beginner">
-                    Początkujący
-                  </option>
-                  <option className="bg-accent" value="intermediate">
-                    Średniozaawansowany
-                  </option>
-                  <option className="bg-accent" value="advanced">
-                    Zaawansowany
-                  </option>
-                  <option className="bg-accent" value="expert">
-                    Ekspert
-                  </option>
-                  <option className="bg-accent" value="pro">
-                    Profesjonalista
-                  </option>
-                </select>
-                <FontAwesomeIcon
-                  icon={faPersonHiking}
-                  className="absolute -left-2 top-1/2 transform -translate-y-1/2 text-white text-lg pointer-events-none"
-                />
-              </div>
-              <div className="flex flex-col w-full relative border-b-2 border-white mb-5">
-                <select
-                  id="fitness_level"
-                  disabled={!editMode}
-                  className={`w-full py-4 ml-4 border-none ${editMode ? "bg-[rgba(255,255,255,0.1)]" : "bg-transparent"} text-white ${
-                    editMode
-                      ? "focus:outline-white cursor-pointer"
-                      : "focus:outline-none"
-                  } appearance-none`}
-                  value={
-                    editMode
-                      ? editedUser?.fitness_level
-                      : currentUser.fitness_level
-                  }
-                  onChange={handleInputChange}
-                >
-                  <option className="bg-accent" value="">
-                    Wybierz poziom wysportowania
-                  </option>
-                  <option className="bg-accent" value="beginner">
-                    Brak aktywności
-                  </option>
-                  <option className="bg-accent" value="intermediate">
-                    Aktywności 1 - 2 razy w tygodniu
-                  </option>
-                  <option className="bg-accent" value="advanced">
-                    Aktywności 3 - 4 razy w tygodniu
-                  </option>
-                  <option className="bg-accent" value="expert">
-                    Aktywności 5 - 6 razy w tygodniu
-                  </option>
-                  <option className="bg-accent" value="pro">
-                    Aktywności codziennie
-                  </option>
-                </select>
-                <FontAwesomeIcon
-                  icon={faPersonRunning}
-                  className="absolute -left-2 top-1/2 transform -translate-y-1/2 text-white text-lg pointer-events-none"
-                />
               </div>
             </div>
-            <div className="flex flex-row w-1/2">
-              <div className="flex flex-col w-full justify-start items-start ">
-                <span className="text-2xl font-lora text-center text-white mt-3">
-                  Aktywność
-                </span>
-                <div className="flex flex-col w-full justify-start text-lg items-start mt-4 text-wrap text-white">
-                  <p className="mx-4">
-                    02.07.2025 Utworzyłeś i zapisałeś trasę "nazwa Trasy" w
-                    ulubionych{" "}
-                  </p>
+          </div>
+          <div className="p-6 flex flex-col md:flex-row gap-6">
+            <div className="w-full md:w-1/2">
+              <h2 className="text-xl font-lora text-white mb-4 pb-2 border-b border-white/10">
+                Dane profilu
+              </h2>
+
+              <div className="space-y-5">
+                <div className="bg-white/5 rounded-xl p-4">
+                  <div className="flex items-center mb-2">
+                    <FontAwesomeIcon
+                      icon={faUser}
+                      className="text-white/70 w-6"
+                    />
+                    <p className="text-white/70 ml-3">Imię i nazwisko</p>
+                  </div>
+                  <input
+                    type="text"
+                    id="name"
+                    value={editMode ? editedUser?.name : currentUser.name}
+                    onChange={handleInputChange}
+                    readOnly={!editMode}
+                    className={`w-full px-3 py-2 rounded-lg ${
+                      editMode
+                        ? "bg-white/10 border border-white/30"
+                        : "bg-transparent"
+                    } text-white placeholder-white focus:outline-none ${
+                      editMode && "focus:border-accent"
+                    }`}
+                  />
+                </div>
+
+                <div className="bg-white/5 rounded-xl p-4">
+                  <div className="flex items-center mb-2">
+                    <FontAwesomeIcon
+                      icon={faEnvelope}
+                      className="text-white/70 w-6"
+                    />
+                    <p className="text-white/70 ml-3">Email</p>
+                  </div>
+                  <input
+                    type="email"
+                    id="email"
+                    value={currentUser.email}
+                    readOnly
+                    className="`w-full px-3 py-2 rounded-lg text-white"
+                  />
+                </div>
+
+                <div className="bg-white/5 rounded-xl p-4">
+                  <div className="flex items-center mb-2">
+                    <FontAwesomeIcon
+                      icon={faPersonHiking}
+                      className="text-white/70 w-6"
+                    />
+                    <p className="text-white/70 ml-3">Poziom doświadczenia</p>
+                  </div>
+                  <select
+                    id="level_of_experience"
+                    disabled={!editMode}
+                    className={`w-full px-3 py-2 rounded-lg ${
+                      editMode
+                        ? "bg-white/10 border border-white/30"
+                        : "bg-transparent"
+                    } text-white placeholder-white focus:outline-none ${
+                      editMode && "focus:border-accent"
+                    }`}
+                    value={
+                      editMode
+                        ? editedUser?.level_of_experience
+                        : currentUser.level_of_experience
+                    }
+                    onChange={handleInputChange}
+                  >
+                    <option className="bg-gray-800" value="">
+                      Wybierz poziom doświadczenia
+                    </option>
+                    <option className="bg-gray-800" value="beginner">
+                      Początkujący
+                    </option>
+                    <option className="bg-gray-800" value="intermediate">
+                      Średniozaawansowany
+                    </option>
+                    <option className="bg-gray-800" value="advanced">
+                      Zaawansowany
+                    </option>
+                    <option className="bg-gray-800" value="expert">
+                      Ekspert
+                    </option>
+                    <option className="bg-gray-800" value="pro">
+                      Profesjonalista
+                    </option>
+                  </select>
+                </div>
+
+                <div className="bg-white/5 rounded-xl p-4">
+                  <div className="flex items-center mb-2">
+                    <FontAwesomeIcon
+                      icon={faPersonRunning}
+                      className="text-white/70 w-6"
+                    />
+                    <p className="text-white/70 ml-3">Poziom wysportowania</p>
+                  </div>
+                  <select
+                    id="fitness_level"
+                    disabled={!editMode}
+                    className={`w-full px-3 py-2 rounded-lg ${
+                      editMode
+                        ? "bg-white/10 border border-white/30"
+                        : "bg-transparent"
+                    } text-white placeholder-white focus:outline-none ${
+                      editMode && "focus:border-accent"
+                    }`}
+                    value={
+                      editMode
+                        ? editedUser?.fitness_level
+                        : currentUser.fitness_level
+                    }
+                    onChange={handleInputChange}
+                  >
+                    <option className="bg-gray-800" value="">
+                      Wybierz poziom wysportowania
+                    </option>
+                    <option className="bg-gray-800" value="beginner">
+                      Brak aktywności
+                    </option>
+                    <option className="bg-gray-800" value="intermediate">
+                      Aktywności 1 - 2 razy w tygodniu
+                    </option>
+                    <option className="bg-gray-800" value="advanced">
+                      Aktywności 3 - 4 razy w tygodniu
+                    </option>
+                    <option className="bg-gray-800" value="expert">
+                      Aktywności 5 - 6 razy w tygodniu
+                    </option>
+                    <option className="bg-gray-800" value="pro">
+                      Aktywności codziennie
+                    </option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div className="w-full md:w-1/2">
+              <h2 className="text-xl font-lora text-white mb-4 pb-2 border-b border-white/10">
+                Twoja aktywność
+              </h2>
+
+              <div className="bg-white/5 rounded-xl p-3">
+                <div className="space-y-3">
+                  <div className=" rounded-lg  p-3">
+                    <div className="flex items-center">
+                      <div className="bg-accent/30 p-2 rounded-full">
+                        <FontAwesomeIcon
+                          icon={faRoute}
+                          className="text-white"
+                        />
+                      </div>
+                      <div className="ml-3">
+                        <p className="text-white">
+                          Utworzyłeś i zapisałeś trasę{" "}
+                          <span className="font-semibold">"nazwa Trasy"</span> w
+                          ulubionych
+                        </p>
+                        <p className="text-white/50 text-sm">02.07.2025</p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </>
+        </div>
       )}
     </div>
   );

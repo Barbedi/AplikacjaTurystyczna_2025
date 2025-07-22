@@ -7,6 +7,7 @@ import {
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import TrailsPublic from "./pages/TrailsPublic";
 import Dashboard from "./pages/Manager/Dashboard";
 import ErrorBoundary from "./pages/ErrorBoundary";
 import PlanRoute from "./pages/Manager/PlanRoute";
@@ -39,6 +40,10 @@ function Root() {
       <Route index element={<Home />} />
       <Route path="login" element={<Login />} />
       <Route path="register" element={<Register />} />
+      <Route path="trails">
+        <Route index element={<TrailsPublic />} />
+        <Route path=":id" element={<TrailsPublic />} />
+      </Route>
       <Route path="dashboard" element={<Manager />}>
         <Route index element={<Dashboard />} />
         <Route path="plan-route" element={<PlanRoute />} />
@@ -65,8 +70,14 @@ function Root() {
           </Route>
         </Route>
 
-        <Route path="recommended" element={<Recommended />} />
-        <Route path="favorite-routes" element={<FavoriteRoutes />} />
+        <Route path="recommended">
+          <Route index element={<Recommended />} />
+          <Route path=":id" element={<EditTrailPage />} />
+        </Route>
+        <Route path="favorite-routes">
+          <Route index element={<FavoriteRoutes />} />
+          <Route path=":id" element={<EditTrailPage />} />
+        </Route>
         <Route path="search-trail" element={<SearchTrail />} />
         <Route path="statistics" element={<Statistics />} />
       </Route>

@@ -40,6 +40,18 @@ interface UserPeaks {
   photo_url?: string;
   description?: string;
 }
+interface FavoriteTrails {
+  user_id: number;
+  trail_id: number;
+  added_at: string;
+}
+
+interface Photo {
+  id: number;
+  trail_id: number;
+  image_name: string;
+  created_at: string;
+}
 
 interface Trails {
   id: number;
@@ -57,7 +69,9 @@ interface Trails {
   created_by: string;
   created_at: string;
   points?: TrailPoint[];
-  duration_minutes: number; // Optional field for duration in minutes
+  photos?: Photo[];
+  duration_minutes: number;
+  public: boolean;
 }
 
 interface TrailPoint {
@@ -86,4 +100,6 @@ export type {
   Trails,
   TrailPoint,
   UserPeaks,
+  FavoriteTrails,
+  Photo,
 };

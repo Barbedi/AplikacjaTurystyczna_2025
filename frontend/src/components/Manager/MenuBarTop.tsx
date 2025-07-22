@@ -6,7 +6,6 @@ const MenuBarTop = () => {
   const pathParts = location.pathname.split("/").filter(Boolean);
 
   const getDisplayName = (part: string, index: number) => {
-    
     if (/^\d+$/.test(part)) {
       if (
         index > 0 &&
@@ -29,9 +28,16 @@ const MenuBarTop = () => {
       if (index > 0 && pathParts[index - 1] === "edit-route") {
         return ` #${part}`;
       }
+      if (index > 0 && pathParts[index - 1] === "recommended") {
+        return `Trasa #${part}`;
+      }
+      if (index > 0 && pathParts[index - 1] === "favorite-routes") {
+        return `Trasa #${part}`;
+      }
+
       return `ID: ${part}`;
     }
-   
+
     return pathTranslation[part] || part;
   };
 

@@ -6,7 +6,7 @@ export const pathTranslation: Record<string, string> = {
   "my-peaks": "Moje szczyty",
   "my-reviews": "Moje opinie",
   "crown-peaks": "Korona Gór",
-  recommended: "Polecane trasy",
+  recommended: "Proponowane trasy",
   "favorite-routes": "Ulubione trasy",
   "search-trail": "Wyszukaj szlak",
   statistics: "Statystyki",
@@ -17,5 +17,5 @@ export const pathTranslation: Record<string, string> = {
   manager: "Manager",
   explore: "Odkrywaj",
   home: "Strona główna",
-  "peak": "Szczyt"
+  peak: "Szczyt",
 };

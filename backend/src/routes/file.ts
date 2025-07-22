@@ -8,6 +8,7 @@ import path from "path";
 const FILES_DIR = path.join(__dirname, "../files");
 const PROFILES_DIR = path.join(FILES_DIR, "profiles");
 const PEAKS_DIR = path.join(FILES_DIR, "peaks");
+const TRAILS_DIR = path.join(FILES_DIR, "trails");
 
 if (!fs.existsSync(FILES_DIR)) {
   fs.mkdirSync(FILES_DIR, { recursive: true });
@@ -17,6 +18,9 @@ if (!fs.existsSync(PROFILES_DIR)) {
 }
 if (!fs.existsSync(PEAKS_DIR)) {
   fs.mkdirSync(PEAKS_DIR, { recursive: true });
+}
+if (!fs.existsSync(TRAILS_DIR)) {
+  fs.mkdirSync(TRAILS_DIR, { recursive: true });
 }
 
 const upload = multer({
@@ -29,6 +33,8 @@ const upload = multer({
         destinationDir = PROFILES_DIR;
       } else if (uploadType === "peaks") {
         destinationDir = PEAKS_DIR;
+      } else if (uploadType === "trails") {
+        destinationDir = TRAILS_DIR;
       }
 
       cb(null, destinationDir);
@@ -154,6 +160,34 @@ router.post(
   },
 );
 
+/**
+ * @openapi
+ * /files/upload/peaks:
+ *   post:
+ *     tags:
+ *       - Files
+ *     summary: Upload a peak image
+ *     security:
+ *       - cookieAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               file:
+ *                 type: string
+ *                 format: binary
+ *           responses:
+ *             200:
+ *               description: Successfully uploaded peak image
+ *             400:
+ *               description: Bad request
+ *             500:
+ *               description: Internal server error
+ */
+
 router.post(
   "/upload/peaks",
   verifyUser,
@@ -214,6 +248,94 @@ router.get("/peaks/:file", async function (req, res, next) {
       res.sendFile(filePath);
     } else {
       res.status(404).json({ message: "Peak image not found" });
+    }
+  } catch (err) {
+    next(err);
+  }
+});
+
+/**
+ * @openapi
+ * /files/upload/trails:
+ *   post:
+ *     tags:
+ *       - Files
+ *     summary: Upload a trail image
+ *     security:
+ *       - cookieAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               file:
+ *                 type: string
+ *                 format: binary
+ *     responses:
+ *       200:
+ *         description: Successfully uploaded trail image
+ *       400:
+ *         description: Bad request
+ *       500:
+ *         description: Internal server error
+ */
+router.post(
+  "/upload/trails",
+  verifyUser,
+  (req, _res, next) => {
+    (req as any).uploadType = "trails";
+    next();
+  },
+  upload.single("file"),
+  (req, res, next) => {
+    try {
+      if (!req.file) {
+        res.status(400).json({ message: "No file uploaded" });
+        return;
+      }
+
+      res.status(200).json({
+        file: req.file,
+        message: "Trail image uploaded successfully.",
+      });
+    } catch (err) {
+      next(err);
+    }
+  },
+);
+
+/**
+ * @openapi
+ * /files/trails/{file}:
+ *   get:
+ *     tags:
+ *       - Files
+ *     summary: Get a trail image by filename
+ *     parameters:
+ *       - name: file
+ *         in: path
+ *         required: true
+ *         description: Filename of the trail image
+ *         type: string
+ *     responses:
+ *       200:
+ *         description: Successfully fetched trail image
+ *       404:
+ *         description: Trail image not found
+ *       500:
+ *         description: Internal server error
+ */
+router.get("/trails/:file", async function (req, res, next) {
+  try {
+    const filename = req.params.file;
+    const filePath = path.join(TRAILS_DIR, filename);
+
+    if (fs.existsSync(filePath)) {
+      res.sendFile(filePath);
+    } else {
+      res.status(404).json({ message: "Trail image not found" });
     }
   } catch (err) {
     next(err);

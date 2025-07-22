@@ -64,12 +64,16 @@ const MyPeaksUser = () => {
       >
         <h2 className="text-lg font-lora text-white">
           <span className="relative inline-block">
-            <FontAwesomeIcon title="Ilość zdobyć" className="text-yellow-500 text-2xl" icon={faCrown} />
+            <FontAwesomeIcon
+              title="Ilość zdobyć"
+              className="text-yellow-500 text-2xl"
+              icon={faCrown}
+            />
             <span className="absolute top-2 left-1.5 text-white font-bold text-xs rounded-full w-4 h-4 flex items-center justify-center">
               {peak.times_visited}
             </span>
-          </span> Szczyt
-          zdobyty!
+          </span>{" "}
+          Szczyt zdobyty!
         </h2>
         <h3 className="text-md font-lora text-white">{peak.peak_name}</h3>
         <p className="text-sm text-gray-300">

@@ -288,13 +288,27 @@ const DashboardMenu: React.FC<DashboardMenuProps> = () => {
           </button>
         </div>
       </div>
-      <div className="absolute bottom-0 w-full md:py-3 py-6">
-        <Link
-          to="/"
-          className="block text-center text-white text-4xl font-bold"
-        >
-          {isOpen && "HikeUp"}
-        </Link>
+      <div
+        className="fixed bottom-0 w-full md:py-3 py-6"
+        style={{
+          width: isOpen
+            ? window.innerWidth >= 1536
+              ? "20rem"
+              : window.innerWidth >= 768
+                ? "18rem"
+                : "20rem"
+            : "5rem",
+          zIndex: 10,
+        }}
+      >
+        <div className="bg-transparent/80 backdrop-blur-sm">
+          <Link
+            to="/"
+            className="block text-center text-white text-4xl font-bold"
+          >
+            {isOpen && "HikeUp"}
+          </Link>
+        </div>
       </div>
 
       {/* Toggle button */}

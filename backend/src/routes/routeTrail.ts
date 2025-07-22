@@ -1,6 +1,56 @@
 import express from "express";
 const router = express.Router();
 
+/**
+ * @openapi
+ * /trailsRoute:
+ *   post:
+ *     tags:
+ *       - TrailsRoute
+ *     summary: Create a new trail
+ *     description: Create a new trail with the provided details.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - description
+ *               - points
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: "Trail to the Peak"
+ *               description:
+ *                 type: string
+ *                 example: "A beautiful trail leading to the peak."
+ *               points:
+ *                 type: array
+ *                 items:
+ *                   type: array
+ *                   items:
+ *                     type: number
+ *                 example: [[37.7749, -122.4194], [37.7849, -122.4094]]
+ * responses:
+ *       '201':
+ *         description: Trail created successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: Creation success message.
+ *                   example: Trail created successfully.
+ *       '400':
+ *         description: Bad request - missing or invalid data.
+ *       '500':
+ *         description: Internal server error.
+ */
+
 router.post("/", async function (req, res) {
   const { points } = req.body;
 

@@ -40,18 +40,31 @@ export interface Trails {
   points?: TrailPoint[];
   duration_minutes?: number;
 }
+export interface FavoriteTrails {
+  user_id: number;
+  trail_id: number;
+  added_at: string;
+}
+
+interface ExtendedTrail extends Trails {
+  photos?: {
+    id: number;
+    trail_id: number;
+    image_name: string;
+    created_at: string;
+  }[];
+}
 export interface UserPeak {
   peak_id: number;
   peak_name: string;
   user_id: number;
   visited_at: string;
-  times_visited: number;  
+  times_visited: number;
   last_visited: string;
   description?: string;
   photo_url?: string;
 }
 
-// Typ dla nowej trasy bez ID i created_at
 export type NewTrail = Omit<Trails, "id" | "created_at" | "points">;
 
 export interface TrailPoint {

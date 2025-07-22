@@ -6,7 +6,7 @@ declare module "express-serve-static-core" {
   interface Request {
     response?: {
       auth: boolean;
-      user: { email: string; role: string };
+      user: { id: number; email: string; role: string };
       message: string;
     };
   }
@@ -29,11 +29,11 @@ export function refreshToken(req: Request, res: Response, next: NextFunction) {
           console.log("❌ Invalid refresh token:", err.message);
           return next(new Err("Invalid refresh token", 403));
         }
-        const tokenUser = user as { email: string; role: string };
+        const tokenUser = user as { id: number; email: string; role: string };
         console.log("✅ Refresh token valid. User:", tokenUser);
 
         const accessToken = jwt.sign(
-          { email: tokenUser.email, role: tokenUser.role }, // dodaj role
+          { id: tokenUser.id, email: tokenUser.email, role: tokenUser.role }, // dodaj role
           process.env["SECRET_TOKEN"] as string,
           {
             expiresIn: 86400, // 24 godziny (jak w login.ts)
