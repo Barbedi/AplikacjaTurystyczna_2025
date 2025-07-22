@@ -291,8 +291,8 @@ const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
                   )
                 }
               >
-                <option value="one-way">Tatry</option>
-                <option value="loop">Beskid Sądecki</option>
+                <option value="Tatry">Tatry</option>
+                <option value="Beskid Sądecki">Beskid Sądecki</option>
               </select>
             </div>
           </div>
