@@ -21,49 +21,23 @@ const RegionPage: React.FC = () => {
   const handleBackClick = () => {
     navigate("/");
   };
-  useEffect(() => {
-    setSearchParams({ page: pageData.page.toString() });
-  }, [pageData.page, setSearchParams]);
-
+   useEffect(() => {
+    const currentPage = parseInt(searchParams.get("page") || "1");
+    if (pageData.page !== currentPage) {
+      setSearchParams({ page: pageData.page.toString() });
+    }
+  }, [pageData.page, searchParams, setSearchParams]);
   useEffect(() => {
     if (!region) return;
     
     setLoading(true);
     trailService.gettrailByRegion(region, pageData.page)
       .then((res) => {
-        if (res.data && Array.isArray(res.data.data)) {
           setTrails(res.data.data);
-          
-          const currentPageItemCount = res.data.data.length;
-          const limit = res.data.limit || 6;
-          const isLastPageFull = currentPageItemCount === limit;
-          
-          if (res.data.page === 1 && !isLastPageFull) {
-            setPageData((prev) => ({
-              ...prev,
-              pages: 1,
-            }));
-          } else {
-            setPageData((prev) => ({
-              ...prev,
-              pages: res.data.totalPages || 1,
-            }));
-          }
-        } else if (Array.isArray(res.data)) {
-          setTrails(res.data);
           setPageData((prev) => ({
-            ...prev,
-            pages: 1,
-          }));
-        } else {
-          setTrails([]);
-          setPageData((prev) => ({
-            ...prev,
-            pages: 1,
-          }));
-        }
-        
-        setError(null);
+              ...prev,
+               pages: res.data.totalPages,
+            }));
       })
       .catch(() => {
         setError("Nie udało się załadować szlaków. Spróbuj ponownie później.");
