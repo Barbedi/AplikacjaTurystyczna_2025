@@ -84,6 +84,37 @@ class TrailsService {
     return null;
   }
 
+  async getTrailsByRegion(region: string, page = 1, limit = 6) {
+    if (page < 1 || limit < 1) {
+      throw new Err("Invalid page or limit", 400);
+    }
+    const offset = helper.getOffset(page, limit);
+    const query = `
+      SELECT *, ST_AsGeoJSON(geometry) as geometry FROM trails
+      WHERE region = $1 and is_public = true
+      ORDER BY created_at DESC
+      LIMIT $2 OFFSET $3
+    `;
+    const result = await db.query(query, [region, limit, offset]);
+    const countQuery = `
+      SELECT COUNT(*) FROM trails WHERE region = $1 and is_public = true
+    `;
+    const countResult = await db.query(countQuery, [region]);
+     const totalCount = parseInt(countResult.rows[0].count);
+     const totalPages = Math.ceil(totalCount / limit);
+      const trails = result.rows.map((row) => ({
+      ...row,
+      geometry: row.geometry ? JSON.parse(row.geometry) : null,
+    }));
+    return {
+      data: trails,
+      message: `Successfully fetched trails for region ${region}`,
+      totalPages,
+      page,
+      limit,
+    };
+  }
+
   async getTrailsByUser(userId: string, page = 1, limit = 7) {
     if (page < 1 || limit < 1) {
       throw new Err("Invalid page or limit", 400);
@@ -234,15 +265,13 @@ class TrailsService {
     trailId: number,
     photos: { image_name: string; created_at: string }[],
   ) {
-    // First check if the trail exists
+
     const trailCheck = await db.query("SELECT id FROM trails WHERE id = $1", [
       trailId,
     ]);
     if (trailCheck.rowCount === 0) {
       throw new Err("Trail not found", 404);
     }
-
-    // Process each photo
     const insertPromises = photos.map(async (photo) => {
       const result = await db.query(
         "INSERT INTO photos (trail_id, image_name, created_at) VALUES ($1, $2, $3) RETURNING *",
@@ -250,11 +279,7 @@ class TrailsService {
       );
       return result.rows[0];
     });
-
-    // Wait for all inserts to complete
     const insertedPhotos = await Promise.all(insertPromises);
-
-    // Return the inserted photos
     return insertedPhotos;
   }
 

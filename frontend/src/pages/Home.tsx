@@ -127,7 +127,7 @@ const Home = () => {
             )}
           </div>
         </div>
-        <div className="absolute inset-0 bg-black/40 z-10"></div>
+        <div className="absolute inset-0 bg-black/40 rounded-2xl z-10"></div>
       </div>
       <div className="flex items-center justify-center max-w-[2330px] mx-auto px-4">
         <div className="flex flex-col items-center text-center mt-6">

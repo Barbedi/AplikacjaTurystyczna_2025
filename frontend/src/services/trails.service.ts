@@ -47,6 +47,12 @@ class TrailsService {
     });
   };
 
+  gettrailByRegion = (region: string, page: number = 1) => {
+    return http.get<TrailsResponse>(`/trails/region/${region}?page=${page}`, {
+      withCredentials: true,
+    });
+  };
+
   deleteTrail = (id: number) => {
     return http.delete(`/trails/${id}`, { withCredentials: true });
   };
