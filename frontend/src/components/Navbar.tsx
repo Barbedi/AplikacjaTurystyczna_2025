@@ -38,7 +38,7 @@ const Navbar = () => {
         </div>
         <div className="hidden md:flex absolute left-1/2 -translate-x-1/2">
           <nav className="flex space-x-3 2xl:text-2xl text-xl">
-            <NavLink
+            {/* <NavLink
               to="/"
               className={({ isActive }) =>
                 `text-white py-2 px-4 hover:text-gray-300 ${
@@ -48,8 +48,8 @@ const Navbar = () => {
               onClick={() => setMenuOpen(false)}
             >
               Strona główna
-            </NavLink>
-            <NavLink
+            </NavLink> */}
+            {/* <NavLink
               to="/discover"
               className={({ isActive }) =>
                 `text-white py-2 px-4 hover:text-gray-300 ${
@@ -59,7 +59,7 @@ const Navbar = () => {
               onClick={() => setMenuOpen(false)}
             >
               Odkryj trasy
-            </NavLink>
+            </NavLink> */}
           </nav>
         </div>
         <div className="hidden md:flex items-center space-x-4 2xl:text-2xl text-xl flex-shrink-0">

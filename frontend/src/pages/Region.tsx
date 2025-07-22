@@ -35,7 +35,7 @@ const RegionPage: React.FC = () => {
           setTrails(res.data.data);
           
           const currentPageItemCount = res.data.data.length;
-          const limit = res.data.limit || 7;
+          const limit = res.data.limit || 6;
           const isLastPageFull = currentPageItemCount === limit;
           
           if (res.data.page === 1 && !isLastPageFull) {
@@ -70,6 +70,10 @@ const RegionPage: React.FC = () => {
       })
       .finally(() => setLoading(false));
   }, [region, pageData.page]);
+
+  const handleTrailClick = (trailId: number) => {
+    navigate(`/trails/${trailId}`); // Navigate to the trail details page
+  }; 
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-grad1 to-grad2 pb-24 md:pb-0">
@@ -128,7 +132,9 @@ const RegionPage: React.FC = () => {
                       <div className="text-white/70 text-sm">
                         <span className="mr-2"><FontAwesomeIcon icon={faMountain} /></span>{trail.elevation_gain}m przewyższenia
                       </div>
-                      <button className="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg transition-all duration-300 border border-white/40">
+                      <button
+                        onClick={() => handleTrailClick(trail.id)}
+                        className="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg transition-all duration-300 border border-white/40 cursor-pointer">
                         Zobacz szlak
                       </button>
                     </div>
@@ -138,8 +144,6 @@ const RegionPage: React.FC = () => {
             </div>
           </>
         )}
-        
-        {pageData.pages > 1 && (
           <div className="mt-10">
             <Pagination
               pageData={pageData}
@@ -147,7 +151,6 @@ const RegionPage: React.FC = () => {
               className="flex justify-center"
             />
           </div>
-        )}
       </div>
     </div>
   );

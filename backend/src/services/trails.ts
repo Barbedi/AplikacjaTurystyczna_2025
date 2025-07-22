@@ -84,7 +84,7 @@ class TrailsService {
     return null;
   }
 
-  async getTrailsByRegion(region: string, page = 1, limit = 7) {
+  async getTrailsByRegion(region: string, page = 1, limit = 6) {
     if (page < 1 || limit < 1) {
       throw new Err("Invalid page or limit", 400);
     }

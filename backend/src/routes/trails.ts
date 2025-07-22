@@ -266,7 +266,7 @@ router.get("/region/:region", async (req, res, next) => {
   try {
     const { page, limit } = req.query;
     const parsedPage = page ? parseInt(page as string) : 1;
-    const parsedLimit = limit ? parseInt(limit as string) : 7;
+    const parsedLimit = limit ? parseInt(limit as string) : 6;
     const region = req.params.region;
 
     const result = await TrailsService.getTrailsByRegion(
