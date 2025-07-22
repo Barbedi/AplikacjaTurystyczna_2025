@@ -261,6 +261,29 @@ router.get("/:id", async (req, res, next) => {
   }
 });
 
+
+router.get("/region/:region", async (req, res, next) => {
+  try {
+    const { page, limit } = req.query;
+    const parsedPage = page ? parseInt(page as string) : 1;
+    const parsedLimit = limit ? parseInt(limit as string) : 7;
+    const region = req.params.region;
+
+    const result = await TrailsService.getTrailsByRegion(
+      region,
+      parsedPage,
+      parsedLimit,
+    );
+    res.status(200).json(result);
+  } catch (error) {
+    if (error instanceof Err) {
+      res.status(error.statusCode || 500).json({ message: error.message });
+    } else {
+      next(error);
+    }
+  }
+});
+
 /**
  * @swagger
  * /trails/{id}/photos:

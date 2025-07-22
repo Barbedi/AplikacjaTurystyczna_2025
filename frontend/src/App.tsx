@@ -26,6 +26,7 @@ import CrownPolandPage from "./pages/Manager/CrownPolandPage";
 import CrownBeskidPage from "./pages/Manager/CrownBeskidPage";
 import EditCrownPage from "./pages/Manager/EditCrownPage";
 import EditTrailPage from "./pages/Manager/TrailPage";
+import RegionPage from "./pages/Region";
 
 const router = createBrowserRouter([
   { path: "*", Component: Root, errorElement: <ErrorBoundary /> },
@@ -81,7 +82,10 @@ function Root() {
         <Route path="search-trail" element={<SearchTrail />} />
         <Route path="statistics" element={<Statistics />} />
       </Route>
-      <Route path="discover" element={<Discover />} />
+      <Route path="discover">
+        <Route index element={<Discover />} />
+        <Route path=":region" element={<RegionPage />} />
+      </Route>
     </Routes>
   );
 }
