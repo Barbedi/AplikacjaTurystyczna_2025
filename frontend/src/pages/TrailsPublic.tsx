@@ -6,7 +6,15 @@ import favouriteTrailsService from "../services/favouriteTrails.service";
 import MapTrails from "../components/Manager/MapTrails";
 import ElevationProfile from "../components/Manager/ElevationProfile";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircleArrowLeft, faHeart,faMountain,faFireFlameCurved,faPersonHiking,faImage,faMap } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCircleArrowLeft,
+  faHeart,
+  faMountain,
+  faFireFlameCurved,
+  faPersonHiking,
+  faImage,
+  faMap,
+} from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import AuthContext from "../store/auth-context";
 import filesService from "../services/files.service";
@@ -38,29 +46,28 @@ const TrailsPublic = () => {
   const [hoverPoint] = useState<[number, number] | null>(null);
   const { id } = useParams<{ id: string }>();
 
-
   const handleBackClick = () => {
     navigate(-1);
-   };
+  };
 
-   useEffect(() => {
-     if (!id) {
+  useEffect(() => {
+    if (!id) {
       console.error("ID is not provided");
       return;
     }
 
-     trailsService
-       .getTrailById(parseInt(id))
-       .then((response) => {
-         setTrail(response.data);
-       })
-       .catch((error) => {
-         console.error("Error fetching trail data:", error);
-       });
-   }, [id]);
-   const handleFavoriteClick = async () => {
-     if (!user) {
-       alert("Musisz być zalogowany, aby dodać trasę do ulubionych.");
+    trailsService
+      .getTrailById(parseInt(id))
+      .then((response) => {
+        setTrail(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching trail data:", error);
+      });
+  }, [id]);
+  const handleFavoriteClick = async () => {
+    if (!user) {
+      alert("Musisz być zalogowany, aby dodać trasę do ulubionych.");
       return;
     }
 
@@ -81,7 +88,7 @@ const TrailsPublic = () => {
       console.error("Błąd:", error);
     }
   };
-  
+
   return (
     <div className="min-h-screen bg-linear-to-b from-grad1 to-grad2 pb-24 md:pb-0">
       <FontAwesomeIcon
@@ -95,10 +102,10 @@ const TrailsPublic = () => {
           <div className="relative z-10 p-8">
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
               <FontAwesomeIcon
-                    icon={faHeart}
-                    className="ml-4 text-white cursor-pointer hover:text-red-500 absolute -top-3 -right-2 text-2xl"
-                    onClick={handleFavoriteClick}
-                  />
+                icon={faHeart}
+                className="ml-4 text-white cursor-pointer hover:text-red-500 absolute -top-3 -right-2 text-2xl"
+                onClick={handleFavoriteClick}
+              />
               <div>
                 <h1 className="text-4xl font-bold text-white font-lora">
                   {trail.name}
@@ -109,7 +116,10 @@ const TrailsPublic = () => {
                     {trail.region}
                   </span>
                   <span className="bg-red-600/20 text-red-300 border border-red-600/30 text-sm py-1 px-3 rounded-full flex items-center">
-                    <FontAwesomeIcon icon={faFireFlameCurved} className="mr-1" />
+                    <FontAwesomeIcon
+                      icon={faFireFlameCurved}
+                      className="mr-1"
+                    />
                     {trail.difficulty || "Średni"}
                   </span>
                 </div>
@@ -198,7 +208,7 @@ const TrailsPublic = () => {
                 </div>
               </div>
             </div>
-  
+
             <div className="lg:col-span-2">
               <div
                 className={`${activeTab === "info" ? "block" : "hidden"} bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20`}
@@ -255,7 +265,9 @@ const TrailsPublic = () => {
                 className={`${activeTab === "photos" ? "block" : "hidden"} bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20`}
               >
                 <div className="flex justify-between items-center mb-6">
-                  <h3 className="text-xl font-lora text-white">Galeria zdjęć</h3>
+                  <h3 className="text-xl font-lora text-white">
+                    Galeria zdjęć
+                  </h3>
                 </div>
                 {trail.photos && trail.photos.length > 0 ? (
                   <>
@@ -298,7 +310,7 @@ const TrailsPublic = () => {
                       Brak zdjęć do wyświetlenia.
                     </p>
                     <p className="text-sm text-white/50 mt-2 max-w-md text-center">
-                      Zaloguj sie aby dodac zdjecie 
+                      Zaloguj sie aby dodac zdjecie
                     </p>
                   </div>
                 )}
@@ -307,8 +319,8 @@ const TrailsPublic = () => {
           </div>
         </div>
       </div>
-      </div>
-    );
-  };
+    </div>
+  );
+};
 
 export default TrailsPublic;

@@ -22,7 +22,7 @@ const DiscoverList = () => {
   }, []);
 
   const handleTrailClick = (trailId: number) => {
-    navigate(`/trails/${trailId}`); 
+    navigate(`/trails/${trailId}`);
   };
 
   return (
@@ -32,19 +32,18 @@ const DiscoverList = () => {
           key={trail.id}
           className={`flex bg-white/10 backdrop-blur-lg rounded-lg shadow-lg p-4 mt-5 transition-all duration-300 ease-in-out hover:shadow-xl w-full
              ${
-            trail.region === "Tatry"
-            ? "border-2 border-purple-500/20 hover:bg-purple-500/30 "
-            : trail.region === "Beskid Sądecki"
-            ? "border-2 border-green-500/20 hover:bg-green-500/30 "
-            : "border border-gray-400"
-        }`}
+               trail.region === "Tatry"
+                 ? "border-2 border-purple-500/20 hover:bg-purple-500/30 "
+                 : trail.region === "Beskid Sądecki"
+                   ? "border-2 border-green-500/20 hover:bg-green-500/30 "
+                   : "border border-gray-400"
+             }`}
         >
           <span className="flex-1 text-lg font-lora text-white">
             {trail.name}
           </span>
           <span className="flex-1 text-lg font-lora text-white">
             {trail.region}
-
           </span>
           <span className="flex-1 text-lg font-lora text-white">
             {trail.length_km} km

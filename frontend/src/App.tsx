@@ -80,10 +80,10 @@ function Root() {
           <Route path=":id" element={<EditTrailPage />} />
         </Route>
         <Route path="community-trails">
-        <Route index element={<CommunityList />} />
-        <Route path=":id" element={<CommunityTrails />} />
-        <Route path="edit/:trailId" element={<EditTrailPage />} />
-      </Route>
+          <Route index element={<CommunityList />} />
+          <Route path=":id" element={<CommunityTrails />} />
+          <Route path="edit/:trailId" element={<EditTrailPage />} />
+        </Route>
         <Route path="statistics" element={<Statistics />} />
       </Route>
       <Route path="discover">

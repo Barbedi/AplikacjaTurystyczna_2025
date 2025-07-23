@@ -29,6 +29,14 @@ export interface CommunityTrails {
   description: string;
   created_at: string;
 }
+
+export interface TrailLike {
+  id: number;
+  user_id: number;
+  shared_trail_id: number;
+  created_at: string;
+}
+
 interface ExtendedCommunityTrails extends CommunityTrails {
   user_name: string;
   trail_name: string;

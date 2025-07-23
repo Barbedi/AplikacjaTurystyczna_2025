@@ -1,17 +1,22 @@
 import http from "../http-common";
 
-
 class CommunityTrailsService {
   getCommunityTrails = () => {
     return http.get(`/community-trails`, { withCredentials: true });
   };
 
   getCommunityTrailDetails = (sharedTrailId: number) => {
-    return http.get(`/community-trails/${sharedTrailId}`, { withCredentials: true });
+    return http.get(`/community-trails/${sharedTrailId}`, {
+      withCredentials: true,
+    });
   };
 
   addCommunityTrail = (trailId: number, description: string) => {
-    return http.post(`/community-trails`, { trailId, description }, { withCredentials: true });
+    return http.post(
+      `/community-trails`,
+      { trailId, description },
+      { withCredentials: true },
+    );
   };
 
   updateCommunityTrail = (trailId: number) => {
@@ -19,7 +24,9 @@ class CommunityTrailsService {
   };
 
   deleteCommunityTrail = (trailId: number) => {
-    return http.delete(`/community-trails/${trailId}`, { withCredentials: true });
+    return http.delete(`/community-trails/${trailId}`, {
+      withCredentials: true,
+    });
   };
 }
 

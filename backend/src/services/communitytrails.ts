@@ -1,8 +1,11 @@
 import db from "../db";
 import { Err, CommunityTrails } from "../Types";
 
-
-async function createCommunityTrail(userId: number, trailId: number, description: string) {
+async function createCommunityTrail(
+  userId: number,
+  trailId: number,
+  description: string,
+) {
   const query = `
     INSERT INTO shared_trails (user_id, trail_id, description, created_at)
     VALUES ($1, $2, $3, NOW())
@@ -39,9 +42,8 @@ async function getCommunityTrailsBySharedId(sharedId: number) {
   return result.rows[0] as CommunityTrails;
 }
 
-
 async function getCommunityTrails() {
-    const query = `
+  const query = `
      SELECT st.id AS shared_id, st.description AS shared_description,
         st.created_at,
          t.id AS trail_id,
@@ -56,9 +58,9 @@ async function getCommunityTrails() {
     `;
 
   const result = await db.query(query);
-    if (result.rowCount === 0) {
-      throw new Err("Failed to get community trails", 500);
-    }
+  if (result.rowCount === 0) {
+    throw new Err("Failed to get community trails", 500);
+  }
   return result.rows as CommunityTrails[];
 }
 export default {

@@ -18,5 +18,5 @@ export const pathTranslation: Record<string, string> = {
   explore: "Odkrywaj",
   home: "Strona główna",
   peak: "Szczyt",
-  "community-trails": "Społeczność"
+  "community-trails": "Społeczność",
 };
