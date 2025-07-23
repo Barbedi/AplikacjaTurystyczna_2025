@@ -15,7 +15,7 @@ import Discover from "./pages/Discover";
 import Manager from "./pages/Manager";
 import CrownPeaks from "./pages/Manager/CrownPeaks";
 import MyRoutes from "./pages/Manager/MyRoutes";
-import SearchTrail from "./pages/Manager/SearchTrail";
+import CommunityTrails from "./pages/Manager/CommunityTrails";
 import Recommended from "./pages/Manager/Recommended";
 import MyPeaks from "./pages/Manager/MyPeaks";
 import MyReviews from "./pages/Manager/MyReviews";
@@ -27,6 +27,7 @@ import CrownBeskidPage from "./pages/Manager/CrownBeskidPage";
 import EditCrownPage from "./pages/Manager/EditCrownPage";
 import EditTrailPage from "./pages/Manager/TrailPage";
 import RegionPage from "./pages/Region";
+import CommunityList from "./pages/Manager/CommunityList";
 
 const router = createBrowserRouter([
   { path: "*", Component: Root, errorElement: <ErrorBoundary /> },
@@ -70,7 +71,6 @@ function Root() {
             <Route path=":id" element={<EditCrownPage />} />
           </Route>
         </Route>
-
         <Route path="recommended">
           <Route index element={<Recommended />} />
           <Route path=":id" element={<EditTrailPage />} />
@@ -79,7 +79,11 @@ function Root() {
           <Route index element={<FavoriteRoutes />} />
           <Route path=":id" element={<EditTrailPage />} />
         </Route>
-        <Route path="search-trail" element={<SearchTrail />} />
+        <Route path="community-trails">
+        <Route index element={<CommunityList />} />
+        <Route path=":id" element={<CommunityTrails />} />
+        <Route path="edit/:trailId" element={<EditTrailPage />} />
+      </Route>
         <Route path="statistics" element={<Statistics />} />
       </Route>
       <Route path="discover">

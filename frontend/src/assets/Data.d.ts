@@ -22,6 +22,19 @@ export interface UserInfo {
   profile_image?: string;
 }
 
+export interface CommunityTrails {
+  shared_id: number;
+  user_id: number;
+  trail_id: number;
+  description: string;
+  created_at: string;
+}
+interface ExtendedCommunityTrails extends CommunityTrails {
+  user_name: string;
+  trail_name: string;
+  shared_description: string;
+}
+
 export interface Trails {
   id: number;
   name: string;

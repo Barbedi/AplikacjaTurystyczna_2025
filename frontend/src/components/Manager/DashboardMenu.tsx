@@ -7,13 +7,13 @@ import {
   faChevronLeft,
   faHouse,
   faRoute,
-  faCompass,
   faLocationPinLock,
   faHeart,
   faMapLocationDot,
   faMountainSun,
   faRankingStar,
   faCircleUser,
+  faUsers,
 } from "@fortawesome/free-solid-svg-icons";
 import LogoutIcon from "@mui/icons-material/Logout";
 import PermMediaIcon from "@mui/icons-material/PermMedia";
@@ -113,7 +113,7 @@ const DashboardMenu: React.FC<DashboardMenuProps> = () => {
             </div>
           </NavLink>
           <NavLink
-            to="search-trail"
+            to="community-trails"
             className={({ isActive }) =>
               `text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl transition duration-300 ${
                 isActive ? "bg-gray-700" : "hover:bg-gray-700"
@@ -124,10 +124,10 @@ const DashboardMenu: React.FC<DashboardMenuProps> = () => {
               className={`flex items-center ${!isOpen ? "justify-center" : ""}`}
             >
               <FontAwesomeIcon
-                icon={faCompass}
+                icon={faUsers}
                 className="mr-2 text-lg 2xl:text-xl"
               />
-              {isOpen && "Wyszukaj szlaku"}
+              {isOpen && "Społeczność"}
             </div>
           </NavLink>
           <NavLink

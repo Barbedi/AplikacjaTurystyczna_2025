@@ -45,6 +45,13 @@ interface FavoriteTrails {
   trail_id: number;
   added_at: string;
 }
+interface CommunityTrails{
+  id:number;
+  user_id:number;
+  trail_id:number;
+  description:string;
+  created_at:string;
+}
 
 interface Photo {
   id: number;
@@ -102,4 +109,5 @@ export type {
   UserPeaks,
   FavoriteTrails,
   Photo,
+  CommunityTrails
 };

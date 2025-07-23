@@ -1,10 +1,11 @@
-import { useParams } from "react-router-dom";
+import { useParams, } from "react-router-dom";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { ExtendedTrail } from "../../assets/Data";
 import trailsService from "../../services/trails.service";
 import MapTrails from "../../components/Manager/MapTrails";
 import ElevationProfile from "../../components/Manager/ElevationProfile";
 import filesService from "../../services/files.service";
+import communitytrailsService from "../../services/communitytrails.service";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faMountain,
@@ -13,7 +14,9 @@ import {
   faImage,
   faFireFlameCurved,
   faTrash,
+  faShare
 } from "@fortawesome/free-solid-svg-icons";
+import Modal from "../../components/Modal";
 
 const emptyTrail: ExtendedTrail = {
   id: 0,
@@ -35,12 +38,18 @@ const emptyTrail: ExtendedTrail = {
 };
 
 const EditTrailPage = () => {
+  const [openModal, setOpenModal] = useState(false);
   const [trail, setTrail] = useState<ExtendedTrail>(emptyTrail);
   const [hoverPoint] = useState<[number, number] | null>(null);
   const [activeTab, setActiveTab] = useState<"info" | "photos" | "map">("map");
-  const { id } = useParams<{ id: string }>();
+  const { id, trailId } = useParams<{ id: string; trailId: string }>();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [description, setDescription] = useState("");
+
+  const descriptionInputHandler = (ev: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setDescription(ev.target.value);
+  };
 
   useEffect(() => {
     if (!id) {
@@ -57,6 +66,21 @@ const EditTrailPage = () => {
         console.error("Error fetching trail data:", error);
       });
   }, [id]);
+  useEffect(() => {
+  if (!trailId) {
+    console.error("Trail ID is not provided");
+    return;
+  }
+
+  trailsService
+    .getTrailById(parseInt(trailId))
+    .then((response) => {
+      setTrail(response.data);
+    })
+    .catch((error) => {
+      console.error("Error fetching trail data:", error);
+    });
+}, [trailId]);
 
   const AddImg = useCallback(async (id: number, img: string) => {
     try {
@@ -123,11 +147,31 @@ const EditTrailPage = () => {
     }
   };
 
+  const handleShareTrail = async () => {
+    if (!id) return;
+    try {
+      const response = await communitytrailsService.addCommunityTrail(
+        trail.id,
+        description,
+      );
+      if (response.status === 201) {
+        setOpenModal(false);
+        // Optionally, refresh the trail data or show a success message
+        console.log("Trail shared successfully:", response.data);
+      }
+    } catch (error) {
+      console.error("Error sharing trail:", error);
+    }
+  };
+  
+
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-6 w-full">
       <div className="relative bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20 mb-6 overflow-hidden">
         <div className="relative z-10 p-8">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <FontAwesomeIcon icon={faShare} className="absolute -top-3 -right-2 text-white text-2xl" onClick={() => setOpenModal(true)} />
             <div>
               <h1 className="text-4xl font-bold text-white font-lora">
                 {trail.name}
@@ -387,7 +431,33 @@ const EditTrailPage = () => {
           </div>
         </div>
       </div>
-    </div>
+        <Modal isOpen={openModal} onClose={() => setOpenModal(false)}>
+            <h2 className="text-white text-2xl font-semibold mb-4 text-center">Udostępnij trasę</h2>
+              <span className="text-white/70 text-xl underline">{trail.name}</span>
+              <textarea
+                name="description"
+                id="description"
+                value={description}
+                onChange={descriptionInputHandler}
+                className="mt-2  w-full rounded-md bg-white/5 border border-white/20 focus:outline-none text-white p-3"
+                placeholder="Dodaj opis trasy..."
+              ></textarea>
+                <div className="flex flex-row items-end gap-3 mt-6">
+              <button
+                onClick={() => setOpenModal(false)}
+                className="px-4 py-2 rounded-lg bg-white/10 text-white hover:bg-white/20 transition-all w-full"
+              >
+                Zamknij
+              </button>
+              <button
+                className="px-4 py-2 rounded-lg bg-white/10 text-white hover:bg-white/20 transition-all w-full"
+                onClick={() => handleShareTrail()}
+              >
+                Udostępnij
+              </button>
+          </div>
+        </Modal>
+      </div>
   );
 };
 
