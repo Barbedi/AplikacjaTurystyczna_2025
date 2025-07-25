@@ -12,6 +12,7 @@ interface CommentSectionProps {
 
 const CommentSection = ({ sharedTrailId }: CommentSectionProps) => {
   const { getUserByEmail, usersData } = useGetUsers();
+  const [visibleCount, setVisibleCount] = useState(2);
   const { user } = useContext(AuthContext);
   const [comments, setComments] = useState<CommentShared[]>([]);
   const [newComment, setNewComment] = useState<string>("");
@@ -55,6 +56,9 @@ const CommentSection = ({ sharedTrailId }: CommentSectionProps) => {
     }
   };
 
+  const handleShowMore = () => {
+  setVisibleCount((prev) => prev + 2); 
+};
   return (
     <div className="bg-white/10 backdrop-blur-lg rounded-xl border border-white/20 mt-6 mb-6 overflow-hidden">
       <div className="p-4 border-b border-white/10">
@@ -90,7 +94,7 @@ const CommentSection = ({ sharedTrailId }: CommentSectionProps) => {
       </div>
       <div className="divide-y divide-white/10">
         {comments.length > 0 ? (
-          comments.map((comment) => (
+          comments.slice(0, visibleCount).map((comment) => (
             <div key={comment.id} className="flex gap-3 p-4">
               <img
                 className="rounded-full h-10 w-10 object-cover bg-blue-400/50 ring-1 ring-white/30"
@@ -111,6 +115,16 @@ const CommentSection = ({ sharedTrailId }: CommentSectionProps) => {
           ))
         ) : (
           <div className="p-4 text-gray-400 text-center">Brak komentarzy</div>
+        )}
+        {comments.length > visibleCount && (
+        <div className="p-4 flex justify-center">
+            <button
+            onClick={handleShowMore}
+            className="px-4 py-1.5 rounded-lg bg-white/5 text-white hover:bg-white/10 transition-all text-sm"
+            >
+            Pokaż więcej komentarzy
+            </button>
+        </div>
         )}
       </div>
     </div>
