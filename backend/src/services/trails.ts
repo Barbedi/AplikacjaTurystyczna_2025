@@ -100,9 +100,9 @@ class TrailsService {
       SELECT COUNT(*) FROM trails WHERE region = $1 and is_public = true
     `;
     const countResult = await db.query(countQuery, [region]);
-     const totalCount = parseInt(countResult.rows[0].count);
-     const totalPages = Math.ceil(totalCount / limit);
-      const trails = result.rows.map((row) => ({
+    const totalCount = parseInt(countResult.rows[0].count);
+    const totalPages = Math.ceil(totalCount / limit);
+    const trails = result.rows.map((row) => ({
       ...row,
       geometry: row.geometry ? JSON.parse(row.geometry) : null,
     }));
@@ -265,7 +265,6 @@ class TrailsService {
     trailId: number,
     photos: { image_name: string; created_at: string }[],
   ) {
-
     const trailCheck = await db.query("SELECT id FROM trails WHERE id = $1", [
       trailId,
     ]);

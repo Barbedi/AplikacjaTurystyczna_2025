@@ -39,7 +39,7 @@ const Home = () => {
 
   const selectPeak = (peak: Peaks) => {
     console.log("Selected peak:", peak);
-    
+
     setSearchTerm(peak.name);
     setShowResults(false);
   };

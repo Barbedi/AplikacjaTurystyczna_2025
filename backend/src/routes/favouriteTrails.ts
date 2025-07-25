@@ -39,12 +39,10 @@ router.post("/", verifyUser, async (req, res, next) => {
       userId,
       trail_id,
     );
-    res
-      .status(200)
-      .json({
-        message: "Trail added to favourites successfully.",
-        data: result,
-      });
+    res.status(200).json({
+      message: "Trail added to favourites successfully.",
+      data: result,
+    });
   } catch (error) {
     next(error);
   }
@@ -118,12 +116,10 @@ router.delete("/:trailId", verifyUser, async (req, res, next) => {
       userId,
       trailId,
     );
-    res
-      .status(200)
-      .json({
-        message: "Trail removed from favourites successfully.",
-        data: result,
-      });
+    res.status(200).json({
+      message: "Trail removed from favourites successfully.",
+      data: result,
+    });
   } catch (error) {
     next(error);
   }

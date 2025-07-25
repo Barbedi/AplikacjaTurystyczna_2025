@@ -1,15 +1,5 @@
+// ===================== USERS =====================
 export interface Users {
-  id?: number;
-  email: string;
-  password: string;
-  name: string;
-  level_of_experience?: string;
-  fitness_level?: string;
-  created_at?: string;
-  salt?: string;
-  role?: string;
-}
-export interface UserInfo {
   id?: number;
   email: string;
   password: string;
@@ -22,6 +12,14 @@ export interface UserInfo {
   profile_image?: string;
 }
 
+export interface User {
+  exp: number;
+  iat: number;
+  email: string;
+  role: string;
+}
+
+// ===================== TRAILS =====================
 export interface Trails {
   id: number;
   name: string;
@@ -40,6 +38,18 @@ export interface Trails {
   points?: TrailPoint[];
   duration_minutes?: number;
 }
+
+export type NewTrail = Omit<Trails, "id" | "created_at" | "points">;
+
+export interface TrailPoint {
+  id: number;
+  trail_id: number;
+  lat: number;
+  lng: number;
+  name?: string;
+  point_order: number;
+}
+
 export interface FavoriteTrails {
   user_id: number;
   trail_id: number;
@@ -54,6 +64,63 @@ interface ExtendedTrail extends Trails {
     created_at: string;
   }[];
 }
+
+// ===================== COMMUNITY TRAILS & COMMENTS =====================
+export interface CommunityTrails {
+  shared_id: number;
+  user_id: number;
+  trail_id: number;
+  description: string;
+  created_at: string;
+}
+
+interface ExtendedCommunityTrails extends CommunityTrails {
+  user_name: string;
+  user_profile_image?: string;
+  trail_name: string;
+  shared_description: string;
+}
+
+export interface TrailLike {
+  id: number;
+  user_id: number;
+  shared_trail_id: number;
+  created_at: string;
+}
+
+export interface CommentShared {
+  id?: number;
+  shared_trail_id: number;
+  user_id: number;
+  content: string;
+  parent_id?: number;
+  created_at?: string;
+  user?: {
+    id: number;
+    name: string;
+    profile_image?: string;
+  };
+}
+
+// ===================== PEAKS =====================
+export interface Peaks {
+  id: number;
+  name: string;
+  elevation: number;
+  region: string;
+  latitude: number;
+  longitude: number;
+  verified: boolean;
+  description?: string;
+  image_filename?: string;
+}
+
+export interface PeakCollection {
+  id: number;
+  name: string;
+  description: string;
+}
+
 export interface UserPeak {
   peak_id: number;
   peak_name: string;
@@ -65,23 +132,6 @@ export interface UserPeak {
   photo_url?: string;
 }
 
-export type NewTrail = Omit<Trails, "id" | "created_at" | "points">;
-
-export interface TrailPoint {
-  id: number;
-  trail_id: number;
-  lat: number;
-  lng: number;
-  name?: string;
-  point_order: number;
-}
-
-export interface User {
-  exp: number;
-  iat: number;
-  email: string;
-  role: string;
-}
 export interface UserPeaks {
   id: number;
   user_id: number;
@@ -91,16 +141,19 @@ export interface UserPeaks {
   description?: string;
 }
 
-export interface Peaks {
+// ===================== SHELTERS =====================
+export interface Shelters {
   id: number;
   name: string;
-  elevation: number;
-  region: string;
+  description?: string;
   latitude: number;
   longitude: number;
-  verified: boolean;
-  image_filename: string;
+  altitude: number;
+  photo?: string;
+  mountain_range: string;
 }
+
+// ===================== ROUTES =====================
 export interface RoutePoint {
   coordinates: [number, number];
   name?: string;
@@ -115,16 +168,6 @@ export interface RouteInfo {
   description?: string;
 }
 
-export interface Shelters {
-  id: number;
-  name: string;
-  description?: string;
-  latitude: number;
-  longitude: number;
-  altitude: number;
-  photo?: string;
-  mountain_range: string;
-}
 interface routeTrail {
   type: string;
   features: {
@@ -159,36 +202,7 @@ interface routeTrail {
   }[];
 }
 
-// Typ dla odpowiedzi z paginacją
-export interface TrailsResponse {
-  data: Trails[];
-  message: string;
-  totalPages: number;
-  page: number;
-  limit: number;
-}
-
-export interface PeakCollection {
-  id: number;
-  name: string;
-  description: string;
-}
-interface PageData {
-  page: number;
-  pages: number;
-}
-export interface Peaks {
-  id: number;
-  name: string;
-  elevation: number;
-  region: string;
-  latitude: number;
-  longitude: number;
-  verified: boolean;
-  description?: string;
-  image_filename?: string;
-}
-
+// ===================== WEATHER =====================
 export interface CurrentWeather {
   name: string;
   dt: number;
@@ -221,6 +235,22 @@ export interface ForecastItem {
     description: string;
   }[];
 }
+
+// ===================== PAGINATION =====================
+export interface TrailsResponse {
+  data: Trails[];
+  message: string;
+  totalPages: number;
+  page: number;
+  limit: number;
+}
+
+interface PageData {
+  page: number;
+  pages: number;
+}
+
+// ===================== FILTERS & SORT =====================
 interface Filter {
   by: string;
   operator?: string;
@@ -232,6 +262,7 @@ interface Sort {
   order?: string;
 }
 
+// ===================== ERROR =====================
 interface Err extends Error {
   response: {
     status: number;

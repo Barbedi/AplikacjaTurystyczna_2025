@@ -45,12 +45,38 @@ interface FavoriteTrails {
   trail_id: number;
   added_at: string;
 }
+interface CommunityTrails {
+  id: number;
+  user_id: number;
+  trail_id: number;
+  description: string;
+  created_at: string;
+}
+interface TrailLike {
+  id: number;
+  user_id: number;
+  shared_trail_id: number;
+  created_at: string;
+}
 
 interface Photo {
   id: number;
   trail_id: number;
   image_name: string;
   created_at: string;
+}
+interface CommentShared {
+  id: number;
+  shared_trail_id: number;
+  user_id: number;
+  content: string;
+  parent_id?: number;
+  created_at: string;
+  user?: {
+    id: number;
+    name: string;
+    profile_image?: string;
+  };
 }
 
 interface Trails {
@@ -102,4 +128,7 @@ export type {
   UserPeaks,
   FavoriteTrails,
   Photo,
+  CommunityTrails,
+  TrailLike,
+  CommentShared,
 };

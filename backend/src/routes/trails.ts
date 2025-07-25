@@ -261,7 +261,6 @@ router.get("/:id", async (req, res, next) => {
   }
 });
 
-
 router.get("/region/:region", async (req, res, next) => {
   try {
     const { page, limit } = req.query;
