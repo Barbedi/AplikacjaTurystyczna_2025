@@ -25,7 +25,7 @@ import Statistics from "./pages/Manager/Statistics";
 import CrownPolandPage from "./pages/Manager/CrownPolandPage";
 import CrownBeskidPage from "./pages/Manager/CrownBeskidPage";
 import EditCrownPage from "./pages/Manager/EditCrownPage";
-import EditTrailPage from "./pages/Manager/TrailPage";
+import EditTrailPage from "./pages/Manager/EditTrailPage";
 import RegionPage from "./pages/Region";
 import CommunityList from "./pages/Manager/CommunityList";
 

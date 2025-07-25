@@ -46,15 +46,25 @@ LIMIT $2 OFFSET $3
   `;
   const result = await db.query(query, [userId, limit, offset]);
   const rows = helper.emptyOrRows(result.rows);
+  
   if (rows.length === 0) {
     throw new Err("No peaks found for this user", 404);
   }
-
+  const totalCountQuery = `
+    SELECT COUNT(DISTINCT p.id) AS count
+    FROM peaks p
+    JOIN user_peaks up ON p.id = up.peak_id
+    WHERE up.user_id = $1
+  `;
+  const totalCountResult = await db.query(totalCountQuery, [userId]);
+  const totalCount = parseInt(totalCountResult.rows[0].count);
   return {
     data: rows,
     message: "Successfully fetched peaks for user",
     page,
     limit,
+    total: totalCount,
+    
   };
 }
 

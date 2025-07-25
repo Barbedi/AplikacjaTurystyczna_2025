@@ -9,7 +9,7 @@ const MyPeaks = () => {
         <div className="flex items-center justify-center gap-3 mb-2">
           <h1 className="text-2xl font-lora text-white">Moje Szczyty</h1>
         </div>
-        <div className="grid grid-cols-4 gap-4 mt-4">
+        <div >
           <MyPeaksUser />
         </div>
       </div>
