@@ -4,35 +4,32 @@ import communitytrailsService from "../../services/communitytrails.service";
 import userService from "../../services/user.service";
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState, useCallback } from "react";
-import { ExtendedCommunityTrails, Trails, UserInfo } from "../../assets/Data";
+import { ExtendedCommunityTrails, Trails } from "../../assets/Data";
 import filesService from "../../services/files.service";
-import { formatTime, timeAgo } from "../../utils/format";
+import { timeAgo } from "../../utils/format";
 import trailsService from "../../services/trails.service";
 import likeTrailService from "../../services/LikeTrail.service";
+import CommentSection from "../../components/Manager/CommentSection";
 
 const CommunityTrails = () => {
   const navigate = useNavigate();
   const [trail, setTrail] = useState<ExtendedCommunityTrails | null>(null);
   const [trailsData, setTrailsData] = useState<Trails[]>([]);
-  const [, setUser] = useState<UserInfo | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [likesCount, setLikesCount] = useState<number>(0);
   const [likedByUser, setLikedByUser] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+
   const { id: sharedTrailId } = useParams<{ id: string }>();
 
   const fetchData = useCallback(async () => {
     if (!sharedTrailId) {
-      setError("Nie znaleziono ID trasy");
       setIsLoading(false);
       return;
     }
 
     try {
       setIsLoading(true);
-      setError(null);
-
       const [trailResponse, likeResponse] = await Promise.all([
         communitytrailsService.getCommunityTrailDetails(
           parseInt(sharedTrailId, 10),
@@ -52,13 +49,9 @@ const CommunityTrails = () => {
 
       setTrailsData([trailDetails.data]);
       const userData = userResponse.data.data[0];
-      setUser(userData);
       setPreviewUrl(filesService.getImgUrl(userData.profile_image));
     } catch (error) {
       console.error("Błąd podczas pobierania danych:", error);
-      setError(
-        "Wystąpił błąd podczas ładowania danych trasy. Spróbuj ponownie później.",
-      );
     } finally {
       setIsLoading(false);
     }
@@ -66,12 +59,9 @@ const CommunityTrails = () => {
 
   useEffect(() => {
     fetchData();
-
-    // Czyszczenie stanu przy odmontowaniu komponentu
     return () => {
       setTrail(null);
       setTrailsData([]);
-      setUser(null);
       setPreviewUrl(null);
       setLikesCount(0);
       setLikedByUser(false);
@@ -82,16 +72,6 @@ const CommunityTrails = () => {
     return (
       <div className="flex justify-center items-center min-h-[200px]">
         <div className="text-white">Ładowanie...</div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="flex justify-center items-center min-h-[200px]">
-        <div className="text-red-400 bg-red-900/40 rounded-lg px-4 py-3">
-          {error}
-        </div>
       </div>
     );
   }
@@ -178,8 +158,8 @@ const CommunityTrails = () => {
             <div className="bg-white/5 p-3 rounded-lg">
               <p className="text-gray-400 text-xs mb-1">Czas przejścia</p>
               <p className="text-white font-medium">
-                {formatTime(trailsData[0]?.duration_minutes as number) ||
-                  "Brak danych"}
+                {Math.floor((trailsData[0]?.duration_minutes as number) / 60)} h{" "}
+                {(trailsData[0]?.duration_minutes as number) % 60} min
               </p>
             </div>
             <div className="bg-white/5 p-3 rounded-lg">
@@ -205,59 +185,7 @@ const CommunityTrails = () => {
           </div>
         </div>
       </div>
-      <div className="bg-white/10 backdrop-blur-lg rounded-xl border border-white/20 mt-6 mb-6 overflow-hidden">
-        <div className="p-4 border-b border-white/10">
-          <h3 className="text-white font-medium">Komentarze (1)</h3>
-        </div>
-        <div className="p-4 border-b border-white/10">
-          <div className="flex gap-3">
-            <img
-              className="rounded-full h-10 w-10 object-cover bg-amber-400/50 ring-1 ring-white/30"
-              src=""
-              alt="Your Avatar"
-            />
-            <div className="flex-grow">
-              <textarea
-                className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white resize-none focus:outline-none focus:ring-1 focus:ring-amber-500/50"
-                placeholder="Dodaj komentarz..."
-                rows={2}
-              ></textarea>
-              <div className="flex justify-end mt-2">
-                <button className="px-4 py-1.5 rounded-lg bg-amber-500 text-white hover:bg-amber-600 transition-all text-sm">
-                  Opublikuj
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="divide-y divide-white/10">
-          <div className="p-4">
-            <div className="flex gap-3">
-              <img
-                className="rounded-full h-10 w-10 object-cover bg-blue-400/50 ring-1 ring-white/30"
-                src=""
-                alt="User Avatar"
-              />
-              <div className="flex-grow">
-                <div className="flex items-center gap-2">
-                  <span className="text-white font-medium">Anna</span>
-                  <span className="text-gray-400 text-xs">2 godziny temu</span>
-                </div>
-                <p className="text-gray-300 mt-1">
-                  Super trasa! Przeszłam ją w zeszłym miesiącu, widoki są
-                  niesamowite.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="p-4 flex justify-center">
-            <button className="px-4 py-1.5 rounded-lg bg-white/5 text-white hover:bg-white/10 transition-all text-sm">
-              Pokaż więcej komentarzy
-            </button>
-          </div>
-        </div>
-      </div>
+      <CommentSection sharedTrailId={trail.shared_id} />
     </div>
   );
 };

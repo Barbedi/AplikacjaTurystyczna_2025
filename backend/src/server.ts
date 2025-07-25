@@ -20,6 +20,7 @@ import trailsPoint from "./routes/trailsPoint";
 import favouriteTrails from "./routes/favouriteTrails";
 import communityTrailsRouter from "./routes/communitytrails";
 import likeTrail from "./routes/likeTrail";
+import commentShared from "./routes/commentShared";
 
 const app = express();
 
@@ -52,6 +53,8 @@ app.use("/trailsPoint", trailsPoint);
 app.use("/favourite-trails", favouriteTrails);
 app.use("/community-trails", communityTrailsRouter);
 app.use("/like-trail", likeTrail);
+app.use("/comment-shared", commentShared);
+
 // Obsługa nieznalezionych endpointów
 app.use((_req: Request, res: Response) => {
   res.status(404).json({ message: "Endpoint not found" });

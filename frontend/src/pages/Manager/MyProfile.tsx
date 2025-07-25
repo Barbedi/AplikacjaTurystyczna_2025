@@ -15,7 +15,7 @@ import AuthContext from "../../store/auth-context";
 import useGetUsers from "../../hooks/user/useGetUser";
 import useUpdateUser from "../../hooks/user/useUpdateUser";
 import filesService from "../../services/files.service";
-import { UserInfo } from "../../assets/Data";
+import {Users } from "../../assets/Data";
 
 const MyProfile = () => {
   const { user } = useContext(AuthContext);
@@ -25,7 +25,7 @@ const MyProfile = () => {
   const { updateUserImg, updateUser } = useUpdateUser();
   const { refreshUserProfile } = useContext(AuthContext);
   const [editMode, setEditMode] = useState(false);
-  const [editedUser, setEditedUser] = useState<UserInfo | null>(null);
+  const [editedUser, setEditedUser] = useState<Users | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {

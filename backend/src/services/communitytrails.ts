@@ -29,7 +29,8 @@ async function getCommunityTrailsBySharedId(sharedId: number) {
            t.name AS trail_name,
            t.description AS trail_description,
            u.id AS user_id,
-           u.name AS user_name
+           u.name AS user_name,
+           u.profile_image AS user_profile_image
     FROM shared_trails st
     JOIN trails t ON st.trail_id = t.id
     JOIN users u ON st.user_id = u.id
@@ -50,7 +51,8 @@ async function getCommunityTrails() {
          t.name AS trail_name,
          t.description AS trail_description,
          u.id AS user_id,
-         u.name AS user_name
+         u.name AS user_name,
+         u.profile_image AS user_profile_image
          FROM shared_trails st
          JOIN trails t ON st.trail_id = t.id
          JOIN users u ON st.user_id = u.id

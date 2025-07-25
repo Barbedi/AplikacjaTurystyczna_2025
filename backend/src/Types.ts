@@ -65,6 +65,19 @@ interface Photo {
   image_name: string;
   created_at: string;
 }
+interface CommentShared {
+  id: number;
+  shared_trail_id: number;
+  user_id: number;
+  content: string;
+  parent_id?: number;
+  created_at: string;
+  user?: {
+    id: number;
+    name: string;
+    profile_image?: string;
+  };
+}
 
 interface Trails {
   id: number;
@@ -117,4 +130,5 @@ export type {
   Photo,
   CommunityTrails,
   TrailLike,
+  CommentShared,
 };
