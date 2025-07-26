@@ -7,7 +7,7 @@ services:
       POSTGRES_DB: HikeUp
     volumes:
     - postgres_data:/var/lib/postgresql/data
-
+    - ./postgresql:/backup
     ports:
       - "5432:5432"
     networks:
