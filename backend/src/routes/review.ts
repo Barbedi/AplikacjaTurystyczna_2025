@@ -20,7 +20,18 @@ router.get("/:userId", async (req, res,next) => {
 
     try {
         const reviews = await reviewService.getReviewByUserId(userId, parsedPage, parsedLimit);
-        res.json(reviews);
+        res.status(200).json(reviews);
+    } catch (err) {
+       next(err);
+    }
+});
+
+router.get("/trail/:trailId", async (req, res,next) => {
+    const trailId = parseInt(req.params.trailId, 10);
+
+    try {
+        const reviews = await reviewService.getReviewForTrail(trailId);
+        res.status(200).json(reviews);
     } catch (err) {
        next(err);
     }
@@ -42,7 +53,10 @@ router.delete("/:id", async (req, res,next) => {
 
     try {
         const deletedReview = await reviewService.deleteReview(reviewId);
-        res.json(deletedReview);
+        res.status(200).json({
+            message: "Review deleted successfully",
+            review: deletedReview
+        });
     } catch (err) {
        next(err);
     }

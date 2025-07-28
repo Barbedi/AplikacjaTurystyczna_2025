@@ -11,7 +11,7 @@ import {
   faChevronRight,
   faEdit,
   faTrash,
-  faXmark
+  faXmark,
 } from "@fortawesome/free-solid-svg-icons";
 import Modal from "../../Modal";
 
@@ -146,7 +146,8 @@ const TrailPeak = () => {
           Czy chcesz usunąć trasę?
         </h2>
         <p className="text-white/70 text-center">
-          Ta akcja jest nieodwracalna. Po usunięciu trasy nie będzie można jej odzyskać.
+          Ta akcja jest nieodwracalna. Po usunięciu trasy nie będzie można jej
+          odzyskać.
         </p>
 
         <div className="flex flex-row items-end gap-3 mt-6">

@@ -15,7 +15,7 @@ import AuthContext from "../../store/auth-context";
 import useGetUsers from "../../hooks/user/useGetUser";
 import useUpdateUser from "../../hooks/user/useUpdateUser";
 import filesService from "../../services/files.service";
-import {Users } from "../../assets/Data";
+import { Users } from "../../assets/Data";
 
 const MyProfile = () => {
   const { user } = useContext(AuthContext);

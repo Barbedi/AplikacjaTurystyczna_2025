@@ -72,7 +72,6 @@ const Navbar = () => {
       </div>
       {menuOpen && (
         <div className="md:hidden flex flex-col items-center bg-opacity-95 mt-2 space-y-2 py-4 text-xl">
-          
           {auth ? (
             <>
               <NavLink

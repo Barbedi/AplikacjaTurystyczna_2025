@@ -62,6 +62,32 @@ async function getReviewByUserId(userId: number,page = 1, limit = 6) {
     };
 }
 
+async function getReviewForTrail(trailId: number) {
+    const query = `
+        SELECT 
+      r.id,
+      r.user_id,
+      r.comment,
+      r.rating,
+      r.created_at,
+      t.name AS trail_name,
+      u.name AS user_name
+    FROM reviews r
+    LEFT JOIN trails t ON r.trail_id = t.id
+    LEFT JOIN users u ON r.user_id = u.id
+    WHERE r.trail_id = $1
+    ORDER BY r.created_at DESC;
+    `;
+    const result = await db.query(query, [trailId]);
+    if (result.rowCount === 0) {
+        throw new Err("No reviews found for this trail", 404);
+    }
+    return {
+        data: result.rows as Review[],
+        message: `Successfully fetched reviews for trail ${trailId}`
+    };
+}
+
 async function createReview(data: Review) {
     if (!data.trail_id && !data.peak_id) {
         throw new Err("Either trail_id or peak_id is required", 400);
@@ -101,6 +127,7 @@ export default {
     getAllReviews,
     getReviewByUserId,
     createReview,
-    deleteReview
+    deleteReview,
+    getReviewForTrail
 };
     

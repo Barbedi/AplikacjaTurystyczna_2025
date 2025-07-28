@@ -3,7 +3,7 @@ import trailsService from "../../../services/trails.service";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { PageData, Trails } from "../../../assets/Data";
-import { useNavigate ,useSearchParams} from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import Pagination from "../../Pagination";
 
 const TrailPropose = () => {
@@ -11,9 +11,9 @@ const TrailPropose = () => {
   const [trails, setTrails] = useState<Trails[]>([]);
   const [searchParams, setSearchParams] = useSearchParams();
   const [pageData, setPageData] = useState<PageData>({
-      page: parseInt(searchParams.get("page") || "1"),
-      pages: 1,
-    });
+    page: parseInt(searchParams.get("page") || "1"),
+    pages: 1,
+  });
   useEffect(() => {
     const fetchTrails = async (page: number) => {
       try {

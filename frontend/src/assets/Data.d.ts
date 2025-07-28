@@ -156,6 +156,7 @@ export interface Shelters {
 export interface Review {
   id?: number;
   user_id: number;
+  user_name?: string;
   trail_id?: number;
   peak_id?: number;
   rating?: number;

@@ -1,17 +1,18 @@
 import { useParams, useLocation } from "react-router-dom";
 import { useState, useEffect, useContext } from "react";
-import { Peaks, Review } from "../../assets/Data";
+import { Peaks} from "../../assets/Data";
 import peaksService from "../../services/peaks.service";
 import userpeaksService from "../../services/userpeaks.service";
 import filesService from "../../services/files.service";
 import MapTrails from "../../components/Manager/Map/MapTrails";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faStar, faMountainSun,faComment, faXmark } from "@fortawesome/free-solid-svg-icons";
+import {
+  faStar,
+  faMountainSun,
+} from "@fortawesome/free-solid-svg-icons";
 import { formatDate } from "../../utils/format";
 import useGetUsers from "../../hooks/user/useGetUser";
 import AuthContext from "../../store/auth-context";
-import Modal from "../../components/Modal";
-import reviewService from "../../services/review.service";
 
 const emptyPeak: Peaks = {
   id: 0,
@@ -25,7 +26,6 @@ const emptyPeak: Peaks = {
 };
 
 const EditCrownPage = () => {
-  const [openModal, setOpenModal] = useState(false);
   const [peak, setPeak] = useState<Peaks>(emptyPeak);
   const [myPeak, setMyPeak] = useState<{
     description?: string;
@@ -43,7 +43,6 @@ const EditCrownPage = () => {
   const { id } = useParams<{ id: string }>();
   const location = useLocation();
   const pathname = location.pathname;
-  const [reviewText, setReviewText] = useState<string>("");
 
   const isCrownPeak = pathname.includes("/crown-peaks/");
   const isMyPeak = pathname.includes("/my-peaks/");
@@ -138,9 +137,6 @@ const EditCrownPage = () => {
     setHoveredStar(0);
   };
 
-
-  
-
   useEffect(() => {
     const fetchPeakData = async () => {
       if (!id) {
@@ -165,47 +161,37 @@ const EditCrownPage = () => {
     fetchPeakData();
   }, [id, isCrownPeak]);
 
-  
-const handleAddReview = async () => {
-  if (!currentUser?.id || !id) return;
-  try {
-    const review: Review = {
-      user_id: currentUser.id,
-      peak_id: parseInt(id),
-      comment: reviewText,
-      rating: rating > 0 ? rating : undefined,
-    };
-    await reviewService.createReview(review);
-    setOpenModal(false);
-    setReviewText("");  // wyczyszczenie textarea po dodaniu
-  } catch (error) {
-    console.error("Error adding review:", error);
-  }
-};
+  // const handleAddReview = async () => {
+  //   if (!currentUser?.id || !id) return;
+  //   try {
+  //     const review: Review = {
+  //       user_id: currentUser.id,
+  //       peak_id: parseInt(id),
+  //       comment: reviewText,
+  //       rating: rating > 0 ? rating : undefined,
+  //     };
+  //     await reviewService.createReview(review);
+  //     setOpenModal(false);
+  //     setReviewText(""); // wyczyszczenie textarea po dodaniu
+  //   } catch (error) {
+  //     console.error("Error adding review:", error);
+  //   }
+  // };
 
   return (
     <div className="flex flex-col max-w-6xl text-center items-center justify-center w-full mx-auto mt-3 gap-y-4">
       <div className="relative w-full flex items-center text-4xl font-lora text-white underline">
-        <div className="w-8" /> 
+        <div className="w-8" />
         <div className="flex items-center mx-auto space-x-2">
           <FontAwesomeIcon icon={faMountainSun} className="text-white" />
           <span>{peak.name}</span>
         </div>
-        {isMyPeak ? (
-          <FontAwesomeIcon
-            onClick={() => setOpenModal(true)}
-            icon={faComment} className="text-white w-8 cursor-pointer" 
-            title="Dodaj Komentarz"/>
-        ) : (
-          <div className="w-8" /> 
-        )}
       </div>
       <div className="flex flex-row items-start justify-start w-full max-w-6xl p-4">
         <div className="flex flex-col items-start justify-start mb-4 w-1/2">
           <div className="w-full mb-6 bg-white/10 backdrop-blur-lg rounded-lg p-4 border border-white/20">
             <h3 className="text-xl font-lora text-white mb-3 border-b border-white/20 pb-2">
               Informacje o szczycie
-               
             </h3>
             <div className="space-y-3">
               <div className="flex items-center">
@@ -295,7 +281,7 @@ const handleAddReview = async () => {
           {isMyPeak && (
             <div className="w-full mb-4">
               <h3 className="text-xl font-lora text-white mb-3 border-b border-white/20 pb-2 mt-4">
-                Moje zdjęcie 
+                Moje zdjęcie
               </h3>
               <div className="grid grid-cols-1 max-h-1/2  gap-3 mt-4">
                 {myPeak?.photoUrl && (
@@ -372,60 +358,6 @@ const handleAddReview = async () => {
           )}
         </div>
       </div>
-      <Modal isOpen={openModal} onClose={() => setOpenModal(false)}>
-  <h2 className="text-white text-2xl font-semibold mb-4 text-center">
-    Oceń szczyt
-  </h2>
-  <div className="w-full flex flex-col items-center">
-    <div className="w-full mb-4">
-      <textarea
-        value={reviewText}
-        onChange={(e) => setReviewText(e.target.value)}
-        rows={4}
-        maxLength={500}
-        required
-        className="mt-2  w-full rounded-md bg-white/5 border border-white/20 focus:outline-none text-white p-3"
-        placeholder="Podziel się swoimi wrażeniami ze szczytu..."
-      />
-    </div>
-    <div className="flex gap-1 justify-center">
-      {[1, 2, 3, 4, 5].map((star) => (
-        <FontAwesomeIcon
-          key={star}
-          icon={faStar}
-          className={`text-2xl cursor-pointer transition-colors ${
-            star <= (hoveredStar || rating)
-              ? "text-yellow-400"
-              : "text-white/30"
-          } hover:text-yellow-300`}
-          onClick={() => handleStarClick(star)}
-          onMouseEnter={() => handleStarHover(star)}
-          onMouseLeave={handleStarLeave}
-        />
-      ))}
-    </div>
-    <span className="mt-2 text-white font-lora">
-      {rating > 0 ? `${rating}/5` : "Nie oceniono"}
-    </span>
-  </div>
-
-  <div className="flex flex-row items-end gap-3 mt-6">
-    <button
-      onClick={() => setOpenModal(false)}
-      className="w-full px-5 py-2 rounded-lg bg-white/10 text-white hover:bg-white/20 transition-all cursor-pointer flex items-center justify-center gap-2"
-    >
-      <FontAwesomeIcon icon={faXmark} />
-      <span>Zamknij</span>
-    </button>
-    <button
-    onClick={handleAddReview}
-      className="px-4 py-1 rounded-lg bg-purple-400/30  text-purple-400 hover:bg-purple-400/20 border border-purple-400/20 transition-all w-full cursor-pointer"
-    >
-      Oceń
-    </button>
-  </div>
-</Modal>
-
     </div>
   );
 };

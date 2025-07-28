@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronRight, faTrash ,faXmark} from "@fortawesome/free-solid-svg-icons";
+import {
+  faChevronRight,
+  faTrash,
+  faXmark,
+} from "@fortawesome/free-solid-svg-icons";
 import { FavoriteTrails, Trails } from "../../../assets/Data";
 import { useNavigate } from "react-router-dom";
 import favouriteTrailsService from "../../../services/favouriteTrails.service";
@@ -90,7 +94,8 @@ const FavouriteTrailPropose = () => {
           Czy chcesz usunąć trasę z ulubionych?
         </h2>
         <p className="text-white/70 text-center">
-          Ta akcja jest nieodwracalna. Po usunięciu trasy z ulubionych nie będzie można jej odzyskać.
+          Ta akcja jest nieodwracalna. Po usunięciu trasy z ulubionych nie
+          będzie można jej odzyskać.
         </p>
 
         <div className="flex flex-row items-end gap-3 mt-6">

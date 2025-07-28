@@ -14,7 +14,7 @@ const Reviews = () => {
   const { user } = useContext(AuthContext);
   const { getUserByEmail, usersData } = useGetUsers();
   const [openModal, setOpenModal] = useState(false);
-  const [selectedReviewId, setSelectedReviewId] = useState<number | null>(null); 
+  const [selectedReviewId, setSelectedReviewId] = useState<number | null>(null);
 
   useEffect(() => {
     if (user?.email) {
@@ -45,7 +45,7 @@ const Reviews = () => {
     try {
       await reviewService.deleteReview(reviewId);
       setReviews(reviews.filter((review) => review.id !== reviewId));
-      setOpenModal(false); 
+      setOpenModal(false);
     } catch (error) {
       console.error("Error deleting review:", error);
     }
@@ -94,7 +94,9 @@ const Reviews = () => {
                 {formatDate(review.created_at || "")}
               </p>
               <div className="flex items-center gap-3">
-                <span className="text-sm text-white/70 font-medium">Ocena trasy:</span>
+                <span className="text-sm text-white/70 font-medium">
+                  Ocena trasy:
+                </span>
                 <span className="text-white font-medium">{review.rating}</span>
                 <div className="flex">
                   {[...Array(5)].map((_, i) => (
@@ -102,7 +104,9 @@ const Reviews = () => {
                       key={i}
                       icon={faStar}
                       className={`text-sm ${
-                        i < (review.rating ?? 0) ? "text-yellow-400" : "text-white/30"
+                        i < (review.rating ?? 0)
+                          ? "text-yellow-400"
+                          : "text-white/30"
                       } transition-colors duration-200`}
                     />
                   ))}
@@ -110,7 +114,9 @@ const Reviews = () => {
               </div>
             </div>
             <div className="mt-4">
-              <p className="text-sm text-white/70 font-medium mb-2">Komentarz:</p>
+              <p className="text-sm text-white/70 font-medium mb-2">
+                Komentarz:
+              </p>
               <p className="text-white p-4 bg-white/5 rounded-lg leading-relaxed text-sm">
                 {review.comment}
               </p>
@@ -123,7 +129,8 @@ const Reviews = () => {
           Czy chcesz usunąć recenzję?
         </h2>
         <p className="text-white/70 text-center">
-          Ta akcja jest nieodwracalna. Po usunięciu recenzji nie będzie można jej odzyskać.
+          Ta akcja jest nieodwracalna. Po usunięciu recenzji nie będzie można
+          jej odzyskać.
         </p>
 
         <div className="flex flex-row items-end gap-3 mt-6">
