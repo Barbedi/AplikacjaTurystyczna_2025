@@ -7,7 +7,7 @@ import {
   Tooltip,
   GeoJSON,
 } from "react-leaflet";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -44,6 +44,7 @@ const LocationMarker = ({
   });
   return null;
 };
+
 const LocationMarkerDelete = ({
   removePointByCoordinates,
 }: {
@@ -55,6 +56,21 @@ const LocationMarkerDelete = ({
     },
   });
   return null;
+};
+
+// Komponent dla hover markera - memoized żeby się nie przeładowywał
+const HoverMarker = ({ position }: { position: [number, number] | null }) => {
+  // Memoized icon - tworzy się tylko raz
+  const hoverIcon = useMemo(() => 
+    L.icon({
+      iconUrl: "https://cdn-icons-png.flaticon.com/512/684/684908.png",
+      iconSize: [25, 25],
+    }), []
+  );
+
+  if (!position) return null;
+
+  return <Marker position={position} icon={hoverIcon} />;
 };
 
 const MapPlanner = () => {
@@ -74,11 +90,14 @@ const MapPlanner = () => {
   const [editingTrail, setEditingTrail] = useState<Trails | null>(null);
   const [, setIsLoadingTrail] = useState<boolean>(false);
 
+  const hoverTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const ZOOM_LEVELS = {
     PEAKS: 11,
     SHELTERS: 12,
     DETAILS: 14,
   };
+
   useEffect(() => {
     if (trailId) {
       setIsLoadingTrail(true);
@@ -127,6 +146,7 @@ const MapPlanner = () => {
       .then((json) => setShelters(json.data))
       .catch(console.error);
   }, []);
+
   useEffect(() => {
     fetch("http://localhost:6868/peaks")
       .then((res) => res.json())
@@ -167,36 +187,66 @@ const MapPlanner = () => {
     }
   }, [points, routeType]);
 
-  const addPoint = (newPoint: [number, number]) =>
+  const addPoint = useCallback((newPoint: [number, number]) =>
     setPoints((prev) => [
       ...prev,
       {
         coordinates: newPoint,
         type: "custom",
       },
-    ]);
-  const removePoint = (indexToRemove: number) =>
-    setPoints((prev) => prev.filter((_, i) => i !== indexToRemove));
-  const removePointByCoordinates = (lat: number, lng: number) =>
+    ]), []);
+
+  const removePoint = useCallback((indexToRemove: number) =>
+    setPoints((prev) => prev.filter((_, i) => i !== indexToRemove)), []);
+
+  const removePointByCoordinates = useCallback((lat: number, lng: number) =>
     setPoints((prev) =>
       prev.filter(
         (point) =>
           Math.abs(point.coordinates[0] - lat) > 1e-6 ||
           Math.abs(point.coordinates[1] - lng) > 1e-6,
       ),
-    );
-  const addPointAtStart = (newPoint: RoutePoint) =>
-    setPoints((prev) => [newPoint, ...prev]);
-  const addPointM = (newPoint: RoutePoint) =>
+    ), []);
+
+  const addPointAtStart = useCallback((newPoint: RoutePoint) =>
+    setPoints((prev) => [newPoint, ...prev]), []);
+
+  const addPointM = useCallback((newPoint: RoutePoint) =>
     setPoints((prev) => {
       if (prev.length === 0) return [newPoint];
       if (prev.length === 1) return [...prev, newPoint];
       return [...prev.slice(0, -1), newPoint, prev[prev.length - 1]];
-    });
-  const addPointAtEnd = (newPoint: RoutePoint) =>
-    setPoints((prev) => [...prev, newPoint]);
+    }), []);
 
-  const handleTrailUpdated = (updatedTrail: Trails) => {
+  const addPointAtEnd = useCallback((newPoint: RoutePoint) =>
+    setPoints((prev) => [...prev, newPoint]), []);
+  const handleHoverPoint = useCallback((lat: number | null, lng: number | null) => {
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+    }
+    hoverTimeoutRef.current = setTimeout(() => {
+      if (
+        typeof lat === "number" &&
+        typeof lng === "number" &&
+        !isNaN(lat) &&
+        !isNaN(lng)
+      ) {
+        setHoverPoint([lat, lng]);
+      } else {
+        setHoverPoint(null);
+      }
+    }, 16);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (hoverTimeoutRef.current) {
+        clearTimeout(hoverTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  const handleTrailUpdated = useCallback((updatedTrail: Trails) => {
     setEditingTrail(updatedTrail);
 
     if (updatedTrail.points && updatedTrail.points.length > 0) {
@@ -211,9 +261,9 @@ const MapPlanner = () => {
       setPoints(routePoints);
       console.log("Zaktualizowano punkty po edycji:", routePoints);
     }
-  };
+  }, []);
 
-  const handleCancelEdit = () => {
+  const handleCancelEdit = useCallback(() => {
     if (editingTrail && editingTrail.points && editingTrail.points.length > 0) {
       const originalPoints: RoutePoint[] = editingTrail.points
         .sort((a, b) => a.point_order - b.point_order)
@@ -227,7 +277,38 @@ const MapPlanner = () => {
       setRouteType(editingTrail.route_type);
       navigate(`/dashboard/my-routes`);
     }
-  };
+  }, [editingTrail, navigate]);
+
+  const routeStyle = useMemo(() => ({ 
+    color: "red", 
+    weight: 4 
+  }), []);
+
+  const pointMarkers = useMemo(() => 
+    points.map((point, idx) => {
+      const [lat, lng] = point.coordinates;
+      return (
+        <Marker
+          key={`${idx}-${lat}-${lng}`} 
+          position={[lat, lng]}
+          eventHandlers={{
+            mouseover: () => setHoveredPoint(idx),
+            mouseout: () => setHoveredPoint(null),
+            contextmenu: () => removePoint(idx),
+          }}
+        >
+          {hoveredPoint === idx && (
+            <Tooltip permanent direction="top" offset={[0, -30]}>
+              Kliknij prawym przyciskiem, aby usunąć
+              <br />
+              {point.name
+                ? `${point.name} (${lat.toFixed(5)}, ${lng.toFixed(5)})`
+                : `Współrzędne: ${lat.toFixed(5)}, ${lng.toFixed(5)}`}
+            </Tooltip>
+          )}
+        </Marker>
+      );
+    }), [points, hoveredPoint, removePoint]);
 
   return (
     <div className="w-full h-full flex flex-col rounded-lg overflow-hidden border border-white/20 shadow-lg">
@@ -249,6 +330,7 @@ const MapPlanner = () => {
             />
           </BaseLayer>
         </LayersControl>
+
         {currentZoom >= ZOOM_LEVELS.SHELTERS && (
           <SheltersMap
             shelters={shelters}
@@ -257,6 +339,7 @@ const MapPlanner = () => {
             addPointM={addPointM}
           />
         )}
+
         {currentZoom >= ZOOM_LEVELS.PEAKS && (
           <PeaksMap
             peaks={peaks}
@@ -270,49 +353,15 @@ const MapPlanner = () => {
         <LocationMarkerDelete
           removePointByCoordinates={removePointByCoordinates}
         />
-
-        {points.map((point, idx) => {
-          const [lat, lng] = point.coordinates;
-          return (
-            <Marker
-              key={idx}
-              position={[lat, lng]}
-              eventHandlers={{
-                mouseover: () => setHoveredPoint(idx),
-                mouseout: () => setHoveredPoint(null),
-                contextmenu: () => removePoint(idx),
-              }}
-            >
-              {hoveredPoint === idx && (
-                <Tooltip permanent direction="top" offset={[0, -30]}>
-                  Kliknij prawym przyciskiem, aby usunąć
-                  <br />
-                  {point.name
-                    ? `${point.name} (${lat.toFixed(5)}, ${lng.toFixed(5)})`
-                    : `Współrzędne: ${lat.toFixed(5)}, ${lng.toFixed(5)}`}
-                </Tooltip>
-              )}
-            </Marker>
-          );
-        })}
-
+        {pointMarkers}
         {routeGeoJson && (
           <GeoJSON
             key={JSON.stringify(routeGeoJson)}
             data={routeGeoJson}
-            style={{ color: "red", weight: 4 }}
+            style={routeStyle}
           />
         )}
-
-        {hoverPoint && (
-          <Marker
-            position={hoverPoint}
-            icon={L.icon({
-              iconUrl: "https://cdn-icons-png.flaticon.com/512/684/684908.png",
-              iconSize: [25, 25],
-            })}
-          />
-        )}
+        <HoverMarker position={hoverPoint} />
       </MapContainer>
 
       <PlannerDashboard
@@ -321,18 +370,7 @@ const MapPlanner = () => {
         route={routeGeoJson}
         editingTrail={editingTrail}
         isEditing={!!trailId}
-        onHoverPoint={(lat, lng) => {
-          if (
-            typeof lat === "number" &&
-            typeof lng === "number" &&
-            !isNaN(lat) &&
-            !isNaN(lng)
-          ) {
-            setHoverPoint([lat, lng]);
-          } else {
-            setHoverPoint(null);
-          }
-        }}
+        onHoverPoint={handleHoverPoint}
         onRemovePoint={removePoint}
         onRouteTypeChange={(type) => setRouteType(type)}
         onTrailUpdated={handleTrailUpdated}
