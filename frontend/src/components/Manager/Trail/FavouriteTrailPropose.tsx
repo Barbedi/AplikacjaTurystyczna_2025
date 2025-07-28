@@ -1,14 +1,17 @@
 import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronRight, faTrash } from "@fortawesome/free-solid-svg-icons";
-import { FavoriteTrails, Trails } from "../../assets/Data";
+import { faChevronRight, faTrash ,faXmark} from "@fortawesome/free-solid-svg-icons";
+import { FavoriteTrails, Trails } from "../../../assets/Data";
 import { useNavigate } from "react-router-dom";
-import favouriteTrailsService from "../../services/favouriteTrails.service";
-import trailsService from "../../services/trails.service";
+import favouriteTrailsService from "../../../services/favouriteTrails.service";
+import trailsService from "../../../services/trails.service";
+import Modal from "../../Modal";
 
 const FavouriteTrailPropose = () => {
   const navigate = useNavigate();
   const [trails, setTrails] = useState<Trails[]>([]);
+  const [openModal, setOpenModal] = useState(false);
+  const [selectedTrailId, setSelectedTrailId] = useState<number | null>(null);
 
   useEffect(() => {
     const fetchFavouriteTrails = async () => {
@@ -71,14 +74,46 @@ const FavouriteTrailPropose = () => {
               title="Zobacz szczegóły"
             />
             <FontAwesomeIcon
-              onClick={() => handleRemoveFavourite(trail.id)}
+              onClick={() => {
+                setSelectedTrailId(trail.id);
+                setOpenModal(true);
+              }}
               icon={faTrash}
-              className="text-white cursor-pointer text-lg"
+              className="text-white/70 hover:text-red-400 cursor-pointer text-lg transition-colors duration-200"
               title="Usuń z ulubionych"
             />
           </span>
         </div>
       ))}
+      <Modal isOpen={openModal} onClose={() => setOpenModal(false)}>
+        <h2 className="text-white text-2xl font-semibold mb-4 text-center">
+          Czy chcesz usunąć trasę z ulubionych?
+        </h2>
+        <p className="text-white/70 text-center">
+          Ta akcja jest nieodwracalna. Po usunięciu trasy z ulubionych nie będzie można jej odzyskać.
+        </p>
+
+        <div className="flex flex-row items-end gap-3 mt-6">
+          <button
+            onClick={() => setOpenModal(false)}
+            className="w-full px-4 py-1 rounded-lg bg-white/10 text-white hover:bg-white/20 transition-all cursor-pointer flex items-center justify-center gap-2"
+          >
+            <FontAwesomeIcon icon={faXmark} />
+            <span>Anuluj</span>
+          </button>
+          <button
+            onClick={() => {
+              if (selectedTrailId) {
+                handleRemoveFavourite(selectedTrailId);
+              }
+              setOpenModal(false);
+            }}
+            className="px-4 py-1 rounded-lg bg-red-500/20 text-red-300 hover:bg-red-500/30 border border-red-500/20 transition-all w-full cursor-pointer"
+          >
+            Usuń
+          </button>
+        </div>
+      </Modal>
     </div>
   );
 };

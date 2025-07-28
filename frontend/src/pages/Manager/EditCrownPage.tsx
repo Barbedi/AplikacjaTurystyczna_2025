@@ -4,7 +4,7 @@ import { Peaks, Review } from "../../assets/Data";
 import peaksService from "../../services/peaks.service";
 import userpeaksService from "../../services/userpeaks.service";
 import filesService from "../../services/files.service";
-import MapTrails from "../../components/Manager/MapTrails";
+import MapTrails from "../../components/Manager/Map/MapTrails";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar, faMountainSun,faComment, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { formatDate } from "../../utils/format";

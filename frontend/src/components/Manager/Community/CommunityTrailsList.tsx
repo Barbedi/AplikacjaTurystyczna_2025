@@ -1,11 +1,11 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
-import communitytrailsService from "../../services/communitytrails.service";
-import { ExtendedCommunityTrails } from "../../assets/Data";
-import { formatDate } from "../../utils/format";
+import communitytrailsService from "../../../services/communitytrails.service";
+import { ExtendedCommunityTrails } from "../../../assets/Data";
+import { formatDate } from "../../../utils/format";
 import { useNavigate } from "react-router-dom";
-import filesService from "../../services/files.service";
+import filesService from "../../../services/files.service";
 
 const CommunityTrailsList = () => {
   const navigate = useNavigate();

@@ -1,8 +1,8 @@
 import { useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthContext from "../../store/auth-context";
-import WeatherWidget from "../../components/Manager/WeatherWidget";
-import MapPlanner from "../../components/Manager/MapPlanner";
+import WeatherWidget from "../../components/Manager/Dashboard/WeatherWidget";
+import MapPlanner from "../../components/Manager/Map/MapPlanner";
 
 const Dashboard = () => {
   const { checkAuth } = useContext(AuthContext);

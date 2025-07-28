@@ -1,10 +1,10 @@
-import commentSharedService from "../../services/commentShared.service";
-import { CommentShared } from "../../assets/Data";
+import commentSharedService from "../../../services/commentShared.service";
+import { CommentShared } from "../../../assets/Data";
 import { useEffect, useState, useContext } from "react";
-import useGetUsers from "../../hooks/user/useGetUser";
-import AuthContext from "../../store/auth-context";
-import filesService from "../../services/files.service";
-import { timeAgo } from "../../utils/format";
+import useGetUsers from "../../../hooks/user/useGetUser";
+import AuthContext from "../../../store/auth-context";
+import filesService from "../../../services/files.service";
+import { timeAgo } from "../../../utils/format";
 
 interface CommentSectionProps {
   sharedTrailId: number;

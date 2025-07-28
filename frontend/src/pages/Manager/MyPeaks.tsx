@@ -1,5 +1,5 @@
-import MyPeaksAdd from "../../components/Manager/MyPeaksAdd";
-import MyPeaksUser from "../../components/Manager/MyPeaksUser";
+import MyPeaksAdd from "../../components/Manager/Peaks/MyPeaksAdd";
+import MyPeaksUser from "../../components/Manager/Peaks/MyPeaksUser";
 
 const MyPeaks = () => {
   return (

@@ -14,7 +14,7 @@ class TrailsService {
       geometry: row.geometry ? JSON.parse(row.geometry) : null,
     }));
   }
-  async getTrailsByPublic(page = 1, limit = 7) {
+  async getTrailsByPublic(page = 1, limit = 5) {
     if (page < 1 || limit < 1) {
       throw new Err("Invalid page or limit", 400);
     }

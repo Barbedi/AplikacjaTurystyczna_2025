@@ -1,4 +1,4 @@
-import FavouriteTrailPropose from "../../components/Manager/FavouriteTrailPropose";
+import FavouriteTrailPropose from "../../components/Manager/Trail/FavouriteTrailPropose";
 
 const FavoriteRoutes = () => {
   return (

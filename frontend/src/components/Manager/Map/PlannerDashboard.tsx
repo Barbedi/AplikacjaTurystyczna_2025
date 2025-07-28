@@ -12,11 +12,11 @@ import {
   faCheck,
   faXmark,
 } from "@fortawesome/free-solid-svg-icons";
-import { routeTrail, RoutePoint, Trails } from "../../assets/Data";
-import ElevationProfile from "./ElevationProfile";
-import TrailsService from "../../services/trails.service";
-import AuthContext from "../../store/auth-context";
-import useGetUsers from "../../hooks/user/useGetUser";
+import { routeTrail, RoutePoint, Trails } from "../../../assets/Data";
+import ElevationProfile from "../ElevationProfile";
+import TrailsService from "../../../services/trails.service";
+import AuthContext from "../../../store/auth-context";
+import useGetUsers from "../../../hooks/user/useGetUser";
 import { useNavigate } from "react-router-dom";
 
 interface PlannerDashboardProps {
@@ -178,7 +178,7 @@ const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
         className={`fixed top-0 right-0 bg-white/20 backdrop-blur-lg shadow-2xl h-screen rounded-l-2xl transition-transform duration-300 ease-in-out z-[1000]
         ${isOpen ? "translate-x-0 w-120 p-4" : "translate-x-full w-0 p-0"} overflow-hidden`}
       >
-        <div className="p-4 text-gray-800 text-sm">
+        <div className=" text-gray-800 text-sm">
           <h2 className="text-2xl font-bold mb-4">Opcje trasy</h2>
           <div className="mb-4 w-full flex flex-row items-start justify-between">
             <div className="flex flex-col flex-1">
@@ -224,7 +224,7 @@ const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
           <h2 className="text-lg font-semibold mb-2">
             <FontAwesomeIcon icon={faMapLocationDot} /> Punkty trasy:
           </h2>
-          <ol className="list-decimal pl-5 mb-4 space-y-1">
+          <ol className="list-decimal pl-5 mb-4 space-y-1 max-h-18 overflow-y-auto pr-2 scrollbar-thin">
             {points.map((point, idx) => {
               const [lat, lng] = point.coordinates;
               const displayName = point.name

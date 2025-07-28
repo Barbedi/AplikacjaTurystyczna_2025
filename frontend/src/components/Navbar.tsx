@@ -36,32 +36,6 @@ const Navbar = () => {
             HikeUp
           </Link>
         </div>
-        <div className="hidden md:flex absolute left-1/2 -translate-x-1/2">
-          <nav className="flex space-x-3 2xl:text-2xl text-xl">
-            {/* <NavLink
-              to="/"
-              className={({ isActive }) =>
-                `text-white py-2 px-4 hover:text-gray-300 ${
-                  isActive ? "border-b-2 border-white" : ""
-                }`
-              }
-              onClick={() => setMenuOpen(false)}
-            >
-              Strona główna
-            </NavLink> */}
-            {/* <NavLink
-              to="/discover"
-              className={({ isActive }) =>
-                `text-white py-2 px-4 hover:text-gray-300 ${
-                  isActive ? "border-b-2 border-white" : ""
-                }`
-              }
-              onClick={() => setMenuOpen(false)}
-            >
-              Odkryj trasy
-            </NavLink> */}
-          </nav>
-        </div>
         <div className="hidden md:flex items-center space-x-4 2xl:text-2xl text-xl flex-shrink-0">
           {auth ? (
             <>
@@ -98,27 +72,7 @@ const Navbar = () => {
       </div>
       {menuOpen && (
         <div className="md:hidden flex flex-col items-center bg-opacity-95 mt-2 space-y-2 py-4 text-xl">
-          <NavLink
-            to="/"
-            onClick={() => setMenuOpen(false)}
-            className="text-white hover:text-gray-300"
-          >
-            Strona główna
-          </NavLink>
-          <NavLink
-            to="/plan-route"
-            onClick={() => setMenuOpen(false)}
-            className="text-white hover:text-gray-300"
-          >
-            Zaplanuj trasę
-          </NavLink>
-          <NavLink
-            to="/discover"
-            onClick={() => setMenuOpen(false)}
-            className="text-white hover:text-gray-300"
-          >
-            Odkryj trasy
-          </NavLink>
+          
           {auth ? (
             <>
               <NavLink

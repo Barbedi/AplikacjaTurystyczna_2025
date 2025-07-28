@@ -1,4 +1,4 @@
-import TrailPeak from "../../components/Manager/TrailPeak";
+import TrailPeak from "../../components/Manager/Trail/TrailPeak";
 
 const MyRoutes = () => {
   return (

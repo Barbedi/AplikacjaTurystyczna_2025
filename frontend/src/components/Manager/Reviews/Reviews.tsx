@@ -1,12 +1,12 @@
 import { useContext, useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar, faTrash, faXmark } from "@fortawesome/free-solid-svg-icons"; // Dodaj faXmark
-import reviewService from "../../services/review.service";
-import AuthContext from "../../store/auth-context";
-import useGetUsers from "../../hooks/user/useGetUser";
-import { Review } from "../../assets/Data";
-import { formatDate } from "../../utils/format";
-import Modal from "../Modal";
+import reviewService from "../../../services/review.service";
+import AuthContext from "../../../store/auth-context";
+import useGetUsers from "../../../hooks/user/useGetUser";
+import { Review } from "../../../assets/Data";
+import { formatDate } from "../../../utils/format";
+import Modal from "../../Modal";
 
 const Reviews = () => {
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -14,7 +14,7 @@ const Reviews = () => {
   const { user } = useContext(AuthContext);
   const { getUserByEmail, usersData } = useGetUsers();
   const [openModal, setOpenModal] = useState(false);
-  const [selectedReviewId, setSelectedReviewId] = useState<number | null>(null); // <--- NEW
+  const [selectedReviewId, setSelectedReviewId] = useState<number | null>(null); 
 
   useEffect(() => {
     if (user?.email) {
@@ -45,14 +45,14 @@ const Reviews = () => {
     try {
       await reviewService.deleteReview(reviewId);
       setReviews(reviews.filter((review) => review.id !== reviewId));
-      setOpenModal(false); // Zamknij modal po usunięciu
+      setOpenModal(false); 
     } catch (error) {
       console.error("Error deleting review:", error);
     }
   };
 
   return (
-    <div className="flex flex-col items-center w-full max-w-5xl mx-auto mt-8 px-4">
+    <div className="flex flex-col items-center w-full max-w-5xl mx-auto  px-4">
       {isLoading ? (
         <div className="text-white text-center w-full bg-white/10 backdrop-blur-lg rounded-xl shadow-xl p-8 border border-white/20">
           <p className="text-lg font-lora font-medium text-white/80">
@@ -72,7 +72,7 @@ const Reviews = () => {
         reviews.map((review) => (
           <div
             key={review.id}
-            className="flex flex-col bg-white/10 backdrop-blur-lg rounded-xl shadow-xl p-6 mt-6 border border-white/20 hover:bg-white/15 transition-all duration-300 ease-in-out w-full"
+            className="flex flex-col bg-white/10 backdrop-blur-lg rounded-xl shadow-xl p-6 mt-2 border border-white/20 hover:bg-white/15 transition-all duration-300 ease-in-out w-full"
           >
             <div className="flex items-center justify-between">
               <h3 className="text-xl font-lora font-semibold text-white tracking-tight">

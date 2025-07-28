@@ -1,12 +1,13 @@
 import { useParams } from "react-router-dom";
-import { useState, useEffect, useCallback, useRef } from "react";
-import { ExtendedTrail } from "../../assets/Data";
+import { useState, useEffect, useCallback, useRef, useContext } from "react";
+import { ExtendedTrail,Review } from "../../assets/Data";
 import trailsService from "../../services/trails.service";
-import MapTrails from "../../components/Manager/MapTrails";
+import MapTrails from "../../components/Manager/Map/MapTrails";
 import ElevationProfile from "../../components/Manager/ElevationProfile";
 import filesService from "../../services/files.service";
 import communitytrailsService from "../../services/communitytrails.service";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import reviewService from "../../services/review.service";
 import {
   faMountain,
   faPersonHiking,
@@ -15,8 +16,13 @@ import {
   faFireFlameCurved,
   faTrash,
   faShare,
+  faComment,
+  faStar,
+  faXmark,
 } from "@fortawesome/free-solid-svg-icons";
 import Modal from "../../components/Modal";
+import useGetUsers from "../../hooks/user/useGetUser";
+import AuthContext from "../../store/auth-context";
 
 const emptyTrail: ExtendedTrail = {
   id: 0,
@@ -39,6 +45,12 @@ const emptyTrail: ExtendedTrail = {
 
 const EditTrailPage = () => {
   const [openModal, setOpenModal] = useState(false);
+  const [reviewText, setReviewText] = useState("");
+  const { user } = useContext(AuthContext);
+  const [rating, setRating] = useState(0);
+  const [hoveredStar, setHoveredStar] = useState<number>(0);
+  const { getUserByEmail, usersData } = useGetUsers();
+  const [openModalComment, setOpenModalComment] = useState(false);
   const [trail, setTrail] = useState<ExtendedTrail>(emptyTrail);
   const [hoverPoint] = useState<[number, number] | null>(null);
   const [activeTab, setActiveTab] = useState<"info" | "photos" | "map">("map");
@@ -158,14 +170,46 @@ const EditTrailPage = () => {
       );
       if (response.status === 201) {
         setOpenModal(false);
-        // Optionally, refresh the trail data or show a success message
         console.log("Trail shared successfully:", response.data);
       }
     } catch (error) {
       console.error("Error sharing trail:", error);
     }
   };
+useEffect(() => {
+    if (user?.email) {
+      getUserByEmail(user.email);
+    }
+  }, [user?.email, getUserByEmail]);
 
+  const currentUser = usersData?.[0]?.[0];
+   const handleStarClick = (starNumber: number) => {
+    setRating(starNumber);
+  };
+
+  const handleStarHover = (starNumber: number) => {
+    setHoveredStar(starNumber);
+  };
+
+  const handleStarLeave = () => {
+    setHoveredStar(0);
+  };
+  const handleAddReview = async () => {
+    if (!currentUser?.id || !id) return;
+    try {
+      const review: Review = {
+        user_id: currentUser.id,
+        trail_id: parseInt(id),
+        comment: reviewText,
+        rating: rating > 0 ? rating : undefined,
+      };
+      await reviewService.createReview(review);
+      setOpenModal(false);
+      setReviewText("");
+    } catch (error) {
+      console.error("Error adding review:", error);
+    }
+  };
   return (
     <div className="max-w-7xl mx-auto px-4 py-6 w-full">
       <div className="relative bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20 mb-6 overflow-hidden">
@@ -173,8 +217,15 @@ const EditTrailPage = () => {
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
             <FontAwesomeIcon
               icon={faShare}
-              className="absolute -top-3 -right-2 text-white text-2xl"
+              title="Udostępnij trasę"
+              className="absolute -top-3 -right-2 text-white text-2xl cursor-pointer"
               onClick={() => setOpenModal(true)}
+            />
+            <FontAwesomeIcon
+              icon={faComment}
+              title="Dodaj komentarz"
+              className="absolute -top-3 right-6 text-white text-2xl cursor-pointer"
+              onClick={() => setOpenModalComment(true)}
             />
             <div>
               <h1 className="text-4xl font-bold text-white font-lora">
@@ -347,26 +398,6 @@ const EditTrailPage = () => {
                 >
                   {isUploading ? (
                     <>
-                      <svg
-                        className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                        ></circle>
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        ></path>
-                      </svg>
                       <span>Przesyłanie...</span>
                     </>
                   ) : (
@@ -427,7 +458,7 @@ const EditTrailPage = () => {
                   </p>
                   <p className="text-sm text-white/50 mt-2 max-w-md text-center">
                     Kliknij przycisk "Dodaj zdjęcie" powyżej, aby dodać pierwsze
-                    zdjęcie tej trasy. Wspierane formaty to JPG, PNG i GIF.
+                    zdjęcie tej trasy.
                   </p>
                 </div>
               )}
@@ -463,6 +494,59 @@ const EditTrailPage = () => {
           </button>
         </div>
       </Modal>
+      <Modal isOpen={openModalComment} onClose={() => setOpenModalComment(false)}>
+  <h2 className="text-white text-2xl font-semibold mb-4 text-center">
+    Dodaj komentarz
+  </h2>
+  <div className="w-full flex flex-col items-center">
+    <div className="w-full mb-4">
+      <textarea
+        value={reviewText}
+        onChange={(e) => setReviewText(e.target.value)}
+        rows={4}
+        maxLength={500}
+        required
+        className="mt-2  w-full rounded-md bg-white/5 border border-white/20 focus:outline-none text-white p-3"
+        placeholder="Podziel się swoimi wrażeniami ze szczytu..."
+      />
+    </div>
+    <div className="flex gap-1 justify-center">
+      {[1, 2, 3, 4, 5].map((star) => (
+        <FontAwesomeIcon
+          key={star}
+          icon={faStar}
+          className={`text-2xl cursor-pointer transition-colors ${
+            star <= (hoveredStar || rating)
+              ? "text-yellow-400"
+              : "text-white/30"
+          } hover:text-yellow-300`}
+          onClick={() => handleStarClick(star)}
+          onMouseEnter={() => handleStarHover(star)}
+          onMouseLeave={handleStarLeave}
+        />
+      ))}
+    </div>
+    <span className="mt-2 text-white font-lora">
+      {rating > 0 ? `${rating}/5` : "Nie oceniono"}
+    </span>
+  </div>
+
+  <div className="flex flex-row items-end gap-3 mt-6">
+    <button
+      onClick={() => setOpenModal(false)}
+      className="w-full px-5 py-2 rounded-lg bg-white/10 text-white hover:bg-white/20 transition-all cursor-pointer flex items-center justify-center gap-2"
+    >
+      <FontAwesomeIcon icon={faXmark} />
+      <span>Zamknij</span>
+    </button>
+    <button
+    onClick={handleAddReview}
+      className="px-4 py-1 rounded-lg bg-purple-400/30  text-purple-400 hover:bg-purple-400/20 border border-purple-400/20 transition-all w-full cursor-pointer"
+    >
+      Oceń
+    </button>
+  </div>
+</Modal>
     </div>
   );
 };

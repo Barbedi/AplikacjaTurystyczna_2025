@@ -1,13 +1,13 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCrown } from "@fortawesome/free-solid-svg-icons";
-import userpeaksService from "../../services/userpeaks.service";
+import userpeaksService from "../../../services/userpeaks.service";
 import { useState, useEffect, useContext } from "react";
-import useGetUsers from "../../hooks/user/useGetUser";
-import AuthContext from "../../store/auth-context";
-import { PageData, UserPeak } from "../../assets/Data";
-import { formatDate } from "../../utils/format";
+import useGetUsers from "../../../hooks/user/useGetUser";
+import AuthContext from "../../../store/auth-context";
+import { PageData, UserPeak } from "../../../assets/Data";
+import { formatDate } from "../../../utils/format";
 import { useNavigate, useSearchParams, } from "react-router-dom";
-import Pagination from "../Pagination";
+import Pagination from "../../Pagination";
 
 const MyPeaksUser = () => {
   const [searchParams, setSearchParams] = useSearchParams();

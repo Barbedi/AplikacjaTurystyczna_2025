@@ -3,7 +3,7 @@ import { useState, useEffect, useContext } from "react";
 import { ExtendedTrail } from "../assets/Data";
 import trailsService from "../services/trails.service";
 import favouriteTrailsService from "../services/favouriteTrails.service";
-import MapTrails from "../components/Manager/MapTrails";
+import MapTrails from "../components/Manager/Map/MapTrails";
 import ElevationProfile from "../components/Manager/ElevationProfile";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {

@@ -5,12 +5,12 @@ import {
   faXmark,
 } from "@fortawesome/free-solid-svg-icons";
 import { useState, useEffect, useRef, useContext } from "react";
-import peaksService from "../../services/peaks.service";
-import userpeaksService from "../../services/userpeaks.service";
-import { Peaks } from "../../assets/Data";
-import AuthContext from "../../store/auth-context";
-import useGetUsers from "../../hooks/user/useGetUser";
-import filesService from "../../services/files.service";
+import peaksService from "../../../services/peaks.service";
+import userpeaksService from "../../../services/userpeaks.service";
+import { Peaks } from "../../../assets/Data";
+import AuthContext from "../../../store/auth-context";
+import useGetUsers from "../../../hooks/user/useGetUser";
+import filesService from "../../../services/files.service";
 
 const MyPeaksAdd = () => {
   const [isOpen, setIsOpen] = useState(false);

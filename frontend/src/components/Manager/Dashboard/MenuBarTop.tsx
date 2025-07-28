@@ -1,5 +1,5 @@
 import { useLocation, Link } from "react-router-dom";
-import { pathTranslation } from "../../utils/pathTranslation";
+import { pathTranslation } from "../../../utils/pathTranslation";
 
 const MenuBarTop = () => {
   const location = useLocation();
