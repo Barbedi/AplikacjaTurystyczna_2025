@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useCallback } from "react";
 import { ExtendedTrail, Review } from "../../assets/Data";
 import trailsService from "../../services/trails.service";
 import MapTrails from "../../components/Manager/Map/MapTrails";
@@ -44,48 +44,46 @@ const emptyTrail: ExtendedTrail = {
 };
 
 const EditTrailPage = () => {
+  const [trail, setTrail] = useState<ExtendedTrail>(emptyTrail);
   const [reviews, setReviews] = useState<Review[]>([]);
+  const [activeTab, setActiveTab] = useState<"info" | "photos" | "map" | "comments">("map");
   const [openModal, setOpenModal] = useState(false);
+  const [openModalComment, setOpenModalComment] = useState(false);
+  const [description, setDescription] = useState("");
   const [reviewText, setReviewText] = useState("");
-  const { user } = useContext(AuthContext);
   const [rating, setRating] = useState(0);
   const [hoveredStar, setHoveredStar] = useState<number>(0);
+  const { user } = useContext(AuthContext);
   const { getUserByEmail, usersData } = useGetUsers();
-  const [openModalComment, setOpenModalComment] = useState(false);
-  const [trail, setTrail] = useState<ExtendedTrail>(emptyTrail);
-  const [hoverPoint] = useState<[number, number] | null>(null);
-  const [activeTab, setActiveTab] = useState<
-    "info" | "photos" | "map" | "comments"
-  >("map");
-  const { id, trailId } = useParams<{ id: string; trailId: string }>();
-  const [description, setDescription] = useState("");
+  const { id } = useParams<{ id: string }>();
 
+  const currentUser = usersData?.[0][0];
   const descriptionInputHandler = (
     ev: React.ChangeEvent<HTMLTextAreaElement>,
   ) => {
     setDescription(ev.target.value);
   };
 
-  useEffect(() => {
-  const trailIdentifier = id || trailId;
+ useEffect(() => {
+  const trailIdentifier = id;
+  
   if (!trailIdentifier) {
     console.error("Brak identyfikatora trasy");
     return;
   }
   const fetchData = async () => {
     try {
-      const [trailResponse, reviewsResponse] = await Promise.all([
-        trailsService.getTrailById(parseInt(trailIdentifier)),
-        reviewService.getReviewForTrail(parseInt(trailIdentifier)),
-      ]);
+      const trailResponse = await trailsService.getTrailById(parseInt(trailIdentifier));
       setTrail(trailResponse.data);
+      const reviewsResponse = await reviewService.getReviewForTrail(parseInt(trailIdentifier));
       setReviews(reviewsResponse.data.data || []);
     } catch (error) {
       console.error("Błąd pobierania danych:", error);
     }
   };
+
   fetchData();
-}, [id, trailId]);
+}, [id]);
 
   const handleShareTrail = async () => {
     if (!description.trim()) {
@@ -99,7 +97,7 @@ const EditTrailPage = () => {
       );
       if (response.status === 201) {
         setOpenModal(false);
-        console.log("Trail shared successfully:", response.data);
+        setDescription("");
       }
     } catch (error) {
       console.error("Error sharing trail:", error);
@@ -111,18 +109,6 @@ const EditTrailPage = () => {
     }
   }, [user?.email, getUserByEmail]);
 
-  const currentUser = usersData?.[0][0];
-  const handleStarClick = (starNumber: number) => {
-    setRating(starNumber);
-  };
-
-  const handleStarHover = (starNumber: number) => {
-    setHoveredStar(starNumber);
-  };
-
-  const handleStarLeave = () => {
-    setHoveredStar(0);
-  };
   const handleAddReview = async () => {
      if (!currentUser?.id || !id || !reviewText.trim() || rating === 0) {
     alert("Wypełnij wszystkie pola!");
@@ -145,12 +131,23 @@ const EditTrailPage = () => {
     }
   };
 
-  const getAverageRating = () => {
-  if (reviews.length === 0) return null;
+  const handleStarClick = (starNumber: number) => {
+    setRating(starNumber);
+  };
 
-  const total = reviews.reduce((sum, r) => sum + (r.rating || 0), 0);
-  return (total / reviews.length).toFixed(1);
-};
+  const handleStarHover = (starNumber: number) => {
+    setHoveredStar(starNumber);
+  };
+
+  const handleStarLeave = () => {
+    setHoveredStar(0);
+  };
+
+  const getAverageRating = useCallback(() => {
+    if (reviews.length === 0) return null;
+    const total = reviews.reduce((sum, r) => sum + (r.rating || 0), 0);
+    return (total / reviews.length).toFixed(1);
+  }, [reviews]);
 
 
 
@@ -168,7 +165,7 @@ const EditTrailPage = () => {
             <FontAwesomeIcon
               icon={faComment}
               title="Dodaj komentarz"
-              className="absolute -top-3 right-6 text-white text-2xl cursor-pointer"
+              className="absolute -top-3 right-6 text-white text-2xl cursor-pointer "
               onClick={() => setOpenModalComment(true)}
             />
             <div>
@@ -289,7 +286,7 @@ const EditTrailPage = () => {
                   Mapa trasy
                 </h3>
                 <div className="h-[312px] w-full">
-                  <MapTrails trail={trail} hoverPoint={hoverPoint} />
+                  <MapTrails trail={trail} hoverPoint={null} />
                 </div>
               </div>
             )}

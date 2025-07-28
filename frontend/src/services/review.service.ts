@@ -8,9 +8,6 @@ class ReviewService {
   getReviewByUserId(userId: number) {
     return httpCommon.get(`/reviews/${userId}`);
   }
-  getReviewForPeak(peakId: number) {
-    return httpCommon.get(`/reviews/peak/${peakId}`);
-  }
   getReviewForTrail(trailId: number) {
     return httpCommon.get(`/reviews/trail/${trailId}`);
   }
