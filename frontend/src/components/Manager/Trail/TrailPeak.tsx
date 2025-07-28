@@ -1,21 +1,25 @@
 import { useContext, useEffect, useState } from "react";
-import AuthContext from "../../store/auth-context";
-import useGetUsers from "../../hooks/user/useGetUser";
-import trailsService from "../../services/trails.service";
-import { Trails, PageData } from "../../assets/Data";
-import { formatDate } from "../../utils/format";
-import Pagination from "../Pagination";
+import AuthContext from "../../../store/auth-context";
+import useGetUsers from "../../../hooks/user/useGetUser";
+import trailsService from "../../../services/trails.service";
+import { Trails, PageData } from "../../../assets/Data";
+import { formatDate } from "../../../utils/format";
+import Pagination from "../../Pagination";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faChevronRight,
   faEdit,
   faTrash,
+  faXmark,
 } from "@fortawesome/free-solid-svg-icons";
+import Modal from "../../Modal";
 
 const TrailPeak = () => {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
+  const [isOpenModal, setIsOpenModal] = useState(false);
+  const [selectedTrailId, setSelectedTrailId] = useState<number | null>(null);
   const [searchParams, setSearchParams] = useSearchParams();
   const [trails, setTrails] = useState<Trails[]>([]);
   const [pageData, setPageData] = useState<PageData>({
@@ -115,8 +119,11 @@ const TrailPeak = () => {
             </a>
             <a
               title="Usuń trase"
-              onClick={() => deleteTrail(trail.id)}
-              className="p-4 cursor-pointer"
+              onClick={() => {
+                setSelectedTrailId(trail.id);
+                setIsOpenModal(true);
+              }}
+              className="p-4 cursor-pointer text-white/70 hover:text-red-400 transition-colors duration-200"
             >
               {" "}
               <FontAwesomeIcon icon={faTrash} />
@@ -134,6 +141,36 @@ const TrailPeak = () => {
         setPageData={setPageData}
         className="mt-5"
       />
+      <Modal isOpen={isOpenModal} onClose={() => setIsOpenModal(false)}>
+        <h2 className="text-white text-2xl font-semibold mb-4 text-center">
+          Czy chcesz usunąć trasę?
+        </h2>
+        <p className="text-white/70 text-center">
+          Ta akcja jest nieodwracalna. Po usunięciu trasy nie będzie można jej
+          odzyskać.
+        </p>
+
+        <div className="flex flex-row items-end gap-3 mt-6">
+          <button
+            onClick={() => setIsOpenModal(false)}
+            className="w-full px-4 py-1 rounded-lg bg-white/10 text-white hover:bg-white/20 transition-all cursor-pointer flex items-center justify-center gap-2"
+          >
+            <FontAwesomeIcon icon={faXmark} />
+            <span>Anuluj</span>
+          </button>
+          <button
+            onClick={() => {
+              if (selectedTrailId) {
+                deleteTrail(selectedTrailId);
+              }
+              setIsOpenModal(false);
+            }}
+            className="px-4 py-1 rounded-lg bg-red-500/20 text-red-300 hover:bg-red-500/30 border border-red-500/20 transition-all w-full cursor-pointer"
+          >
+            Usuń
+          </button>
+        </div>
+      </Modal>
     </div>
   );
 };

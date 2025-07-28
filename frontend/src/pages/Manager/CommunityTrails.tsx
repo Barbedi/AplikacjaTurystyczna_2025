@@ -9,7 +9,7 @@ import filesService from "../../services/files.service";
 import { timeAgo } from "../../utils/format";
 import trailsService from "../../services/trails.service";
 import likeTrailService from "../../services/LikeTrail.service";
-import CommentSection from "../../components/Manager/CommentSection";
+import CommentSection from "../../components/Manager/Community/CommentSection";
 
 const CommunityTrails = () => {
   const navigate = useNavigate();

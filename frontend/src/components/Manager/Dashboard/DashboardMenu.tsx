@@ -1,4 +1,4 @@
-import AuthContext from "../../store/auth-context";
+import AuthContext from "../../../store/auth-context";
 import { useContext, useEffect, useState } from "react";
 import { useNavigate, Link, NavLink } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -18,8 +18,8 @@ import {
 import LogoutIcon from "@mui/icons-material/Logout";
 import PermMediaIcon from "@mui/icons-material/PermMedia";
 import RateReviewIcon from "@mui/icons-material/RateReview";
-import filesService from "../../services/files.service";
-import useGetUsers from "../../hooks/user/useGetUser";
+import filesService from "../../../services/files.service";
+import useGetUsers from "../../../hooks/user/useGetUser";
 
 interface DashboardMenuProps {
   title?: string;

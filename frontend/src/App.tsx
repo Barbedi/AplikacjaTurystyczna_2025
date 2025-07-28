@@ -25,7 +25,7 @@ import Statistics from "./pages/Manager/Statistics";
 import CrownPolandPage from "./pages/Manager/CrownPolandPage";
 import CrownBeskidPage from "./pages/Manager/CrownBeskidPage";
 import EditCrownPage from "./pages/Manager/EditCrownPage";
-import EditTrailPage from "./pages/Manager/TrailPage";
+import EditTrailPage from "./pages/Manager/EditTrailPage";
 import RegionPage from "./pages/Region";
 import CommunityList from "./pages/Manager/CommunityList";
 
@@ -53,7 +53,7 @@ function Root() {
         <Route path="my-profile" element={<MyProfile />} />
         <Route path="my-routes">
           <Route index element={<MyRoutes />} />
-          <Route path=":id" element={<EditTrailPage />} />
+           <Route path=":id" element={<EditTrailPage />} />
         </Route>
         <Route path="my-peaks">
           <Route index element={<MyPeaks />} />
@@ -82,7 +82,7 @@ function Root() {
         <Route path="community-trails">
           <Route index element={<CommunityList />} />
           <Route path=":id" element={<CommunityTrails />} />
-          <Route path="edit/:trailId" element={<EditTrailPage />} />
+          <Route path="edit/:id" element={<EditTrailPage />} />
         </Route>
         <Route path="statistics" element={<Statistics />} />
       </Route>

@@ -52,8 +52,8 @@ const router = express.Router();
 router.get("/", async (req, res, next) => {
   try {
     const { page, limit } = req.query;
-    const parsedPage = page ? parseInt(page as string) : 1;
-    const parsedLimit = limit ? parseInt(limit as string) : 7;
+    const parsedPage = page ? parseInt(page as string) : undefined;
+    const parsedLimit = limit ? parseInt(limit as string) : undefined;
 
     const result = await TrailsService.getTrailsByPublic(
       parsedPage,

@@ -1,4 +1,4 @@
-import TrailPropose from "../../components/Manager/TrailPropose";
+import TrailPropose from "../../components/Manager/Trail/TrailPropose";
 
 const Recommended = () => {
   return (

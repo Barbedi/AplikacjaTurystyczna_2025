@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
-import DashboardMenu from "../components/Manager/DashboardMenu";
-import MenuBarTop from "../components/Manager/MenuBarTop";
+import DashboardMenu from "../components/Manager/Dashboard/DashboardMenu";
+import MenuBarTop from "../components/Manager/Dashboard/MenuBarTop";
 import AuthContext from "../store/auth-context";
 
 const Manager = () => {

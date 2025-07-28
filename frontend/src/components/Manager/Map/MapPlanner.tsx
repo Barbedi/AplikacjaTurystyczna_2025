@@ -11,12 +11,12 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { Shelters, Peaks, RoutePoint, Trails } from "../../assets/Data";
+import { Shelters, Peaks, RoutePoint, Trails } from "../../../assets/Data";
 import SheltersMap from "./PopupShelters";
 import PlannerDashboard from "./PlannerDashboard";
 import PeaksMap from "./PopupPeaks";
 import ZoomHandler from "./ZoomHandler";
-import trailsService from "../../services/trails.service";
+import trailsService from "../../../services/trails.service";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 delete (L.Icon.Default.prototype as any)._getIconUrl;

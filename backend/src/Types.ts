@@ -78,6 +78,15 @@ interface CommentShared {
     profile_image?: string;
   };
 }
+interface Review {
+  id?: number;
+  user_id: number;
+  trail_id?: number;
+  peak_id?: number;
+  rating: number;
+  comment: string;
+  created_at?: string;
+}
 
 interface Trails {
   id: number;
@@ -131,4 +140,5 @@ export type {
   CommunityTrails,
   TrailLike,
   CommentShared,
+  Review,
 };

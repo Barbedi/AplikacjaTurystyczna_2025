@@ -152,6 +152,19 @@ export interface Shelters {
   photo?: string;
   mountain_range: string;
 }
+// ===================== REVIEWS =====================
+export interface Review {
+  id?: number;
+  user_id: number;
+  user_name?: string;
+  trail_id?: number;
+  peak_id?: number;
+  rating?: number;
+  comment: string;
+  created_at?: string;
+  peak_name?: string;
+  trail_name?: string;
+}
 
 // ===================== ROUTES =====================
 export interface RoutePoint {

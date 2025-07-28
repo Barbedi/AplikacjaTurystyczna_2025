@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import VerifiedIcon from "@mui/icons-material/Verified";
-import { Peaks, PageData } from "../../assets/Data";
-import Pagination from "../Pagination";
+import { Peaks, PageData } from "../../../assets/Data";
+import Pagination from "../../Pagination";
 import { useSearchParams, useNavigate, useLocation } from "react-router-dom";
 
 interface PeakItemProps {

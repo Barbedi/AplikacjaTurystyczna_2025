@@ -1,4 +1,4 @@
-import CommunityTrailsList from "../../components/Manager/CommunityTrailsList";
+import CommunityTrailsList from "../../components/Manager/Community/CommunityTrailsList";
 
 const CommunityList = () => {
   return (

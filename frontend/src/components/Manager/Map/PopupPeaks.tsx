@@ -1,6 +1,6 @@
 import React from "react";
 import { CircleMarker, Popup } from "react-leaflet";
-import { Peaks, RoutePoint } from "../../assets/Data";
+import { Peaks, RoutePoint } from "../../../assets/Data";
 
 interface PeaksMapProps {
   peaks: Peaks[];

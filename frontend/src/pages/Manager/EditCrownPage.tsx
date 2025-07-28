@@ -1,12 +1,15 @@
 import { useParams, useLocation } from "react-router-dom";
 import { useState, useEffect, useContext } from "react";
-import { Peaks } from "../../assets/Data";
+import { Peaks} from "../../assets/Data";
 import peaksService from "../../services/peaks.service";
 import userpeaksService from "../../services/userpeaks.service";
 import filesService from "../../services/files.service";
-import MapTrails from "../../components/Manager/MapTrails";
+import MapTrails from "../../components/Manager/Map/MapTrails";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faStar, faMountainSun } from "@fortawesome/free-solid-svg-icons";
+import {
+  faStar,
+  faMountainSun,
+} from "@fortawesome/free-solid-svg-icons";
 import { formatDate } from "../../utils/format";
 import useGetUsers from "../../hooks/user/useGetUser";
 import AuthContext from "../../store/auth-context";
@@ -50,8 +53,6 @@ const EditCrownPage = () => {
   }, [user?.email, getUserByEmail]);
 
   const currentUser = usersData?.[0]?.[0];
-
-  // Fetch user peak data (only for My Peaks)
   useEffect(() => {
     const fetchMyPeak = async () => {
       if (!currentUser?.id || !id || !isMyPeak) return;
@@ -68,8 +69,6 @@ const EditCrownPage = () => {
           photoUrl: userPeakData.photo_url,
           visitedAt: userPeakData.visited_at,
         });
-
-        // Set user image preview separately from general peak image
         if (userPeakData.photo_url) {
           setUserImagePreview(
             filesService.getPeakImgUrl(userPeakData.photo_url),
@@ -110,13 +109,10 @@ const EditCrownPage = () => {
 
         if (filename && id) {
           if (isCrownPeak) {
-            // Update crown peak image
             await peaksService.updateImage(id, filename);
             const peakResponse = await peaksService.getById(id);
             setPeak(peakResponse.data.data);
           } else if (isMyPeak && currentUser?.id) {
-            // Update user peak image - you'll need to implement this in your service
-            // For now, just update the local state
             setMyPeak((prev) =>
               prev ? { ...prev, photoUrl: filename } : null,
             );
@@ -141,7 +137,6 @@ const EditCrownPage = () => {
     setHoveredStar(0);
   };
 
-  // Fetch general peak data
   useEffect(() => {
     const fetchPeakData = async () => {
       if (!id) {
@@ -154,7 +149,6 @@ const EditCrownPage = () => {
         const peakData = response.data.data;
         setPeak(peakData);
 
-        // Only set image preview for crown peaks
         if (isCrownPeak && peakData.image_filename) {
           const imageUrl = filesService.getPeakImgUrl(peakData.image_filename);
           setImagePreview(imageUrl);
@@ -167,11 +161,31 @@ const EditCrownPage = () => {
     fetchPeakData();
   }, [id, isCrownPeak]);
 
+  // const handleAddReview = async () => {
+  //   if (!currentUser?.id || !id) return;
+  //   try {
+  //     const review: Review = {
+  //       user_id: currentUser.id,
+  //       peak_id: parseInt(id),
+  //       comment: reviewText,
+  //       rating: rating > 0 ? rating : undefined,
+  //     };
+  //     await reviewService.createReview(review);
+  //     setOpenModal(false);
+  //     setReviewText(""); // wyczyszczenie textarea po dodaniu
+  //   } catch (error) {
+  //     console.error("Error adding review:", error);
+  //   }
+  // };
+
   return (
     <div className="flex flex-col max-w-6xl text-center items-center justify-center w-full mx-auto mt-3 gap-y-4">
-      <div className="text-4xl font-lora text-white  underline">
-        <FontAwesomeIcon icon={faMountainSun} className="mr-2" />
-        {peak.name}
+      <div className="relative w-full flex items-center text-4xl font-lora text-white underline">
+        <div className="w-8" />
+        <div className="flex items-center mx-auto space-x-2">
+          <FontAwesomeIcon icon={faMountainSun} className="text-white" />
+          <span>{peak.name}</span>
+        </div>
       </div>
       <div className="flex flex-row items-start justify-start w-full max-w-6xl p-4">
         <div className="flex flex-col items-start justify-start mb-4 w-1/2">
@@ -267,7 +281,7 @@ const EditCrownPage = () => {
           {isMyPeak && (
             <div className="w-full mb-4">
               <h3 className="text-xl font-lora text-white mb-3 border-b border-white/20 pb-2 mt-4">
-                Twoje zdjęcia
+                Moje zdjęcie
               </h3>
               <div className="grid grid-cols-1 max-h-1/2  gap-3 mt-4">
                 {myPeak?.photoUrl && (
@@ -306,7 +320,7 @@ const EditCrownPage = () => {
           {isMyPeak && (
             <div className="w-full mb-4">
               <label className="block text-lg font-lora text-white mb-2">
-                Twój komentarz
+                Mój opis
               </label>
               <textarea
                 readOnly

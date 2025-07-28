@@ -1,4 +1,4 @@
-import PeakItem from "../../components/Manager/PeakItem";
+import PeakItem from "../../components/Manager/Peaks/PeakItem";
 import PeaksService from "../../services/peaks.service";
 
 const CrownPolandPage = () => {

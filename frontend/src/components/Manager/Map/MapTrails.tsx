@@ -9,7 +9,7 @@ import {
 import { useState, useEffect } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { RoutePoint, Trails } from "../../assets/Data";
+import { RoutePoint, Trails } from "../../../assets/Data";
 import ZoomHandler from "./ZoomHandler";
 
 const { BaseLayer } = LayersControl;

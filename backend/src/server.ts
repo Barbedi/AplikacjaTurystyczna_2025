@@ -21,6 +21,7 @@ import favouriteTrails from "./routes/favouriteTrails";
 import communityTrailsRouter from "./routes/communitytrails";
 import likeTrail from "./routes/likeTrail";
 import commentShared from "./routes/commentShared";
+import reviewsRouter from "./routes/review";
 
 const app = express();
 
@@ -54,6 +55,7 @@ app.use("/favourite-trails", favouriteTrails);
 app.use("/community-trails", communityTrailsRouter);
 app.use("/like-trail", likeTrail);
 app.use("/comment-shared", commentShared);
+app.use("/reviews", reviewsRouter);
 
 // Obsługa nieznalezionych endpointów
 app.use((_req: Request, res: Response) => {

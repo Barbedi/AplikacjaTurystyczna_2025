@@ -1,11 +1,11 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
-import communitytrailsService from "../../services/communitytrails.service";
-import { ExtendedCommunityTrails } from "../../assets/Data";
-import { formatDate } from "../../utils/format";
+import communitytrailsService from "../../../services/communitytrails.service";
+import { ExtendedCommunityTrails } from "../../../assets/Data";
+import { formatDate } from "../../../utils/format";
 import { useNavigate } from "react-router-dom";
-import filesService from "../../services/files.service";
+import filesService from "../../../services/files.service";
 
 const CommunityTrailsList = () => {
   const navigate = useNavigate();
@@ -38,13 +38,17 @@ const CommunityTrailsList = () => {
         >
           <span className="flex-1  text-lg font-lora text-white flex items-center gap-3">
             <img
-              src={filesService.getImgUrl(sharedTrail.user_profile_image as string) || ""}
+              src={
+                filesService.getImgUrl(
+                  sharedTrail.user_profile_image as string,
+                ) || ""
+              }
               alt={sharedTrail.user_name}
               className="rounded-full h-12 w-12 object-cover bg-amber-400/50 ring-1 ring-white/30 flex-shrink-0"
             />
             <span className="truncate">{sharedTrail.user_name}</span>
           </span>
-          
+
           <span className="flex-1 text-lg font-lora text-white">
             {sharedTrail.trail_name}
           </span>

@@ -1,10 +1,10 @@
-import commentSharedService from "../../services/commentShared.service";
-import { CommentShared } from "../../assets/Data";
+import commentSharedService from "../../../services/commentShared.service";
+import { CommentShared } from "../../../assets/Data";
 import { useEffect, useState, useContext } from "react";
-import useGetUsers from "../../hooks/user/useGetUser";
-import AuthContext from "../../store/auth-context";
-import filesService from "../../services/files.service";
-import { timeAgo } from "../../utils/format";
+import useGetUsers from "../../../hooks/user/useGetUser";
+import AuthContext from "../../../store/auth-context";
+import filesService from "../../../services/files.service";
+import { timeAgo } from "../../../utils/format";
 
 interface CommentSectionProps {
   sharedTrailId: number;
@@ -57,8 +57,8 @@ const CommentSection = ({ sharedTrailId }: CommentSectionProps) => {
   };
 
   const handleShowMore = () => {
-  setVisibleCount((prev) => prev + 2); 
-};
+    setVisibleCount((prev) => prev + 2);
+  };
   return (
     <div className="bg-white/10 backdrop-blur-lg rounded-xl border border-white/20 mt-6 mb-6 overflow-hidden">
       <div className="p-4 border-b border-white/10">
@@ -117,14 +117,14 @@ const CommentSection = ({ sharedTrailId }: CommentSectionProps) => {
           <div className="p-4 text-gray-400 text-center">Brak komentarzy</div>
         )}
         {comments.length > visibleCount && (
-        <div className="p-4 flex justify-center">
+          <div className="p-4 flex justify-center">
             <button
-            onClick={handleShowMore}
-            className="px-4 py-1.5 rounded-lg bg-white/5 text-white hover:bg-white/10 transition-all text-sm"
+              onClick={handleShowMore}
+              className="px-4 py-1.5 rounded-lg bg-white/5 text-white hover:bg-white/10 transition-all text-sm"
             >
-            Pokaż więcej komentarzy
+              Pokaż więcej komentarzy
             </button>
-        </div>
+          </div>
         )}
       </div>
     </div>

@@ -1,6 +1,6 @@
 import React from "react";
 import { CircleMarker, Popup } from "react-leaflet";
-import { Shelters, RoutePoint } from "../../assets/Data";
+import { Shelters, RoutePoint } from "../../../assets/Data";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHouseFlag, faChevronRight } from "@fortawesome/free-solid-svg-icons";
 
