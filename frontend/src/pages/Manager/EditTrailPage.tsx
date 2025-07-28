@@ -57,7 +57,7 @@ const EditTrailPage = () => {
   const [activeTab, setActiveTab] = useState<
     "info" | "photos" | "map" | "comments"
   >("map");
-  const { id } = useParams<{ id: string }>();
+  const { id, trailId } = useParams<{ id: string; trailId: string }>();
   const [description, setDescription] = useState("");
 
   const descriptionInputHandler = (
@@ -67,36 +67,31 @@ const EditTrailPage = () => {
   };
 
   useEffect(() => {
-    if (!id) {
-      console.error("ID is not provided");
-      return;
+  const trailIdentifier = id || trailId;
+  if (!trailIdentifier) {
+    console.error("Brak identyfikatora trasy");
+    return;
+  }
+  const fetchData = async () => {
+    try {
+      const [trailResponse, reviewsResponse] = await Promise.all([
+        trailsService.getTrailById(parseInt(trailIdentifier)),
+        reviewService.getReviewForTrail(parseInt(trailIdentifier)),
+      ]);
+      setTrail(trailResponse.data);
+      setReviews(reviewsResponse.data.data || []);
+    } catch (error) {
+      console.error("Błąd pobierania danych:", error);
     }
-    trailsService
-      .getTrailById(parseInt(id))
-      .then((response) => {
-        setTrail(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching trail data:", error);
-      });
-  }, [id]);
-
-  useEffect(() => {
-    const fetchComments = async () => {
-      if (!id) return;
-      try {
-        const response = await reviewService.getReviewForTrail(parseInt(id));
-        setReviews(response.data.data || []);
-      } catch (error) {
-        console.error("Error fetching comments:", error);
-      }
-    };
-
-    fetchComments();
-  }, [id]);
+  };
+  fetchData();
+}, [id, trailId]);
 
   const handleShareTrail = async () => {
-    if (!id) return;
+    if (!description.trim()) {
+      alert("Wypełnij wszystkie pola!");
+      return;
+    }
     try {
       const response = await communitytrailsService.addCommunityTrail(
         trail.id,
@@ -116,7 +111,7 @@ const EditTrailPage = () => {
     }
   }, [user?.email, getUserByEmail]);
 
-  const currentUser = usersData?.[0]?.[0];
+  const currentUser = usersData?.[0][0];
   const handleStarClick = (starNumber: number) => {
     setRating(starNumber);
   };
@@ -129,7 +124,10 @@ const EditTrailPage = () => {
     setHoveredStar(0);
   };
   const handleAddReview = async () => {
-    if (!currentUser?.id || !id) return;
+     if (!currentUser?.id || !id || !reviewText.trim() || rating === 0) {
+    alert("Wypełnij wszystkie pola!");
+    return;
+  }
     try {
       const review: Review = {
         user_id: currentUser.id,
@@ -137,9 +135,11 @@ const EditTrailPage = () => {
         comment: reviewText,
         rating: rating > 0 ? rating : undefined,
       };
-      await reviewService.createReview(review);
-      setOpenModal(false);
-      setReviewText("");
+      const response = await reviewService.createReview(review);
+      if (response.status === 201) {
+        setOpenModalComment(false);
+        setReviewText("");
+      }
     } catch (error) {
       console.error("Error adding review:", error);
     }
@@ -277,38 +277,41 @@ const EditTrailPage = () => {
               </div>
             </div>
           </div>
-
           <div className="lg:col-span-2">
-            <div
-              className={`${activeTab === "info" ? "block" : "hidden"} bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20`}
-            >
-              <ElevationSection trail={trail} />
-            </div>
-            <div
-              className={`${activeTab === "map" ? "block" : "hidden"} bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20`}
-            >
-              <h3 className="text-xl font-lora text-white mb-4 border-b border-white/20 pb-2">
-                Mapa trasy
-              </h3>
-              <div className="h-[312px] w-full">
-                <MapTrails trail={trail} hoverPoint={hoverPoint} />
+            {activeTab === "info" && (
+              <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20">
+                <ElevationSection trail={trail} />
               </div>
-            </div>
+            )}
+            {activeTab === "map" && (
+              <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20">
+                <h3 className="text-xl font-lora text-white mb-4 border-b border-white/20 pb-2">
+                  Mapa trasy
+                </h3>
+                <div className="h-[312px] w-full">
+                  <MapTrails trail={trail} hoverPoint={hoverPoint} />
+                </div>
+              </div>
+            )}
+            {activeTab === "photos" && (
+              <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20">
+                <GallerySection
+                  trail={trail}
+                  onPhotosUpdated={(updatedTrail) => setTrail(updatedTrail)}
+                />
+              </div>
+            )}
+            {activeTab === "comments" && (
             <div
-              className={`${activeTab === "photos" ? "block" : "hidden"} bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20`}
-            >
-              <GallerySection
-                trail={trail}
-                onPhotosUpdated={(updatedTrail) => setTrail(updatedTrail)}
+              className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20">
+              <ReviewSection
+                reviews={reviews}
+                averageRating={getAverageRating()}
               />
             </div>
-            <div
-              className={`${activeTab === "comments" ? "block" : "hidden"} bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20`}
-            >
-              <ReviewSection reviews={reviews} averageRating={getAverageRating()} />
-            </div>
-          </div>
+            )}
         </div>
+      </div>
       </div>
       <Modal isOpen={openModal} onClose={() => setOpenModal(false)}>
         <h2 className="text-white text-2xl font-semibold mb-4 text-center">
