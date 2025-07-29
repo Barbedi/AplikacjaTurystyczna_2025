@@ -9,13 +9,16 @@ import {
   faSave,
   faTimes,
   faGear,
-  faRoute,
 } from "@fortawesome/free-solid-svg-icons";
 import AuthContext from "../../store/auth-context";
 import useGetUsers from "../../hooks/user/useGetUser";
 import useUpdateUser from "../../hooks/user/useUpdateUser";
 import filesService from "../../services/files.service";
-import { Users } from "../../assets/Data";
+import { Users,User_Activities,PageData } from "../../assets/Data";
+import logsService from "../../services/logs.service";
+import UserActivity from "../../components/Manager/User/UserActivity";
+import { useSearchParams } from "react-router-dom";
+
 
 const MyProfile = () => {
   const { user } = useContext(AuthContext);
@@ -27,7 +30,13 @@ const MyProfile = () => {
   const [editMode, setEditMode] = useState(false);
   const [editedUser, setEditedUser] = useState<Users | null>(null);
   const [isSaving, setIsSaving] = useState(false);
-
+  const [activities, setActivities] = useState<User_Activities[]>([]);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [pageData, setPageData] = useState<PageData>({
+    page: parseInt(searchParams.get("page") || "1"),
+    pages: 1,
+  });
+  
   useEffect(() => {
     if (user?.email) {
       getUserByEmail(user.email);
@@ -44,6 +53,29 @@ const MyProfile = () => {
       setEditedUser(currentUser);
     }
   }, [currentUser]);
+
+  useEffect(() => {
+  if (currentUser?.id) {
+    logsService.getUserActivities(currentUser.id, pageData.page)
+      .then((response) => {
+        setActivities(response.data.data);
+        setPageData((prev) => ({
+            ...prev,
+            pages: response.data.totalPages,
+          }));
+      })
+      .catch((error) => {
+        console.error("Error fetching user activities:", error);
+      });
+  }
+}, [currentUser, pageData.page]);
+
+useEffect(() => {
+    const currentPage = parseInt(searchParams.get("page") || "1");
+    if (pageData.page !== currentPage) {
+      setSearchParams({ page: pageData.page.toString() });
+    }
+  }, [pageData.page, searchParams, setSearchParams]);
 
   const handlePhotoClick = () => {
     fileInputRef.current?.click();
@@ -341,32 +373,11 @@ const MyProfile = () => {
               </div>
             </div>
             <div className="w-full md:w-1/2">
-              <h2 className="text-xl font-lora text-white mb-4 pb-2 border-b border-white/10">
-                Twoja aktywność
-              </h2>
-
-              <div className="bg-white/5 rounded-xl p-3">
-                <div className="space-y-3">
-                  <div className=" rounded-lg  p-3">
-                    <div className="flex items-center">
-                      <div className="bg-accent/30 p-2 rounded-full">
-                        <FontAwesomeIcon
-                          icon={faRoute}
-                          className="text-white"
-                        />
-                      </div>
-                      <div className="ml-3">
-                        <p className="text-white">
-                          Utworzyłeś i zapisałeś trasę{" "}
-                          <span className="font-semibold">"nazwa Trasy"</span> w
-                          ulubionych
-                        </p>
-                        <p className="text-white/50 text-sm">02.07.2025</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <UserActivity
+                activities={activities}
+                pageData={pageData}
+                setPageData={setPageData}
+              />
             </div>
           </div>
         </div>

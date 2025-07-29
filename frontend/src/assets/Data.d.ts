@@ -19,6 +19,15 @@ export interface User {
   role: string;
 }
 
+export interface User_Activities{
+  id: number;
+  user_id: number;
+  action_type: string;
+  target_id: number;
+  target_name: string;
+  created_at: string;
+}
+
 // ===================== TRAILS =====================
 export interface Trails {
   id: number;

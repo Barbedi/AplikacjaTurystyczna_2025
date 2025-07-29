@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useMemo, useCallback } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faChevronLeft,
@@ -70,30 +70,15 @@ const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
 
   const currentUser = usersData?.[0]?.[0];
 
-  const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setName(event.target.value);
-  };
 
-  const handleRouteTypeChange = (
-    type: "one-way" | "loop" | "back-and-forth",
-  ) => {
-    setRouteType(type);
-    onRouteTypeChange?.(type);
-  };
-
-  const handleRegionChange = (region: "Tatry" | "Beskid Sądecki") => {
-    setRegion(region);
-  };
-
-  const handleSaveTrail = async () => {
-    if (!route) return;
+  const routeData = useMemo(() => {
+    if (!route) return null;
 
     const feature = route.features[0];
     const summary = feature.properties.summary;
     const geometry = feature.geometry;
 
     let coordinates: number[][];
-
     if (
       Array.isArray(geometry.coordinates[0]) &&
       Array.isArray(geometry.coordinates[0][0])
@@ -112,21 +97,60 @@ const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
         ? Math.max(...elevations) - Math.min(...elevations)
         : 0;
 
+    return {
+      coordinates,
+      summary,
+      elevations,
+      elevationGain,
+      distance: (summary.distance / 1000).toFixed(2),
+      duration: {
+        hours: Math.floor(summary.duration / 3600),
+        minutes: Math.floor((summary.duration % 3600) / 60),
+      },
+    };
+  }, [route]);
+
+  const handleNameChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    setName(event.target.value);
+  }, []);
+
+  const handleRouteTypeChange = useCallback((
+    type: "one-way" | "loop" | "back-and-forth",
+  ) => {
+    setRouteType(type);
+    onRouteTypeChange?.(type);
+  }, [onRouteTypeChange]);
+
+  const handleRegionChange = useCallback((region: "Tatry" | "Beskid Sądecki") => {
+    setRegion(region);
+  }, []);
+
+  const handleHoverPoint = useCallback((hoverLat: number, hoverLng: number) => {
+    if (!isNaN(hoverLat) && !isNaN(hoverLng)) {
+      onHoverPoint?.(hoverLat, hoverLng);
+    } else {
+      onHoverPoint?.(NaN, NaN);
+    }
+  }, [onHoverPoint]);
+
+  const handleSaveTrail = useCallback(async () => {
+    if (!routeData) return;
+
     const trailData = {
       id: editingTrail?.id || 0,
       name: name || "Moja trasa",
       description: editingTrail?.description || "",
       difficulty: editingTrail?.difficulty || "",
-      length_km: +(summary.distance / 1000).toFixed(2),
-      elevation_gain: Math.round(elevationGain),
+      length_km: +routeData.distance,
+      elevation_gain: Math.round(routeData.elevationGain),
       region: region,
       route_type: routeType,
       geometry: {
         type: "LineString",
-        coordinates: coordinates,
+        coordinates: routeData.coordinates,
       },
       created_by: currentUser?.id?.toString() || "1",
-      duration_minutes: Math.round(summary.duration / 60),
+      duration_minutes: Math.round(routeData.summary.duration / 60),
     };
 
     const pointsData = points.map((p, idx) => ({
@@ -161,7 +185,7 @@ const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
       console.error("Błąd zapisu trasy:", err);
       alert("Wystąpił błąd przy zapisie trasy.");
     }
-  };
+  }, [routeData, editingTrail, name, region, routeType, currentUser, points, isEditing, onTrailUpdated, navigate]);
 
   if (!visible) return null;
 
@@ -178,7 +202,7 @@ const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
         className={`fixed top-0 right-0 bg-white/20 backdrop-blur-lg shadow-2xl h-screen rounded-l-2xl transition-transform duration-300 ease-in-out z-[1000]
         ${isOpen ? "translate-x-0 w-120 p-4" : "translate-x-full w-0 p-0"} overflow-hidden`}
       >
-        <div className=" text-gray-800 text-sm">
+        <div className="text-gray-800 text-sm">
           <h2 className="text-2xl font-bold mb-4">Opcje trasy</h2>
           <div className="mb-4 w-full flex flex-row items-start justify-between">
             <div className="flex flex-col flex-1">
@@ -256,7 +280,7 @@ const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
               );
             })}
           </ol>
-          <div className="flex flex-row  space-y-4">
+          <div className="flex flex-row space-y-4">
             <div className="mb-4 w-1/2">
               <label className="block text-sm font-medium mb-1">
                 Typ trasy
@@ -270,7 +294,7 @@ const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
                   )
                 }
               >
-                <option selected value="one-way">
+                <option value="one-way">
                   W jedną stronę
                 </option>
                 <option disabled value="loop">
@@ -302,40 +326,18 @@ const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
           <div className="mb-4 space-y-1">
             <p>
               <strong>Długość trasy:</strong>{" "}
-              {route
-                ? (
-                    route.features[0].properties.summary.distance / 1000
-                  ).toFixed(2)
-                : "0"}{" "}
-              km
+              {routeData?.distance || "0"} km
             </p>
             <p>
               <strong>Czas przejścia:</strong>{" "}
-              {route
-                ? `${Math.floor(route.features[0].properties.summary.duration / 3600)} h ${Math.floor(
-                    (route.features[0].properties.summary.duration % 3600) / 60,
-                  )} min`
+              {routeData 
+                ? `${routeData.duration.hours} h ${routeData.duration.minutes} min`
                 : "0 h 0 min"}
             </p>
             <p>
               <strong>Przewyższenie:</strong>{" "}
-              {route
-                ? `${
-                    Math.max(
-                      ...route.features[0].geometry.coordinates
-                        .map((c) => c[2])
-                        .filter(
-                          (elev) => typeof elev === "number" && !isNaN(elev),
-                        ),
-                    ) -
-                    Math.min(
-                      ...route.features[0].geometry.coordinates
-                        .map((c) => c[2])
-                        .filter(
-                          (elev) => typeof elev === "number" && !isNaN(elev),
-                        ),
-                    )
-                  } m`
+              {routeData 
+                ? `${Math.round(routeData.elevationGain)} m`
                 : "0 m"}
             </p>
           </div>
@@ -345,13 +347,7 @@ const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
           <div className="mb-4 space-y-1">
             <ElevationProfile
               route={route}
-              onHoverPoint={(hoverLat, hoverLng) => {
-                if (!isNaN(hoverLat) && !isNaN(hoverLng)) {
-                  onHoverPoint?.(hoverLat, hoverLng);
-                } else {
-                  onHoverPoint?.(NaN, NaN);
-                }
-              }}
+              onHoverPoint={handleHoverPoint}
             />
           </div>
         </div>
