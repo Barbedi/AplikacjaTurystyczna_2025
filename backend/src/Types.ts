@@ -58,6 +58,14 @@ interface TrailLike {
   shared_trail_id: number;
   created_at: string;
 }
+interface User_Activities{
+  id: number;
+  user_id: number;
+  action_type: string;
+  target_id: number;
+  target_name: string;
+  created_at: string;
+}
 
 interface Photo {
   id: number;
@@ -141,4 +149,5 @@ export type {
   TrailLike,
   CommentShared,
   Review,
+  User_Activities
 };
