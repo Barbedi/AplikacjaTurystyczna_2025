@@ -70,7 +70,6 @@ const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
 
   const currentUser = usersData?.[0]?.[0];
 
-
   const routeData = useMemo(() => {
     if (!route) return null;
 
@@ -110,28 +109,38 @@ const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
     };
   }, [route]);
 
-  const handleNameChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-    setName(event.target.value);
-  }, []);
+  const handleNameChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      setName(event.target.value);
+    },
+    [],
+  );
 
-  const handleRouteTypeChange = useCallback((
-    type: "one-way" | "loop" | "back-and-forth",
-  ) => {
-    setRouteType(type);
-    onRouteTypeChange?.(type);
-  }, [onRouteTypeChange]);
+  const handleRouteTypeChange = useCallback(
+    (type: "one-way" | "loop" | "back-and-forth") => {
+      setRouteType(type);
+      onRouteTypeChange?.(type);
+    },
+    [onRouteTypeChange],
+  );
 
-  const handleRegionChange = useCallback((region: "Tatry" | "Beskid Sądecki") => {
-    setRegion(region);
-  }, []);
+  const handleRegionChange = useCallback(
+    (region: "Tatry" | "Beskid Sądecki") => {
+      setRegion(region);
+    },
+    [],
+  );
 
-  const handleHoverPoint = useCallback((hoverLat: number, hoverLng: number) => {
-    if (!isNaN(hoverLat) && !isNaN(hoverLng)) {
-      onHoverPoint?.(hoverLat, hoverLng);
-    } else {
-      onHoverPoint?.(NaN, NaN);
-    }
-  }, [onHoverPoint]);
+  const handleHoverPoint = useCallback(
+    (hoverLat: number, hoverLng: number) => {
+      if (!isNaN(hoverLat) && !isNaN(hoverLng)) {
+        onHoverPoint?.(hoverLat, hoverLng);
+      } else {
+        onHoverPoint?.(NaN, NaN);
+      }
+    },
+    [onHoverPoint],
+  );
 
   const handleSaveTrail = useCallback(async () => {
     if (!routeData) return;
@@ -185,7 +194,18 @@ const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
       console.error("Błąd zapisu trasy:", err);
       alert("Wystąpił błąd przy zapisie trasy.");
     }
-  }, [routeData, editingTrail, name, region, routeType, currentUser, points, isEditing, onTrailUpdated, navigate]);
+  }, [
+    routeData,
+    editingTrail,
+    name,
+    region,
+    routeType,
+    currentUser,
+    points,
+    isEditing,
+    onTrailUpdated,
+    navigate,
+  ]);
 
   if (!visible) return null;
 
@@ -294,9 +314,7 @@ const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
                   )
                 }
               >
-                <option value="one-way">
-                  W jedną stronę
-                </option>
+                <option value="one-way">W jedną stronę</option>
                 <option disabled value="loop">
                   Pętla
                 </option>
@@ -325,30 +343,24 @@ const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
           </h2>
           <div className="mb-4 space-y-1">
             <p>
-              <strong>Długość trasy:</strong>{" "}
-              {routeData?.distance || "0"} km
+              <strong>Długość trasy:</strong> {routeData?.distance || "0"} km
             </p>
             <p>
               <strong>Czas przejścia:</strong>{" "}
-              {routeData 
+              {routeData
                 ? `${routeData.duration.hours} h ${routeData.duration.minutes} min`
                 : "0 h 0 min"}
             </p>
             <p>
               <strong>Przewyższenie:</strong>{" "}
-              {routeData 
-                ? `${Math.round(routeData.elevationGain)} m`
-                : "0 m"}
+              {routeData ? `${Math.round(routeData.elevationGain)} m` : "0 m"}
             </p>
           </div>
           <h2 className="text-lg font-semibold mb-2">
             <FontAwesomeIcon icon={faMountain} /> Wykres wysokości
           </h2>
           <div className="mb-4 space-y-1">
-            <ElevationProfile
-              route={route}
-              onHoverPoint={handleHoverPoint}
-            />
+            <ElevationProfile route={route} onHoverPoint={handleHoverPoint} />
           </div>
         </div>
       </div>

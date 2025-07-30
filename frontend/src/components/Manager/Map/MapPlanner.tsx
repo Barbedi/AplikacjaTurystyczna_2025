@@ -61,11 +61,13 @@ const LocationMarkerDelete = ({
 // Komponent dla hover markera - memoized żeby się nie przeładowywał
 const HoverMarker = ({ position }: { position: [number, number] | null }) => {
   // Memoized icon - tworzy się tylko raz
-  const hoverIcon = useMemo(() => 
-    L.icon({
-      iconUrl: "https://cdn-icons-png.flaticon.com/512/684/684908.png",
-      iconSize: [25, 25],
-    }), []
+  const hoverIcon = useMemo(
+    () =>
+      L.icon({
+        iconUrl: "https://cdn-icons-png.flaticon.com/512/684/684908.png",
+        iconSize: [25, 25],
+      }),
+    [],
   );
 
   if (!position) return null;
@@ -187,56 +189,75 @@ const MapPlanner = () => {
     }
   }, [points, routeType]);
 
-  const addPoint = useCallback((newPoint: [number, number]) =>
-    setPoints((prev) => [
-      ...prev,
-      {
-        coordinates: newPoint,
-        type: "custom",
-      },
-    ]), []);
+  const addPoint = useCallback(
+    (newPoint: [number, number]) =>
+      setPoints((prev) => [
+        ...prev,
+        {
+          coordinates: newPoint,
+          type: "custom",
+        },
+      ]),
+    [],
+  );
 
-  const removePoint = useCallback((indexToRemove: number) =>
-    setPoints((prev) => prev.filter((_, i) => i !== indexToRemove)), []);
+  const removePoint = useCallback(
+    (indexToRemove: number) =>
+      setPoints((prev) => prev.filter((_, i) => i !== indexToRemove)),
+    [],
+  );
 
-  const removePointByCoordinates = useCallback((lat: number, lng: number) =>
-    setPoints((prev) =>
-      prev.filter(
-        (point) =>
-          Math.abs(point.coordinates[0] - lat) > 1e-6 ||
-          Math.abs(point.coordinates[1] - lng) > 1e-6,
+  const removePointByCoordinates = useCallback(
+    (lat: number, lng: number) =>
+      setPoints((prev) =>
+        prev.filter(
+          (point) =>
+            Math.abs(point.coordinates[0] - lat) > 1e-6 ||
+            Math.abs(point.coordinates[1] - lng) > 1e-6,
+        ),
       ),
-    ), []);
+    [],
+  );
 
-  const addPointAtStart = useCallback((newPoint: RoutePoint) =>
-    setPoints((prev) => [newPoint, ...prev]), []);
+  const addPointAtStart = useCallback(
+    (newPoint: RoutePoint) => setPoints((prev) => [newPoint, ...prev]),
+    [],
+  );
 
-  const addPointM = useCallback((newPoint: RoutePoint) =>
-    setPoints((prev) => {
-      if (prev.length === 0) return [newPoint];
-      if (prev.length === 1) return [...prev, newPoint];
-      return [...prev.slice(0, -1), newPoint, prev[prev.length - 1]];
-    }), []);
+  const addPointM = useCallback(
+    (newPoint: RoutePoint) =>
+      setPoints((prev) => {
+        if (prev.length === 0) return [newPoint];
+        if (prev.length === 1) return [...prev, newPoint];
+        return [...prev.slice(0, -1), newPoint, prev[prev.length - 1]];
+      }),
+    [],
+  );
 
-  const addPointAtEnd = useCallback((newPoint: RoutePoint) =>
-    setPoints((prev) => [...prev, newPoint]), []);
-  const handleHoverPoint = useCallback((lat: number | null, lng: number | null) => {
-    if (hoverTimeoutRef.current) {
-      clearTimeout(hoverTimeoutRef.current);
-    }
-    hoverTimeoutRef.current = setTimeout(() => {
-      if (
-        typeof lat === "number" &&
-        typeof lng === "number" &&
-        !isNaN(lat) &&
-        !isNaN(lng)
-      ) {
-        setHoverPoint([lat, lng]);
-      } else {
-        setHoverPoint(null);
+  const addPointAtEnd = useCallback(
+    (newPoint: RoutePoint) => setPoints((prev) => [...prev, newPoint]),
+    [],
+  );
+  const handleHoverPoint = useCallback(
+    (lat: number | null, lng: number | null) => {
+      if (hoverTimeoutRef.current) {
+        clearTimeout(hoverTimeoutRef.current);
       }
-    }, 16);
-  }, []);
+      hoverTimeoutRef.current = setTimeout(() => {
+        if (
+          typeof lat === "number" &&
+          typeof lng === "number" &&
+          !isNaN(lat) &&
+          !isNaN(lng)
+        ) {
+          setHoverPoint([lat, lng]);
+        } else {
+          setHoverPoint(null);
+        }
+      }, 16);
+    },
+    [],
+  );
 
   useEffect(() => {
     return () => {
@@ -279,36 +300,42 @@ const MapPlanner = () => {
     }
   }, [editingTrail, navigate]);
 
-  const routeStyle = useMemo(() => ({ 
-    color: "red", 
-    weight: 4 
-  }), []);
+  const routeStyle = useMemo(
+    () => ({
+      color: "red",
+      weight: 4,
+    }),
+    [],
+  );
 
-  const pointMarkers = useMemo(() => 
-    points.map((point, idx) => {
-      const [lat, lng] = point.coordinates;
-      return (
-        <Marker
-          key={`${idx}-${lat}-${lng}`} 
-          position={[lat, lng]}
-          eventHandlers={{
-            mouseover: () => setHoveredPoint(idx),
-            mouseout: () => setHoveredPoint(null),
-            contextmenu: () => removePoint(idx),
-          }}
-        >
-          {hoveredPoint === idx && (
-            <Tooltip permanent direction="top" offset={[0, -30]}>
-              Kliknij prawym przyciskiem, aby usunąć
-              <br />
-              {point.name
-                ? `${point.name} (${lat.toFixed(5)}, ${lng.toFixed(5)})`
-                : `Współrzędne: ${lat.toFixed(5)}, ${lng.toFixed(5)}`}
-            </Tooltip>
-          )}
-        </Marker>
-      );
-    }), [points, hoveredPoint, removePoint]);
+  const pointMarkers = useMemo(
+    () =>
+      points.map((point, idx) => {
+        const [lat, lng] = point.coordinates;
+        return (
+          <Marker
+            key={`${idx}-${lat}-${lng}`}
+            position={[lat, lng]}
+            eventHandlers={{
+              mouseover: () => setHoveredPoint(idx),
+              mouseout: () => setHoveredPoint(null),
+              contextmenu: () => removePoint(idx),
+            }}
+          >
+            {hoveredPoint === idx && (
+              <Tooltip permanent direction="top" offset={[0, -30]}>
+                Kliknij prawym przyciskiem, aby usunąć
+                <br />
+                {point.name
+                  ? `${point.name} (${lat.toFixed(5)}, ${lng.toFixed(5)})`
+                  : `Współrzędne: ${lat.toFixed(5)}, ${lng.toFixed(5)}`}
+              </Tooltip>
+            )}
+          </Marker>
+        );
+      }),
+    [points, hoveredPoint, removePoint],
+  );
 
   return (
     <div className="w-full h-full flex flex-col rounded-lg overflow-hidden border border-white/20 shadow-lg">

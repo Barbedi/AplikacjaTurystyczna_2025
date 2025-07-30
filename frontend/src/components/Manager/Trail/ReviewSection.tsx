@@ -10,7 +10,7 @@ interface ReviewSectionProps {
 
 const ReviewSection = ({ reviews, averageRating }: ReviewSectionProps) => {
   return (
-    <div >
+    <div>
       <div className="flex items-center justify-between mb-4 border-b border-white/20 pb-2">
         <h3 className="text-xl font-lora text-white">
           Komentarze użytkowników ({reviews.length})

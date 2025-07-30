@@ -19,7 +19,7 @@ export interface User {
   role: string;
 }
 
-export interface User_Activities{
+export interface User_Activities {
   id: number;
   user_id: number;
   action_type: string;
@@ -173,6 +173,36 @@ export interface Review {
   created_at?: string;
   peak_name?: string;
   trail_name?: string;
+}
+// ===================== Statistics ======================
+export interface Statistics {
+  crowns: {
+    kgp: {
+      visited: number;
+      all: number;
+      percent: number;
+    };
+    kbs: {
+      visited: number;
+      all: number;
+      percent: number;
+    };
+  };
+  longestTrail: {
+    name: string;
+    length_km: number;
+  } | null;
+  highestPeak: {
+    name: string;
+    elevation: number;
+  } | null;
+  lastPeak: {
+    name: string;
+    created_at: string;
+  } | null;
+  allUserPeaks: number;
+  allUserTrails: number;
+  allUserTrailsShared: number;
 }
 
 // ===================== ROUTES =====================

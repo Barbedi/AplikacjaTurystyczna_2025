@@ -6,6 +6,8 @@
 }
 
 @theme {
+  --animate-bar: progress_bar 2s linear infinite;
+
   --font-lora: "Lora", sans-serif;
   --color-primary: #4c95db;
   --color-secondary: #7ebcf2;
@@ -14,4 +16,13 @@
   --color-background: #ffffff;
   --color-grad1: #5996eb;
   --color-grad2: #050c28;
+}
+
+@keyframes progress_bar {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
 }

@@ -58,7 +58,7 @@ interface TrailLike {
   shared_trail_id: number;
   created_at: string;
 }
-interface User_Activities{
+interface User_Activities {
   id: number;
   user_id: number;
   action_type: string;
@@ -125,6 +125,37 @@ interface TrailPoint {
   name?: string;
   point_order: number;
 }
+
+interface Statistics {
+  crowns: {
+    kgp: {
+      visited: number;
+      all: number;
+      percent: number;
+    };
+    kbs: {
+      visited: number;
+      all: number;
+      percent: number;
+    };
+  };
+  longestTrail: {
+    name: string;
+    length_km: number;
+  } | null;
+  highestPeak: {
+    name: string;
+    elevation: number;
+  } | null;
+  lastPeak: {
+    name: string;
+    created_at: string; // jeśli w DB masz timestamptz to string
+  } | null;
+  allUserPeaks: number;
+  allUserTrails: number;
+  allUserTrailsShared: number;
+}
+
 export class Err implements ErrInterface {
   constructor(message: string, statusCode?: number) {
     this.message = message;
@@ -149,5 +180,6 @@ export type {
   TrailLike,
   CommentShared,
   Review,
-  User_Activities
+  User_Activities,
+  Statistics,
 };

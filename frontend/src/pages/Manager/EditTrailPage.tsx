@@ -46,7 +46,9 @@ const emptyTrail: ExtendedTrail = {
 const EditTrailPage = () => {
   const [trail, setTrail] = useState<ExtendedTrail>(emptyTrail);
   const [reviews, setReviews] = useState<Review[]>([]);
-  const [activeTab, setActiveTab] = useState<"info" | "photos" | "map" | "comments">("map");
+  const [activeTab, setActiveTab] = useState<
+    "info" | "photos" | "map" | "comments"
+  >("map");
   const [openModal, setOpenModal] = useState(false);
   const [openModalComment, setOpenModalComment] = useState(false);
   const [description, setDescription] = useState("");
@@ -64,26 +66,30 @@ const EditTrailPage = () => {
     setDescription(ev.target.value);
   };
 
- useEffect(() => {
-  const trailIdentifier = id;
-  
-  if (!trailIdentifier) {
-    console.error("Brak identyfikatora trasy");
-    return;
-  }
-  const fetchData = async () => {
-    try {
-      const trailResponse = await trailsService.getTrailById(parseInt(trailIdentifier));
-      setTrail(trailResponse.data);
-      const reviewsResponse = await reviewService.getReviewForTrail(parseInt(trailIdentifier));
-      setReviews(reviewsResponse.data.data || []);
-    } catch (error) {
-      console.error("Błąd pobierania danych:", error);
-    }
-  };
+  useEffect(() => {
+    const trailIdentifier = id;
 
-  fetchData();
-}, [id]);
+    if (!trailIdentifier) {
+      console.error("Brak identyfikatora trasy");
+      return;
+    }
+    const fetchData = async () => {
+      try {
+        const trailResponse = await trailsService.getTrailById(
+          parseInt(trailIdentifier),
+        );
+        setTrail(trailResponse.data);
+        const reviewsResponse = await reviewService.getReviewForTrail(
+          parseInt(trailIdentifier),
+        );
+        setReviews(reviewsResponse.data.data || []);
+      } catch (error) {
+        console.error("Błąd pobierania danych:", error);
+      }
+    };
+
+    fetchData();
+  }, [id]);
 
   const handleShareTrail = async () => {
     if (!description.trim()) {
@@ -110,10 +116,10 @@ const EditTrailPage = () => {
   }, [user?.email, getUserByEmail]);
 
   const handleAddReview = async () => {
-     if (!currentUser?.id || !id || !reviewText.trim() || rating === 0) {
-    alert("Wypełnij wszystkie pola!");
-    return;
-  }
+    if (!currentUser?.id || !id || !reviewText.trim() || rating === 0) {
+      alert("Wypełnij wszystkie pola!");
+      return;
+    }
     try {
       const review: Review = {
         user_id: currentUser.id,
@@ -148,8 +154,6 @@ const EditTrailPage = () => {
     const total = reviews.reduce((sum, r) => sum + (r.rating || 0), 0);
     return (total / reviews.length).toFixed(1);
   }, [reviews]);
-
-
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-6 w-full">
@@ -299,16 +303,15 @@ const EditTrailPage = () => {
               </div>
             )}
             {activeTab === "comments" && (
-            <div
-              className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20">
-              <ReviewSection
-                reviews={reviews}
-                averageRating={getAverageRating()}
-              />
-            </div>
+              <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20">
+                <ReviewSection
+                  reviews={reviews}
+                  averageRating={getAverageRating()}
+                />
+              </div>
             )}
+          </div>
         </div>
-      </div>
       </div>
       <Modal isOpen={openModal} onClose={() => setOpenModal(false)}>
         <h2 className="text-white text-2xl font-semibold mb-4 text-center">
@@ -326,7 +329,7 @@ const EditTrailPage = () => {
         <div className="flex flex-row items-end gap-3 mt-6">
           <button
             onClick={() => setOpenModal(false)}
-           className="w-full px-4 py-1 rounded-lg bg-white/10 text-white hover:bg-white/20 transition-all cursor-pointer flex items-center justify-center gap-2"
+            className="w-full px-4 py-1 rounded-lg bg-white/10 text-white hover:bg-white/20 transition-all cursor-pointer flex items-center justify-center gap-2"
           >
             <FontAwesomeIcon icon={faXmark} />
             Zamknij
