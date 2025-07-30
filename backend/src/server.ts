@@ -29,9 +29,6 @@ import { parseGeoJSON } from "./routing-graph/parseGeoJSON";
 
 const app = express();
 export const hikingGraph = parseGeoJSON("data/exportMain.geojson");
-console.log("Graf załadowany!");
-console.log("Liczba wierzchołków:", Object.keys(hikingGraph.nodes).length);
-console.log("Liczba krawędzi:", Object.keys(hikingGraph.edges).length);
 const corsOptions = {
   credentials: true,
   origin: true,

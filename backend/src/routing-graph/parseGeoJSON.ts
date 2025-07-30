@@ -16,7 +16,6 @@ export function parseGeoJSON(filePath: string): Graph {
     feature.geometry.type !== "LineString" ||
     !Array.isArray(feature.geometry.coordinates)
   ) {
-    console.warn("⏭️ Pomijam feature o typie:", feature.geometry.type);
     continue;
   }
 
@@ -43,7 +42,7 @@ export function parseGeoJSON(filePath: string): Graph {
       if (!edges[toId]) edges[toId] = [];
 
       edges[fromId].push({ to: toId, distance });
-      edges[toId].push({ to: fromId, distance }); // bidirectional
+      edges[toId].push({ to: fromId, distance }); 
     }
   }
 

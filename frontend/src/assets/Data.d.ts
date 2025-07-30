@@ -226,7 +226,7 @@ export interface RouteTrail {
     type: string;
     geometry: {
       type: string;
-      coordinates: [number, number][];
+      coordinates: [number, number, number][];
     };
     properties: {
       distance: number;
