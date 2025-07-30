@@ -1,4 +1,4 @@
-import { faHeart } from "@fortawesome/free-solid-svg-icons";
+import { faThumbsUp } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import communitytrailsService from "../../services/communitytrails.service";
 import userService from "../../services/user.service";
@@ -132,7 +132,7 @@ const CommunityTrails = () => {
             </div>
             <div className="flex items-center gap-2 ml-auto">
               <FontAwesomeIcon
-                icon={faHeart}
+                icon={faThumbsUp}
                 title="Polubienia"
                 onClick={likedByUser ? handleUnlikeTrail : handleLikeTrail}
                 className={`text-2xl cursor-pointer ${likedByUser ? "text-red-500" : "text-white"}`}

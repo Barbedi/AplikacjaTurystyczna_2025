@@ -1,15 +1,12 @@
 import { useParams, useLocation } from "react-router-dom";
 import { useState, useEffect, useContext } from "react";
-import { Peaks} from "../../assets/Data";
+import { Peaks } from "../../assets/Data";
 import peaksService from "../../services/peaks.service";
 import userpeaksService from "../../services/userpeaks.service";
 import filesService from "../../services/files.service";
 import MapTrails from "../../components/Manager/Map/MapTrails";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faStar,
-  faMountainSun,
-} from "@fortawesome/free-solid-svg-icons";
+import { faStar, faMountainSun } from "@fortawesome/free-solid-svg-icons";
 import { formatDate } from "../../utils/format";
 import useGetUsers from "../../hooks/user/useGetUser";
 import AuthContext from "../../store/auth-context";

@@ -10,7 +10,11 @@ type UserActivityProps = {
   setPageData: React.Dispatch<React.SetStateAction<PageData>>;
 };
 
-const UserActivity = ({ activities, pageData, setPageData }: UserActivityProps) => {
+const UserActivity = ({
+  activities,
+  pageData,
+  setPageData,
+}: UserActivityProps) => {
   return (
     <div className="w-full">
       <h2 className="text-xl font-lora text-white mb-4 pb-2 border-b border-white/10">

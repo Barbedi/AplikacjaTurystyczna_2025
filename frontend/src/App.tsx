@@ -53,7 +53,7 @@ function Root() {
         <Route path="my-profile" element={<MyProfile />} />
         <Route path="my-routes">
           <Route index element={<MyRoutes />} />
-           <Route path=":id" element={<EditTrailPage />} />
+          <Route path=":id" element={<EditTrailPage />} />
         </Route>
         <Route path="my-peaks">
           <Route index element={<MyPeaks />} />

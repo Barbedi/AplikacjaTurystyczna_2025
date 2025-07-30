@@ -46,7 +46,7 @@ LIMIT $2 OFFSET $3
   `;
   const result = await db.query(query, [userId, limit, offset]);
   const rows = helper.emptyOrRows(result.rows);
-  
+
   if (rows.length === 0) {
     throw new Err("No peaks found for this user", 404);
   }
@@ -64,7 +64,6 @@ LIMIT $2 OFFSET $3
     page,
     limit,
     total: totalCount,
-    
   };
 }
 

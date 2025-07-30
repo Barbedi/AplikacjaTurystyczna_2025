@@ -23,6 +23,7 @@ import likeTrail from "./routes/likeTrail";
 import commentShared from "./routes/commentShared";
 import reviewsRouter from "./routes/review";
 import logs from "./routes/logs";
+import statistics from "./routes/statistics";
 
 const app = express();
 
@@ -58,6 +59,7 @@ app.use("/like-trail", likeTrail);
 app.use("/comment-shared", commentShared);
 app.use("/reviews", reviewsRouter);
 app.use("/user-activities", logs);
+app.use("/statistics", statistics);
 
 // Obsługa nieznalezionych endpointów
 app.use((_req: Request, res: Response) => {

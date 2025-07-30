@@ -14,11 +14,10 @@ import AuthContext from "../../store/auth-context";
 import useGetUsers from "../../hooks/user/useGetUser";
 import useUpdateUser from "../../hooks/user/useUpdateUser";
 import filesService from "../../services/files.service";
-import { Users,User_Activities,PageData } from "../../assets/Data";
+import { Users, User_Activities, PageData } from "../../assets/Data";
 import logsService from "../../services/logs.service";
 import UserActivity from "../../components/Manager/User/UserActivity";
 import { useSearchParams } from "react-router-dom";
-
 
 const MyProfile = () => {
   const { user } = useContext(AuthContext);
@@ -36,7 +35,7 @@ const MyProfile = () => {
     page: parseInt(searchParams.get("page") || "1"),
     pages: 1,
   });
-  
+
   useEffect(() => {
     if (user?.email) {
       getUserByEmail(user.email);
@@ -55,22 +54,23 @@ const MyProfile = () => {
   }, [currentUser]);
 
   useEffect(() => {
-  if (currentUser?.id) {
-    logsService.getUserActivities(currentUser.id, pageData.page)
-      .then((response) => {
-        setActivities(response.data.data);
-        setPageData((prev) => ({
+    if (currentUser?.id) {
+      logsService
+        .getUserActivities(currentUser.id, pageData.page)
+        .then((response) => {
+          setActivities(response.data.data);
+          setPageData((prev) => ({
             ...prev,
             pages: response.data.totalPages,
           }));
-      })
-      .catch((error) => {
-        console.error("Error fetching user activities:", error);
-      });
-  }
-}, [currentUser, pageData.page]);
+        })
+        .catch((error) => {
+          console.error("Error fetching user activities:", error);
+        });
+    }
+  }, [currentUser, pageData.page]);
 
-useEffect(() => {
+  useEffect(() => {
     const currentPage = parseInt(searchParams.get("page") || "1");
     if (pageData.page !== currentPage) {
       setSearchParams({ page: pageData.page.toString() });
