@@ -12,9 +12,9 @@ import {
   faCheck,
   faXmark,
 } from "@fortawesome/free-solid-svg-icons";
-import { routeTrail, RoutePoint, Trails } from "../../../assets/Data";
-import ElevationProfile from "../ElevationProfile";
-import TrailsService from "../../../services/trails.service";
+import { RouteTrail, RoutePoint, Trails } from "../../../assets/Data";
+// import ElevationProfile from "../ElevationProfile";
+//import TrailsService from "../../../services/trails.service";
 import AuthContext from "../../../store/auth-context";
 import useGetUsers from "../../../hooks/user/useGetUser";
 import { useNavigate } from "react-router-dom";
@@ -22,7 +22,7 @@ import { useNavigate } from "react-router-dom";
 interface PlannerDashboardProps {
   visible: boolean;
   points: RoutePoint[];
-  route: routeTrail | null;
+  route: RouteTrail | null;
   editingTrail?: Trails | null;
   isEditing?: boolean;
   onHoverPoint?: (lat: number, lng: number) => void;
@@ -38,10 +38,10 @@ const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
   route,
   editingTrail,
   isEditing = false,
-  onHoverPoint,
+  // onHoverPoint,
   onRemovePoint,
   onRouteTypeChange,
-  onTrailUpdated,
+  // onTrailUpdated,
   onCancelEdit,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -71,43 +71,43 @@ const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
   const currentUser = usersData?.[0]?.[0];
 
   const routeData = useMemo(() => {
-    if (!route) return null;
+   if (!route) return null;
 
-    const feature = route.features[0];
-    const summary = feature.properties.summary;
-    const geometry = feature.geometry;
+  const feature = route.features?.[0];
+  if (!feature || !feature.geometry || !feature.geometry.coordinates) return null;
 
-    let coordinates: number[][];
-    if (
-      Array.isArray(geometry.coordinates[0]) &&
-      Array.isArray(geometry.coordinates[0][0])
-    ) {
-      coordinates = geometry.coordinates[0] as unknown as number[][];
-    } else {
-      coordinates = geometry.coordinates as unknown as number[][];
-    }
+  const geometry = feature.geometry;
+  const details =feature.properties
+  let coordinates: number[][];
 
-    const elevations = coordinates
-      .map((coord) => coord[2])
-      .filter((elev) => typeof elev === "number" && !isNaN(elev));
+  if (
+    Array.isArray(geometry.coordinates[0]) &&
+    Array.isArray(geometry.coordinates[0][0])
+  ) {
+    coordinates = geometry.coordinates[0] as unknown as number[][];
+  } else {
+    coordinates = geometry.coordinates as unknown as number[][];
+  }
 
-    const elevationGain =
-      elevations.length > 0
-        ? Math.max(...elevations) - Math.min(...elevations)
-        : 0;
+  const elevations = coordinates
+    .map((coord) => coord[2])
+    .filter((elev) => typeof elev === "number" && !isNaN(elev));
 
-    return {
-      coordinates,
-      summary,
-      elevations,
-      elevationGain,
-      distance: (summary.distance / 1000).toFixed(2),
-      duration: {
-        hours: Math.floor(summary.duration / 3600),
-        minutes: Math.floor((summary.duration % 3600) / 60),
-      },
-    };
-  }, [route]);
+  const elevationGain =
+    elevations.length > 0
+      ? Math.max(...elevations) - Math.min(...elevations)
+      : 0;
+
+  return {
+    coordinates,
+    elevations,
+    elevationGain,
+    details,
+    
+
+  };
+}, [route]);
+
 
   const handleNameChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -131,81 +131,81 @@ const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
     [],
   );
 
-  const handleHoverPoint = useCallback(
-    (hoverLat: number, hoverLng: number) => {
-      if (!isNaN(hoverLat) && !isNaN(hoverLng)) {
-        onHoverPoint?.(hoverLat, hoverLng);
-      } else {
-        onHoverPoint?.(NaN, NaN);
-      }
-    },
-    [onHoverPoint],
-  );
+  // const handleHoverPoint = useCallback(
+  //   (hoverLat: number, hoverLng: number) => {
+  //     if (!isNaN(hoverLat) && !isNaN(hoverLng)) {
+  //       onHoverPoint?.(hoverLat, hoverLng);
+  //     } else {
+  //       onHoverPoint?.(NaN, NaN);
+  //     }
+  //   },
+  //   [onHoverPoint],
+  // );
 
-  const handleSaveTrail = useCallback(async () => {
-    if (!routeData) return;
+  // const handleSaveTrail = useCallback(async () => {
+  //   if (!routeData) return;
 
-    const trailData = {
-      id: editingTrail?.id || 0,
-      name: name || "Moja trasa",
-      description: editingTrail?.description || "",
-      difficulty: editingTrail?.difficulty || "",
-      length_km: +routeData.distance,
-      elevation_gain: Math.round(routeData.elevationGain),
-      region: region,
-      route_type: routeType,
-      geometry: {
-        type: "LineString",
-        coordinates: routeData.coordinates,
-      },
-      created_by: currentUser?.id?.toString() || "1",
-      duration_minutes: Math.round(routeData.summary.duration / 60),
-    };
+  //   const trailData = {
+  //     id: editingTrail?.id || 0,
+  //     name: name || "Moja trasa",
+  //     description: editingTrail?.description || "",
+  //     difficulty: editingTrail?.difficulty || "",
+  //     length_km: +routeData.distance,
+  //     elevation_gain: Math.round(routeData.elevationGain),
+  //     region: region,
+  //     route_type: routeType,
+  //     geometry: {
+  //       type: "LineString",
+  //       coordinates: routeData.coordinates,
+  //     },
+  //     created_by: currentUser?.id?.toString() || "1",
+  //     duration_minutes: Math.round(routeData.summary.duration / 60),
+  //   };
 
-    const pointsData = points.map((p, idx) => ({
-      coordinates: p.coordinates,
-      name: p.name,
-      point_order: idx,
-    })) as RoutePoint[];
+  //   const pointsData = points.map((p, idx) => ({
+  //     coordinates: p.coordinates,
+  //     name: p.name,
+  //     point_order: idx,
+  //   })) as RoutePoint[];
 
-    try {
-      let res;
-      if (isEditing && editingTrail?.id) {
-        res = await TrailsService.updateTrail(editingTrail.id, {
-          ...trailData,
-          points: pointsData,
-        });
-        alert("Trasa zaktualizowana pomyślnie!");
-        navigate(`/dashboard/my-routes/${editingTrail.id}`);
-        console.log("Trail updated:", res.data);
+  //   try {
+  //     let res;
+  //     if (isEditing && editingTrail?.id) {
+  //       res = await TrailsService.updateTrail(editingTrail.id, {
+  //         ...trailData,
+  //         points: pointsData,
+  //       });
+  //       alert("Trasa zaktualizowana pomyślnie!");
+  //       navigate(`/dashboard/my-routes/${editingTrail.id}`);
+  //       console.log("Trail updated:", res.data);
 
-        if (onTrailUpdated && res.data) {
-          onTrailUpdated(res.data);
-        }
-      } else {
-        res = await TrailsService.createTrail({
-          ...trailData,
-          points: pointsData,
-        });
-        alert("Trasa zapisana pomyślnie!");
-        console.log("Trail created:", res.data);
-      }
-    } catch (err) {
-      console.error("Błąd zapisu trasy:", err);
-      alert("Wystąpił błąd przy zapisie trasy.");
-    }
-  }, [
-    routeData,
-    editingTrail,
-    name,
-    region,
-    routeType,
-    currentUser,
-    points,
-    isEditing,
-    onTrailUpdated,
-    navigate,
-  ]);
+  //       if (onTrailUpdated && res.data) {
+  //         onTrailUpdated(res.data);
+  //       }
+  //     } else {
+  //       res = await TrailsService.createTrail({
+  //         ...trailData,
+  //         points: pointsData,
+  //       });
+  //       alert("Trasa zapisana pomyślnie!");
+  //       console.log("Trail created:", res.data);
+  //     }
+  //   } catch (err) {
+  //     console.error("Błąd zapisu trasy:", err);
+  //     alert("Wystąpił błąd przy zapisie trasy.");
+  //   }
+  // }, [
+  //   routeData,
+  //   editingTrail,
+  //   name,
+  //   region,
+  //   routeType,
+  //   currentUser,
+  //   points,
+  //   isEditing,
+  //   onTrailUpdated,
+  //   navigate,
+  // ]);
 
   if (!visible) return null;
 
@@ -242,7 +242,7 @@ const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
             <FontAwesomeIcon
               icon={isEditing ? faCheck : faHeartCircleCheck}
               className="text-black text-2xl cursor-pointer ml-2"
-              onClick={handleSaveTrail}
+              // onClick={handleSaveTrail}
               title={isEditing ? "Zaktualizuj trasę" : "Zapisz trasę w profilu"}
             />
             {isEditing && (
@@ -343,13 +343,13 @@ const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
           </h2>
           <div className="mb-4 space-y-1">
             <p>
-              <strong>Długość trasy:</strong> {routeData?.distance || "0"} km
+              <strong>Długość trasy:</strong> {routeData?.details?.distance !== undefined ? (routeData.details.distance / 1000).toFixed(2) : "0.00"} km
             </p>
             <p>
               <strong>Czas przejścia:</strong>{" "}
-              {routeData
+              {/* {routeData
                 ? `${routeData.duration.hours} h ${routeData.duration.minutes} min`
-                : "0 h 0 min"}
+                : "0 h 0 min"} */}
             </p>
             <p>
               <strong>Przewyższenie:</strong>{" "}
@@ -359,9 +359,9 @@ const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
           <h2 className="text-lg font-semibold mb-2">
             <FontAwesomeIcon icon={faMountain} /> Wykres wysokości
           </h2>
-          <div className="mb-4 space-y-1">
+          {/* <div className="mb-4 space-y-1">
             <ElevationProfile route={route} onHoverPoint={handleHoverPoint} />
-          </div>
+          </div> */}
         </div>
       </div>
     </>

@@ -18,6 +18,7 @@ import PeaksMap from "./PopupPeaks";
 import ZoomHandler from "./ZoomHandler";
 import trailsService from "../../../services/trails.service";
 
+// Poprawa domyślnych ikon Leaflet
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -32,11 +33,8 @@ L.Icon.Default.mergeOptions({
 
 const { BaseLayer } = LayersControl;
 
-const LocationMarker = ({
-  addPoint,
-}: {
-  addPoint: (point: [number, number]) => void;
-}) => {
+// Marker do dodawania punktów kliknięciem
+const LocationMarker = ({ addPoint }: { addPoint: (point: [number, number]) => void }) => {
   useMapEvents({
     click(e) {
       addPoint([e.latlng.lat, e.latlng.lng]);
@@ -45,6 +43,7 @@ const LocationMarker = ({
   return null;
 };
 
+// Marker do usuwania punktów kliknięciem prawym przyciskiem
 const LocationMarkerDelete = ({
   removePointByCoordinates,
 }: {
@@ -58,9 +57,8 @@ const LocationMarkerDelete = ({
   return null;
 };
 
-// Komponent dla hover markera - memoized żeby się nie przeładowywał
+// Marker hover — memoized aby nie tworzyć na nowo za każdym renderem
 const HoverMarker = ({ position }: { position: [number, number] | null }) => {
-  // Memoized icon - tworzy się tylko raz
   const hoverIcon = useMemo(
     () =>
       L.icon({
@@ -77,6 +75,8 @@ const HoverMarker = ({ position }: { position: [number, number] | null }) => {
 
 const MapPlanner = () => {
   const { id: trailId } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+
   const [points, setPoints] = useState<RoutePoint[]>([]);
   const [hoveredPoint, setHoveredPoint] = useState<number | null>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -85,10 +85,7 @@ const MapPlanner = () => {
   const [hoverPoint, setHoverPoint] = useState<[number, number] | null>(null);
   const [peaks, setPeaks] = useState<Peaks[]>([]);
   const [currentZoom, setCurrentZoom] = useState<number>(12);
-  const navigate = useNavigate();
-  const [routeType, setRouteType] = useState<
-    "one-way" | "loop" | "back-and-forth"
-  >("one-way");
+  const [, setRouteType] = useState<"one-way" | "loop" | "back-and-forth">("one-way");
   const [editingTrail, setEditingTrail] = useState<Trails | null>(null);
   const [, setIsLoadingTrail] = useState<boolean>(false);
 
@@ -100,48 +97,43 @@ const MapPlanner = () => {
     DETAILS: 14,
   };
 
+  // Ładowanie trasy po ID (edycja)
   useEffect(() => {
-    if (trailId) {
-      setIsLoadingTrail(true);
-      trailsService
-        .getTrailById(parseInt(trailId))
-        .then((response) => {
-          const trail = response.data;
-          setEditingTrail(trail);
-          setRouteType(trail.route_type);
+    if (!trailId) return;
+    setIsLoadingTrail(true);
+    trailsService
+      .getTrailById(parseInt(trailId))
+      .then((response) => {
+        const trail = response.data;
+        setEditingTrail(trail);
+        setRouteType(trail.route_type);
 
-          if (trail.points && trail.points.length > 0) {
-            const routePoints: RoutePoint[] = trail.points
-              .sort((a, b) => a.point_order - b.point_order)
-              .map((point) => ({
-                coordinates: [point.lat, point.lng],
-                name: point.name || `Punkt ${point.point_order + 1}`,
-                type: "custom",
-                id: point.id,
-              }));
-            setPoints(routePoints);
-            console.log("Załadowano punkty z bazy:", routePoints);
-          } else if (trail.geometry?.coordinates) {
-            const routePoints: RoutePoint[] = trail.geometry.coordinates.map(
-              (coord: number[], index: number) => ({
-                coordinates: [coord[1], coord[0]],
-                type: "custom",
-                name: `Punkt ${index + 1}`,
-              }),
-            );
-            setPoints(routePoints);
-            console.log("Konwertowano geometrię na punkty:", routePoints);
-          }
-        })
-        .catch((error) => {
-          console.error("Error loading trail for edit:", error);
-        })
-        .finally(() => {
-          setIsLoadingTrail(false);
-        });
-    }
+        if (trail.points && trail.points.length > 0) {
+          const routePoints: RoutePoint[] = trail.points
+            .sort((a, b) => a.point_order - b.point_order)
+            .map((point) => ({
+              coordinates: [point.lat, point.lng],
+              name: point.name || `Punkt ${point.point_order + 1}`,
+              type: "custom",
+              id: point.id,
+            }));
+          setPoints(routePoints);
+        } else if (trail.geometry?.coordinates) {
+          const routePoints: RoutePoint[] = trail.geometry.coordinates.map(
+            (coord: number[], index: number) => ({
+              coordinates: [coord[1], coord[0]],
+              type: "custom",
+              name: `Punkt ${index + 1}`,
+            }),
+          );
+          setPoints(routePoints);
+        }
+      })
+      .catch(console.error)
+      .finally(() => setIsLoadingTrail(false));
   }, [trailId]);
 
+  // Fetch schronisk
   useEffect(() => {
     fetch("http://localhost:6868/shelters")
       .then((res) => res.json())
@@ -149,6 +141,7 @@ const MapPlanner = () => {
       .catch(console.error);
   }, []);
 
+  // Fetch szczytów
   useEffect(() => {
     fetch("http://localhost:6868/peaks")
       .then((res) => res.json())
@@ -156,57 +149,56 @@ const MapPlanner = () => {
       .catch(console.error);
   }, []);
 
+  // Wywołanie backendu dla lokalnego routingu (kiedy mamy min. 2 punkty)
   useEffect(() => {
-    const fetchRoute = async (pointsToUse: RoutePoint[]) => {
+    if (points.length < 2) {
+      setRouteGeoJson(null);
+      return;
+    }
+
+    // Budujemy start i end
+    const pointsPayload = points.map(point => ({
+  lat: point.coordinates[0],
+  lng: point.coordinates[1],
+}));
+
+    const fetchLocalRoute = async () => {
       try {
-        let coordinates = pointsToUse.map((p) => p.coordinates);
-
-        if (routeType === "loop" && pointsToUse.length >= 3) {
-          coordinates = [...coordinates, coordinates[0]];
-        } else if (routeType === "back-and-forth") {
-          const reverse = [...coordinates].reverse().slice(1);
-          coordinates = [...coordinates, ...reverse];
-        }
-
-        const response = await fetch("http://localhost:6868/routeTrail", {
+        const res = await fetch("http://localhost:6868/routing/local", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ points: coordinates }),
+          body: JSON.stringify({ points: pointsPayload }),
         });
-
-        if (!response.ok) return;
-        const data = await response.json();
+        if (!res.ok) {
+          console.error("Błąd w odpowiedzi backendu:", res.status);
+          setRouteGeoJson(null);
+          return;
+        }
+        const data = await res.json();
         setRouteGeoJson(data);
-      } catch (err) {
-        console.error("Błąd sieci:", err);
+      } catch (error) {
+        console.error("Błąd fetch:", error);
+        setRouteGeoJson(null);
       }
     };
 
-    if (points.length >= 2) {
-      fetchRoute(points);
-    } else {
-      setRouteGeoJson(null);
-    }
-  }, [points, routeType]);
+    fetchLocalRoute();
+  }, [points]);
 
+  // Dodawanie punktu (kliknięcie na mapie)
   const addPoint = useCallback(
     (newPoint: [number, number]) =>
-      setPoints((prev) => [
-        ...prev,
-        {
-          coordinates: newPoint,
-          type: "custom",
-        },
-      ]),
+      setPoints((prev) => [...prev, { coordinates: newPoint, type: "custom" }]),
     [],
   );
 
+  // Usuwanie punktu po indeksie
   const removePoint = useCallback(
-    (indexToRemove: number) =>
-      setPoints((prev) => prev.filter((_, i) => i !== indexToRemove)),
+    (indexToRemove: number) => setPoints((prev) => prev.filter((_, i) => i !== indexToRemove)),
     [],
   );
 
+  // Usuwanie punktu po współrzędnych (z eventu contextmenu)
   const removePointByCoordinates = useCallback(
     (lat: number, lng: number) =>
       setPoints((prev) =>
@@ -219,30 +211,29 @@ const MapPlanner = () => {
     [],
   );
 
+  // Dodawanie punktów na różne sposoby (wykorzystywane w schroniskach/szczytach)
   const addPointAtStart = useCallback(
     (newPoint: RoutePoint) => setPoints((prev) => [newPoint, ...prev]),
     [],
   );
-
   const addPointM = useCallback(
     (newPoint: RoutePoint) =>
       setPoints((prev) => {
-        if (prev.length === 0) return [newPoint];
-        if (prev.length === 1) return [...prev, newPoint];
+        if (prev.length <= 1) return [...prev, newPoint];
         return [...prev.slice(0, -1), newPoint, prev[prev.length - 1]];
       }),
     [],
   );
-
   const addPointAtEnd = useCallback(
     (newPoint: RoutePoint) => setPoints((prev) => [...prev, newPoint]),
     [],
   );
+
+  // Obsługa hover na punkcie
   const handleHoverPoint = useCallback(
     (lat: number | null, lng: number | null) => {
-      if (hoverTimeoutRef.current) {
-        clearTimeout(hoverTimeoutRef.current);
-      }
+      if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+
       hoverTimeoutRef.current = setTimeout(() => {
         if (
           typeof lat === "number" &&
@@ -261,12 +252,11 @@ const MapPlanner = () => {
 
   useEffect(() => {
     return () => {
-      if (hoverTimeoutRef.current) {
-        clearTimeout(hoverTimeoutRef.current);
-      }
+      if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
     };
   }, []);
 
+  // Aktualizacja trasy po edycji
   const handleTrailUpdated = useCallback((updatedTrail: Trails) => {
     setEditingTrail(updatedTrail);
 
@@ -280,10 +270,10 @@ const MapPlanner = () => {
           id: point.id,
         }));
       setPoints(routePoints);
-      console.log("Zaktualizowano punkty po edycji:", routePoints);
     }
   }, []);
 
+  // Anulowanie edycji — reset do oryginału i nawigacja
   const handleCancelEdit = useCallback(() => {
     if (editingTrail && editingTrail.points && editingTrail.points.length > 0) {
       const originalPoints: RoutePoint[] = editingTrail.points
@@ -300,14 +290,10 @@ const MapPlanner = () => {
     }
   }, [editingTrail, navigate]);
 
-  const routeStyle = useMemo(
-    () => ({
-      color: "red",
-      weight: 4,
-    }),
-    [],
-  );
+  // Styl linii trasy
+  const routeStyle = useMemo(() => ({ color: "red", weight: 4 }), []);
 
+  // Marker punktów trasy
   const pointMarkers = useMemo(
     () =>
       points.map((point, idx) => {
@@ -339,12 +325,7 @@ const MapPlanner = () => {
 
   return (
     <div className="w-full h-full flex flex-col rounded-lg overflow-hidden border border-white/20 shadow-lg">
-      <MapContainer
-        center={[49.29, 19.95]}
-        zoom={12}
-        scrollWheelZoom
-        className="w-full h-full"
-      >
+      <MapContainer center={[49.29, 19.95]} zoom={12} scrollWheelZoom className="w-full h-full">
         <ZoomHandler onZoomChange={setCurrentZoom} />
 
         <LayersControl position="topright">
@@ -377,17 +358,11 @@ const MapPlanner = () => {
         )}
 
         <LocationMarker addPoint={addPoint} />
-        <LocationMarkerDelete
-          removePointByCoordinates={removePointByCoordinates}
-        />
+        <LocationMarkerDelete removePointByCoordinates={removePointByCoordinates} />
         {pointMarkers}
-        {routeGeoJson && (
-          <GeoJSON
-            key={JSON.stringify(routeGeoJson)}
-            data={routeGeoJson}
-            style={routeStyle}
-          />
-        )}
+
+        {routeGeoJson && <GeoJSON key={JSON.stringify(routeGeoJson)} data={routeGeoJson} style={routeStyle} />}
+
         <HoverMarker position={hoverPoint} />
       </MapContainer>
 
@@ -399,7 +374,7 @@ const MapPlanner = () => {
         isEditing={!!trailId}
         onHoverPoint={handleHoverPoint}
         onRemovePoint={removePoint}
-        onRouteTypeChange={(type) => setRouteType(type)}
+        onRouteTypeChange={setRouteType}
         onTrailUpdated={handleTrailUpdated}
         onCancelEdit={handleCancelEdit}
       />
