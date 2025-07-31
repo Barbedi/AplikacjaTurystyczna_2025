@@ -18,6 +18,8 @@ import TrailsService from "../../../services/trails.service";
 import AuthContext from "../../../store/auth-context";
 import useGetUsers from "../../../hooks/user/useGetUser";
 import { useNavigate } from "react-router-dom";
+import { timeForWalk } from "../../../utils/timeforWalk";
+import { calculateElevationGainAndLoss } from "../../../utils/elevation";
 
 interface PlannerDashboardProps {
   visible: boolean;
@@ -53,6 +55,7 @@ const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
   const [name, setName] = useState("");
   const { user } = useContext(AuthContext);
   const { getUserByEmail, usersData } = useGetUsers();
+  
 
   useEffect(() => {
     if (user?.email) {
@@ -343,20 +346,31 @@ const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
           <h2 className="text-lg font-semibold mb-2">
             <FontAwesomeIcon icon={faList} /> Podsumowanie:
           </h2>
+          <div className="flex flex-row space-x-4">
           <div className="mb-4 space-y-1">
             <p>
-              <strong>Długość trasy:</strong> {routeData?.details?.distance !== undefined ? (routeData.details.distance / 1000).toFixed(2) : "0.00"} km
+              <strong>Długość trasy:</strong> {routeData?.details?.distance !== undefined ? (routeData.details.distance / 1000).toFixed(1) : "0.00"} km
             </p>
             <p>
               <strong>Czas przejścia:</strong>{" "}
-              {/* {routeData
-                ? `${routeData.duration.hours} h ${routeData.duration.minutes} min`
-                : "0 h 0 min"} */}
+              {routeData
+                ? `${timeForWalk(
+                    routeData.details.distance / 1000,
+                    routeData.elevationGain,
+                  )}`
+                : "0 godz."}
+            </p>
+            </div>
+            <div className="mb-4 space-y-1">
+            <p>
+              <strong>Suma podejść:</strong>{" "}
+              {routeData?.elevationGain ? `${(calculateElevationGainAndLoss(routeData.coordinates).gain.toFixed(0))} m` : "0 m"}
             </p>
             <p>
-              <strong>Przewyższenie:</strong>{" "}
-              {routeData ? `${Math.round(routeData.elevationGain)} m` : "0 m"}
+              <strong>Suma zejść:</strong>{" "}
+              {routeData?.elevationGain ? `${(calculateElevationGainAndLoss(routeData.coordinates).loss.toFixed(0))} m` : "0 m"}
             </p>
+            </div>
           </div>
           <h2 className="text-lg font-semibold mb-2">
             <FontAwesomeIcon icon={faMountain} /> Wykres wysokości
