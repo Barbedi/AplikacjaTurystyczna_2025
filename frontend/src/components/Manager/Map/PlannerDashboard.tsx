@@ -18,8 +18,10 @@ import TrailsService from "../../../services/trails.service";
 import AuthContext from "../../../store/auth-context";
 import useGetUsers from "../../../hooks/user/useGetUser";
 import { useNavigate } from "react-router-dom";
-import { timeForWalk } from "../../../utils/timeforWalk";
+import { timeForWalkHours ,formatDuration } from "../../../utils/timeforWalk";
 import { calculateElevationGainAndLoss } from "../../../utils/elevation";
+import Modaltrails from "./Modaltrails";
+import { createPortal } from 'react-dom';
 
 interface PlannerDashboardProps {
   visible: boolean;
@@ -47,6 +49,7 @@ const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
   onCancelEdit,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isOpenModal, setIsOpenModal] = useState(false);
   const navigate = useNavigate();
   const [routeType, setRouteType] = useState<
     "one-way" | "loop" | "back-and-forth"
@@ -71,16 +74,16 @@ const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
     }
   }, [editingTrail, isEditing]);
 
-  const currentUser = usersData?.[0]?.[0];
-  console.log("Current user:", currentUser);
+  const currentUser = usersData?.[0][0];
+
   const routeData = useMemo(() => {
-   if (!route) return null;
+  if (!route) return null;
 
   const feature = route.features?.[0];
   if (!feature || !feature.geometry || !feature.geometry.coordinates) return null;
 
   const geometry = feature.geometry;
-  const details =feature.properties
+  const details = feature.properties;
   let coordinates: number[][];
 
   if (
@@ -101,15 +104,40 @@ const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
       ? Math.max(...elevations) - Math.min(...elevations)
       : 0;
 
+  const distanceKm = parseFloat((feature.properties.distance / 1000).toFixed(2));
+  let difficultyLevel = 3; 
+  if (editingTrail?.difficulty) {
+    switch (editingTrail.difficulty.toLowerCase()) {
+      case 'łatwa': case 'latwa': case 'easy': 
+        difficultyLevel = 1; break;
+      case 'średnia': case 'srednia': case 'moderate': 
+        difficultyLevel = 3; break;
+      case 'trudna': case 'hard': case 'difficult': 
+        difficultyLevel = 5; break;
+      default: {
+        const numericDifficulty = parseInt(editingTrail.difficulty.replace(/\D/g, ''));
+        if (!isNaN(numericDifficulty) && numericDifficulty >= 1 && numericDifficulty <= 5) {
+          difficultyLevel = numericDifficulty;
+        }
+      }
+    }
+  }
+  
+ const durationHours = timeForWalkHours(distanceKm, elevationGain / 1000, difficultyLevel);
+  
+  const elevationData = calculateElevationGainAndLoss(coordinates);
+
   return {
     coordinates,
     elevations,
     elevationGain,
+    distanceKm,
     details,
-    
-
+    elevationData,
+    duration: durationHours,
   };
-}, [route]);
+}, [route, editingTrail?.difficulty]);
+
 
 
   const handleNameChange = useCallback(
@@ -156,7 +184,7 @@ const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
       length_km: routeData.details?.distance
         ? Number((routeData.details.distance / 1000).toFixed(2))
         : 0,
-      elevation_gain: Math.round(routeData.elevationGain) || 0,
+      elevation_gain: parseInt(routeData.elevationData.gain) || Math.round(routeData.elevationGain) || 0,
       region: region,
       route_type: routeType,
       geometry: {
@@ -164,7 +192,11 @@ const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
         coordinates: routeData.coordinates,
       },
       created_by: currentUser?.id?.toString() || "1",
-      duration_minutes: Math.round(0),
+      duration_minutes: routeData.duration
+        ? Math.round(Number(routeData.duration) * 60)
+        : 0,
+      photos: editingTrail?.photos || [],
+      public: editingTrail?.public || false,
     };
 
     const pointsData = points.map((p, idx) => ({
@@ -343,32 +375,34 @@ const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
               </select>
             </div>
           </div>
+          <div className="flex flex-row space-x-4">
+          <h2 className="text-lg font-semibold mb-2">
+            <FontAwesomeIcon icon={faList} /> Ustal poziom trudności:
+          </h2>
+              <a onClick={() => setIsOpenModal(true)} className="px-4 py-1 bg-accent rounded-lg">ustal </a>
+
+          </div>
           <h2 className="text-lg font-semibold mb-2">
             <FontAwesomeIcon icon={faList} /> Podsumowanie:
           </h2>
           <div className="flex flex-row space-x-4">
           <div className="mb-4 space-y-1">
             <p>
-              <strong>Długość trasy:</strong> {routeData?.details?.distance !== undefined ? (routeData.details.distance / 1000).toFixed(1) : "0.00"} km
+              <strong>Długość trasy:</strong> {routeData?.distanceKm || 0} km
             </p>
             <p>
               <strong>Czas przejścia:</strong>{" "}
-              {routeData
-                ? `${timeForWalk(
-                    routeData.details.distance / 1000,
-                    routeData.elevationGain,
-                  )}`
-                : "0 godz."}
+              {formatDuration(routeData?.duration || 0)}
             </p>
             </div>
             <div className="mb-4 space-y-1">
             <p>
               <strong>Suma podejść:</strong>{" "}
-              {routeData?.elevationGain ? `${(calculateElevationGainAndLoss(routeData.coordinates).gain.toFixed(0))} m` : "0 m"}
+              {routeData?.elevationGain ? `${(calculateElevationGainAndLoss(routeData.coordinates).gain)} ` : "0 m"}
             </p>
             <p>
               <strong>Suma zejść:</strong>{" "}
-              {routeData?.elevationGain ? `${(calculateElevationGainAndLoss(routeData.coordinates).loss.toFixed(0))} m` : "0 m"}
+              {routeData?.elevationGain ? `${(calculateElevationGainAndLoss(routeData.coordinates).loss)} ` : "0 m"}
             </p>
             </div>
           </div>
@@ -379,7 +413,20 @@ const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
             <ElevationProfile route={route} onHoverPoint={handleHoverPoint} />
           </div>
         </div>
+       {isOpenModal && routeData &&
+        createPortal(
+          <Modaltrails
+            isOpenModal={isOpenModal}
+            setIsOpenModal={setIsOpenModal}
+            distance={routeData.distanceKm}
+            elevationGain={[routeData.elevationData.gain] as unknown as number}
+            duration={routeData.duration || 0}
+          />,
+          document.body
+        )}
+
       </div>
+
     </>
   );
 };

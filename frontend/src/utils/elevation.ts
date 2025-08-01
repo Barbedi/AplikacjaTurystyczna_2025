@@ -1,4 +1,4 @@
-export function calculateElevationGainAndLoss(coords: number[][]): { gain: number; loss: number } {
+export function calculateElevationGainAndLoss(coords: number[][]): { gain: string; loss: string } {
   let gain = 0;
   let loss = 0;
   for (let i = 1; i < coords.length; i++) {
@@ -6,5 +6,8 @@ export function calculateElevationGainAndLoss(coords: number[][]): { gain: numbe
     if (delta > 0) gain += delta;
     else if (delta < 0) loss += Math.abs(delta);
   }
-  return { gain, loss };
+  return {
+    gain: gain.toFixed(0),
+    loss: loss.toFixed(0),
+  };
 }

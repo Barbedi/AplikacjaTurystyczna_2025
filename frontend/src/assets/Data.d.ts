@@ -45,10 +45,12 @@ export interface Trails {
   created_by: string;
   created_at: string;
   points?: TrailPoint[];
-  duration_minutes?: number;
+  photos?: Photo[];
+  duration_minutes: number;
+  public?: boolean;
 }
 
-export type NewTrail = Omit<Trails, "id" | "created_at" | "points">;
+export type NewTrail = Omit<Trails, "id" | "created_at" | "points" | "photos">;
 
 export interface TrailPoint {
   id: number;
@@ -65,13 +67,15 @@ export interface FavoriteTrails {
   added_at: string;
 }
 
+export interface Photo {
+  id: number;
+  trail_id: number;
+  image_name: string;
+  created_at: string;
+}
+
 interface ExtendedTrail extends Trails {
-  photos?: {
-    id: number;
-    trail_id: number;
-    image_name: string;
-    created_at: string;
-  }[];
+  photos?: Photo[];
 }
 
 // ===================== COMMUNITY TRAILS & COMMENTS =====================
