@@ -74,7 +74,7 @@ export interface Photo {
   created_at: string;
 }
 
-interface ExtendedTrail extends Trails {
+export interface ExtendedTrail extends Trails {
   photos?: Photo[];
 }
 
@@ -230,11 +230,18 @@ export interface RouteTrail {
     type: string;
     geometry: {
       type: string;
-      coordinates: [number, number, number][];
+      coordinates: [number, number, number][] | number[][][];
     };
     properties: {
+      id?: string;
       distance: number;
-      nodes: number;
+      nodes?: number;
+      summary?: {
+        distance: number;
+        duration: number;
+      };
+      segments?: unknown[];
+      elevation?: number[];
     };
   }[];
 }
@@ -309,3 +316,7 @@ interface Err extends Error {
     };
   };
 }
+
+ export type RouteType = "one-way" | "loop" | "back-and-forth";
+
+export type Region = "Tatry" | "Beskid Sądecki";

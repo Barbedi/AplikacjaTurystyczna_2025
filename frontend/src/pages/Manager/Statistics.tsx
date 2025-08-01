@@ -12,13 +12,26 @@ import statisticsService from "../../services/statistics.service";
 import { useEffect, useState } from "react";
 import type { Statistics } from "../../assets/Data";
 import InfoCard from "../../components/Manager/Statistic/InfoCard";
+import AuthContext from "../../store/auth-context";
+import useGetUsers from "../../hooks/user/useGetUser";
+import { useContext } from "react";
 
 const Statistics = () => {
+ const { user } = useContext(AuthContext);
+  const { getUserByEmail, usersData } = useGetUsers();
+
+  useEffect(() => {
+    if (user?.email) {
+      getUserByEmail(user.email);
+    }
+  }, [user?.email, getUserByEmail]);
+
+  const currentUser = usersData?.[0][0];
   const [statistics, setStatistics] = useState<Statistics | null>(null);
   useEffect(() => {
     const fetchStatistics = async () => {
       try {
-        const data = await statisticsService.getStatisticsForUser(1);
+        const data = await statisticsService.getStatisticsForUser(currentUser?.id || 0);
         setStatistics(data);
       } catch (error) {
         console.error("Failed to fetch statistics:", error);
@@ -26,7 +39,7 @@ const Statistics = () => {
     };
 
     fetchStatistics();
-  }, []);
+  }, [currentUser?.id]);
 
 
 

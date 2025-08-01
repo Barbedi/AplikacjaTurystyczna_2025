@@ -1,4 +1,4 @@
-import { Filter, Sort, UserInfo } from "../assets/Data";
+import { Filter, Sort,Users } from "../assets/Data";
 import http from "../http-common";
 
 class UsersService {
@@ -58,7 +58,7 @@ class UsersService {
     });
   };
 
-  update = (id: number, data: UserInfo) => {
+  update = (id: number, data: Users) => {
     if (!id || !data) throw new Error("ID and data are required");
 
     return http.patch(`/users/${id}`, data, { withCredentials: true });
