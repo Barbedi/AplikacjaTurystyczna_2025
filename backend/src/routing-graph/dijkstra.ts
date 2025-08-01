@@ -1,4 +1,3 @@
-
 // dijkstra.ts
 import { Graph } from "./graph";
 
@@ -13,17 +12,17 @@ class MinHeap {
 
   pop(): { nodeId: string; distance: number } | null {
     if (this.heap.length === 0) return null;
-    
+
     const min = this.heap[0];
     const last = this.heap.pop();
-    
+
     if (typeof last === "undefined") return null; // Jeśli pop() zwróciło undefined
-    
+
     if (this.heap.length > 0) {
       this.heap[0] = last;
       this.heapifyDown(0);
     }
-    
+
     return min ?? null;
   }
 
@@ -33,12 +32,16 @@ class MinHeap {
 
   private heapifyUp(index: number) {
     if (index === 0) return;
-    
+
     const parentIndex = Math.floor((index - 1) / 2);
     const currentNode = this.heap[index];
     const parentNode = this.heap[parentIndex];
-    
-    if (currentNode && parentNode && currentNode.distance < parentNode.distance) {
+
+    if (
+      currentNode &&
+      parentNode &&
+      currentNode.distance < parentNode.distance
+    ) {
       [this.heap[index], this.heap[parentIndex]] = [parentNode, currentNode];
       this.heapifyUp(parentIndex);
     }
@@ -58,7 +61,11 @@ class MinHeap {
     }
 
     const smallestNode = this.heap[smallest];
-    if (rightNode && smallestNode && rightNode.distance < smallestNode.distance) {
+    if (
+      rightNode &&
+      smallestNode &&
+      rightNode.distance < smallestNode.distance
+    ) {
       smallest = rightChild;
     }
 
@@ -77,7 +84,7 @@ export function dijkstra(graph: Graph, startId: string, endId: string) {
   if (!graph.nodes[startId]) {
     throw new Error(`Węzeł startowy ${startId} nie istnieje w grafie`);
   }
-  
+
   if (!graph.nodes[endId]) {
     throw new Error(`Węzeł końcowy ${endId} nie istnieje w grafie`);
   }
@@ -115,15 +122,15 @@ export function dijkstra(graph: Graph, startId: string, endId: string) {
 
     // Sprawdź sąsiadów
     for (const edge of edges) {
-      if (!edge || typeof edge.distance !== 'number' || !edge.to) continue;
+      if (!edge || typeof edge.distance !== "number" || !edge.to) continue;
 
       const neighborId = edge.to;
-      
+
       // Pomiń jeśli sąsiad już został odwiedzony
       if (visited.has(neighborId)) continue;
 
       const newDistance = currentDistance + edge.distance;
-      
+
       // Jeśli znaleźliśmy krótszą ścieżkę
       if (newDistance < (distances[neighborId] ?? Infinity)) {
         distances[neighborId] = newDistance;
@@ -136,13 +143,13 @@ export function dijkstra(graph: Graph, startId: string, endId: string) {
   // Odtwórz ścieżkę
   const path: string[] = [];
   let current: string | null = endId;
-  
+
   // Sprawdź czy ścieżka istnieje
   if (distances[endId] === Infinity) {
     return {
       path: [],
       totalDistance: Infinity,
-      found: false
+      found: false,
     };
   }
 
@@ -154,6 +161,6 @@ export function dijkstra(graph: Graph, startId: string, endId: string) {
   return {
     path,
     totalDistance: distances[endId] ?? Infinity,
-    found: true
+    found: true,
   };
 }

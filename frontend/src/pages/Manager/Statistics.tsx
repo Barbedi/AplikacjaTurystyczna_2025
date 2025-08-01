@@ -17,7 +17,7 @@ import useGetUsers from "../../hooks/user/useGetUser";
 import { useContext } from "react";
 
 const Statistics = () => {
- const { user } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
   const { getUserByEmail, usersData } = useGetUsers();
 
   useEffect(() => {
@@ -31,7 +31,9 @@ const Statistics = () => {
   useEffect(() => {
     const fetchStatistics = async () => {
       try {
-        const data = await statisticsService.getStatisticsForUser(currentUser?.id || 0);
+        const data = await statisticsService.getStatisticsForUser(
+          currentUser?.id || 0,
+        );
         setStatistics(data);
       } catch (error) {
         console.error("Failed to fetch statistics:", error);
@@ -40,8 +42,6 @@ const Statistics = () => {
 
     fetchStatistics();
   }, [currentUser?.id]);
-
-
 
   return (
     <div className="w-full max-w-6xl px-4 md:px-6 mx-auto">
@@ -129,7 +129,7 @@ const Statistics = () => {
               </p>
             </div>
           </div>
-          
+
           <div className="w-full mt-4">
             <div className="flex justify-between text-sm text-purple-400/80 mb-2">
               <span>Postęp</span>
@@ -180,7 +180,7 @@ const Statistics = () => {
         <InfoCard
           icon={faMountain}
           title="Najwyższy twój szczyt"
-          value={statistics?.highestPeak?.elevation|| 0}
+          value={statistics?.highestPeak?.elevation || 0}
           name={statistics?.highestPeak?.name || "Brak danych"}
           description="Najwyżej zdobyty szczyt"
           unit="m n.p.m."

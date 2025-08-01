@@ -10,18 +10,16 @@ export function parseGeoJSON(filePath: string): Graph {
   const nodes: Record<string, Node> = {};
   const edges: Record<string, Edge[]> = {};
 
-
   for (const feature of geojson.features) {
-  if (
-    feature.geometry.type !== "LineString" ||
-    !Array.isArray(feature.geometry.coordinates)
-  ) {
-    continue;
-  }
+    if (
+      feature.geometry.type !== "LineString" ||
+      !Array.isArray(feature.geometry.coordinates)
+    ) {
+      continue;
+    }
 
-  const coords: number[][] = feature.geometry.coordinates;
+    const coords: number[][] = feature.geometry.coordinates;
 
-  
     for (let i = 0; i < coords.length - 1; i++) {
       const [lng1, lat1] = coords[i] as [number, number];
       const [lng2, lat2] = coords[i + 1] as [number, number];
@@ -42,7 +40,7 @@ export function parseGeoJSON(filePath: string): Graph {
       if (!edges[toId]) edges[toId] = [];
 
       edges[fromId].push({ to: toId, distance });
-      edges[toId].push({ to: fromId, distance }); 
+      edges[toId].push({ to: fromId, distance });
     }
   }
 

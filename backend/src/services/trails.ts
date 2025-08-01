@@ -69,16 +69,27 @@ class TrailsService {
       "SELECT *, ST_AsGeoJSON(geometry) as geometry FROM trails WHERE id = $1",
       [id],
     );
+
     if (result.rows[0]) {
       const row = result.rows[0];
       const points = await TrailPointsService.getPointsByTrailId(id);
       const photos = await this.getTrailPhotos(id);
+
+      const featuresResult = await db.query(
+        `SELECT f.* FROM trail_features f
+       JOIN trail_trail_features tf ON f.id = tf.feature_id
+       WHERE tf.trail_id = $1`,
+        [id],
+      );
+
+      const features = featuresResult.rows || [];
 
       return {
         ...row,
         geometry: row.geometry ? JSON.parse(row.geometry) : null,
         points: points || [],
         photos: photos || [],
+        features, // dodaj cechy do zwracanego obiektu
       };
     }
     return null;

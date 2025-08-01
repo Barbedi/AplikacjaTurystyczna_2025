@@ -34,7 +34,11 @@ L.Icon.Default.mergeOptions({
 const { BaseLayer } = LayersControl;
 
 // Marker do dodawania punktów kliknięciem
-const LocationMarker = ({ addPoint }: { addPoint: (point: [number, number]) => void }) => {
+const LocationMarker = ({
+  addPoint,
+}: {
+  addPoint: (point: [number, number]) => void;
+}) => {
   useMapEvents({
     click(e) {
       addPoint([e.latlng.lat, e.latlng.lng]);
@@ -85,7 +89,9 @@ const MapPlanner = () => {
   const [hoverPoint, setHoverPoint] = useState<[number, number] | null>(null);
   const [peaks, setPeaks] = useState<Peaks[]>([]);
   const [currentZoom, setCurrentZoom] = useState<number>(12);
-  const [, setRouteType] = useState<"one-way" | "loop" | "back-and-forth">("one-way");
+  const [, setRouteType] = useState<"one-way" | "loop" | "back-and-forth">(
+    "one-way",
+  );
   const [editingTrail, setEditingTrail] = useState<Trails | null>(null);
   const [, setIsLoadingTrail] = useState<boolean>(false);
 
@@ -157,10 +163,10 @@ const MapPlanner = () => {
     }
 
     // Budujemy start i end
-    const pointsPayload = points.map(point => ({
-  lat: point.coordinates[0],
-  lng: point.coordinates[1],
-}));
+    const pointsPayload = points.map((point) => ({
+      lat: point.coordinates[0],
+      lng: point.coordinates[1],
+    }));
 
     const fetchLocalRoute = async () => {
       try {
@@ -194,7 +200,8 @@ const MapPlanner = () => {
 
   // Usuwanie punktu po indeksie
   const removePoint = useCallback(
-    (indexToRemove: number) => setPoints((prev) => prev.filter((_, i) => i !== indexToRemove)),
+    (indexToRemove: number) =>
+      setPoints((prev) => prev.filter((_, i) => i !== indexToRemove)),
     [],
   );
 
@@ -325,7 +332,12 @@ const MapPlanner = () => {
 
   return (
     <div className="w-full h-full flex flex-col rounded-lg overflow-hidden border border-white/20 shadow-lg">
-      <MapContainer center={[49.29, 19.95]} zoom={12} scrollWheelZoom className="w-full h-full">
+      <MapContainer
+        center={[49.29, 19.95]}
+        zoom={12}
+        scrollWheelZoom
+        className="w-full h-full"
+      >
         <ZoomHandler onZoomChange={setCurrentZoom} />
 
         <LayersControl position="topright">
@@ -358,10 +370,18 @@ const MapPlanner = () => {
         )}
 
         <LocationMarker addPoint={addPoint} />
-        <LocationMarkerDelete removePointByCoordinates={removePointByCoordinates} />
+        <LocationMarkerDelete
+          removePointByCoordinates={removePointByCoordinates}
+        />
         {pointMarkers}
 
-        {routeGeoJson && <GeoJSON key={JSON.stringify(routeGeoJson)} data={routeGeoJson} style={routeStyle} />}
+        {routeGeoJson && (
+          <GeoJSON
+            key={JSON.stringify(routeGeoJson)}
+            data={routeGeoJson}
+            style={routeStyle}
+          />
+        )}
 
         <HoverMarker position={hoverPoint} />
       </MapContainer>

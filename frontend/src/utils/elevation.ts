@@ -1,4 +1,7 @@
-export function calculateElevationGainAndLoss(coords: number[][]): { gain: string; loss: string } {
+export function calculateElevationGainAndLoss(coords: number[][]): {
+  gain: string;
+  loss: string;
+} {
   let gain = 0;
   let loss = 0;
   for (let i = 1; i < coords.length; i++) {

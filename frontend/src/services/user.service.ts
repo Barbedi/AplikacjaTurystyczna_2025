@@ -1,4 +1,4 @@
-import { Filter, Sort,Users } from "../assets/Data";
+import { Filter, Sort, Users } from "../assets/Data";
 import http from "../http-common";
 
 class UsersService {

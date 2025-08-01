@@ -48,6 +48,7 @@ export interface Trails {
   photos?: Photo[];
   duration_minutes: number;
   public?: boolean;
+  features?: { id: number; name: string; weight: number }[];
 }
 
 export type NewTrail = Omit<Trails, "id" | "created_at" | "points" | "photos">;
@@ -246,7 +247,6 @@ export interface RouteTrail {
   }[];
 }
 
-
 // ===================== WEATHER =====================
 export interface CurrentWeather {
   name: string;
@@ -317,6 +317,6 @@ interface Err extends Error {
   };
 }
 
- export type RouteType = "one-way" | "loop" | "back-and-forth";
+export type RouteType = "one-way" | "loop" | "back-and-forth";
 
 export type Region = "Tatry" | "Beskid Sądecki";

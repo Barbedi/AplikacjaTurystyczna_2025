@@ -15,8 +15,9 @@ const ElevationSection = ({ trail }: Props) => {
           type: "Feature",
           geometry: {
             type: "LineString",
-            coordinates: trail.geometry.coordinates.map(coord => 
-              [coord[0], coord[1], coord[2] || 0] as [number, number, number]
+            coordinates: trail.geometry.coordinates.map(
+              (coord) =>
+                [coord[0], coord[1], coord[2] || 0] as [number, number, number],
             ),
           },
           properties: {
@@ -25,10 +26,10 @@ const ElevationSection = ({ trail }: Props) => {
             nodes: trail.geometry.coordinates.length,
             summary: {
               distance: trail.length_km * 1000,
-              duration: (trail.duration_minutes || 0) * 60, 
+              duration: (trail.duration_minutes || 0) * 60,
             },
             segments: [],
-            elevation: trail.geometry.coordinates.map(coord => coord[2] || 0),
+            elevation: trail.geometry.coordinates.map((coord) => coord[2] || 0),
           },
         },
       ],
@@ -42,9 +43,7 @@ const ElevationSection = ({ trail }: Props) => {
       </h3>
       {trail.geometry.coordinates.length > 0 ? (
         <div className="h-[336px]">
-          <ElevationProfile
-            route={routeData}
-          />
+          <ElevationProfile route={routeData} />
         </div>
       ) : (
         <div className="flex items-center justify-center h-[200px] text-white/70">

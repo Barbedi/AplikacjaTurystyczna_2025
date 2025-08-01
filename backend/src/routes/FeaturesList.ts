@@ -42,4 +42,18 @@ router.post("/:trailId/update", async (req, res, next) => {
   }
 });
 
+router.get("/trails/:trailId/features", async (req, res, next) => {
+  const trailId = parseInt(req.params["trailId"] as string, 10);
+  if (isNaN(trailId)) {
+    return next(new Err("Invalid trail ID", 400));
+  }
+
+  try {
+    const features = await FeaturesList.getFeaturesForTrail(trailId);
+    res.json(features);
+  } catch (error) {
+    next(error);
+  }
+});
+
 export default router;

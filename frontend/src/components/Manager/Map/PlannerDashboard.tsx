@@ -12,16 +12,22 @@ import {
   faCheck,
   faXmark,
 } from "@fortawesome/free-solid-svg-icons";
-import { RouteTrail, RoutePoint, Trails, Region, RouteType } from "../../../assets/Data";
+import {
+  RouteTrail,
+  RoutePoint,
+  Trails,
+  Region,
+  RouteType,
+} from "../../../assets/Data";
 import ElevationProfile from "../ElevationProfile";
 import TrailsService from "../../../services/trails.service";
 import AuthContext from "../../../store/auth-context";
 import useGetUsers from "../../../hooks/user/useGetUser";
 import { useNavigate } from "react-router-dom";
-import { timeForWalkHours ,formatDuration } from "../../../utils/timeforWalk";
+import { timeForWalkHours, formatDuration } from "../../../utils/timeforWalk";
 import { calculateElevationGainAndLoss } from "../../../utils/elevation";
 import Modaltrails from "./Modaltrails";
-import { createPortal } from 'react-dom';
+import { createPortal } from "react-dom";
 import FeaturesListService from "../../../services/featuresList.service";
 
 interface PlannerDashboardProps {
@@ -59,61 +65,85 @@ const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
   const { getUserByEmail, usersData } = useGetUsers();
   const [features, setFeatures] = useState([]);
   const [trailDifficulty, setTrailDifficulty] = useState<string | null>(null);
-  const [selectedTrailFeatures, setSelectedTrailFeatures] = useState<number[]>([]);
+  const [selectedTrailFeatures, setSelectedTrailFeatures] = useState<number[]>(
+    [],
+  );
 
   useEffect(() => {
-  if (!user?.email) return;
-  getUserByEmail(user.email);
-}, [user?.email, getUserByEmail]);
+    if (!user?.email) return;
+    getUserByEmail(user.email);
+  }, [user?.email, getUserByEmail]);
 
-useEffect(() => {
-  FeaturesListService.getAll().then((res) => setFeatures(res.data.data));
-}, []);
+  useEffect(() => {
+    FeaturesListService.getAll().then((res) => setFeatures(res.data.data));
+  }, []);
 
-useEffect(() => {
-  if (editingTrail && isEditing) {
-    setName(editingTrail.name || "");
-    setRouteType(editingTrail.route_type);
-    setRegion(editingTrail.region as "Tatry" | "Beskid Sądecki");
-  }
-}, [editingTrail, isEditing]);
-const handleSaveDifficulty = (difficulty: string, selectedFeatures: number[]) => {
-  setTrailDifficulty(difficulty);
-  setSelectedTrailFeatures(selectedFeatures.map(Number));
-};
+  useEffect(() => {
+    if (editingTrail && isEditing) {
+      setName(editingTrail.name || "");
+      setRouteType(editingTrail.route_type);
+      setRegion(editingTrail.region as "Tatry" | "Beskid Sądecki");
+    }
+  }, [editingTrail, isEditing]);
+  const handleSaveDifficulty = (
+    difficulty: string,
+    selectedFeatures: number[],
+  ) => {
+    setTrailDifficulty(difficulty);
+    setSelectedTrailFeatures(selectedFeatures.map(Number));
+  };
   const currentUser = usersData?.[0][0];
 
   const calculateRouteData = useCallback((route: RouteTrail | null) => {
     if (!route) return null;
-  
+
     const feature = route.features?.[0];
-    if (!feature || !feature.geometry || !feature.geometry.coordinates) return null;
-  
+    if (!feature || !feature.geometry || !feature.geometry.coordinates)
+      return null;
+
     const geometry = feature.geometry;
     const details = feature.properties;
     const coordinates = Array.isArray(geometry.coordinates[0][0])
       ? (geometry.coordinates[0] as number[][])
       : (geometry.coordinates as number[][]);
-  
+
     const elevations = coordinates
       .map((coord) => coord[2])
       .filter((elev) => typeof elev === "number" && !isNaN(elev));
-  
-    const elevationGain = elevations.length > 0 ? Math.max(...elevations) - Math.min(...elevations) : 0;
-    const distanceKm = parseFloat((feature.properties.distance / 1000).toFixed(2));
-    
+
+    const elevationGain =
+      elevations.length > 0
+        ? Math.max(...elevations) - Math.min(...elevations)
+        : 0;
+    const distanceKm = parseFloat(
+      (feature.properties.distance / 1000).toFixed(2),
+    );
+
     // Używamy domyślnego poziomu trudności 3 dla obliczeń czasu
     const difficultyLevel = 3;
-  
-    const durationHours = timeForWalkHours(distanceKm, elevationGain / 1000, difficultyLevel);
+
+    const durationHours = timeForWalkHours(
+      distanceKm,
+      elevationGain / 1000,
+      difficultyLevel,
+    );
     const elevationData = calculateElevationGainAndLoss(coordinates);
-  
-    return { coordinates, elevations, elevationGain, distanceKm, details, elevationData, duration: durationHours };
+
+    return {
+      coordinates,
+      elevations,
+      elevationGain,
+      distanceKm,
+      details,
+      elevationData,
+      duration: durationHours,
+    };
   }, []);
 
-const routeData = useMemo(() => calculateRouteData(route), [route, calculateRouteData]);
-
-
+  const routeData = useMemo(
+    () => calculateRouteData(route),
+    [route, calculateRouteData],
+  );
 
   const handleNameChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -148,85 +178,95 @@ const routeData = useMemo(() => calculateRouteData(route), [route, calculateRout
     [onHoverPoint],
   );
 
-const handleSaveTrail = useCallback(async () => {
-  if (!routeData) return;
-  
-  const trailData = {
-    id: editingTrail?.id || 0,
-    name: name || "Moja trasa",
-    description: editingTrail?.description || "",
-    difficulty: trailDifficulty || editingTrail?.difficulty || "",
-    length_km: routeData?.details?.distance
-      ? Number((routeData.details.distance / 1000).toFixed(2))
-      : 0,
-    elevation_gain: parseInt(routeData?.elevationData.gain) || Math.round(routeData?.elevationGain) || 0,
-    region,
-    route_type: routeType,
-    geometry: {
-      type: "LineString",
-      coordinates: routeData?.coordinates || [],
-    },
-    created_by: currentUser?.id?.toString() || "1",
-    duration_minutes: routeData?.duration ? Math.round(Number(routeData.duration) * 60) : 0,
-    photos: editingTrail?.photos || [],
-    public: editingTrail?.public || false,
-    points: points.map((p, idx) => ({
-      coordinates: p.coordinates,
-      name: p.name,
-      point_order: idx,
-    })),
-  };
+  const handleSaveTrail = useCallback(async () => {
+    if (!routeData) return;
 
-  try {
-    let res;
-    
-    if (isEditing && editingTrail?.id) {
-      res = await TrailsService.updateTrail(editingTrail.id, trailData);
-      
-      try {
-        await FeaturesListService.updateTrailFeatures(editingTrail.id, selectedTrailFeatures);
-      } catch (featuresError) {
-        console.error("Błąd aktualizacji cech trasy:", featuresError);
-      }
-      
-      alert("Trasa zaktualizowana pomyślnie!");
-      navigate(`/dashboard/my-routes/${editingTrail.id}`);
-      onTrailUpdated?.(res.data);
-      
-    } else {
-      res = await TrailsService.createTrail(trailData);
-      
-      const newTrailId = res.data?.data?.id || res.data?.id || res.data?.trail?.id;
-      
-      if (newTrailId) {
+    const trailData = {
+      id: editingTrail?.id || 0,
+      name: name || "Moja trasa",
+      description: editingTrail?.description || "",
+      difficulty: trailDifficulty || editingTrail?.difficulty || "",
+      length_km: routeData?.details?.distance
+        ? Number((routeData.details.distance / 1000).toFixed(2))
+        : 0,
+      elevation_gain:
+        parseInt(routeData?.elevationData.gain) ||
+        Math.round(routeData?.elevationGain) ||
+        0,
+      region,
+      route_type: routeType,
+      geometry: {
+        type: "LineString",
+        coordinates: routeData?.coordinates || [],
+      },
+      created_by: currentUser?.id?.toString() || "1",
+      duration_minutes: routeData?.duration
+        ? Math.round(Number(routeData.duration) * 60)
+        : 0,
+      photos: editingTrail?.photos || [],
+      public: editingTrail?.public || false,
+      points: points.map((p, idx) => ({
+        coordinates: p.coordinates,
+        name: p.name,
+        point_order: idx,
+      })),
+    };
+
+    try {
+      let res;
+
+      if (isEditing && editingTrail?.id) {
+        res = await TrailsService.updateTrail(editingTrail.id, trailData);
+
         try {
-          await FeaturesListService.updateTrailFeatures(newTrailId, selectedTrailFeatures);
+          await FeaturesListService.updateTrailFeatures(
+            editingTrail.id,
+            selectedTrailFeatures,
+          );
         } catch (featuresError) {
-          console.error("Błąd zapisu cech trasy:", featuresError);
+          console.error("Błąd aktualizacji cech trasy:", featuresError);
         }
+
+        alert("Trasa zaktualizowana pomyślnie!");
+        navigate(`/dashboard/my-routes/${editingTrail.id}`);
+        onTrailUpdated?.(res.data);
+      } else {
+        res = await TrailsService.createTrail(trailData);
+
+        const newTrailId =
+          res.data?.data?.id || res.data?.id || res.data?.trail?.id;
+
+        if (newTrailId) {
+          try {
+            await FeaturesListService.updateTrailFeatures(
+              newTrailId,
+              selectedTrailFeatures,
+            );
+          } catch (featuresError) {
+            console.error("Błąd zapisu cech trasy:", featuresError);
+          }
+        }
+
+        alert("Trasa zapisana pomyślnie!");
       }
-      
-      alert("Trasa zapisana pomyślnie!");
+    } catch (err) {
+      console.error("Błąd zapisu trasy:", err);
+      alert("Wystąpił błąd przy zapisie trasy.");
     }
-    
-  } catch (err) {
-    console.error("Błąd zapisu trasy:", err);
-    alert("Wystąpił błąd przy zapisie trasy.");
-  }
-}, [
-  routeData,
-  editingTrail,
-  name,
-  region,
-  routeType,
-  currentUser,
-  points,
-  isEditing,
-  onTrailUpdated,
-  navigate,
-  trailDifficulty,
-  selectedTrailFeatures,
-]);
+  }, [
+    routeData,
+    editingTrail,
+    name,
+    region,
+    routeType,
+    currentUser,
+    points,
+    isEditing,
+    onTrailUpdated,
+    navigate,
+    trailDifficulty,
+    selectedTrailFeatures,
+  ]);
 
   if (!visible) return null;
 
@@ -360,34 +400,42 @@ const handleSaveTrail = useCallback(async () => {
             </div>
           </div>
           <div className="flex flex-row space-x-4">
-          <h2 className="text-lg font-semibold mb-2">
-            <FontAwesomeIcon icon={faList} /> Ustal poziom trudności:
-          </h2>
-              <a onClick={() => setIsOpenModal(true)} className="px-4 py-1 bg-accent rounded-lg">ustal </a>
-
+            <h2 className="text-lg font-semibold mb-2">
+              <FontAwesomeIcon icon={faList} /> Ustal poziom trudności:
+            </h2>
+            <a
+              onClick={() => setIsOpenModal(true)}
+              className="px-4 py-1 bg-accent rounded-lg"
+            >
+              ustal{" "}
+            </a>
           </div>
           <h2 className="text-lg font-semibold mb-2">
             <FontAwesomeIcon icon={faList} /> Podsumowanie:
           </h2>
           <div className="flex flex-row space-x-4">
-          <div className="mb-4 space-y-1">
-            <p>
-              <strong>Długość trasy:</strong> {routeData?.distanceKm || 0} km
-            </p>
-            <p>
-              <strong>Czas przejścia:</strong>{" "}
-              {formatDuration(routeData?.duration || 0)}
-            </p>
+            <div className="mb-4 space-y-1">
+              <p>
+                <strong>Długość trasy:</strong> {routeData?.distanceKm || 0} km
+              </p>
+              <p>
+                <strong>Czas przejścia:</strong>{" "}
+                {formatDuration(routeData?.duration || 0)}
+              </p>
             </div>
             <div className="mb-4 space-y-1">
-            <p>
-              <strong>Suma podejść:</strong>{" "}
-              {routeData?.elevationGain ? `${(calculateElevationGainAndLoss(routeData.coordinates).gain)} ` : "0 m"}
-            </p>
-            <p>
-              <strong>Suma zejść:</strong>{" "}
-              {routeData?.elevationGain ? `${(calculateElevationGainAndLoss(routeData.coordinates).loss)} ` : "0 m"}
-            </p>
+              <p>
+                <strong>Suma podejść:</strong>{" "}
+                {routeData?.elevationGain
+                  ? `${calculateElevationGainAndLoss(routeData.coordinates).gain} `
+                  : "0 m"}
+              </p>
+              <p>
+                <strong>Suma zejść:</strong>{" "}
+                {routeData?.elevationGain
+                  ? `${calculateElevationGainAndLoss(routeData.coordinates).loss} `
+                  : "0 m"}
+              </p>
             </div>
           </div>
           <h2 className="text-lg font-semibold mb-2">
@@ -397,22 +445,21 @@ const handleSaveTrail = useCallback(async () => {
             <ElevationProfile route={route} onHoverPoint={handleHoverPoint} />
           </div>
         </div>
-       {isOpenModal && routeData &&
-        createPortal(
-          <Modaltrails
-            isOpenModal={isOpenModal}
-            setIsOpenModal={setIsOpenModal}
-            distance={routeData.distanceKm}
-            elevationGain={parseInt(routeData.elevationData.gain) || 0}
-            duration={routeData.duration || 0}
-            features={features}
-            onSaveDifficulty={handleSaveDifficulty}
-          />,
-          document.body
-        )}
-
+        {isOpenModal &&
+          routeData &&
+          createPortal(
+            <Modaltrails
+              isOpenModal={isOpenModal}
+              setIsOpenModal={setIsOpenModal}
+              distance={routeData.distanceKm}
+              elevationGain={parseInt(routeData.elevationData.gain) || 0}
+              duration={routeData.duration || 0}
+              features={features}
+              onSaveDifficulty={handleSaveDifficulty}
+            />,
+            document.body,
+          )}
       </div>
-
     </>
   );
 };

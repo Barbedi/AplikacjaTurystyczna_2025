@@ -9,11 +9,9 @@ class FeaturesListService {
     return http.get(`/features-list/${id}`);
   }
 
- updateTrailFeatures(trailId: number, featureIds: number[]) {
+  updateTrailFeatures(trailId: number, featureIds: number[]) {
     return http.post(`/features-list/${trailId}/update`, { featureIds });
   }
-
-
 }
 
 export default new FeaturesListService();

@@ -38,7 +38,7 @@ function findRouteThroughPoints(graph: Graph, points: Point[]) {
     if (i === 0) {
       fullPath = result.path;
     } else {
-      fullPath = fullPath.concat(result.path.slice(1)); 
+      fullPath = fullPath.concat(result.path.slice(1));
     }
 
     totalDistance += result.totalDistance;

@@ -96,7 +96,7 @@ interface Review {
   created_at?: string;
 }
 
-interface FeaturesList{
+interface FeaturesList {
   id: number;
   name: string;
   weight: number;

@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
 import Modal from "../../Modal";
 import { formatDuration } from "../../../utils/timeforWalk";
-import { calculateDifficulty, getDifficultyColor } from "../../../utils/calculateDifficulty";
+import {
+  calculateDifficulty,
+  getDifficultyColor,
+} from "../../../utils/calculateDifficulty";
 
 interface ModaltrailsProps {
   isOpenModal: boolean;
@@ -20,7 +23,7 @@ const Modaltrails: React.FC<ModaltrailsProps> = ({
   distance,
   elevationGain,
   duration,
-  features: externalFeatures = [], 
+  features: externalFeatures = [],
   onSaveDifficulty,
 }) => {
   const [selectedFeatures, setSelectedFeatures] = useState<number[]>([]);
@@ -38,12 +41,10 @@ const Modaltrails: React.FC<ModaltrailsProps> = ({
   if (!isOpenModal) return null;
 
   const toggleFeature = (id: number) => {
-  setSelectedFeatures((prev) =>
-    prev.includes(id)
-      ? prev.filter(fId => fId !== id)
-      : [...prev, id]
-  );
-};
+    setSelectedFeatures((prev) =>
+      prev.includes(id) ? prev.filter((fId) => fId !== id) : [...prev, id],
+    );
+  };
 
   const getDifficulty = () => {
     return calculateDifficulty(
@@ -51,7 +52,7 @@ const Modaltrails: React.FC<ModaltrailsProps> = ({
       elevationGain,
       duration,
       selectedFeatures,
-      localFeatures
+      localFeatures,
     );
   };
   const difficulty = getDifficulty();
@@ -92,7 +93,8 @@ const Modaltrails: React.FC<ModaltrailsProps> = ({
           <p className="text-sm text-gray-600 mt-2">
             Wybierz cechy techniczne aby uzyskać dokładniejszą ocenę
             <br />
-            Jeśli nie zaznaczysz żadnej cechy, poziom trudności będzie oparty tylko na dystansie i przewyższeniu.
+            Jeśli nie zaznaczysz żadnej cechy, poziom trudności będzie oparty
+            tylko na dystansie i przewyższeniu.
           </p>
         )}
       </div>
@@ -133,7 +135,7 @@ const Modaltrails: React.FC<ModaltrailsProps> = ({
         </button>
         <button
           onClick={() => {
-             onSaveDifficulty(difficulty, selectedFeatures);
+            onSaveDifficulty(difficulty, selectedFeatures);
             setIsOpenModal(false);
           }}
           className="cursor-pointer w-full px-4 py-2 rounded-lg bg-green-500/20 text-green-800 hover:bg-green-500/30 border border-green-500/20 transition-all"
