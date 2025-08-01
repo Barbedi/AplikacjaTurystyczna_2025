@@ -59,7 +59,7 @@ const TrailPropose = () => {
             <FontAwesomeIcon
               onClick={() => handleTrailClick(trail.id)}
               icon={faChevronRight}
-              className="text-white cursor-pointer text-lg"
+              className="text-white  hover:text-purple-400  cursor-pointer text-lg"
               title="Zobacz szczegóły"
             />
           </span>

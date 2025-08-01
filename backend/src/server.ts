@@ -24,9 +24,12 @@ import commentShared from "./routes/commentShared";
 import reviewsRouter from "./routes/review";
 import logs from "./routes/logs";
 import statistics from "./routes/statistics";
+import routing from "./routes/routing";
+import FeaturesList from "./routes/FeaturesList";
+import { parseGeoJSON } from "./routing-graph/parseGeoJSON";
 
 const app = express();
-
+export const hikingGraph = parseGeoJSON("data/exportMain.geojson");
 const corsOptions = {
   credentials: true,
   origin: true,
@@ -60,6 +63,8 @@ app.use("/comment-shared", commentShared);
 app.use("/reviews", reviewsRouter);
 app.use("/user-activities", logs);
 app.use("/statistics", statistics);
+app.use("/routing", routing);
+app.use("/features-list", FeaturesList);
 
 // Obsługa nieznalezionych endpointów
 app.use((_req: Request, res: Response) => {

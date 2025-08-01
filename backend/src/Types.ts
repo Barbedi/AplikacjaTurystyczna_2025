@@ -96,6 +96,12 @@ interface Review {
   created_at?: string;
 }
 
+interface FeaturesList {
+  id: number;
+  name: string;
+  weight: number;
+}
+
 interface Trails {
   id: number;
   name: string;
@@ -182,4 +188,5 @@ export type {
   Review,
   User_Activities,
   Statistics,
+  FeaturesList,
 };

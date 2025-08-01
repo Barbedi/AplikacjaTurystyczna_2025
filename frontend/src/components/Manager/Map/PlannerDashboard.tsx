@@ -12,17 +12,28 @@ import {
   faCheck,
   faXmark,
 } from "@fortawesome/free-solid-svg-icons";
-import { routeTrail, RoutePoint, Trails } from "../../../assets/Data";
+import {
+  RouteTrail,
+  RoutePoint,
+  Trails,
+  Region,
+  RouteType,
+} from "../../../assets/Data";
 import ElevationProfile from "../ElevationProfile";
 import TrailsService from "../../../services/trails.service";
 import AuthContext from "../../../store/auth-context";
 import useGetUsers from "../../../hooks/user/useGetUser";
 import { useNavigate } from "react-router-dom";
+import { timeForWalkHours, formatDuration } from "../../../utils/timeforWalk";
+import { calculateElevationGainAndLoss } from "../../../utils/elevation";
+import Modaltrails from "./Modaltrails";
+import { createPortal } from "react-dom";
+import FeaturesListService from "../../../services/featuresList.service";
 
 interface PlannerDashboardProps {
   visible: boolean;
   points: RoutePoint[];
-  route: routeTrail | null;
+  route: RouteTrail | null;
   editingTrail?: Trails | null;
   isEditing?: boolean;
   onHoverPoint?: (lat: number, lng: number) => void;
@@ -45,20 +56,27 @@ const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
   onCancelEdit,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isOpenModal, setIsOpenModal] = useState(false);
   const navigate = useNavigate();
-  const [routeType, setRouteType] = useState<
-    "one-way" | "loop" | "back-and-forth"
-  >("one-way");
-  const [region, setRegion] = useState<"Tatry" | "Beskid Sądecki">("Tatry");
+  const [routeType, setRouteType] = useState<RouteType>("one-way");
+  const [region, setRegion] = useState<Region>("Tatry");
   const [name, setName] = useState("");
   const { user } = useContext(AuthContext);
   const { getUserByEmail, usersData } = useGetUsers();
+  const [features, setFeatures] = useState([]);
+  const [trailDifficulty, setTrailDifficulty] = useState<string | null>(null);
+  const [selectedTrailFeatures, setSelectedTrailFeatures] = useState<number[]>(
+    [],
+  );
 
   useEffect(() => {
-    if (user?.email) {
-      getUserByEmail(user.email);
-    }
+    if (!user?.email) return;
+    getUserByEmail(user.email);
   }, [user?.email, getUserByEmail]);
+
+  useEffect(() => {
+    FeaturesListService.getAll().then((res) => setFeatures(res.data.data));
+  }, []);
 
   useEffect(() => {
     if (editingTrail && isEditing) {
@@ -67,25 +85,27 @@ const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
       setRegion(editingTrail.region as "Tatry" | "Beskid Sądecki");
     }
   }, [editingTrail, isEditing]);
+  const handleSaveDifficulty = (
+    difficulty: string,
+    selectedFeatures: number[],
+  ) => {
+    setTrailDifficulty(difficulty);
+    setSelectedTrailFeatures(selectedFeatures.map(Number));
+  };
+  const currentUser = usersData?.[0][0];
 
-  const currentUser = usersData?.[0]?.[0];
-
-  const routeData = useMemo(() => {
+  const calculateRouteData = useCallback((route: RouteTrail | null) => {
     if (!route) return null;
 
-    const feature = route.features[0];
-    const summary = feature.properties.summary;
-    const geometry = feature.geometry;
+    const feature = route.features?.[0];
+    if (!feature || !feature.geometry || !feature.geometry.coordinates)
+      return null;
 
-    let coordinates: number[][];
-    if (
-      Array.isArray(geometry.coordinates[0]) &&
-      Array.isArray(geometry.coordinates[0][0])
-    ) {
-      coordinates = geometry.coordinates[0] as unknown as number[][];
-    } else {
-      coordinates = geometry.coordinates as unknown as number[][];
-    }
+    const geometry = feature.geometry;
+    const details = feature.properties;
+    const coordinates = Array.isArray(geometry.coordinates[0][0])
+      ? (geometry.coordinates[0] as number[][])
+      : (geometry.coordinates as number[][]);
 
     const elevations = coordinates
       .map((coord) => coord[2])
@@ -95,19 +115,35 @@ const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
       elevations.length > 0
         ? Math.max(...elevations) - Math.min(...elevations)
         : 0;
+    const distanceKm = parseFloat(
+      (feature.properties.distance / 1000).toFixed(2),
+    );
+
+    // Używamy domyślnego poziomu trudności 3 dla obliczeń czasu
+    const difficultyLevel = 3;
+
+    const durationHours = timeForWalkHours(
+      distanceKm,
+      elevationGain / 1000,
+      difficultyLevel,
+    );
+    const elevationData = calculateElevationGainAndLoss(coordinates);
 
     return {
       coordinates,
-      summary,
       elevations,
       elevationGain,
-      distance: (summary.distance / 1000).toFixed(2),
-      duration: {
-        hours: Math.floor(summary.duration / 3600),
-        minutes: Math.floor((summary.duration % 3600) / 60),
-      },
+      distanceKm,
+      details,
+      elevationData,
+      duration: durationHours,
     };
-  }, [route]);
+  }, []);
+
+  const routeData = useMemo(
+    () => calculateRouteData(route),
+    [route, calculateRouteData],
+  );
 
   const handleNameChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -149,46 +185,69 @@ const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
       id: editingTrail?.id || 0,
       name: name || "Moja trasa",
       description: editingTrail?.description || "",
-      difficulty: editingTrail?.difficulty || "",
-      length_km: +routeData.distance,
-      elevation_gain: Math.round(routeData.elevationGain),
-      region: region,
+      difficulty: trailDifficulty || editingTrail?.difficulty || "",
+      length_km: routeData?.details?.distance
+        ? Number((routeData.details.distance / 1000).toFixed(2))
+        : 0,
+      elevation_gain:
+        parseInt(routeData?.elevationData.gain) ||
+        Math.round(routeData?.elevationGain) ||
+        0,
+      region,
       route_type: routeType,
       geometry: {
         type: "LineString",
-        coordinates: routeData.coordinates,
+        coordinates: routeData?.coordinates || [],
       },
       created_by: currentUser?.id?.toString() || "1",
-      duration_minutes: Math.round(routeData.summary.duration / 60),
+      duration_minutes: routeData?.duration
+        ? Math.round(Number(routeData.duration) * 60)
+        : 0,
+      photos: editingTrail?.photos || [],
+      public: editingTrail?.public || false,
+      points: points.map((p, idx) => ({
+        coordinates: p.coordinates,
+        name: p.name,
+        point_order: idx,
+      })),
     };
-
-    const pointsData = points.map((p, idx) => ({
-      coordinates: p.coordinates,
-      name: p.name,
-      point_order: idx,
-    })) as RoutePoint[];
 
     try {
       let res;
+
       if (isEditing && editingTrail?.id) {
-        res = await TrailsService.updateTrail(editingTrail.id, {
-          ...trailData,
-          points: pointsData,
-        });
+        res = await TrailsService.updateTrail(editingTrail.id, trailData);
+
+        try {
+          await FeaturesListService.updateTrailFeatures(
+            editingTrail.id,
+            selectedTrailFeatures,
+          );
+        } catch (featuresError) {
+          console.error("Błąd aktualizacji cech trasy:", featuresError);
+        }
+
         alert("Trasa zaktualizowana pomyślnie!");
         navigate(`/dashboard/my-routes/${editingTrail.id}`);
-        console.log("Trail updated:", res.data);
-
-        if (onTrailUpdated && res.data) {
-          onTrailUpdated(res.data);
-        }
+        onTrailUpdated?.(res.data);
       } else {
-        res = await TrailsService.createTrail({
-          ...trailData,
-          points: pointsData,
-        });
+        res = await TrailsService.createTrail(trailData);
+
+        const newTrailId =
+          res.data?.data?.id || res.data?.id || res.data?.trail?.id;
+
+        if (newTrailId) {
+          try {
+            await FeaturesListService.updateTrailFeatures(
+              newTrailId,
+              selectedTrailFeatures,
+            );
+          } catch (featuresError) {
+            console.error("Błąd zapisu cech trasy:", featuresError);
+          }
+        }
+
         alert("Trasa zapisana pomyślnie!");
-        console.log("Trail created:", res.data);
       }
     } catch (err) {
       console.error("Błąd zapisu trasy:", err);
@@ -205,6 +264,8 @@ const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
     isEditing,
     onTrailUpdated,
     navigate,
+    trailDifficulty,
+    selectedTrailFeatures,
   ]);
 
   if (!visible) return null;
@@ -338,23 +399,44 @@ const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
               </select>
             </div>
           </div>
+          <div className="flex flex-row space-x-4">
+            <h2 className="text-lg font-semibold mb-2">
+              <FontAwesomeIcon icon={faList} /> Ustal poziom trudności:
+            </h2>
+            <a
+              onClick={() => setIsOpenModal(true)}
+              className="px-4 py-1 bg-accent rounded-lg"
+            >
+              ustal{" "}
+            </a>
+          </div>
           <h2 className="text-lg font-semibold mb-2">
             <FontAwesomeIcon icon={faList} /> Podsumowanie:
           </h2>
-          <div className="mb-4 space-y-1">
-            <p>
-              <strong>Długość trasy:</strong> {routeData?.distance || "0"} km
-            </p>
-            <p>
-              <strong>Czas przejścia:</strong>{" "}
-              {routeData
-                ? `${routeData.duration.hours} h ${routeData.duration.minutes} min`
-                : "0 h 0 min"}
-            </p>
-            <p>
-              <strong>Przewyższenie:</strong>{" "}
-              {routeData ? `${Math.round(routeData.elevationGain)} m` : "0 m"}
-            </p>
+          <div className="flex flex-row space-x-4">
+            <div className="mb-4 space-y-1">
+              <p>
+                <strong>Długość trasy:</strong> {routeData?.distanceKm || 0} km
+              </p>
+              <p>
+                <strong>Czas przejścia:</strong>{" "}
+                {formatDuration(routeData?.duration || 0)}
+              </p>
+            </div>
+            <div className="mb-4 space-y-1">
+              <p>
+                <strong>Suma podejść:</strong>{" "}
+                {routeData?.elevationGain
+                  ? `${calculateElevationGainAndLoss(routeData.coordinates).gain} `
+                  : "0 m"}
+              </p>
+              <p>
+                <strong>Suma zejść:</strong>{" "}
+                {routeData?.elevationGain
+                  ? `${calculateElevationGainAndLoss(routeData.coordinates).loss} `
+                  : "0 m"}
+              </p>
+            </div>
           </div>
           <h2 className="text-lg font-semibold mb-2">
             <FontAwesomeIcon icon={faMountain} /> Wykres wysokości
@@ -363,6 +445,20 @@ const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
             <ElevationProfile route={route} onHoverPoint={handleHoverPoint} />
           </div>
         </div>
+        {isOpenModal &&
+          routeData &&
+          createPortal(
+            <Modaltrails
+              isOpenModal={isOpenModal}
+              setIsOpenModal={setIsOpenModal}
+              distance={routeData.distanceKm}
+              elevationGain={parseInt(routeData.elevationData.gain) || 0}
+              duration={routeData.duration || 0}
+              features={features}
+              onSaveDifficulty={handleSaveDifficulty}
+            />,
+            document.body,
+          )}
       </div>
     </>
   );

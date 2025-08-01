@@ -23,6 +23,7 @@ import AuthContext from "../../store/auth-context";
 import ElevationSection from "../../components/Manager/Trail/ElevationSection";
 import GallerySection from "../../components/Manager/Trail/GallerySection";
 import ReviewSection from "../../components/Manager/Trail/ReviewSection";
+import TrailInfoSection from "../../components/Manager/Trail/TrailInfoSection";
 
 const emptyTrail: ExtendedTrail = {
   id: 0,
@@ -41,6 +42,7 @@ const emptyTrail: ExtendedTrail = {
   created_at: new Date().toISOString(),
   duration_minutes: 0,
   photos: [],
+  features: [],
 };
 
 const EditTrailPage = () => {
@@ -250,33 +252,7 @@ const EditTrailPage = () => {
       <div className="lg:col-span-2">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-1">
-            <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20 mb-6">
-              <h3 className="text-xl font-lora text-white mb-4 border-b border-white/20 pb-2">
-                Informacje o trasie
-              </h3>
-              <div className="space-y-4">
-                <div>
-                  <h4 className="text-white/70 text-sm mb-1">Opis</h4>
-                  <p className="text-white">
-                    {trail.description || "Brak opisu trasy."}
-                  </p>
-                </div>
-                <div>
-                  <h4 className="text-white/70 text-sm mb-1">Cechy</h4>
-                  <p className="text-white">{"Brak cech trasy."}</p>
-                </div>
-                <div>
-                  <h4 className="text-white/70 text-sm mb-1">Region</h4>
-                  <p className="text-white font-medium">{trail.region}</p>
-                </div>
-                <div>
-                  <h4 className="text-white/70 text-sm mb-1">Utworzono</h4>
-                  <p className="text-white">
-                    {new Date(trail.created_at).toLocaleDateString()}
-                  </p>
-                </div>
-              </div>
-            </div>
+            <TrailInfoSection trail={trail} />
           </div>
           <div className="lg:col-span-2">
             {activeTab === "info" && (

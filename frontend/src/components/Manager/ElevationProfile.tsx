@@ -7,11 +7,11 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { routeTrail } from "../../assets/Data";
+import { RouteTrail } from "../../assets/Data";
 import React, { useCallback, useRef, useMemo } from "react";
 
 interface ElevationData {
-  route: routeTrail | null;
+  route: RouteTrail | null;
   onHoverPoint?: (lat: number, lng: number) => void;
 }
 
@@ -34,7 +34,7 @@ const ElevationProfile: React.FC<ElevationData> = ({ route, onHoverPoint }) => {
     ) as [number, number, number][];
 
     const totalDistanceKm = parseFloat(
-      (route.features[0].properties.summary.distance / 1000).toFixed(2),
+      (route.features[0].properties.distance / 1000).toFixed(2),
     );
     const maxPoints = 500;
     const step =

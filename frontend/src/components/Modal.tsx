@@ -18,7 +18,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
         className="bg-white/10 backdrop-blur-lg rounded-xl border border-white/20 p-6 max-w-lg w-full"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex flex-col justify-center items-center gap-4 mt-6">
+        <div className="flex flex-col justify-center items-center gap-2 mt-6">
           {children}
         </div>
       </div>

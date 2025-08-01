@@ -32,7 +32,8 @@ services:
       - ./app/dist/files:/app/dist/files
       - ./app/dist/files/profiles:/app/dist/files/profiles
       - ./app/dist/files/verifications:/app/dist/files/verifications  
-      - ./app/dist/files/trails:/app/dist/files/trails  
+      - ./app/dist/files/trails:/app/dist/files/trails
+      - ./backend/data/exportMain.geojson:/app/data/exportMain.geojson:ro
     environment:
       - DB_HOST=postgres
       - DB_PORT=5432

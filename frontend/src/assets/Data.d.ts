@@ -45,10 +45,13 @@ export interface Trails {
   created_by: string;
   created_at: string;
   points?: TrailPoint[];
-  duration_minutes?: number;
+  photos?: Photo[];
+  duration_minutes: number;
+  public?: boolean;
+  features?: { id: number; name: string; weight: number }[];
 }
 
-export type NewTrail = Omit<Trails, "id" | "created_at" | "points">;
+export type NewTrail = Omit<Trails, "id" | "created_at" | "points" | "photos">;
 
 export interface TrailPoint {
   id: number;
@@ -65,13 +68,15 @@ export interface FavoriteTrails {
   added_at: string;
 }
 
-interface ExtendedTrail extends Trails {
-  photos?: {
-    id: number;
-    trail_id: number;
-    image_name: string;
-    created_at: string;
-  }[];
+export interface Photo {
+  id: number;
+  trail_id: number;
+  image_name: string;
+  created_at: string;
+}
+
+export interface ExtendedTrail extends Trails {
+  photos?: Photo[];
 }
 
 // ===================== COMMUNITY TRAILS & COMMENTS =====================
@@ -220,36 +225,24 @@ export interface RouteInfo {
   description?: string;
 }
 
-interface routeTrail {
+export interface RouteTrail {
   type: string;
   features: {
     type: string;
     geometry: {
-      coordinates: number[][][];
+      type: string;
+      coordinates: [number, number, number][] | number[][][];
     };
     properties: {
-      id: string;
-      summary: {
+      id?: string;
+      distance: number;
+      nodes?: number;
+      summary?: {
         distance: number;
         duration: number;
       };
-      segments: {
-        distance: number;
-        duration: number;
-        steps: {
-          distance: number;
-          duration: number;
-          type: number;
-          instruction: string;
-          name?: string;
-          way_points: number[];
-        }[];
-      }[];
-      elevation: number[];
-    };
-    geometry: {
-      type: string;
-      coordinates: number[][];
+      segments?: unknown[];
+      elevation?: number[];
     };
   }[];
 }
@@ -323,3 +316,7 @@ interface Err extends Error {
     };
   };
 }
+
+export type RouteType = "one-way" | "loop" | "back-and-forth";
+
+export type Region = "Tatry" | "Beskid Sądecki";

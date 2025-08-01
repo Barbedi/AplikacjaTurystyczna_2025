@@ -104,7 +104,7 @@ const TrailPeak = () => {
             <a
               title="Zobacz trase"
               onClick={() => chooseTrail(trail)}
-              className="p-4 cursor-pointer"
+              className="p-4  hover:text-purple-400  cursor-pointer"
             >
               {" "}
               <FontAwesomeIcon icon={faChevronRight} className="ml-2" />{" "}
@@ -112,7 +112,7 @@ const TrailPeak = () => {
             <a
               title="Edycja trasy"
               onClick={() => editTrail(trail)}
-              className="p-4 cursor-pointer"
+              className="p-4 hover:text-green-400/80  cursor-pointer"
             >
               {" "}
               <FontAwesomeIcon icon={faEdit} />

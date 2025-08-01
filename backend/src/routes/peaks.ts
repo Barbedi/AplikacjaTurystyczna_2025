@@ -479,14 +479,14 @@ router.get("/:id", async (req, res, next) => {
  *                 format: float
  *                 example: 20.0886
  *     responses:
- *       200:
- *         description: Peak updated successfully
- *      400:
- *        description: Bad request (e.g., missing required fields)
- *      404:
- *        description: Peak not found
- *      500:
- *        description: Internal server error
+ *         200:
+ *           description: Peak updated successfully
+ *         400:
+ *           description: Bad request (e.g., missing required fields)
+ *         404:
+ *           description: Peak not found
+ *         500:
+ *           description: Internal server error
  */
 
 router.patch("/:id", async (req, res, next) => {
