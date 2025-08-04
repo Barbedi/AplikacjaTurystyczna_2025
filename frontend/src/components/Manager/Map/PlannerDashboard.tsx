@@ -11,6 +11,8 @@ import {
   faTrash,
   faCheck,
   faXmark,
+  faCircleExclamation,
+  faCircleCheck,
 } from "@fortawesome/free-solid-svg-icons";
 import {
   RouteTrail,
@@ -29,6 +31,7 @@ import { calculateElevationGainAndLoss } from "../../../utils/elevation";
 import Modaltrails from "./Modaltrails";
 import { createPortal } from "react-dom";
 import FeaturesListService from "../../../services/featuresList.service";
+import ToastModalContext from "../../../store/toast-modal-context";
 
 interface PlannerDashboardProps {
   visible: boolean;
@@ -72,6 +75,8 @@ const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
   const [selectedTrailFeatures, setSelectedTrailFeatures] = useState<number[]>(
     [],
   );
+   const { createToast } = useContext(ToastModalContext);
+
 
   useEffect(() => {
     if (!user?.email) return;
@@ -231,7 +236,12 @@ const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
           console.error("Błąd aktualizacji cech trasy:", featuresError);
         }
 
-        alert("Trasa zaktualizowana pomyślnie!");
+        createToast({
+          message: "Trasa zaktualizowana pomyślnie!",
+          icon: faCircleCheck,
+          type: "primary",
+          timeout: 5000,
+        });
         navigate(`/dashboard/my-routes/${editingTrail.id}`);
         onTrailUpdated?.(res.data);
       } else {
@@ -251,12 +261,22 @@ const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
           }
         }
       onCloseDashboard?.();
-        alert("Trasa zapisana pomyślnie!");
+        createToast({
+          message: "Trasa zapisana pomyślnie!",
+          icon: faCircleCheck,
+          type: "primary",
+          timeout: 5000,
+        });
        
       }
     } catch (err) {
       console.error("Błąd zapisu trasy:", err);
-      alert("Wystąpił błąd przy zapisie trasy.");
+      createToast({
+        message: "Wystąpił błąd podczas zapisywania trasy. Spróbuj ponownie.",
+        icon: faCircleExclamation,
+        type: "danger",
+        timeout: 5000,
+      });
     }
   }, [
     onCloseDashboard,
@@ -272,6 +292,7 @@ const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
     navigate,
     trailDifficulty,
     selectedTrailFeatures,
+    createToast,
   ]);
 
   if (!visible) return null;

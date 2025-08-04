@@ -3,7 +3,9 @@ import {
   faCamera,
   faChevronDown,
   faXmark,
+  faTriangleExclamation,
   faCircleExclamation,
+  faCircleCheck,
 } from "@fortawesome/free-solid-svg-icons";
 import { useState, useEffect, useRef, useContext } from "react";
 import peaksService from "../../../services/peaks.service";
@@ -173,7 +175,12 @@ const MyPeaksAdd = () => {
 
         const response = await peaksService.create(newPeak);
         if (!response?.data?.data) {
-          alert("Błąd podczas tworzenia szczytu.");
+          createToast({
+            message: "Błąd podczas tworzenia szczytu.",
+            type: "danger",
+            icon: faCircleExclamation,
+            timeout: 5000,
+          });
           return;
         }
 
@@ -181,13 +188,17 @@ const MyPeaksAdd = () => {
       }
 
       if (!userId || !peakId) {
-        alert("Brakuje ID użytkownika lub szczytu.");
+        createToast({
+          message: "Nie udało się uzyskać identyfikatora użytkownika lub szczytu.",
+          type: "warning",
+          icon: faTriangleExclamation,
+          timeout: 5000,
+        });
         return;
       }
 
       let uploadedFilename: string | null = null;
 
-      // Upload zdjęcia jeśli jest
       if (selectedImage) {
         const uploadRes = await filesService.uploadPeakImage(selectedImage);
         uploadedFilename = uploadRes.data?.file?.filename;
@@ -207,7 +218,7 @@ const MyPeaksAdd = () => {
       createToast({
         message: "Szczyt został pomyślnie dodany!",
         type: "primary",
-        icon: faCamera,
+        icon: faCircleCheck,
         timeout: 5000,
       });
       clearForm();
