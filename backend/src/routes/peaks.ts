@@ -565,6 +565,63 @@ export default router;
 
 /**
  * @swagger
+ * /peaks/{id}/verify:
+ *   patch:
+ *     summary: Update peak verification status
+ *     tags:
+ *       - Peaks
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: Peak ID
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               verified:
+ *                 type: boolean
+ *                 example: true
+ *     responses:
+ *       200:
+ *         description: Peak verification status updated successfully
+ *       400:
+ *         description: Bad request
+ *       404:
+ *         description: Peak not found
+ *       500:
+ *         description: Internal server error
+ */
+router.patch("/:id/verify", async (req, res, next) => {
+  try {
+    const parsedId = parseInt(req.params.id, 10);
+    if (isNaN(parsedId)) {
+      throw new Err("Invalid ID", 400);
+    }
+
+    const { verified } = req.body;
+    if (typeof verified !== 'boolean') {
+      throw new Err("Verified must be a boolean value", 400);
+    }
+
+    const result = await peaksService.updatePeakVerification(parsedId, verified);
+    res.status(200).json(result);
+  } catch (error) {
+    if (error instanceof Err) {
+      res.status(error.statusCode || 500).json({ message: error.message });
+    } else {
+      next(error);
+    }
+  }
+});
+
+/**
+ * @swagger
  * components:
  *   schemas:
  *     Peak:

@@ -291,6 +291,29 @@ async function searchPeaks(query: string) {
   };
 }
 
+// Aktualizacja statusu weryfikacji szczytu
+async function updatePeakVerification(id: number, verified: boolean) {
+  const query = `
+    UPDATE peaks
+    SET verified = $1
+    WHERE id = $2
+    RETURNING id, name, elevation, region, latitude, longitude, verified, image_filename;
+  `;
+  const values = [verified, id];
+
+  const result = await db.query(query, values);
+  const rows = result.rows;
+
+  if (rows.length === 0) {
+    throw new Err("Peak not found", 404);
+  }
+
+  return {
+    data: rows[0],
+    message: "Successfully updated peak verification status",
+  };
+}
+
 export default {
   getPeakByUserId,
   getPeaks,
@@ -299,6 +322,7 @@ export default {
   getPeakById,
   updatePeak,
   updatePeakImage,
+  updatePeakVerification,
   getPeaksByCollectionId,
   searchPeaks,
   getUserPeakById,

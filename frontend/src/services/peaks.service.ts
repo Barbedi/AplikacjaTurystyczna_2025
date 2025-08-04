@@ -30,6 +30,12 @@ class PeaksService {
       image_filename: imageFilename,
     });
   };
+
+  updateVerification = (id: string, verified: boolean) => {
+    return httpCommon.patch(`/peaks/${id}/verify`, {
+      verified: verified,
+    });
+  };
   getCrownPoland = (page: number = 1) => {
     return httpCommon.get(`/peaks/crown-poland?page=${page}`);
   };
