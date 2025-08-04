@@ -41,6 +41,8 @@ interface PlannerDashboardProps {
   onRouteTypeChange?: (type: "one-way" | "loop" | "back-and-forth") => void;
   onTrailUpdated?: (updatedTrail: Trails) => void;
   onCancelEdit?: () => void;
+  onCloseDashboard?: () => void;
+  onRemovePointAll?: () => void;
 }
 
 const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
@@ -51,9 +53,11 @@ const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
   isEditing = false,
   onHoverPoint,
   onRemovePoint,
+  onRemovePointAll,
   onRouteTypeChange,
   onTrailUpdated,
   onCancelEdit,
+  onCloseDashboard,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isOpenModal, setIsOpenModal] = useState(false);
@@ -246,14 +250,16 @@ const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
             console.error("Błąd zapisu cech trasy:", featuresError);
           }
         }
-
+      onCloseDashboard?.();
         alert("Trasa zapisana pomyślnie!");
+       
       }
     } catch (err) {
       console.error("Błąd zapisu trasy:", err);
       alert("Wystąpił błąd przy zapisie trasy.");
     }
   }, [
+    onCloseDashboard,
     routeData,
     editingTrail,
     name,
@@ -321,6 +327,7 @@ const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
             />
             <FontAwesomeIcon
               icon={faTrash}
+              onClick={onRemovePointAll}
               title="Wyczyść trasę"
               className="text-black text-2xl cursor-pointer ml-2"
             />

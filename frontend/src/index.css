@@ -7,6 +7,7 @@
 
 @theme {
   --animate-bar: progress_bar 2s linear infinite;
+  --animate-progress: progress_bar var(--duration) linear 1;
 
   --font-lora: "Lora", sans-serif;
   --color-primary: #4c95db;
@@ -25,4 +26,8 @@
   100% {
     transform: translateX(100%);
   }
+}
+
+.animate-progress {
+  animation: progress_bar linear forwards;
 }

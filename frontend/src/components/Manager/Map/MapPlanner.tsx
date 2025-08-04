@@ -94,6 +94,7 @@ const MapPlanner = () => {
   );
   const [editingTrail, setEditingTrail] = useState<Trails | null>(null);
   const [, setIsLoadingTrail] = useState<boolean>(false);
+  const [isDashboardVisible, setDashboardVisible] = useState(true);
 
   const hoverTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -204,6 +205,8 @@ const MapPlanner = () => {
       setPoints((prev) => prev.filter((_, i) => i !== indexToRemove)),
     [],
   );
+
+  const removePointAll = useCallback(() => setPoints([]), []);
 
   // Usuwanie punktu po współrzędnych (z eventu contextmenu)
   const removePointByCoordinates = useCallback(
@@ -387,16 +390,18 @@ const MapPlanner = () => {
       </MapContainer>
 
       <PlannerDashboard
-        visible={points.length >= 2}
+        visible={isDashboardVisible && points.length >= 2}
         points={points}
         route={routeGeoJson}
         editingTrail={editingTrail}
         isEditing={!!trailId}
         onHoverPoint={handleHoverPoint}
         onRemovePoint={removePoint}
+        onRemovePointAll={removePointAll}
         onRouteTypeChange={setRouteType}
         onTrailUpdated={handleTrailUpdated}
         onCancelEdit={handleCancelEdit}
+        onCloseDashboard={() => setDashboardVisible(false)}
       />
     </div>
   );

@@ -320,3 +320,15 @@ interface Err extends Error {
 export type RouteType = "one-way" | "loop" | "back-and-forth";
 
 export type Region = "Tatry" | "Beskid Sądecki";
+ export interface ToastProps {
+  message: string;
+  type?: "primary" | "alt" | "warning" | "danger";
+  icon?: IconDefinition;
+  action?: {
+    label: string;
+    onClick: () => void;
+  };
+  timeout?: number;
+  onClose?: () => void;
+}
+

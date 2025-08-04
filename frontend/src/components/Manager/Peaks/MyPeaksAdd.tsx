@@ -3,6 +3,7 @@ import {
   faCamera,
   faChevronDown,
   faXmark,
+  faCircleExclamation,
 } from "@fortawesome/free-solid-svg-icons";
 import { useState, useEffect, useRef, useContext } from "react";
 import peaksService from "../../../services/peaks.service";
@@ -11,6 +12,7 @@ import { Peaks } from "../../../assets/Data";
 import AuthContext from "../../../store/auth-context";
 import useGetUsers from "../../../hooks/user/useGetUser";
 import filesService from "../../../services/files.service";
+import ToastModalContext from "../../../store/toast-modal-context";
 
 const MyPeaksAdd = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -23,6 +25,7 @@ const MyPeaksAdd = () => {
   const [userId, setUserId] = useState<number | null>(null);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [selectedFileName, setSelectedFileName] = useState<string>("");
+  const { createToast } = useContext(ToastModalContext);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -201,11 +204,22 @@ const MyPeaksAdd = () => {
         uploadedFilename ?? "",
       );
 
-      alert("Szczyt dodany pomyślnie!");
+      createToast({
+        message: "Szczyt został pomyślnie dodany!",
+        type: "primary",
+        icon: faCamera,
+        timeout: 5000,
+      });
       clearForm();
     } catch (error) {
       console.error("Błąd dodawania szczytu:", error);
-      alert("Wystąpił błąd.");
+      createToast({
+        message: "Nie udało się uzyskać identyfikatora użytkownika lub szczytu.",
+        type: "danger",
+        icon: faCircleExclamation,
+        timeout: 5000,
+        onClose: () => console.log("Toast closed"),
+      });
     }
   };
 
