@@ -13,6 +13,7 @@ import {
   faXmark,
   faCircleExclamation,
   faCircleCheck,
+  faGear,
 } from "@fortawesome/free-solid-svg-icons";
 import {
   RouteTrail,
@@ -427,16 +428,26 @@ const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
               </select>
             </div>
           </div>
-          <div className="flex flex-row space-x-4">
-            <h2 className="text-lg font-semibold mb-2">
-              <FontAwesomeIcon icon={faList} /> Ustal poziom trudności:
+          <div className="flex flex-row items-center gap-x-4 mb-4">
+            <h2 className="text-lg font-semibold">
+              <FontAwesomeIcon icon={faGear} /> Ustal poziom trudności:
             </h2>
-            <a
+            <button
               onClick={() => setIsOpenModal(true)}
-              className="px-4 py-1 bg-accent rounded-lg"
+              className={`px-2 py-1 rounded-lg transition-all duration-200 flex items-center space-x-2 backdrop-blur-sm border text-sm ${
+                trailDifficulty 
+                  ? 'bg-primary/20 hover:bg-primary/30 text-primary border-primary/30 shadow-primary/20' 
+                  : 'bg-white/10 hover:bg-white/20 text-gray-800 border-white/20 hover:border-accent/40'
+              } shadow-lg hover:shadow-xl`}
             >
-              ustal{" "}
-            </a>
+              <FontAwesomeIcon 
+                icon={trailDifficulty ? faCheck : faGear} 
+                className="text-xs" 
+              />
+              <span className="font-medium">
+                {trailDifficulty ? `${trailDifficulty}` : 'Ustal'}
+              </span>
+            </button>
           </div>
           <h2 className="text-lg font-semibold mb-2">
             <FontAwesomeIcon icon={faList} /> Podsumowanie:

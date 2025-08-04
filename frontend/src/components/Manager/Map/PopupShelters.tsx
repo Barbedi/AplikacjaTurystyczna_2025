@@ -1,5 +1,6 @@
-import React from "react";
-import { CircleMarker, Popup } from "react-leaflet";
+import React, { useMemo } from "react";
+import { Marker, Popup } from "react-leaflet";
+import L from "leaflet";
 import { Shelters, RoutePoint } from "../../../assets/Data";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHouseFlag, faChevronRight } from "@fortawesome/free-solid-svg-icons";
@@ -17,19 +18,23 @@ const SheltersMap: React.FC<SheltersMapProps> = ({
   addPointAtEnd,
   addPointM,
 }) => {
+  const shelterIcon = useMemo(
+    () =>
+      L.icon({
+        iconUrl: "https://cdn-icons-png.flaticon.com/512/16935/16935893.png",
+        iconSize: [20, 20],
+        iconAnchor: [10, 20],
+      }),
+    []
+  );
+
   return (
     <>
       {shelters.map((shelter) => (
-        <CircleMarker
+        <Marker
           key={shelter.id}
-          center={[shelter.latitude, shelter.longitude]}
-          radius={6}
-          pathOptions={{
-            color: "white",
-            weight: 1,
-            fillColor: "white",
-            fillOpacity: 1,
-          }}
+          position={[shelter.latitude, shelter.longitude]}
+          icon={shelterIcon}
         >
           <Popup>
             <span className="text-center justify-center items-center flex text-gray-400">
@@ -58,7 +63,7 @@ const SheltersMap: React.FC<SheltersMapProps> = ({
                     type: "shelter",
                   })
                 }
-                className=" text-black rounded-md transition cursor-pointer w-full text-start p-0.5"
+                className="text-black rounded-md transition cursor-pointer w-full text-start p-0.5"
               >
                 Ustaw jako początek trasy
                 <FontAwesomeIcon icon={faChevronRight} className="ml-2" />
@@ -72,7 +77,7 @@ const SheltersMap: React.FC<SheltersMapProps> = ({
                     type: "shelter",
                   })
                 }
-                className=" text-black rounded-md transition cursor-pointer w-full text-start p-0.5"
+                className="text-black rounded-md transition cursor-pointer w-full text-start p-0.5"
               >
                 Ustaw punkt pośredni trasy
                 <FontAwesomeIcon icon={faChevronRight} className="ml-2" />
@@ -93,7 +98,7 @@ const SheltersMap: React.FC<SheltersMapProps> = ({
               </button>
             </div>
           </Popup>
-        </CircleMarker>
+        </Marker>
       ))}
     </>
   );
