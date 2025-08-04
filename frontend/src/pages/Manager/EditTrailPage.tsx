@@ -266,7 +266,11 @@ const EditTrailPage = () => {
                   Mapa trasy
                 </h3>
                 <div className="h-[312px] w-full">
-                  <MapTrails trail={trail} hoverPoint={null} />
+                 <MapTrails 
+                   trail={trail} 
+                   trailPoints={trail.points || []} 
+                   hoverPoint={null} 
+                 />
                 </div>
               </div>
             )}
