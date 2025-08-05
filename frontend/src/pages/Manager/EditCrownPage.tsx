@@ -99,8 +99,6 @@ const EditCrownPage = () => {
 
       let canUpload = true;
       let tempVerificationResult = null;
-
-      // Weryfikacja GPS dla CrownPeak
       if (isCrownPeak && peak.latitude && peak.longitude) {
         try {
           const gps = await exifr.gps(file);
@@ -129,8 +127,6 @@ const EditCrownPage = () => {
         
         setVerificationResult(tempVerificationResult);
       }
-
-      // Pokaż preview tylko jeśli weryfikacja przeszła lub to nie jest Crown Peak
       if (canUpload || !isCrownPeak) {
         const reader = new FileReader();
         reader.onload = () => {
@@ -143,7 +139,6 @@ const EditCrownPage = () => {
         reader.readAsDataURL(file);
       }
 
-      // Upload tylko jeśli weryfikacja przeszła lub to nie jest Crown Peak
       if (canUpload || !isCrownPeak) {
         try {
           const response = await filesService.uploadPeakImage(file);
@@ -152,16 +147,26 @@ const EditCrownPage = () => {
           if (filename && id) {
             if (isCrownPeak) {
               await peaksService.updateImage(id, filename);
-              
-              // Automatycznie ustaw status weryfikacji na podstawie GPS
               if (tempVerificationResult && tempVerificationResult.isValid) {
                 try {
                   await peaksService.updateVerification(id, true);
                 } catch (verificationError) {
                   console.error('Błąd podczas aktualizacji statusu weryfikacji:', verificationError);
                 }
+                if (currentUser?.id) {
+                  try {
+                    await userpeaksService.addPeakUsers(
+                      parseInt(id),
+                      currentUser.id,
+                      "",
+                      filename
+                    );
+                    console.log('Szczyt automatycznie dodany do zdobytych szczytów');
+                  } catch (addPeakError) {
+                    console.error('Błąd podczas dodawania szczytu do user_peaks:', addPeakError);
+                  }
+                }
               }
-              
               const peakResponse = await peaksService.getById(id);
               setPeak(peakResponse.data.data);
             } else if (isMyPeak && currentUser?.id) {
@@ -174,7 +179,6 @@ const EditCrownPage = () => {
           console.error("Błąd podczas uploadowania zdjęcia:", error);
         }
       } else {
-        // Zresetuj preview jeśli upload był anulowany
         setImagePreview("");
       }
     }
@@ -352,7 +356,7 @@ const EditCrownPage = () => {
               </h3>
               <div className="grid grid-cols-1 max-h-1/2  gap-3 mt-4">
                 {myPeak?.photoUrl && (
-                  <div className=" rounded-lg overflow-hidden border border-white/30">
+                  <div className="h-79 rounded-lg overflow-hidden border border-white/30">
                     <img
                       src={
                         userImagePreview ||

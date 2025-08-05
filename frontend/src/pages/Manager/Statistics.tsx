@@ -9,16 +9,17 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import statisticsService from "../../services/statistics.service";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import type { Statistics } from "../../assets/Data";
 import InfoCard from "../../components/Manager/Statistic/InfoCard";
 import AuthContext from "../../store/auth-context";
 import useGetUsers from "../../hooks/user/useGetUser";
-import { useContext } from "react";
 
 const Statistics = () => {
   const { user } = useContext(AuthContext);
   const { getUserByEmail, usersData } = useGetUsers();
+  const [statistics, setStatistics] = useState<Statistics | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (user?.email) {
@@ -27,24 +28,59 @@ const Statistics = () => {
   }, [user?.email, getUserByEmail]);
 
   const currentUser = usersData?.[0][0];
-  const [statistics, setStatistics] = useState<Statistics | null>(null);
+
+  const fetchStatistics = async () => {
+    if (!currentUser?.id) return;
+    
+    setError(null);
+    
+    try {
+      const data = await statisticsService.getStatisticsForUser(
+        currentUser.id,
+      );
+      setStatistics(data);
+    } catch (error) {
+      console.error("Failed to fetch statistics:", error);
+      setError("Nie udało się załadować statystyk. Spróbuj ponownie.");
+    }
+  };
+
   useEffect(() => {
-    const fetchStatistics = async () => {
+    const loadStatistics = async () => {
+      if (!currentUser?.id) return;
+      
+      setError(null);
+      
       try {
         const data = await statisticsService.getStatisticsForUser(
-          currentUser?.id || 0,
+          currentUser.id,
         );
         setStatistics(data);
       } catch (error) {
         console.error("Failed to fetch statistics:", error);
+        setError("Nie udało się załadować statystyk. Spróbuj ponownie.");
       }
     };
 
-    fetchStatistics();
+    if (currentUser?.id) {
+      loadStatistics();
+    }
   }, [currentUser?.id]);
 
   return (
     <div className="w-full max-w-6xl px-4 md:px-6 mx-auto">
+      {error && (
+        <div className="bg-red-500/20 border border-red-500/30 rounded-lg p-4 mb-6">
+          <div className="text-red-200 text-center">{error}</div>
+          <button 
+            onClick={fetchStatistics} 
+            className="mt-2 mx-auto block px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
+          >
+            Spróbuj ponownie
+          </button>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="flex flex-col items-center justify-center bg-white/10 backdrop-blur-lg rounded-lg p-5 shadow-md border-2 border-white/30">
           <h2 className="text-3xl text-white font-lora mb-4 flex items-center gap-2">
