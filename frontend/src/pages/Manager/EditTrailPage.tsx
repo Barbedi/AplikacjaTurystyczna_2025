@@ -16,6 +16,9 @@ import {
   faComment,
   faStar,
   faXmark,
+   faTriangleExclamation,
+  faCircleCheck,
+
 } from "@fortawesome/free-solid-svg-icons";
 import Modal from "../../components/Modal";
 import useGetUsers from "../../hooks/user/useGetUser";
@@ -24,6 +27,8 @@ import ElevationSection from "../../components/Manager/Trail/ElevationSection";
 import GallerySection from "../../components/Manager/Trail/GallerySection";
 import ReviewSection from "../../components/Manager/Trail/ReviewSection";
 import TrailInfoSection from "../../components/Manager/Trail/TrailInfoSection";
+import ToastModalContext from "../../store/toast-modal-context";
+
 
 const emptyTrail: ExtendedTrail = {
   id: 0,
@@ -47,6 +52,7 @@ const emptyTrail: ExtendedTrail = {
 
 const EditTrailPage = () => {
   const [trail, setTrail] = useState<ExtendedTrail>(emptyTrail);
+  const { createToast } = useContext(ToastModalContext);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [activeTab, setActiveTab] = useState<
     "info" | "photos" | "map" | "comments"
@@ -95,7 +101,12 @@ const EditTrailPage = () => {
 
   const handleShareTrail = async () => {
     if (!description.trim()) {
-      alert("Wypełnij wszystkie pola!");
+      createToast({
+        type: "warning",
+        message: "Uzupełnij wszystkie pola!",
+        icon: faTriangleExclamation,
+        timeout: 5000,
+      });
       return;
     }
     try {
@@ -105,6 +116,12 @@ const EditTrailPage = () => {
       );
       if (response.status === 201) {
         setOpenModal(false);
+        createToast({
+          type: "primary",
+          message: "Trasa została udostępniona!",
+          icon: faCircleCheck,
+          timeout: 5000,
+        });
         setDescription("");
       }
     } catch (error) {
@@ -119,7 +136,12 @@ const EditTrailPage = () => {
 
   const handleAddReview = async () => {
     if (!currentUser?.id || !id || !reviewText.trim() || rating === 0) {
-      alert("Wypełnij wszystkie pola!");
+      createToast({
+        type: "warning",
+        message: "Uzupełnij wszystkie pola!",
+        icon: faTriangleExclamation,
+        timeout: 5000,
+      });
       return;
     }
     try {
@@ -130,9 +152,25 @@ const EditTrailPage = () => {
         rating: rating > 0 ? rating : undefined,
       };
       const response = await reviewService.createReview(review);
+      
       if (response.status === 201) {
         setOpenModalComment(false);
+        createToast({
+          type: "primary",
+          message: "Komentarz został dodany!",
+          icon: faCircleCheck,
+          timeout: 5000,
+        });
         setReviewText("");
+        setRating(0);
+        try {
+          const reviewsResponse = await reviewService.getReviewForTrail(
+            parseInt(id),
+          );
+          setReviews(reviewsResponse.data.data || []);
+        } catch (error) {
+          console.error("Błąd podczas odświeżania komentarzy:", error);
+        }
       }
     } catch (error) {
       console.error("Error adding review:", error);
@@ -266,7 +304,11 @@ const EditTrailPage = () => {
                   Mapa trasy
                 </h3>
                 <div className="h-[312px] w-full">
-                  <MapTrails trail={trail} hoverPoint={null} />
+                 <MapTrails 
+                   trail={trail} 
+                   trailPoints={trail.points || []} 
+                   hoverPoint={null} 
+                 />
                 </div>
               </div>
             )}

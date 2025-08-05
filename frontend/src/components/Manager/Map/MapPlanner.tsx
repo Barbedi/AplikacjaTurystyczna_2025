@@ -68,6 +68,7 @@ const HoverMarker = ({ position }: { position: [number, number] | null }) => {
       L.icon({
         iconUrl: "https://cdn-icons-png.flaticon.com/512/684/684908.png",
         iconSize: [25, 25],
+        iconAnchor: [12.5, 25], 
       }),
     [],
   );
@@ -94,6 +95,7 @@ const MapPlanner = () => {
   );
   const [editingTrail, setEditingTrail] = useState<Trails | null>(null);
   const [, setIsLoadingTrail] = useState<boolean>(false);
+  const [isDashboardVisible, setDashboardVisible] = useState(true);
 
   const hoverTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -205,6 +207,8 @@ const MapPlanner = () => {
     [],
   );
 
+  const removePointAll = useCallback(() => setPoints([]), []);
+
   // Usuwanie punktu po współrzędnych (z eventu contextmenu)
   const removePointByCoordinates = useCallback(
     (lat: number, lng: number) =>
@@ -298,37 +302,74 @@ const MapPlanner = () => {
   }, [editingTrail, navigate]);
 
   // Styl linii trasy
-  const routeStyle = useMemo(() => ({ color: "red", weight: 4 }), []);
+  const routeStyle = useMemo(() => ({ color: "#9333ea", weight: 4, dashArray: "5, 5" }), []);
+const startFlagIcon = useMemo(
+  () =>
+    L.icon({
+      iconUrl: "https://cdn-icons-png.flaticon.com/512/2107/2107961.png",
+      iconSize: [30, 30],
+      iconAnchor: [2.5, 30], // środek na dole
+    }),
+  []
+);
+const endFlagIcon = useMemo(
+  () =>
+    L.icon({
+      iconUrl: "https://cdn-icons-png.flaticon.com/512/16982/16982672.png",
+      iconSize: [30, 30],
+      iconAnchor: [2.5, 30], // środek na dole
+    }),
+  []
+);
+const midPointIcon = useMemo(
+  () =>
+    L.icon({
+      iconUrl: "https://cdn-icons-png.flaticon.com/512/17116/17116302.png",
+      iconSize: [30, 30],
+      iconAnchor: [15, 30],
+    }),
+  []
+);
 
   // Marker punktów trasy
   const pointMarkers = useMemo(
-    () =>
-      points.map((point, idx) => {
-        const [lat, lng] = point.coordinates;
-        return (
-          <Marker
-            key={`${idx}-${lat}-${lng}`}
-            position={[lat, lng]}
-            eventHandlers={{
-              mouseover: () => setHoveredPoint(idx),
-              mouseout: () => setHoveredPoint(null),
-              contextmenu: () => removePoint(idx),
-            }}
-          >
-            {hoveredPoint === idx && (
-              <Tooltip permanent direction="top" offset={[0, -30]}>
-                Kliknij prawym przyciskiem, aby usunąć
-                <br />
-                {point.name
-                  ? `${point.name} (${lat.toFixed(5)}, ${lng.toFixed(5)})`
-                  : `Współrzędne: ${lat.toFixed(5)}, ${lng.toFixed(5)}`}
-              </Tooltip>
-            )}
-          </Marker>
-        );
-      }),
-    [points, hoveredPoint, removePoint],
-  );
+  () =>
+    points.map((point, idx) => {
+      const [lat, lng] = point.coordinates;
+      const isStart = idx === 0;
+      const isEnd = idx === points.length - 1;
+
+      let icon;
+      if (isStart) icon = startFlagIcon;
+      else if (isEnd) icon = endFlagIcon;
+      else icon = midPointIcon;
+
+      return (
+        <Marker
+          key={`${idx}-${lat}-${lng}`}
+          position={[lat, lng]}
+          icon={icon}
+          eventHandlers={{
+            mouseover: () => setHoveredPoint(idx),
+            mouseout: () => setHoveredPoint(null),
+            contextmenu: () => removePoint(idx),
+          }}
+        >
+          {hoveredPoint === idx && (
+            <Tooltip permanent direction="top" offset={[0, -30]}>
+              {point.name
+                ? `${point.name} (${lat.toFixed(5)}, ${lng.toFixed(5)})`
+                : `Współrzędne: ${lat.toFixed(5)}, ${lng.toFixed(5)})`}
+              <br />
+              Kliknij prawym przyciskiem, aby usunąć
+            </Tooltip>
+          )}
+        </Marker>
+      );
+    }),
+  [points, hoveredPoint, removePoint, startFlagIcon, endFlagIcon, midPointIcon]
+);
+
 
   return (
     <div className="w-full h-full flex flex-col rounded-lg overflow-hidden border border-white/20 shadow-lg">
@@ -387,16 +428,18 @@ const MapPlanner = () => {
       </MapContainer>
 
       <PlannerDashboard
-        visible={points.length >= 2}
+        visible={isDashboardVisible && points.length >= 2}
         points={points}
         route={routeGeoJson}
         editingTrail={editingTrail}
         isEditing={!!trailId}
         onHoverPoint={handleHoverPoint}
         onRemovePoint={removePoint}
+        onRemovePointAll={removePointAll}
         onRouteTypeChange={setRouteType}
         onTrailUpdated={handleTrailUpdated}
         onCancelEdit={handleCancelEdit}
+        onCloseDashboard={() => setDashboardVisible(false)}
       />
     </div>
   );

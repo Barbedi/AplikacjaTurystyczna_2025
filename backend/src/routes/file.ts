@@ -44,7 +44,7 @@ const upload = multer({
       cb(null, uniqueName + path.extname(file.originalname));
     },
   }),
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+  limits: { fileSize: 50 * 1024 * 1024 }, 
 });
 
 /**

@@ -22,7 +22,7 @@ const Reviews = () => {
     }
   }, [user?.email, getUserByEmail]);
 
-  const currentUser = usersData?.[0]?.[0];
+  const currentUser = usersData?.[0][0];
 
   useEffect(() => {
     const fetchReviews = async () => {

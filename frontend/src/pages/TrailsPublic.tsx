@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useCallback } from "react";
 import { ExtendedTrail } from "../assets/Data";
 import trailsService from "../services/trails.service";
 import favouriteTrailsService from "../services/favouriteTrails.service";
@@ -14,10 +14,12 @@ import {
   faPersonHiking,
   faImage,
   faMap,
+  faTriangleExclamation,
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import AuthContext from "../store/auth-context";
 import filesService from "../services/files.service";
+import ToastModalContext from "../store/toast-modal-context";
 
 const emptyTrail: ExtendedTrail = {
   id: 0,
@@ -36,6 +38,7 @@ const emptyTrail: ExtendedTrail = {
   created_at: new Date().toISOString(),
   duration_minutes: 0,
   photos: [],
+  features: [],
 };
 
 const TrailsPublic = () => {
@@ -43,12 +46,26 @@ const TrailsPublic = () => {
   const [activeTab, setActiveTab] = useState<"info" | "map" | "photos">("map");
   const navigate = useNavigate();
   const [trail, setTrail] = useState<ExtendedTrail>(emptyTrail);
-  const [hoverPoint] = useState<[number, number] | null>(null);
+  const [isFavorite, setIsFavorite] = useState<boolean>(false);
   const { id } = useParams<{ id: string }>();
+   const { createToast } = useContext(ToastModalContext);
+
 
   const handleBackClick = () => {
     navigate(-1);
   };
+
+  const checkIfFavorite = useCallback(async () => {
+    if (!user || !id) return;
+    try {
+      const favResponse = await favouriteTrailsService.getFavouriteTrails();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const favoriteIds = favResponse.data.data.map((fav: any) => fav.trail_id);
+      setIsFavorite(favoriteIds.includes(parseInt(id)));
+    } catch (error) {
+      console.error("Error checking favorites:", error);
+    }
+  }, [user, id]);
 
   useEffect(() => {
     if (!id) {
@@ -64,16 +81,40 @@ const TrailsPublic = () => {
       .catch((error) => {
         console.error("Error fetching trail data:", error);
       });
-  }, [id]);
+      
+    checkIfFavorite();
+  }, [id, user, checkIfFavorite]);
   const handleFavoriteClick = async () => {
     if (!user) {
-      alert("Musisz być zalogowany, aby dodać trasę do ulubionych.");
+      createToast({
+        message: "Musisz być zalogowany, aby dodać trasę do ulubionych.",
+        icon: faTriangleExclamation,
+        type: "warning",
+        timeout: 5000,
+      });
       return;
     }
 
     try {
-      await favouriteTrailsService.addFavouriteTrail(trail.id);
-      alert("Trasa została dodana do ulubionych!");
+      if (isFavorite) {
+        await favouriteTrailsService.removeFavouriteTrail(trail.id);
+        setIsFavorite(false);
+        createToast({
+          message: "Trasa została usunięta z ulubionych!",
+          icon: faHeart,
+          type: "primary",
+          timeout: 5000,
+        });
+      } else {
+        await favouriteTrailsService.addFavouriteTrail(trail.id);
+        setIsFavorite(true);
+        createToast({
+          message: "Trasa została dodana do ulubionych!",
+          icon: faHeart,
+          type: "primary",
+          timeout: 5000,
+        });
+      }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       if (error.response?.status === 401 || error.response?.status === 403) {
@@ -103,8 +144,13 @@ const TrailsPublic = () => {
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
               <FontAwesomeIcon
                 icon={faHeart}
-                className="ml-4 text-white cursor-pointer hover:text-red-500 absolute -top-3 -right-2 text-2xl"
+                className={`ml-4 cursor-pointer absolute -top-3 -right-2 text-2xl transition-colors duration-200 ${
+                  isFavorite
+                    ? "text-red-500 hover:text-red-600"
+                    : "text-white hover:text-red-500"
+                }`}
                 onClick={handleFavoriteClick}
+                title={isFavorite ? "Usuń z ulubionych" : "Dodaj do ulubionych"}
               />
               <div>
                 <h1 className="text-4xl font-bold text-white font-lora">
@@ -192,9 +238,32 @@ const TrailsPublic = () => {
                     </p>
                   </div>
                   <div>
-                    <h4 className="text-white/70 text-sm mb-1">Cechy</h4>
-                    <p className="text-white">{"Brak cech trasy."}</p>
-                  </div>
+          <h4 className="text-white/70 text-sm mb-3">Cechy</h4>
+          {trail.features && trail.features.length > 0 ? (
+            <div className="flex flex-wrap gap-1">
+              {trail.features.map((feature, index) => (
+                <div
+                  key={feature.id}
+                  className={`relative overflow-hidden rounded-full px-2 py-1.5 text-sm font-lora
+                    border backdrop-blur-sm transition-all duration-300 hover:scale-105
+                    ${index % 4 === 0 ? "bg-blue-500/20 text-blue-300 border-blue-500/30 hover:bg-blue-500/30" : ""}
+                    ${index % 4 === 1 ? "bg-green-500/20 text-green-300 border-green-500/30 hover:bg-green-500/30" : ""}
+                    ${index % 4 === 2 ? "bg-purple-500/20 text-purple-300 border-purple-500/30 hover:bg-purple-500/30" : ""}
+                    ${index % 4 === 3 ? "bg-yellow-500/20 text-yellow-300 border-yellow-500/30 hover:bg-yellow-500/30" : ""}`}
+                >
+                  <span className="relative z-10">{feature.name}</span>
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300" />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="flex items-center justify-center p-4 rounded-lg bg-white/5 border border-white/10">
+              <p className="text-white/70 text-sm italic">
+                Brak przypisanych cech do tej trasy
+              </p>
+            </div>
+          )}
+        </div>
                   <div>
                     <h4 className="text-white/70 text-sm mb-1">Region</h4>
                     <p className="text-white font-medium">{trail.region}</p>
@@ -220,28 +289,30 @@ const TrailsPublic = () => {
                   <div className="h-[312px]">
                     <ElevationProfile
                       route={{
-                        type: "FeatureCollection",
-                        features: [
-                          {
-                            type: "Feature",
-                            geometry: {
-                              coordinates: [
-                                trail.geometry.coordinates,
-                              ] as number[][][],
-                            },
-                            properties: {
-                              id: trail.id.toString(),
-                              summary: {
-                                distance: trail.length_km * 1000,
-                                duration: 0,
-                              },
-                              segments: [],
-                              elevation: trail.geometry.coordinates.map(
-                                (coord) => coord[2] || 0,
-                              ),
-                            },
+                       type: "FeatureCollection",
+                      features: [
+                        {
+                          type: "Feature",
+                          geometry: {
+                            type: "LineString",
+                            coordinates: trail.geometry.coordinates.map(
+                              (coord) =>
+                                [coord[0], coord[1], coord[2] || 0] as [number, number, number],
+                            ),
                           },
-                        ],
+                          properties: {
+                            id: trail.id.toString(),
+                            distance: trail.length_km * 1000,
+                            nodes: trail.geometry.coordinates.length,
+                            summary: {
+                              distance: trail.length_km * 1000,
+                              duration: (trail.duration_minutes || 0) * 60,
+                            },
+                            segments: [],
+                            elevation: trail.geometry.coordinates.map((coord) => coord[2] || 0),
+                          },
+                        },
+                      ],
                       }}
                     />
                   </div>
@@ -258,7 +329,11 @@ const TrailsPublic = () => {
                   Mapa trasy
                 </h3>
                 <div className="h-[312px] w-full">
-                  <MapTrails trail={trail} hoverPoint={hoverPoint} />
+                  <MapTrails 
+                   trail={trail} 
+                   trailPoints={trail.points || []} 
+                   hoverPoint={null} 
+                 />
                 </div>
               </div>
               <div

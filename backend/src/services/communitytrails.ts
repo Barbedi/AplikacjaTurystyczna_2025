@@ -65,8 +65,26 @@ async function getCommunityTrails() {
   }
   return result.rows as CommunityTrails[];
 }
+
+async function deleteCommunityTrail(sharedId: number) {
+  const query = `
+    DELETE FROM shared_trails
+    WHERE id = $1
+    RETURNING *
+  `;
+
+  const result = await db.query(query, [sharedId]);
+
+  if (result.rowCount === 0) {
+    throw new Err("Failed to delete community trail", 500);
+  }
+
+  return result.rows[0] as CommunityTrails;
+}
+
 export default {
   createCommunityTrail,
   getCommunityTrails,
   getCommunityTrailsBySharedId,
+  deleteCommunityTrail,
 };

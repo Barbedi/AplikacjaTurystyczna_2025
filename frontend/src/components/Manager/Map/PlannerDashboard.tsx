@@ -11,6 +11,9 @@ import {
   faTrash,
   faCheck,
   faXmark,
+  faCircleExclamation,
+  faCircleCheck,
+  faGear,
 } from "@fortawesome/free-solid-svg-icons";
 import {
   RouteTrail,
@@ -29,6 +32,7 @@ import { calculateElevationGainAndLoss } from "../../../utils/elevation";
 import Modaltrails from "./Modaltrails";
 import { createPortal } from "react-dom";
 import FeaturesListService from "../../../services/featuresList.service";
+import ToastModalContext from "../../../store/toast-modal-context";
 
 interface PlannerDashboardProps {
   visible: boolean;
@@ -41,6 +45,8 @@ interface PlannerDashboardProps {
   onRouteTypeChange?: (type: "one-way" | "loop" | "back-and-forth") => void;
   onTrailUpdated?: (updatedTrail: Trails) => void;
   onCancelEdit?: () => void;
+  onCloseDashboard?: () => void;
+  onRemovePointAll?: () => void;
 }
 
 const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
@@ -51,9 +57,11 @@ const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
   isEditing = false,
   onHoverPoint,
   onRemovePoint,
+  onRemovePointAll,
   onRouteTypeChange,
   onTrailUpdated,
   onCancelEdit,
+  onCloseDashboard,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isOpenModal, setIsOpenModal] = useState(false);
@@ -68,6 +76,8 @@ const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
   const [selectedTrailFeatures, setSelectedTrailFeatures] = useState<number[]>(
     [],
   );
+   const { createToast } = useContext(ToastModalContext);
+
 
   useEffect(() => {
     if (!user?.email) return;
@@ -227,7 +237,12 @@ const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
           console.error("Błąd aktualizacji cech trasy:", featuresError);
         }
 
-        alert("Trasa zaktualizowana pomyślnie!");
+        createToast({
+          message: "Trasa zaktualizowana pomyślnie!",
+          icon: faCircleCheck,
+          type: "primary",
+          timeout: 5000,
+        });
         navigate(`/dashboard/my-routes/${editingTrail.id}`);
         onTrailUpdated?.(res.data);
       } else {
@@ -246,14 +261,26 @@ const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
             console.error("Błąd zapisu cech trasy:", featuresError);
           }
         }
-
-        alert("Trasa zapisana pomyślnie!");
+      onCloseDashboard?.();
+        createToast({
+          message: "Trasa zapisana pomyślnie!",
+          icon: faCircleCheck,
+          type: "primary",
+          timeout: 5000,
+        });
+       
       }
     } catch (err) {
       console.error("Błąd zapisu trasy:", err);
-      alert("Wystąpił błąd przy zapisie trasy.");
+      createToast({
+        message: "Wystąpił błąd podczas zapisywania trasy. Spróbuj ponownie.",
+        icon: faCircleExclamation,
+        type: "danger",
+        timeout: 5000,
+      });
     }
   }, [
+    onCloseDashboard,
     routeData,
     editingTrail,
     name,
@@ -266,6 +293,7 @@ const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
     navigate,
     trailDifficulty,
     selectedTrailFeatures,
+    createToast,
   ]);
 
   if (!visible) return null;
@@ -321,6 +349,7 @@ const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
             />
             <FontAwesomeIcon
               icon={faTrash}
+              onClick={onRemovePointAll}
               title="Wyczyść trasę"
               className="text-black text-2xl cursor-pointer ml-2"
             />
@@ -399,16 +428,26 @@ const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
               </select>
             </div>
           </div>
-          <div className="flex flex-row space-x-4">
-            <h2 className="text-lg font-semibold mb-2">
-              <FontAwesomeIcon icon={faList} /> Ustal poziom trudności:
+          <div className="flex flex-row items-center gap-x-4 mb-4">
+            <h2 className="text-lg font-semibold">
+              <FontAwesomeIcon icon={faGear} /> Ustal poziom trudności:
             </h2>
-            <a
+            <button
               onClick={() => setIsOpenModal(true)}
-              className="px-4 py-1 bg-accent rounded-lg"
+              className={`px-2 py-1 rounded-lg transition-all duration-200 flex items-center space-x-2 backdrop-blur-sm border text-sm ${
+                trailDifficulty 
+                  ? 'bg-primary/20 hover:bg-primary/30 text-primary border-primary/30 shadow-primary/20' 
+                  : 'bg-white/10 hover:bg-white/20 text-gray-800 border-white/20 hover:border-accent/40'
+              } shadow-lg hover:shadow-xl`}
             >
-              ustal{" "}
-            </a>
+              <FontAwesomeIcon 
+                icon={trailDifficulty ? faCheck : faGear} 
+                className="text-xs" 
+              />
+              <span className="font-medium">
+                {trailDifficulty ? `${trailDifficulty}` : 'Ustal'}
+              </span>
+            </button>
           </div>
           <h2 className="text-lg font-semibold mb-2">
             <FontAwesomeIcon icon={faList} /> Podsumowanie:

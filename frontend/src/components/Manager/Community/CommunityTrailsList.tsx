@@ -1,15 +1,29 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
-import { useEffect, useState } from "react";
+import { faChevronRight, faTrash,faXmark } from "@fortawesome/free-solid-svg-icons";
+import { useEffect, useState, useContext } from "react";
 import communitytrailsService from "../../../services/communitytrails.service";
 import { ExtendedCommunityTrails } from "../../../assets/Data";
 import { formatDate } from "../../../utils/format";
 import { useNavigate } from "react-router-dom";
 import filesService from "../../../services/files.service";
+import Modal from "../../Modal";
+import AuthContext from "../../../store/auth-context";
+import useGetUsers from "../../../hooks/user/useGetUser";
 
 const CommunityTrailsList = () => {
   const navigate = useNavigate();
+  const { user } = useContext(AuthContext);
+  const { getUserByEmail, usersData } = useGetUsers();
   const [shared, setShared] = useState<ExtendedCommunityTrails[]>([]);
+  const [openModal, setOpenModal] = useState(false);
+
+  useEffect(() => {
+    if (user?.email) {
+      getUserByEmail(user.email);
+    }
+  }, [user?.email, getUserByEmail]);
+
+  const currentUser = usersData?.[0][0];
 
   useEffect(() => {
     const fetchCommunityTrails = async () => {
@@ -27,6 +41,15 @@ const CommunityTrailsList = () => {
 
   const handleDetails = (sharedTrailId: number) => {
     navigate(`/dashboard/community-trails/${sharedTrailId}`);
+  };
+  const handleDelete = async (sharedTrailId: number) => {
+    try {
+      await communitytrailsService.deleteCommunityTrail(sharedTrailId);
+      setShared((prev) => prev.filter((trail) => trail.shared_id !== sharedTrailId));
+      setOpenModal(false);
+    } catch (error) {
+      console.error("Error deleting community trail:", error);
+    }
   };
 
   return (
@@ -62,9 +85,43 @@ const CommunityTrailsList = () => {
               className="text-white cursor-pointer text-lg mr-6"
               title="Zobacz szczegóły"
             />
+            {currentUser?.id === sharedTrail.user_id && (
+              <FontAwesomeIcon
+                icon={faTrash}
+                onClick={() => setOpenModal(true)}
+                className="text-white cursor-pointer text-lg mr-6"
+                title="Cofnij udostępnienie"
+              />
+            )}
           </span>
         </div>
       ))}
+
+      <Modal isOpen={openModal} onClose={() => setOpenModal(false)}>
+        <h2 className="text-white text-2xl font-semibold mb-4 text-center">
+          Czy chcesz cofnać udostępnienie trasy?
+        </h2>
+        <p className="text-white/70 text-center">
+          Ta akcja jest nieodwracalna. Po cofnięciu udostępnienia trasy nie będzie
+          można jej odzyskać.
+        </p>
+
+        <div className="flex flex-row items-end gap-3 mt-6">
+          <button
+            onClick={() => setOpenModal(false)}
+            className="w-full px-4 py-1 rounded-lg bg-white/10 text-white hover:bg-white/20 transition-all cursor-pointer flex items-center justify-center gap-2"
+          >
+            <FontAwesomeIcon icon={faXmark} />
+            <span>Anuluj</span>
+          </button>
+          <button
+            onClick={() => handleDelete(shared[0].shared_id)}
+            className="px-4 py-1 rounded-lg bg-red-500/20 text-red-300 hover:bg-red-500/30 border border-red-500/20 transition-all w-full cursor-pointer"
+          >
+            Usuń
+          </button>
+        </div>
+      </Modal>
     </div>
   );
 };

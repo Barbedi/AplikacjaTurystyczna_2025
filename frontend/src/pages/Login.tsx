@@ -4,15 +4,20 @@ import {
   faLock,
   faChevronRight,
   faCircleArrowLeft,
+  faTriangleExclamation,
+  faCircleExclamation,
+  faCircleCheck,
 } from "@fortawesome/free-solid-svg-icons";
 import React, { useState } from "react";
 import logowanieService from "../services/logowanie.service";
 import { useNavigate } from "react-router-dom";
+import ToastModalContext from "../store/toast-modal-context";
 
 const Login = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const { createToast } = React.useContext(ToastModalContext);
 
   const emailInputHandler = (ev: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(ev.target.value);
@@ -31,25 +36,57 @@ const Login = () => {
     ev.preventDefault();
     try {
       if (!email.trim() || !password.trim()) {
-        alert("Wszystkie pola muszą być wypełnione");
+        createToast({
+          message: "Wszystkie pola muszą być wypełnione",
+          icon: faTriangleExclamation,
+          type: "warning",
+          timeout: 5000,
+        });
         return;
       }
       const response = await logowanieService.create({ email, password });
 
       if (response.status === 200) {
         navigate("/");
-        alert("Logowanie przebiegło pomyślnie");
+        createToast({
+          message: "Zalogowano pomyślnie",
+          icon: faCircleCheck,
+          type: "primary",
+          timeout: 5000,
+        });
         resetForm();
-      } else if (response.status === 401) {
-        alert("Nieprawidłowy e-mail lub hasło");
-      } else if (response.status === 404) {
-        alert("Użytkownik nie został znaleziony");
-      } else {
-        alert("Błąd logowania - sprawdź konsolę");
       }
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("Błąd podczas logowania:", error);
-      alert("Wystąpił błąd podczas logowania - sprawdź konsolę");
+      
+      if (error && typeof error === 'object' && 'response' in error) {
+        const axiosError = error as { response?: { status?: number } };
+        
+        if (axiosError.response?.status === 401) {
+          createToast({
+            message: "Nieprawidłowy e-mail lub hasło",
+            icon: faTriangleExclamation,
+            type: "warning",
+            timeout: 5000,
+          });
+          return;
+        } else if (axiosError.response?.status === 404) {
+          createToast({
+            message: "Użytkownik nie został znaleziony",
+            icon: faTriangleExclamation,
+            type: "warning",
+            timeout: 5000,
+          });
+          return;
+        }
+      }
+      
+      createToast({
+        message: "Wystąpił błąd podczas logowania - spróbuj ponownie później",
+        icon: faCircleExclamation,
+        type: "danger",
+        timeout: 5000,
+      });
     }
   };
 

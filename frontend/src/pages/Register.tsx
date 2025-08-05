@@ -5,15 +5,20 @@ import {
   faLock,
   faChevronRight,
   faUser,
+  faTriangleExclamation,
+  faCircleExclamation,
+  faCircleCheck,
 } from "@fortawesome/free-solid-svg-icons";
 import React from "react";
 import rejestracjaService from "../services/rejestracja.service";
+import ToastModalContext from "../store/toast-modal-context";
 
 const Register = () => {
   const [name, setName] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [confirmPassword, setConfirmPassword] = React.useState("");
+  const { createToast } = React.useContext(ToastModalContext);
 
   const emailInputHandler = (ev: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(ev.target.value);
@@ -44,12 +49,22 @@ const Register = () => {
         !password.trim() ||
         !confirmPassword.trim()
       ) {
-        alert("Wszystkie pola muszą być wypełnione");
+        createToast({
+          message: "Wszystkie pola muszą być wypełnione",
+          icon: faTriangleExclamation,
+          type: "warning",
+          timeout: 5000,
+        });
         return;
       }
 
       if (password !== confirmPassword) {
-        alert("Hasła nie są zgodne");
+        createToast({
+          message: "Hasła nie są zgodne",
+          icon: faTriangleExclamation,
+          type: "warning",
+          timeout: 5000,
+        });
         return;
       }
 
@@ -60,16 +75,36 @@ const Register = () => {
       });
 
       if (response.status === 201) {
-        alert("Rejestracja przebiegła pomyślnie");
+        createToast({
+          message: "Rejestracja przebiegła pomyślnie",
+          icon: faCircleCheck,
+          type: "primary",
+          timeout: 5000,
+        });
         resetForm();
-      } else if (response.status === 409) {
-        alert("Użytkownik o podanym adresie e-mail już istnieje");
-      } else {
-        alert("Błąd rejestracji - sprawdź konsolę");
       }
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("Błąd rejestracji", error);
-      alert("Błąd rejestracji - sprawdź konsolę");
+      
+      if (error && typeof error === 'object' && 'response' in error) {
+        const axiosError = error as { response?: { status?: number } };
+        if (axiosError.response?.status === 409) {
+          createToast({
+            message: "Użytkownik o podanym adresie e-mail już istnieje",
+            icon: faTriangleExclamation,
+            type: "warning",
+            timeout: 5000,
+          });
+          return;
+        }
+      }
+      
+      createToast({
+        message: "Błąd rejestracji - sprawdź konsolę",
+        icon: faCircleExclamation,
+        type: "danger",
+        timeout: 5000,
+      });
     }
   };
 

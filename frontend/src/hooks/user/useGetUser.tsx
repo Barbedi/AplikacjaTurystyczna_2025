@@ -1,9 +1,9 @@
 import { useCallback, useState } from "react";
-import { Err, Filter, Sort, UserInfo } from "../../assets/Data";
+import { Err, Filter, Sort, Users} from "../../assets/Data";
 import usersService from "../../services/user.service";
 
 const useGetUsers = () => {
-  const [usersData, setUsersData] = useState<UserInfo[][] | null>(null);
+  const [usersData, setUsersData] = useState<Users[][] | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Err | null>(null);
 

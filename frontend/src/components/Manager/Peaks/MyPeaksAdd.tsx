@@ -3,6 +3,9 @@ import {
   faCamera,
   faChevronDown,
   faXmark,
+  faTriangleExclamation,
+  faCircleExclamation,
+  faCircleCheck,
 } from "@fortawesome/free-solid-svg-icons";
 import { useState, useEffect, useRef, useContext } from "react";
 import peaksService from "../../../services/peaks.service";
@@ -11,6 +14,7 @@ import { Peaks } from "../../../assets/Data";
 import AuthContext from "../../../store/auth-context";
 import useGetUsers from "../../../hooks/user/useGetUser";
 import filesService from "../../../services/files.service";
+import ToastModalContext from "../../../store/toast-modal-context";
 
 const MyPeaksAdd = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -23,6 +27,7 @@ const MyPeaksAdd = () => {
   const [userId, setUserId] = useState<number | null>(null);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [selectedFileName, setSelectedFileName] = useState<string>("");
+  const { createToast } = useContext(ToastModalContext);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -41,7 +46,7 @@ const MyPeaksAdd = () => {
   }, [user?.email, getUserByEmail]);
 
   useEffect(() => {
-    const currentUser = usersData?.[0]?.[0];
+    const currentUser = usersData?.[0][0];
     if (currentUser?.id) {
       setUserId(currentUser.id);
     }
@@ -170,7 +175,12 @@ const MyPeaksAdd = () => {
 
         const response = await peaksService.create(newPeak);
         if (!response?.data?.data) {
-          alert("Błąd podczas tworzenia szczytu.");
+          createToast({
+            message: "Błąd podczas tworzenia szczytu.",
+            type: "danger",
+            icon: faCircleExclamation,
+            timeout: 5000,
+          });
           return;
         }
 
@@ -178,13 +188,17 @@ const MyPeaksAdd = () => {
       }
 
       if (!userId || !peakId) {
-        alert("Brakuje ID użytkownika lub szczytu.");
+        createToast({
+          message: "Nie udało się uzyskać identyfikatora użytkownika lub szczytu.",
+          type: "warning",
+          icon: faTriangleExclamation,
+          timeout: 5000,
+        });
         return;
       }
 
       let uploadedFilename: string | null = null;
 
-      // Upload zdjęcia jeśli jest
       if (selectedImage) {
         const uploadRes = await filesService.uploadPeakImage(selectedImage);
         uploadedFilename = uploadRes.data?.file?.filename;
@@ -201,11 +215,22 @@ const MyPeaksAdd = () => {
         uploadedFilename ?? "",
       );
 
-      alert("Szczyt dodany pomyślnie!");
+      createToast({
+        message: "Szczyt został pomyślnie dodany!",
+        type: "primary",
+        icon: faCircleCheck,
+        timeout: 5000,
+      });
       clearForm();
     } catch (error) {
       console.error("Błąd dodawania szczytu:", error);
-      alert("Wystąpił błąd.");
+      createToast({
+        message: "Nie udało się uzyskać identyfikatora użytkownika lub szczytu.",
+        type: "danger",
+        icon: faCircleExclamation,
+        timeout: 5000,
+        onClose: () => console.log("Toast closed"),
+      });
     }
   };
 

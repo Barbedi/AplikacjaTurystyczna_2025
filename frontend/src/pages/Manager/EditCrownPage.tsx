@@ -10,6 +10,8 @@ import { faStar, faMountainSun } from "@fortawesome/free-solid-svg-icons";
 import { formatDate } from "../../utils/format";
 import useGetUsers from "../../hooks/user/useGetUser";
 import AuthContext from "../../store/auth-context";
+import exifr from 'exifr';
+import { calculateDistance } from "../../utils/calculateDistance";
 
 const emptyPeak: Peaks = {
   id: 0,
@@ -35,6 +37,11 @@ const EditCrownPage = () => {
   const [, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>("");
   const [userImagePreview, setUserImagePreview] = useState<string>("");
+  const [verificationResult, setVerificationResult] = useState<{
+    isValid: boolean;
+    distance?: number;
+    error?: string;
+  } | null>(null);
   const { user } = useContext(AuthContext);
   const { getUserByEmail, usersData } = useGetUsers();
   const { id } = useParams<{ id: string }>();
@@ -49,7 +56,7 @@ const EditCrownPage = () => {
     }
   }, [user?.email, getUserByEmail]);
 
-  const currentUser = usersData?.[0]?.[0];
+  const currentUser = usersData?.[0][0];
   useEffect(() => {
     const fetchMyPeak = async () => {
       if (!currentUser?.id || !id || !isMyPeak) return;
@@ -90,34 +97,89 @@ const EditCrownPage = () => {
     if (file) {
       setSelectedImage(file);
 
-      const reader = new FileReader();
-      reader.onload = () => {
-        if (isCrownPeak) {
-          setImagePreview(reader.result as string);
-        } else if (isMyPeak) {
-          setUserImagePreview(reader.result as string);
-        }
-      };
-      reader.readAsDataURL(file);
-
-      try {
-        const response = await filesService.uploadPeakImage(file);
-        const filename = response.data.file?.filename;
-
-        if (filename && id) {
-          if (isCrownPeak) {
-            await peaksService.updateImage(id, filename);
-            const peakResponse = await peaksService.getById(id);
-            setPeak(peakResponse.data.data);
-          } else if (isMyPeak && currentUser?.id) {
-            setMyPeak((prev) =>
-              prev ? { ...prev, photoUrl: filename } : null,
+      let canUpload = true;
+      let tempVerificationResult = null;
+      if (isCrownPeak && peak.latitude && peak.longitude) {
+        try {
+          const gps = await exifr.gps(file);
+          
+          if (gps && gps.latitude && gps.longitude) {
+            const distance = calculateDistance(
+              gps.latitude, gps.longitude,
+              peak.latitude, peak.longitude
             );
-            console.log(`User peak image updated: ${filename}`);
+            
+            if (distance <= 1000) {
+              tempVerificationResult = { isValid: true, distance: Math.round(distance) };
+              canUpload = true;
+            } else {
+              tempVerificationResult = { isValid: false, distance: Math.round(distance) };
+              canUpload = false;
+            }
+          } else {
+            tempVerificationResult = { isValid: false, error: 'Brak danych GPS w zdjęciu' };
+            canUpload = false;
           }
+        } catch {
+          tempVerificationResult = { isValid: false, error: 'Błąd odczytu metadanych' };
+          canUpload = false;
         }
-      } catch (error) {
-        console.error("Błąd podczas uploadowania zdjęcia:", error);
+        
+        setVerificationResult(tempVerificationResult);
+      }
+      if (canUpload || !isCrownPeak) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          if (isCrownPeak) {
+            setImagePreview(reader.result as string);
+          } else if (isMyPeak) {
+            setUserImagePreview(reader.result as string);
+          }
+        };
+        reader.readAsDataURL(file);
+      }
+
+      if (canUpload || !isCrownPeak) {
+        try {
+          const response = await filesService.uploadPeakImage(file);
+          const filename = response.data.file?.filename;
+
+          if (filename && id) {
+            if (isCrownPeak) {
+              await peaksService.updateImage(id, filename);
+              if (tempVerificationResult && tempVerificationResult.isValid) {
+                try {
+                  await peaksService.updateVerification(id, true);
+                } catch (verificationError) {
+                  console.error('Błąd podczas aktualizacji statusu weryfikacji:', verificationError);
+                }
+                if (currentUser?.id) {
+                  try {
+                    await userpeaksService.addPeakUsers(
+                      parseInt(id),
+                      currentUser.id,
+                      "",
+                      filename
+                    );
+                    console.log('Szczyt automatycznie dodany do zdobytych szczytów');
+                  } catch (addPeakError) {
+                    console.error('Błąd podczas dodawania szczytu do user_peaks:', addPeakError);
+                  }
+                }
+              }
+              const peakResponse = await peaksService.getById(id);
+              setPeak(peakResponse.data.data);
+            } else if (isMyPeak && currentUser?.id) {
+              setMyPeak((prev) =>
+                prev ? { ...prev, photoUrl: filename } : null,
+              );
+            }
+          }
+        } catch (error) {
+          console.error("Błąd podczas uploadowania zdjęcia:", error);
+        }
+      } else {
+        setImagePreview("");
       }
     }
   };
@@ -225,6 +287,18 @@ const EditCrownPage = () => {
                   </span>
                 )}
               </div>
+              {isCrownPeak && verificationResult && verificationResult.distance && (
+                <div className="flex items-center">
+                  <span className="text-white/70 font-medium w-20">Odległość:</span>
+                  <span className={`ml-2 px-2 py-1 rounded-full text-xs font-medium ${
+                    verificationResult.isValid 
+                      ? 'bg-green-500/20 text-green-300 border border-green-500/30' 
+                      : 'bg-red-500/20 text-red-300 border border-red-500/30'
+                  }`}>
+                    {verificationResult.distance}m od szczytu
+                  </span>
+                </div>
+              )}
               {isMyPeak && (
                 <div className="flex items-center">
                   <span className="text-white/70 font-medium w-20">Data:</span>
@@ -282,7 +356,7 @@ const EditCrownPage = () => {
               </h3>
               <div className="grid grid-cols-1 max-h-1/2  gap-3 mt-4">
                 {myPeak?.photoUrl && (
-                  <div className=" rounded-lg overflow-hidden border border-white/30">
+                  <div className="h-79 rounded-lg overflow-hidden border border-white/30">
                     <img
                       src={
                         userImagePreview ||
