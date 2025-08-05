@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useCallback } from "react";
 import { ExtendedTrail } from "../assets/Data";
 import trailsService from "../services/trails.service";
 import favouriteTrailsService from "../services/favouriteTrails.service";
@@ -46,6 +46,7 @@ const TrailsPublic = () => {
   const [activeTab, setActiveTab] = useState<"info" | "map" | "photos">("map");
   const navigate = useNavigate();
   const [trail, setTrail] = useState<ExtendedTrail>(emptyTrail);
+  const [isFavorite, setIsFavorite] = useState<boolean>(false);
   const { id } = useParams<{ id: string }>();
    const { createToast } = useContext(ToastModalContext);
 
@@ -53,6 +54,18 @@ const TrailsPublic = () => {
   const handleBackClick = () => {
     navigate(-1);
   };
+
+  const checkIfFavorite = useCallback(async () => {
+    if (!user || !id) return;
+    try {
+      const favResponse = await favouriteTrailsService.getFavouriteTrails();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const favoriteIds = favResponse.data.data.map((fav: any) => fav.trail_id);
+      setIsFavorite(favoriteIds.includes(parseInt(id)));
+    } catch (error) {
+      console.error("Error checking favorites:", error);
+    }
+  }, [user, id]);
 
   useEffect(() => {
     if (!id) {
@@ -68,7 +81,9 @@ const TrailsPublic = () => {
       .catch((error) => {
         console.error("Error fetching trail data:", error);
       });
-  }, [id]);
+      
+    checkIfFavorite();
+  }, [id, user, checkIfFavorite]);
   const handleFavoriteClick = async () => {
     if (!user) {
       createToast({
@@ -81,13 +96,25 @@ const TrailsPublic = () => {
     }
 
     try {
-      await favouriteTrailsService.addFavouriteTrail(trail.id);
-      createToast({
-        message: "Trasa została dodana do ulubionych!",
-        icon: faHeart,
-        type: "primary",
-        timeout: 5000,
-      });
+      if (isFavorite) {
+        await favouriteTrailsService.removeFavouriteTrail(trail.id);
+        setIsFavorite(false);
+        createToast({
+          message: "Trasa została usunięta z ulubionych!",
+          icon: faHeart,
+          type: "primary",
+          timeout: 5000,
+        });
+      } else {
+        await favouriteTrailsService.addFavouriteTrail(trail.id);
+        setIsFavorite(true);
+        createToast({
+          message: "Trasa została dodana do ulubionych!",
+          icon: faHeart,
+          type: "primary",
+          timeout: 5000,
+        });
+      }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       if (error.response?.status === 401 || error.response?.status === 403) {
@@ -117,8 +144,13 @@ const TrailsPublic = () => {
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
               <FontAwesomeIcon
                 icon={faHeart}
-                className="ml-4 text-white cursor-pointer hover:text-red-500 absolute -top-3 -right-2 text-2xl"
+                className={`ml-4 cursor-pointer absolute -top-3 -right-2 text-2xl transition-colors duration-200 ${
+                  isFavorite
+                    ? "text-red-500 hover:text-red-600"
+                    : "text-white hover:text-red-500"
+                }`}
                 onClick={handleFavoriteClick}
+                title={isFavorite ? "Usuń z ulubionych" : "Dodaj do ulubionych"}
               />
               <div>
                 <h1 className="text-4xl font-bold text-white font-lora">
