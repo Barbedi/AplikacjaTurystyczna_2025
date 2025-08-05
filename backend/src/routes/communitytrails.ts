@@ -38,4 +38,15 @@ router.get("/:sharedId", verifyUser, async (req, res, next) => {
   }
 });
 
+router.delete("/:sharedId", verifyUser, async (req, res, next) => {
+  const sharedId = parseInt(req.params["sharedId"] || "0", 10);
+  try {
+    await communityTrailsService.deleteCommunityTrail(sharedId);
+    res.status(204).send();
+  } catch (error) {
+    next(error);
+  }
+});
+
+
 export default router;
