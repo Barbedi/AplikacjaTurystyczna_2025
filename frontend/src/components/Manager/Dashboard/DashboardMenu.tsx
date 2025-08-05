@@ -52,7 +52,7 @@ const DashboardMenu: React.FC<DashboardMenuProps> = () => {
   }, [user?.email, getUserByEmail, profileRefreshKey]);
 
   useEffect(() => {
-    const currentUser = usersData?.[0]?.[0];
+    const currentUser = usersData?.[0][0];
     if (currentUser?.profile_image) {
       setProfileImgUrl(filesService.getImgUrl(currentUser.profile_image));
     }

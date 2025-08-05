@@ -1,9 +1,9 @@
 import { useCallback } from "react";
 import usersService from "../../services/user.service";
-import { UserInfo } from "../../assets/Data";
+import { Users } from "../../assets/Data";
 
 const useUpdateUser = () => {
-  const updateUser = useCallback(async (id: number, userInfo: UserInfo) => {
+  const updateUser = useCallback(async (id: number, userInfo: Users) => {
     try {
       const response = await usersService.update(id, userInfo);
       if (response.status === 200) {

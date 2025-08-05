@@ -56,7 +56,7 @@ const EditCrownPage = () => {
     }
   }, [user?.email, getUserByEmail]);
 
-  const currentUser = usersData?.[0]?.[0];
+  const currentUser = usersData?.[0][0];
   useEffect(() => {
     const fetchMyPeak = async () => {
       if (!currentUser?.id || !id || !isMyPeak) return;

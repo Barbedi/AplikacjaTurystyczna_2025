@@ -46,7 +46,7 @@ const MyPeaksAdd = () => {
   }, [user?.email, getUserByEmail]);
 
   useEffect(() => {
-    const currentUser = usersData?.[0]?.[0];
+    const currentUser = usersData?.[0][0];
     if (currentUser?.id) {
       setUserId(currentUser.id);
     }
