@@ -74,11 +74,20 @@ const DashboardMenu: React.FC<DashboardMenuProps> = () => {
     >
       <div className={`p-4 ${!isOpen && "px-2"}`}>
         <div className="flex items-center">
-          <img
-            className="rounded-full h-10 w-10 ml-2 object-cover"
-            src={profileImgUrl || undefined}
-            alt="user"
-          />
+          {profileImgUrl ? (
+            <img
+              className="rounded-full h-10 w-10 ml-2 object-cover"
+              src={profileImgUrl}
+              alt="user"
+            />
+          ) : (
+            <div className="bg-white/10 rounded-full h-10 w-10 flex items-center justify-center">
+              <FontAwesomeIcon
+                icon={faCircleUser}
+                className="text-white/80 text-4xl"
+              />
+            </div>
+          )}
           {isOpen && (
             <h2 className="text-white md:text-sm 2xl:text-lg font-bold ml-4">
               {user?.email}

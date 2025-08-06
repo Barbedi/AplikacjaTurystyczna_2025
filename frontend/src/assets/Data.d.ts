@@ -124,9 +124,7 @@ export interface Peaks {
   region: string;
   latitude: number;
   longitude: number;
-  verified: boolean;
   description?: string;
-  image_filename?: string;
 }
 
 export interface PeakCollection {
@@ -144,6 +142,7 @@ export interface UserPeak {
   last_visited: string;
   description?: string;
   photo_url?: string;
+  verified?: boolean;
 }
 
 export interface UserPeaks {
@@ -153,6 +152,7 @@ export interface UserPeaks {
   visited_at: string;
   photo_url?: string;
   description?: string;
+  verified?: boolean;
 }
 
 // ===================== SHELTERS =====================

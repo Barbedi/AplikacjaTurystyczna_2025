@@ -1,10 +1,13 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import VerifiedIcon from "@mui/icons-material/Verified";
 import { Peaks, PageData } from "../../../assets/Data";
 import Pagination from "../../Pagination";
 import { useSearchParams, useNavigate, useLocation } from "react-router-dom";
+import userpeaksService from "../../../services/userpeaks.service";
+import AuthContext from "../../../store/auth-context";
+import useGetUsers from "../../../hooks/user/useGetUser";
 
 interface PeakItemProps {
   fetchPeaks: (page?: number) => Promise<{
@@ -12,22 +15,61 @@ interface PeakItemProps {
   }>;
 }
 
+interface PeakWithVerification extends Peaks {
+  verified?: boolean;
+}
+
 const PeakItem = ({ fetchPeaks }: PeakItemProps) => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [peaks, setPeaks] = useState<Peaks[]>([]);
+  const [peaks, setPeaks] = useState<PeakWithVerification[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
+  const { user } = useContext(AuthContext);
+  const { getUserByEmail, usersData } = useGetUsers();
   const [pageData, setPageData] = useState<PageData>({
     page: parseInt(searchParams.get("page") || "1"),
     pages: 1,
   });
 
+  const currentUser = usersData?.[0][0];
+
   useEffect(() => {
+    if (user?.email) {
+      getUserByEmail(user.email);
+    }
+  }, [user?.email, getUserByEmail]);
+
+  useEffect(() => {
+    if (!currentUser?.id) return;
+    
     setLoading(true);
     fetchPeaks(pageData.page)
-      .then((res) => {
-        setPeaks(res.data.data);
+      .then(async (res) => {
+        const peaksData = res.data.data;
+        
+        // Dla każdego szczytu sprawdź czy jest zweryfikowany przez użytkownika
+        const peaksWithVerification = await Promise.all(
+          peaksData.map(async (peak) => {
+            try {
+              const userPeakResponse = await userpeaksService.getUserPeakById(
+                currentUser.id!,
+                peak.id
+              );
+              return {
+                ...peak,
+                verified: userPeakResponse.data.data.verified || false
+              };
+            } catch {
+              return {
+                ...peak,
+                verified: false
+              };
+            }
+          })
+        );
+        
+        setPeaks(peaksWithVerification);
         setPageData((prev) => ({
           ...prev,
           pages: res.data.totalPages,
@@ -37,7 +79,7 @@ const PeakItem = ({ fetchPeaks }: PeakItemProps) => {
         console.error("Błąd pobierania szczytów:", err);
       })
       .finally(() => setLoading(false));
-  }, [fetchPeaks, pageData.page]);
+  }, [fetchPeaks, pageData.page, currentUser?.id]);
 
   useEffect(() => {
     const currentPage = parseInt(searchParams.get("page") || "1");

@@ -170,7 +170,6 @@ const MyPeaksAdd = () => {
           latitude: parseFloat(formData.latitude),
           longitude: parseFloat(formData.longitude),
           region: formData.region,
-          verified: false,
         };
 
         const response = await peaksService.create(newPeak);

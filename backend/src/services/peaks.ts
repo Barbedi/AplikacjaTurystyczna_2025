@@ -5,7 +5,7 @@ import helper from "../helper";
 // Pobieranie wszystkich szczytów
 async function getPeaks() {
   const query = `
-    SELECT id, name, elevation, region, latitude, longitude, verified, image_filename
+    SELECT id, name, elevation, region, latitude, longitude
     FROM peaks
     ORDER BY elevation DESC
   `;
@@ -68,27 +68,23 @@ LIMIT $2 OFFSET $3
 }
 
 async function getUserPeakById(userId: number, peakId: number) {
-  if (!userId) {
-    throw new Err("User ID is required", 400);
-  }
   const query = `
-    SELECT p.id, p.name, p.elevation, p.region, p.latitude, p.longitude, p.verified, p.image_filename,
-           up.visited_at, up.description, up.photo_url
+    SELECT p.id, p.name, p.elevation, p.region, p.latitude, p.longitude,
+           up.visited_at, up.description, up.photo_url, up.verified
     FROM peaks p
     JOIN user_peaks up ON p.id = up.peak_id
     WHERE up.user_id = $1 AND p.id = $2
-    ORDER BY up.visited_at DESC;
   `;
   const result = await db.query(query, [userId, peakId]);
-  const rows = helper.emptyOrRows(result.rows);
-
-  if (rows.length === 0) {
-    throw new Err("No peaks found for this user", 404);
+  const row = result.rows[0];
+  
+  if (!row) {
+    throw new Err("User peak not found", 404);
   }
-
+  
   return {
-    data: rows[0],
-    message: "Successfully fetched peak for user",
+    data: row,
+    message: "Successfully fetched user peak",
   };
 }
 
@@ -99,9 +95,9 @@ async function createPeak(peakInfo: Peaks) {
   }
 
   const query = `
-    INSERT INTO peaks (name, elevation, region, latitude, longitude, verified, image_filename)
-    VALUES ($1, $2, $3, $4, $5, $6, $7)
-    RETURNING id, name, elevation, region, latitude, longitude, verified, image_filename;
+    INSERT INTO peaks (name, elevation, region, latitude, longitude)
+    VALUES ($1, $2, $3, $4, $5)
+    RETURNING id, name, elevation, region, latitude, longitude;
   `;
   const values = [
     peakInfo.name,
@@ -109,8 +105,6 @@ async function createPeak(peakInfo: Peaks) {
     peakInfo.region,
     peakInfo.latitude,
     peakInfo.longitude,
-    peakInfo.verified,
-    peakInfo.image_filename,
   ];
 
   const result = await db.query(query, values);
@@ -157,7 +151,7 @@ async function addPeakUsers(
 // Pobieranie szczytu po ID
 async function getPeakById(id: number) {
   const query = `
-    SELECT id, name, elevation, region, latitude, longitude, verified, image_filename
+    SELECT id, name, elevation, region, latitude, longitude
     FROM peaks
     WHERE id = $1
     LIMIT 1;
@@ -184,9 +178,9 @@ async function updatePeak(id: number, peakInfo: Peaks) {
   const query = `
 
     UPDATE peaks
-    SET name = $1, elevation = $2, region = $3, latitude = $4, longitude = $5, verified = $6
-    WHERE id = $7
-    RETURNING id, name, elevation, region, latitude, longitude, verified;
+    SET name = $1, elevation = $2, region = $3, latitude = $4, longitude = $5
+    WHERE id = $6
+    RETURNING id, name, elevation, region, latitude, longitude;
   `;
   const values = [
     peakInfo.name,
@@ -194,7 +188,6 @@ async function updatePeak(id: number, peakInfo: Peaks) {
     peakInfo.region,
     peakInfo.latitude,
     peakInfo.longitude,
-    peakInfo.verified,
     id,
   ];
 
@@ -211,26 +204,26 @@ async function updatePeak(id: number, peakInfo: Peaks) {
   };
 }
 // Aktualizacja obrazu szczytu
-async function updatePeakImage(id: number, imageFilename: string) {
-  const query = `
-    UPDATE peaks
-    SET image_filename = $1
-    WHERE id = $2
-    RETURNING id, name, elevation, region, latitude, longitude, verified, image_filename;
-  `;
+// async function updatePeakImage(id: number, imageFilename: string) {
+//   const query = `
+//     UPDATE peaks
+//     SET image_filename = $1
+//     WHERE id = $2
+//     RETURNING id, name, elevation, region, latitude, longitude, verified, image_filename;
+//   `;
 
-  const result = await db.query(query, [imageFilename, id]);
-  const rows = result.rows;
+//   const result = await db.query(query, [imageFilename, id]);
+//   const rows = result.rows;
 
-  if (rows.length === 0) {
-    throw new Err("Peak not found", 404);
-  }
+//   if (rows.length === 0) {
+//     throw new Err("Peak not found", 404);
+//   }
 
-  return {
-    data: rows[0],
-    message: "Successfully updated peak image",
-  };
-}
+//   return {
+//     data: rows[0],
+//     message: "Successfully updated peak image",
+//   };
+// }
 // Pobieranie szczytów z kolekcji
 async function getPeaksByCollectionId(
   collectionId: number,
@@ -244,7 +237,7 @@ async function getPeaksByCollectionId(
   const offset = helper.getOffset(page, limit);
 
   const query = `
-    SELECT p.id, p.name, p.elevation, p.region, p.latitude, p.longitude, p.verified, p.image_filename
+    SELECT p.id, p.name, p.elevation, p.region, p.latitude, p.longitude
     FROM peaks p
     JOIN peak_collection_peaks pcp ON p.id = pcp.peak_id
     WHERE pcp.collection_id = $1
@@ -276,7 +269,7 @@ async function searchPeaks(query: string) {
     throw new Err("Search query cannot be empty", 400);
   }
   const searchQuery = `
-    SELECT id, name, elevation, region, latitude, longitude, verified, image_filename
+    SELECT id, name, elevation, region, latitude, longitude
     FROM peaks
     WHERE name ILIKE $1
     ORDER BY elevation DESC
@@ -291,26 +284,57 @@ async function searchPeaks(query: string) {
   };
 }
 
-// Aktualizacja statusu weryfikacji szczytu
-async function updatePeakVerification(id: number, verified: boolean) {
-  const query = `
-    UPDATE peaks
-    SET verified = $1
-    WHERE id = $2
-    RETURNING id, name, elevation, region, latitude, longitude, verified, image_filename;
+// Dodaj funkcje do zarządzania user_peaks z verified i photo
+
+async function updateUserPeakPhoto(userId: number, peakId: number, photoUrl: string) {
+  // Najpierw spróbuj zaktualizować
+  const updateQuery = `
+    UPDATE user_peaks 
+    SET photo_url = $1 
+    WHERE user_id = $2 AND peak_id = $3
+    RETURNING *;
   `;
-  const values = [verified, id];
-
-  const result = await db.query(query, values);
-  const rows = result.rows;
-
-  if (rows.length === 0) {
-    throw new Err("Peak not found", 404);
+  let result = await db.query(updateQuery, [photoUrl, userId, peakId]);
+  
+  // Jeśli nie ma rekordu, utwórz go
+  if (result.rows.length === 0) {
+    const insertQuery = `
+      INSERT INTO user_peaks (user_id, peak_id, visited_at, photo_url)
+      VALUES ($1, $2, NOW(), $3)
+      RETURNING *;
+    `;
+    result = await db.query(insertQuery, [userId, peakId, photoUrl]);
   }
-
+  
   return {
-    data: rows[0],
-    message: "Successfully updated peak verification status",
+    data: result.rows[0],
+    message: "Successfully updated user peak photo",
+  };
+}
+
+async function updateUserPeakVerification(userId: number, peakId: number, verified: boolean) {
+  // Najpierw spróbuj zaktualizować
+  const updateQuery = `
+    UPDATE user_peaks 
+    SET verified = $1 
+    WHERE user_id = $2 AND peak_id = $3
+    RETURNING *;
+  `;
+  let result = await db.query(updateQuery, [verified, userId, peakId]);
+  
+  // Jeśli nie ma rekordu, utwórz go
+  if (result.rows.length === 0) {
+    const insertQuery = `
+      INSERT INTO user_peaks (user_id, peak_id, visited_at, verified)
+      VALUES ($1, $2, NOW(), $3)
+      RETURNING *;
+    `;
+    result = await db.query(insertQuery, [userId, peakId, verified]);
+  }
+  
+  return {
+    data: result.rows[0],
+    message: "Successfully updated user peak verification",
   };
 }
 
@@ -321,9 +345,10 @@ export default {
   addPeakUsers,
   getPeakById,
   updatePeak,
-  updatePeakImage,
-  updatePeakVerification,
+  // updatePeakImage,
   getPeaksByCollectionId,
   searchPeaks,
   getUserPeakById,
+  updateUserPeakPhoto,
+  updateUserPeakVerification,
 };

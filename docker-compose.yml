@@ -1,10 +1,12 @@
 services:
   postgres:
     image: postgis/postgis:15-3.4
+    env_file:
+      - .env
     environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: qwerty123!
-      POSTGRES_DB: HikeUp
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+      POSTGRES_DB: ${DB_NAME}
     volumes:
     - postgres_data:/var/lib/postgresql/data
     - ./postgresql:/backup
@@ -26,6 +28,8 @@ services:
 
   backend:
     build: ./backend
+    env_file:
+      - .env
     ports:
       - "6868:6868"
     volumes:
@@ -35,11 +39,16 @@ services:
       - ./app/dist/files/trails:/app/dist/files/trails
       - ./backend/data/exportMain.geojson:/app/data/exportMain.geojson:ro
     environment:
-      - DB_HOST=postgres
-      - DB_PORT=5432
-      - DB_USER=admin
-      - DB_PASS=qwerty123!
-      - DB_NAME=HikeUp
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - DB_PASS=${DB_PASS}
+      - DB_NAME=${DB_NAME}
+      - GMAIL_PASSWORD=${GMAIL_PASSWORD}
+      - SECRET_TOKEN=${SECRET_TOKEN}
+      - REFRESH_SECRET_TOKEN=${REFRESH_SECRET_TOKEN}
+      - ORS_API_KEY=${ORS_API_KEY}
+      - API_KEY=${API_KEY}
     depends_on:
       - postgres
     networks:
@@ -51,6 +60,8 @@ services:
       - backend
     build:
       context: ./frontend
+    env_file:
+      - .env
     ports:
       - "3000:3000"
     volumes:
@@ -59,6 +70,9 @@ services:
       - ./frontend/index.html:/frontend/index.html
     environment:
       - TZ=Europe/Warsaw
+      - VITE_CLIENT_API_URL=${VITE_CLIENT_API_URL}
+      - VITE_OPENWEATHER_API_KEY=${VITE_OPENWEATHER_API_KEY}
+      - VITE_WEATHER_CITY=${VITE_WEATHER_CITY}
     networks:
       - frontend
     command: npm run dev
