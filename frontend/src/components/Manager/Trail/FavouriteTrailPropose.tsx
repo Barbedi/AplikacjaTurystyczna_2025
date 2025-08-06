@@ -14,12 +14,14 @@ import Modal from "../../Modal";
 const FavouriteTrailPropose = () => {
   const navigate = useNavigate();
   const [trails, setTrails] = useState<Trails[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [openModal, setOpenModal] = useState(false);
   const [selectedTrailId, setSelectedTrailId] = useState<number | null>(null);
 
   useEffect(() => {
     const fetchFavouriteTrails = async () => {
       try {
+        setIsLoading(true);
         const response = await favouriteTrailsService.getFavouriteTrails();
         const favouriteList = response.data.data;
 
@@ -33,6 +35,8 @@ const FavouriteTrailPropose = () => {
         setTrails(fullTrails);
       } catch (error) {
         console.error("Error fetching trails:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -56,39 +60,56 @@ const FavouriteTrailPropose = () => {
 
   return (
     <div className="flex flex-col items-center justify-center w-full mt-5 mx-auto">
-      {trails.map((trail) => (
-        <div
-          key={trail.id}
-          className=" flex bg-white/10 backdrop-blur-lg rounded-lg shadow-lg p-4 mt-5 transition-all duration-300 ease-in-out border border-white/20 hover:bg-white/20 hover:border-white/40 hover:shadow-xl w-full"
-        >
-          <span className="flex-1 text-lg font-lora text-white">
-            {trail.name}
-          </span>
-          <span className="flex-1 text-lg font-lora text-white">
-            {trail.region}
-          </span>
-          <span className="flex-1 text-lg font-lora text-white">
-            {trail.length_km} km
-          </span>
-          <span className="flex-1 text-lg font-lora text-white cursor-pointer">
-            <FontAwesomeIcon
-              onClick={() => handleTrailClick(trail.id)}
-              icon={faChevronRight}
-              className="text-white hover:text-purple-400 cursor-pointer text-lg mr-6"
-              title="Zobacz szczegóły"
-            />
-            <FontAwesomeIcon
-              onClick={() => {
-                setSelectedTrailId(trail.id);
-                setOpenModal(true);
-              }}
-              icon={faTrash}
-              className="text-white/70 hover:text-red-400 cursor-pointer text-lg transition-colors duration-200"
-              title="Usuń z ulubionych"
-            />
-          </span>
+      {isLoading ? (
+        <div className="text-white text-center w-full bg-white/10 backdrop-blur-lg rounded-xl shadow-xl p-8 border border-white/20">
+          <p className="text-lg font-lora font-medium text-white/80">
+            Ładowanie ulubionych tras...
+          </p>
         </div>
-      ))}
+      ) : trails.length === 0 ? (
+        <div className="text-white text-center w-full bg-white/10 backdrop-blur-lg rounded-xl shadow-xl p-8 border border-white/20">
+          <p className="text-lg font-lora font-medium text-white/80">
+            Brak ulubionych tras do wyświetlenia.
+          </p>
+          <p className="text-sm text-white/60 mt-2">
+            Dodaj swoje pierwsze ulubione trasy, aby łatwo do nich wrócić!
+          </p>
+        </div>
+      ) : (
+        trails.map((trail) => (
+          <div
+            key={trail.id}
+            className=" flex bg-white/10 backdrop-blur-lg rounded-lg shadow-lg p-4 mt-5 transition-all duration-300 ease-in-out border border-white/20 hover:bg-white/20 hover:border-white/40 hover:shadow-xl w-full"
+          >
+            <span className="flex-1 text-lg font-lora text-white">
+              {trail.name}
+            </span>
+            <span className="flex-1 text-lg font-lora text-white">
+              {trail.region}
+            </span>
+            <span className="flex-1 text-lg font-lora text-white">
+              {trail.length_km} km
+            </span>
+            <span className="flex-1 text-lg font-lora text-white cursor-pointer">
+              <FontAwesomeIcon
+                onClick={() => handleTrailClick(trail.id)}
+                icon={faChevronRight}
+                className="text-white hover:text-purple-400 cursor-pointer text-lg mr-6"
+                title="Zobacz szczegóły"
+              />
+              <FontAwesomeIcon
+                onClick={() => {
+                  setSelectedTrailId(trail.id);
+                  setOpenModal(true);
+                }}
+                icon={faTrash}
+                className="text-white/70 hover:text-red-400 cursor-pointer text-lg transition-colors duration-200"
+                title="Usuń z ulubionych"
+              />
+            </span>
+          </div>
+        ))
+      )}
       <Modal isOpen={openModal} onClose={() => setOpenModal(false)}>
         <h2 className="text-white text-2xl font-semibold mb-4 text-center">
           Czy chcesz usunąć trasę z ulubionych?

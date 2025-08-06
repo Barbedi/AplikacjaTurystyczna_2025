@@ -118,27 +118,11 @@ const DashboardMenu: React.FC<DashboardMenuProps> = () => {
                 icon={faRoute}
                 className="mr-2 text-lg 2xl:text-xl"
               />
-              {isOpen && "Zaplanuj trase"}
+              {isOpen && "Zaplanuj trasę"}
             </div>
           </NavLink>
-          <NavLink
-            to="community-trails"
-            className={({ isActive }) =>
-              `text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl transition duration-300 ${
-                isActive ? "bg-gray-700" : "hover:bg-gray-700"
-              }`
-            }
-          >
-            <div
-              className={`flex items-center ${!isOpen ? "justify-center" : ""}`}
-            >
-              <FontAwesomeIcon
-                icon={faUsers}
-                className="mr-2 text-lg 2xl:text-xl"
-              />
-              {isOpen && "Społeczność"}
-            </div>
-          </NavLink>
+        </div>
+        <div className="flex flex-col md:mt-2 mt-6 w-full md:space-y-1 space-y-2">
           <NavLink
             to="my-routes"
             className={({ isActive }) =>
@@ -249,7 +233,7 @@ const DashboardMenu: React.FC<DashboardMenuProps> = () => {
         </div>
         <div className="flex flex-col md:mt-2 mt-6 w-full md:space-y-1 space-y-2">
           <NavLink
-            to="my-profile"
+            to="community-trails"
             className={({ isActive }) =>
               `text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl transition duration-300 ${
                 isActive ? "bg-gray-700" : "hover:bg-gray-700"
@@ -260,10 +244,10 @@ const DashboardMenu: React.FC<DashboardMenuProps> = () => {
               className={`flex items-center ${!isOpen ? "justify-center" : ""}`}
             >
               <FontAwesomeIcon
-                icon={faCircleUser}
+                icon={faUsers}
                 className="mr-2 text-lg 2xl:text-xl"
               />
-              {isOpen && "Mój profil"}
+              {isOpen && "Społeczność"}
             </div>
           </NavLink>
           <NavLink
@@ -279,6 +263,26 @@ const DashboardMenu: React.FC<DashboardMenuProps> = () => {
             >
               <RateReviewIcon className="mr-2 text-sm 2xl:text-lg" />
               {isOpen && "Moje opinie"}
+            </div>
+          </NavLink>
+        </div>
+        <div className="flex flex-col md:mt-2 mt-6 w-full md:space-y-1 space-y-2">
+          <NavLink
+            to="my-profile"
+            className={({ isActive }) =>
+              `text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl transition duration-300 ${
+                isActive ? "bg-gray-700" : "hover:bg-gray-700"
+              }`
+            }
+          >
+            <div
+              className={`flex items-center ${!isOpen ? "justify-center" : ""}`}
+            >
+              <FontAwesomeIcon
+                icon={faCircleUser}
+                className="mr-2 text-lg 2xl:text-xl"
+              />
+              {isOpen && "Mój profil"}
             </div>
           </NavLink>
           <button

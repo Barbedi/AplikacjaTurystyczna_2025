@@ -22,6 +22,7 @@ const TrailPeak = () => {
   const [selectedTrailId, setSelectedTrailId] = useState<number | null>(null);
   const [searchParams, setSearchParams] = useSearchParams();
   const [trails, setTrails] = useState<Trails[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [pageData, setPageData] = useState<PageData>({
     page: parseInt(searchParams.get("page") || "1"),
     pages: 1,
@@ -37,6 +38,7 @@ const TrailPeak = () => {
   useEffect(() => {
     const fetchUserTrails = async () => {
       try {
+        setIsLoading(true);
         if (!currentUser?.id) {
           console.log("No user ID available yet");
           return;
@@ -54,6 +56,8 @@ const TrailPeak = () => {
         }
       } catch (err) {
         console.error("Error fetching user trails:", err);
+      } finally {
+        setIsLoading(false);
       }
     };
     if (currentUser?.id) {
@@ -86,55 +90,67 @@ const TrailPeak = () => {
 
   return (
     <div className="flex flex-col items-center justify-center w-full mt-5 mx-auto">
-      {trails.map((trail) => (
-        <div
-          key={trail.id}
-          className=" flex bg-white/10 backdrop-blur-lg rounded-lg shadow-lg p-4 mt-5 transition-all duration-300 ease-in-out border border-white/20 hover:bg-white/20 hover:border-white/40 hover:shadow-xl w-full"
-        >
-          <span className="flex-1 text-lg font-lora text-white">
-            {trail.name}
-          </span>
-          <span className="flex-1 text-lg font-lora text-white">
-            {trail.region}
-          </span>
-          <span className="flex-1 text-lg font-lora text-white">
-            {formatDate(trail.created_at)}
-          </span>
-          <span className="flex-1 text-lg font-lora text-white">
-            <a
-              title="Zobacz trase"
-              onClick={() => chooseTrail(trail)}
-              className="p-4  hover:text-purple-400  cursor-pointer"
-            >
-              {" "}
-              <FontAwesomeIcon icon={faChevronRight} className="ml-2" />{" "}
-            </a>
-            <a
-              title="Edycja trasy"
-              onClick={() => editTrail(trail)}
-              className="p-4 hover:text-green-400/80  cursor-pointer"
-            >
-              {" "}
-              <FontAwesomeIcon icon={faEdit} />
-            </a>
-            <a
-              title="Usuń trase"
-              onClick={() => {
-                setSelectedTrailId(trail.id);
-                setIsOpenModal(true);
-              }}
-              className="p-4 cursor-pointer text-white/70 hover:text-red-400 transition-colors duration-200"
-            >
-              {" "}
-              <FontAwesomeIcon icon={faTrash} />
-            </a>
-          </span>
+      {isLoading ? (
+        <div className="text-white text-center w-full bg-white/10 backdrop-blur-lg rounded-xl shadow-xl p-8 border border-white/20">
+          <p className="text-lg font-lora font-medium text-white/80">
+            Ładowanie tras...
+          </p>
         </div>
-      ))}
-      {trails.length === 0 && (
-        <div className="text-white text-center mt-5">
-          Nie masz jeszcze żadnych tras.
+      ) : trails.length === 0 ? (
+        <div className="text-white text-center w-full bg-white/10 backdrop-blur-lg rounded-xl shadow-xl p-8 border border-white/20">
+          <p className="text-lg font-lora font-medium text-white/80">
+            Brak tras do wyświetlenia.
+          </p>
+          <p className="text-sm text-white/60 mt-2">
+            Zaplanuj swoją pierwszą trasę, aby rozpocząć przygodę!
+          </p>
         </div>
+      ) : (
+        trails.map((trail) => (
+          <div
+            key={trail.id}
+            className=" flex bg-white/10 backdrop-blur-lg rounded-lg shadow-lg p-4 mt-5 transition-all duration-300 ease-in-out border border-white/20 hover:bg-white/20 hover:border-white/40 hover:shadow-xl w-full"
+          >
+            <span className="flex-1 text-lg font-lora text-white">
+              {trail.name}
+            </span>
+            <span className="flex-1 text-lg font-lora text-white">
+              {trail.region}
+            </span>
+            <span className="flex-1 text-lg font-lora text-white">
+              {formatDate(trail.created_at)}
+            </span>
+            <span className="flex-1 text-lg font-lora text-white">
+              <a
+                title="Zobacz trase"
+                onClick={() => chooseTrail(trail)}
+                className="p-4  hover:text-purple-400  cursor-pointer"
+              >
+                {" "}
+                <FontAwesomeIcon icon={faChevronRight} className="ml-2" />{" "}
+              </a>
+              <a
+                title="Edycja trasy"
+                onClick={() => editTrail(trail)}
+                className="p-4 hover:text-green-400/80  cursor-pointer"
+              >
+                {" "}
+                <FontAwesomeIcon icon={faEdit} />
+              </a>
+              <a
+                title="Usuń trase"
+                onClick={() => {
+                  setSelectedTrailId(trail.id);
+                  setIsOpenModal(true);
+                }}
+                className="p-4 cursor-pointer text-white/70 hover:text-red-400 transition-colors duration-200"
+              >
+                {" "}
+                <FontAwesomeIcon icon={faTrash} />
+              </a>
+            </span>
+          </div>
+        ))
       )}
       <Pagination
         pageData={pageData}
