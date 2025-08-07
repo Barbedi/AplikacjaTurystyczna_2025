@@ -1,6 +1,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import trailsService from "../services/trails.service";
+import filesService from "../services/files.service";
 import { useEffect, useState } from "react";
 import { Trails } from "../assets/Data";
 import { useNavigate } from "react-router-dom";
@@ -13,6 +14,7 @@ const ProposedRoutes = () => {
       try {
         const response = await trailsService.getRandomTrails(3);
         setTrails(response.data);
+        console.log("Fetched trails:", response.data);
       } catch (error) {
         console.error("Error fetching trails:", error);
       }
@@ -33,8 +35,12 @@ const ProposedRoutes = () => {
         >
           <img
             className="w-full h-60 object-cover"
-            src="/assets/img/IMG_5962.jpg"
-            alt="Trasa"
+            src={
+              trail.photos && trail.photos.length > 0
+                ? filesService.getTrailImgUrl(trail.photos[0].image_name)
+                : "/assets/img/IMG_5962.jpg"
+            }
+            alt={trail.name}
           />
           <div className="flex flex-col items-center text-center px-4 py-6 font-lora text-white flex-grow">
             <h1 className="text-xl md:text-2xl xl:text-3xl font-lora leading-tight mb-4">

@@ -96,9 +96,13 @@ const TrailPropose = () => {
             <span className="flex-1 text-lg font-lora text-white">
               {trail.name}
             </span>
-            <span className="flex-1 text-lg font-lora text-white">
-              {trail.region}
-            </span>
+            <div className="flex-1 flex justify-center">
+              <div className={`inline-flex items-center px-3 py-1 rounded-full border border-purple-500/20 bg-purple-500/30`}>
+                <span className={`text-sm font-semibold  text-purple-300`}>
+                  {trail.difficulty} 
+                </span>
+              </div>
+            </div>
             <span className="flex-1 text-lg font-lora text-white">
               {trail.length_km} km
             </span>
