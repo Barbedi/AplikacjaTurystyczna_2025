@@ -405,7 +405,7 @@ const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
                 }
               >
                 <option value="one-way">W jedną stronę</option>
-                <option disabled value="loop">
+                <option  value="loop">
                   Pętla
                 </option>
                 <option value="back-and-forth">W tę i z powrotem</option>
