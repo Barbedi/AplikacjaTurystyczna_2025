@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { Err, Filter, Sort, Users} from "../../assets/Data";
+import { Err, Filter, Sort, Users } from "../../assets/Data";
 import usersService from "../../services/user.service";
 
 const useGetUsers = () => {

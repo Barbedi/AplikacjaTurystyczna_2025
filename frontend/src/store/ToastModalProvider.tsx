@@ -1,4 +1,3 @@
-
 import useToast from "../hooks/useToast";
 import ToastModalContext from "./toast-modal-context";
 
@@ -6,7 +5,9 @@ interface ToastModalProviderProps {
   children: React.ReactNode;
 }
 
-const ToastModalProvider: React.FC<ToastModalProviderProps> = ({ children }) => {
+const ToastModalProvider: React.FC<ToastModalProviderProps> = ({
+  children,
+}) => {
   const { toast, createToast } = useToast();
 
   return (

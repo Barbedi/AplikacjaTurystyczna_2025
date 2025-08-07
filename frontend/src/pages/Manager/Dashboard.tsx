@@ -33,45 +33,57 @@ const Dashboard = () => {
             <span className="text-2xl font-semibold text-purple-700 drop-shadow-md select-none">
               Kliknij tutaj, aby zaplanować trasę
             </span>
-      </div>
+          </div>
         </div>
         <div className="w-full md:w-1/2 flex flex-col gap-4 p-4">
           <div className="flex flex-col items-center justify-center p-6 bg-white/10 backdrop-blur-lg rounded-xl shadow-xl  border border-blue-100 hover:scale-105 transition-transform duration-300">
             <div className="w-13 h-13 bg-blue-100 rounded-full flex items-center justify-center mb-4">
-              <FontAwesomeIcon icon={faParking} className=" text-2xl text-blue-600" />
+              <FontAwesomeIcon
+                icon={faParking}
+                className=" text-2xl text-blue-600"
+              />
             </div>
-            <h2 className="text-xl font-bold text-white mb-2">Kup bilety na parking</h2>
-            <p className="text-white text-center text-sm mb-4">Zostaniesz przekierowany na stronę zakupu biletów.</p>
-            <a  
-              href="https://tpn.gov.pl/parkingi-morskie-oko" 
+            <h2 className="text-xl font-bold text-white mb-2">
+              Kup bilety na parking
+            </h2>
+            <p className="text-white text-center text-sm mb-4">
+              Zostaniesz przekierowany na stronę zakupu biletów.
+            </p>
+            <a
+              href="https://tpn.gov.pl/parkingi-morskie-oko"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center px-6 py-3 bg-blue-600 text-white font-medium rounded-xl hover:bg-blue-700 transition-colors duration-300 shadow-md hover:shadow-lg"
             >
               Kup bilety
-              
             </a>
           </div>
-          
+
           <div className="flex flex-col items-center justify-center p-6 bg-white/10 backdrop-blur-lg rounded-xl shadow-xl  border border-green-100 hover:scale-105 transition-transform duration-300">
             <div className="w-13 h-13 bg-green-100 rounded-full flex items-center justify-center mb-4">
-              <FontAwesomeIcon icon={faTree} className=" text-2xl text-green-600" />
+              <FontAwesomeIcon
+                icon={faTree}
+                className=" text-2xl text-green-600"
+              />
             </div>
-            <h2 className="text-xl font-bold text-white mb-2">Kup bilety do Parku Narodowego</h2>
-            <p className="text-white text-center text-sm mb-4">Zostaniesz przekierowany na stronę zakupu biletów.</p>
-            <a 
+            <h2 className="text-xl font-bold text-white mb-2">
+              Kup bilety do Parku Narodowego
+            </h2>
+            <p className="text-white text-center text-sm mb-4">
+              Zostaniesz przekierowany na stronę zakupu biletów.
+            </p>
+            <a
               target="_blank"
               rel="noopener noreferrer"
-              href="https://tpn.gov.pl/wstep-do-parku" 
+              href="https://tpn.gov.pl/wstep-do-parku"
               className="inline-flex items-center px-6 py-3 bg-green-600 text-white font-medium rounded-xl hover:bg-green-700 transition-colors duration-300 shadow-md hover:shadow-lg"
             >
               Kup bilety
-              
             </a>
           </div>
         </div>
-        </div>
       </div>
+    </div>
   );
 };
 

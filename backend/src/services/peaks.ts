@@ -77,11 +77,11 @@ async function getUserPeakById(userId: number, peakId: number) {
   `;
   const result = await db.query(query, [userId, peakId]);
   const row = result.rows[0];
-  
+
   if (!row) {
     throw new Err("User peak not found", 404);
   }
-  
+
   return {
     data: row,
     message: "Successfully fetched user peak",
@@ -286,7 +286,11 @@ async function searchPeaks(query: string) {
 
 // Dodaj funkcje do zarządzania user_peaks z verified i photo
 
-async function updateUserPeakPhoto(userId: number, peakId: number, photoUrl: string) {
+async function updateUserPeakPhoto(
+  userId: number,
+  peakId: number,
+  photoUrl: string,
+) {
   // Najpierw spróbuj zaktualizować
   const updateQuery = `
     UPDATE user_peaks 
@@ -295,7 +299,7 @@ async function updateUserPeakPhoto(userId: number, peakId: number, photoUrl: str
     RETURNING *;
   `;
   let result = await db.query(updateQuery, [photoUrl, userId, peakId]);
-  
+
   // Jeśli nie ma rekordu, utwórz go
   if (result.rows.length === 0) {
     const insertQuery = `
@@ -305,14 +309,18 @@ async function updateUserPeakPhoto(userId: number, peakId: number, photoUrl: str
     `;
     result = await db.query(insertQuery, [userId, peakId, photoUrl]);
   }
-  
+
   return {
     data: result.rows[0],
     message: "Successfully updated user peak photo",
   };
 }
 
-async function updateUserPeakVerification(userId: number, peakId: number, verified: boolean) {
+async function updateUserPeakVerification(
+  userId: number,
+  peakId: number,
+  verified: boolean,
+) {
   // Najpierw spróbuj zaktualizować
   const updateQuery = `
     UPDATE user_peaks 
@@ -321,7 +329,7 @@ async function updateUserPeakVerification(userId: number, peakId: number, verifi
     RETURNING *;
   `;
   let result = await db.query(updateQuery, [verified, userId, peakId]);
-  
+
   // Jeśli nie ma rekordu, utwórz go
   if (result.rows.length === 0) {
     const insertQuery = `
@@ -331,7 +339,7 @@ async function updateUserPeakVerification(userId: number, peakId: number, verifi
     `;
     result = await db.query(insertQuery, [userId, peakId, verified]);
   }
-  
+
   return {
     data: result.rows[0],
     message: "Successfully updated user peak verification",

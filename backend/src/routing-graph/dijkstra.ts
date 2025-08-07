@@ -83,7 +83,7 @@ export function dijkstra(
   graph: Graph,
   startId: string,
   endId: string,
-  edgesToExclude: EdgeToExclude[] = []
+  edgesToExclude: EdgeToExclude[] = [],
 ) {
   if (!graph.nodes[startId]) {
     throw new Error(`Węzeł startowy ${startId} nie istnieje w grafie`);
@@ -124,7 +124,7 @@ export function dijkstra(
 
       // Sprawdzenie czy krawędź jest wykluczona:
       const isExcluded = edgesToExclude.some(
-        (e) => e.from === currentNode && e.to === edge.to
+        (e) => e.from === currentNode && e.to === edge.to,
       );
       if (isExcluded) continue;
 

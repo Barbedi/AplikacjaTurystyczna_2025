@@ -25,7 +25,7 @@ const SheltersMap: React.FC<SheltersMapProps> = ({
         iconSize: [20, 20],
         iconAnchor: [10, 20],
       }),
-    []
+    [],
   );
 
   return (

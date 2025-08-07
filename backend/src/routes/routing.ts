@@ -16,7 +16,6 @@ function chunkArray<T>(arr: T[], size: number): T[][] {
 router.post("/local", async (req: any, res: any) => {
   const { points, routeType } = req.body;
 
-
   if (!points || !Array.isArray(points) || points.length < 2) {
     return res.status(400).json({
       error: "Musisz podać tablicę punktów: co najmniej start i koniec",
@@ -114,11 +113,9 @@ router.post("/local", async (req: any, res: any) => {
             .status(502)
             .json({ error: "Invalid coordinates format for elevation API" });
         } else {
-          return res
-            .status(502)
-            .json({
-              error: `MapTiler API error: ${response.status} ${response.statusText}`,
-            });
+          return res.status(502).json({
+            error: `MapTiler API error: ${response.status} ${response.statusText}`,
+          });
         }
       }
 

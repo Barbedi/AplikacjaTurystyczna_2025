@@ -3,7 +3,7 @@ import { CurrentWeather, ForecastItem } from "../../../assets/Data";
 import { formatDate, formatTime } from "../../../utils/format";
 import { weatherTranslation } from "../../../utils/weatherTranslation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCloudSun,faCalendar } from "@fortawesome/free-solid-svg-icons";
+import { faCloudSun, faCalendar } from "@fortawesome/free-solid-svg-icons";
 
 const API_KEY = import.meta.env.VITE_OPENWEATHER_API_KEY;
 const CITY = import.meta.env.VITE_WEATHER_CITY;
@@ -63,8 +63,11 @@ const WeatherWidget = () => {
         });
 
         const forecastArray = Array.from(uniqueDates.values())
-          .sort((a, b) => new Date(a.dt_txt).getTime() - new Date(b.dt_txt).getTime())
-          .slice(0, 3); 
+          .sort(
+            (a, b) =>
+              new Date(a.dt_txt).getTime() - new Date(b.dt_txt).getTime(),
+          )
+          .slice(0, 3);
 
         setForecast(forecastArray);
       } catch (err) {
@@ -89,16 +92,19 @@ const WeatherWidget = () => {
               Pogoda w {currentWeather?.name}
             </h2>
             <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
-              <FontAwesomeIcon icon={faCloudSun} className="text-xl text-white" />
+              <FontAwesomeIcon
+                icon={faCloudSun}
+                className="text-xl text-white"
+              />
             </div>
           </div>
-          
+
           {currentWeather ? (
             <div className="  rounded-xl p-4 ">
               <p className="text-lg text-gray-200 mb-4">
                 {formatDate(new Date().toISOString())}
               </p>
-              
+
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center space-x-4">
                   <img
@@ -109,7 +115,9 @@ const WeatherWidget = () => {
                     className="drop-shadow-lg"
                   />
                   <div>
-                    <p className="text-5xl font-bold">{Math.round(currentWeather.main.temp)}°</p>
+                    <p className="text-5xl font-bold">
+                      {Math.round(currentWeather.main.temp)}°
+                    </p>
                     <p className="text-sm text-gray-300 capitalize">
                       {currentWeather.weather[0].description}
                     </p>
@@ -119,15 +127,21 @@ const WeatherWidget = () => {
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
                 <div className="bg-white/10 rounded-lg p-3 text-center">
                   <p className="text-gray-300 mb-1">Aktualizacja</p>
-                  <p className="font-semibold">{formatTime(currentWeather.dt)}</p>
+                  <p className="font-semibold">
+                    {formatTime(currentWeather.dt)}
+                  </p>
                 </div>
                 <div className="bg-white/10 rounded-lg p-3 text-center">
                   <p className="text-gray-300 mb-1">Wschód słońca</p>
-                  <p className="font-semibold">{formatTime(currentWeather.sys.sunrise)}</p>
+                  <p className="font-semibold">
+                    {formatTime(currentWeather.sys.sunrise)}
+                  </p>
                 </div>
                 <div className="bg-white/10 rounded-lg p-3 text-center">
                   <p className="text-gray-300 mb-1">Zachód słońca</p>
-                  <p className="font-semibold">{formatTime(currentWeather.sys.sunset)}</p>
+                  <p className="font-semibold">
+                    {formatTime(currentWeather.sys.sunset)}
+                  </p>
                 </div>
               </div>
             </div>
@@ -141,17 +155,20 @@ const WeatherWidget = () => {
           <div className="flex items-center space-x-3">
             <h3 className="text-2xl font-bold">Prognoza</h3>
             <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
-              <FontAwesomeIcon icon={faCalendar} className="text-sm text-white" />
+              <FontAwesomeIcon
+                icon={faCalendar}
+                className="text-sm text-white"
+              />
             </div>
           </div>
-          
+
           <div className="  rounded-xl p-4 ">
             <div className="grid grid-cols-1 gap-3">
               {forecast.map((item, index) => (
-                <div 
-                  key={item.dt} 
+                <div
+                  key={item.dt}
                   className={`p-3 rounded-lg transition-all duration-200 hover:bg-white/10 ${
-                    index % 2 === 0 ? 'bg-white/5' : 'bg-transparent'
+                    index % 2 === 0 ? "bg-white/5" : "bg-transparent"
                   }`}
                 >
                   <div className="flex items-center justify-between">
@@ -168,7 +185,8 @@ const WeatherWidget = () => {
                           {formatDate(item.dt_txt)}
                         </p>
                         <p className="text-sm text-gray-300 capitalize">
-                          {weatherTranslation[item.weather[0].main] ?? item.weather[0].main}
+                          {weatherTranslation[item.weather[0].main] ??
+                            item.weather[0].main}
                         </p>
                       </div>
                     </div>

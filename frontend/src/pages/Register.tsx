@@ -85,8 +85,8 @@ const Register = () => {
       }
     } catch (error: unknown) {
       console.error("Błąd rejestracji", error);
-      
-      if (error && typeof error === 'object' && 'response' in error) {
+
+      if (error && typeof error === "object" && "response" in error) {
         const axiosError = error as { response?: { status?: number } };
         if (axiosError.response?.status === 409) {
           createToast({
@@ -98,7 +98,7 @@ const Register = () => {
           return;
         }
       }
-      
+
       createToast({
         message: "Błąd rejestracji - sprawdź konsolę",
         icon: faCircleExclamation,

@@ -76,8 +76,7 @@ const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
   const [selectedTrailFeatures, setSelectedTrailFeatures] = useState<number[]>(
     [],
   );
-   const { createToast } = useContext(ToastModalContext);
-
+  const { createToast } = useContext(ToastModalContext);
 
   useEffect(() => {
     if (!user?.email) return;
@@ -261,14 +260,13 @@ const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
             console.error("Błąd zapisu cech trasy:", featuresError);
           }
         }
-      onCloseDashboard?.();
+        onCloseDashboard?.();
         createToast({
           message: "Trasa zapisana pomyślnie!",
           icon: faCircleCheck,
           type: "primary",
           timeout: 5000,
         });
-       
       }
     } catch (err) {
       console.error("Błąd zapisu trasy:", err);
@@ -405,9 +403,7 @@ const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
                 }
               >
                 <option value="one-way">W jedną stronę</option>
-                <option  value="loop">
-                  Pętla
-                </option>
+                <option value="loop">Pętla</option>
                 <option value="back-and-forth">W tę i z powrotem</option>
               </select>
             </div>
@@ -435,17 +431,17 @@ const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
             <button
               onClick={() => setIsOpenModal(true)}
               className={`px-2 py-1 rounded-lg transition-all duration-200 flex items-center space-x-2 backdrop-blur-sm border text-sm ${
-                trailDifficulty 
-                  ? 'bg-primary/20 hover:bg-primary/30 text-primary border-primary/30 shadow-primary/20' 
-                  : 'bg-white/10 hover:bg-white/20 text-gray-800 border-white/20 hover:border-accent/40'
+                trailDifficulty
+                  ? "bg-primary/20 hover:bg-primary/30 text-primary border-primary/30 shadow-primary/20"
+                  : "bg-white/10 hover:bg-white/20 text-gray-800 border-white/20 hover:border-accent/40"
               } shadow-lg hover:shadow-xl`}
             >
-              <FontAwesomeIcon 
-                icon={trailDifficulty ? faCheck : faGear} 
-                className="text-xs" 
+              <FontAwesomeIcon
+                icon={trailDifficulty ? faCheck : faGear}
+                className="text-xs"
               />
               <span className="font-medium">
-                {trailDifficulty ? `${trailDifficulty}` : 'Ustal'}
+                {trailDifficulty ? `${trailDifficulty}` : "Ustal"}
               </span>
             </button>
           </div>

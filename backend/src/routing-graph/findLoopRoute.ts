@@ -75,14 +75,16 @@ function findLoopRoute(graph: Graph, points: Point[]) {
       if (lastId !== undefined && firstId !== undefined) {
         // Znajdź drogę powrotną z wykluczeniem użytych krawędzi
         const returnResult = dijkstra(graph, lastId, firstId, usedEdges);
-        
+
         if (returnResult.found) {
           // Dodaj drogę powrotną (bez pierwszego węzła żeby uniknąć duplikacji)
           fullPath = fullPath.concat(returnResult.path.slice(1));
           totalDistance += returnResult.totalDistance;
         } else {
           // Jeśli nie można znaleźć alternatywnej drogi, użyj standardowej
-          console.log("Nie znaleziono alternatywnej drogi powrotnej, używam standardowej");
+          console.log(
+            "Nie znaleziono alternatywnej drogi powrotnej, używam standardowej",
+          );
           const fallbackResult = dijkstra(graph, lastId, firstId);
           if (fallbackResult.found) {
             fullPath = fullPath.concat(fallbackResult.path.slice(1));

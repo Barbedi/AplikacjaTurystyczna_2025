@@ -15,7 +15,9 @@ const TrailInfoSection: React.FC<TrailInfoSectionProps> = ({ trail }) => {
       <div className="space-y-4">
         <div>
           <h4 className="text-white/70 text-sm mb-1">Opis</h4>
-          <p className="text-white">{trail.description || "Brak opisu trasy."}</p>
+          <p className="text-white">
+            {trail.description || "Brak opisu trasy."}
+          </p>
         </div>
         <div>
           <h4 className="text-white/70 text-sm mb-3">Cechy</h4>

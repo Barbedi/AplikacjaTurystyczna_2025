@@ -19,11 +19,23 @@ class UserPeaksService {
   getUserPeakById = (userId: number, peakId: number) => {
     return httpCommon.get(`/peaks/${peakId}/users/${userId}`);
   };
-  updateUserPeakPhoto = async (userId: number, peakId: number, photoUrl: string) => {
-    return httpCommon.patch(`/user-peaks/${userId}/${peakId}/photo`, { photoUrl });
+  updateUserPeakPhoto = async (
+    userId: number,
+    peakId: number,
+    photoUrl: string,
+  ) => {
+    return httpCommon.patch(`/user-peaks/${userId}/${peakId}/photo`, {
+      photoUrl,
+    });
   };
-  updateUserPeakVerification = async (userId: number, peakId: number, verified: boolean) => {
-    return httpCommon.patch(`/user-peaks/${userId}/${peakId}/verification`, { verified });
+  updateUserPeakVerification = async (
+    userId: number,
+    peakId: number,
+    verified: boolean,
+  ) => {
+    return httpCommon.patch(`/user-peaks/${userId}/${peakId}/verification`, {
+      verified,
+    });
   };
 }
 

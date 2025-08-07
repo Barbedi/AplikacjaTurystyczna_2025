@@ -67,7 +67,7 @@ class TrailsService {
           geometry: row.geometry ? JSON.parse(row.geometry) : null,
           photos: photos || [],
         };
-      })
+      }),
     );
 
     return trails;

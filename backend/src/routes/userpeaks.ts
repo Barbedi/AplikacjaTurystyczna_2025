@@ -50,18 +50,18 @@ router.patch("/:userId/:peakId/photo", verifyUser, async (req, res, next) => {
   try {
     const { userId, peakId } = req.params;
     const { photoUrl } = req.body;
-    
+
     if (!userId || !peakId) {
       res.status(400).json({ message: "User ID and Peak ID are required" });
       return;
     }
-    
+
     const result = await peaksService.updateUserPeakPhoto(
       parseInt(userId),
       parseInt(peakId),
-      photoUrl
+      photoUrl,
     );
-    
+
     res.status(200).json({ data: result });
   } catch (error) {
     next(error);
@@ -110,26 +110,30 @@ router.patch("/:userId/:peakId/photo", verifyUser, async (req, res, next) => {
  *       500:
  *         description: Internal server error
  */
-router.patch("/:userId/:peakId/verification", verifyUser, async (req, res, next) => {
-  try {
-    const { userId, peakId } = req.params;
-    const { verified } = req.body;
+router.patch(
+  "/:userId/:peakId/verification",
+  verifyUser,
+  async (req, res, next) => {
+    try {
+      const { userId, peakId } = req.params;
+      const { verified } = req.body;
 
-    if (!userId || !peakId) {
-      res.status(400).json({ message: "User ID and Peak ID are required" });
-      return;
+      if (!userId || !peakId) {
+        res.status(400).json({ message: "User ID and Peak ID are required" });
+        return;
+      }
+
+      const result = await peaksService.updateUserPeakVerification(
+        parseInt(userId),
+        parseInt(peakId),
+        verified,
+      );
+
+      res.status(200).json({ data: result });
+    } catch (error) {
+      next(error);
     }
-
-    const result = await peaksService.updateUserPeakVerification(
-      parseInt(userId),
-      parseInt(peakId),
-      verified
-    );
-    
-    res.status(200).json({ data: result });
-  } catch (error) {
-    next(error);
-  }
-});
+  },
+);
 
 export default router;

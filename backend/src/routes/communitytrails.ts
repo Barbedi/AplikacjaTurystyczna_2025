@@ -48,5 +48,4 @@ router.delete("/:sharedId", verifyUser, async (req, res, next) => {
   }
 });
 
-
 export default router;

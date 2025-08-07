@@ -10,7 +10,7 @@ import { faStar, faMountainSun } from "@fortawesome/free-solid-svg-icons";
 import { formatDate } from "../../utils/format";
 import useGetUsers from "../../hooks/user/useGetUser";
 import AuthContext from "../../store/auth-context";
-import exifr from 'exifr';
+import exifr from "exifr";
 import { calculateDistance } from "../../utils/calculateDistance";
 
 const emptyPeak: Peaks = {
@@ -74,9 +74,7 @@ const EditCrownPage = () => {
         });
         if (userPeakData.photo_url) {
           if (isCrownPeak) {
-            setImagePreview(
-              filesService.getPeakImgUrl(userPeakData.photo_url),
-            );
+            setImagePreview(filesService.getPeakImgUrl(userPeakData.photo_url));
           } else {
             setUserImagePreview(
               filesService.getPeakImgUrl(userPeakData.photo_url),
@@ -103,33 +101,47 @@ const EditCrownPage = () => {
     if (file && currentUser?.id && id) {
       let canUpload = true;
       let tempVerificationResult = null;
-      
+
       if (isCrownPeak && peak.latitude && peak.longitude) {
         try {
           const gps = await exifr.gps(file);
-          
+
           if (gps && gps.latitude && gps.longitude) {
             const distance = calculateDistance(
-              gps.latitude, gps.longitude,
-              peak.latitude, peak.longitude
+              gps.latitude,
+              gps.longitude,
+              peak.latitude,
+              peak.longitude,
             );
-            
+
             if (distance <= 1000) {
-              tempVerificationResult = { isValid: true, distance: Math.round(distance) };
+              tempVerificationResult = {
+                isValid: true,
+                distance: Math.round(distance),
+              };
               canUpload = true;
             } else {
-              tempVerificationResult = { isValid: false, distance: Math.round(distance) };
+              tempVerificationResult = {
+                isValid: false,
+                distance: Math.round(distance),
+              };
               canUpload = false;
             }
           } else {
-            tempVerificationResult = { isValid: false, error: 'Brak danych GPS w zdjęciu' };
+            tempVerificationResult = {
+              isValid: false,
+              error: "Brak danych GPS w zdjęciu",
+            };
             canUpload = false;
           }
         } catch {
-          tempVerificationResult = { isValid: false, error: 'Błąd odczytu metadanych' };
+          tempVerificationResult = {
+            isValid: false,
+            error: "Błąd odczytu metadanych",
+          };
           canUpload = false;
         }
-        
+
         setVerificationResult(tempVerificationResult);
       }
 
@@ -140,33 +152,37 @@ const EditCrownPage = () => {
 
           if (filename) {
             await userpeaksService.updateUserPeakPhoto(
-              currentUser.id, 
-              parseInt(id), 
-              filename
+              currentUser.id,
+              parseInt(id),
+              filename,
             );
             if (tempVerificationResult && tempVerificationResult.isValid) {
               await userpeaksService.updateUserPeakVerification(
                 currentUser.id,
                 parseInt(id),
-                true
+                true,
               );
             }
             const updatedData = await userpeaksService.getUserPeakById(
               currentUser.id,
-              parseInt(id)
+              parseInt(id),
             );
-            
+
             setMyPeak({
               description: updatedData.data.data.description,
               photoUrl: updatedData.data.data.photo_url,
               visitedAt: updatedData.data.data.visited_at,
-              verified: updatedData.data.data.verified
+              verified: updatedData.data.data.verified,
             });
             if (updatedData.data.data.photo_url) {
               if (isCrownPeak) {
-                setImagePreview(filesService.getPeakImgUrl(updatedData.data.data.photo_url));
+                setImagePreview(
+                  filesService.getPeakImgUrl(updatedData.data.data.photo_url),
+                );
               } else {
-                setUserImagePreview(filesService.getPeakImgUrl(updatedData.data.data.photo_url));
+                setUserImagePreview(
+                  filesService.getPeakImgUrl(updatedData.data.data.photo_url),
+                );
               }
             }
             if (isCrownPeak) {
@@ -210,7 +226,6 @@ const EditCrownPage = () => {
         const response = await peaksService.getById(id);
         const peakData = response.data.data;
         setPeak(peakData);
-
       } catch (error) {
         console.error("Error fetching peak data:", error);
       }
@@ -286,18 +301,24 @@ const EditCrownPage = () => {
                   </span>
                 )}
               </div>
-              {isCrownPeak && verificationResult && verificationResult.distance && (
-                <div className="flex items-center">
-                  <span className="text-white/70 font-medium w-20">Odległość:</span>
-                  <span className={`ml-2 px-2 py-1 rounded-full text-xs font-medium ${
-                    verificationResult.isValid 
-                      ? 'bg-green-500/20 text-green-300 border border-green-500/30' 
-                      : 'bg-red-500/20 text-red-300 border border-red-500/30'
-                  }`}>
-                    {verificationResult.distance}m od szczytu
-                  </span>
-                </div>
-              )}
+              {isCrownPeak &&
+                verificationResult &&
+                verificationResult.distance && (
+                  <div className="flex items-center">
+                    <span className="text-white/70 font-medium w-20">
+                      Odległość:
+                    </span>
+                    <span
+                      className={`ml-2 px-2 py-1 rounded-full text-xs font-medium ${
+                        verificationResult.isValid
+                          ? "bg-green-500/20 text-green-300 border border-green-500/30"
+                          : "bg-red-500/20 text-red-300 border border-red-500/30"
+                      }`}
+                    >
+                      {verificationResult.distance}m od szczytu
+                    </span>
+                  </div>
+                )}
               {isMyPeak && (
                 <div className="flex items-center">
                   <span className="text-white/70 font-medium w-20">Data:</span>

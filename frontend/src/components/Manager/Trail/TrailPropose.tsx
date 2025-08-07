@@ -1,7 +1,11 @@
 import { useEffect, useState } from "react";
 import trailsService from "../../../services/trails.service";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronRight, faHeart } from "@fortawesome/free-solid-svg-icons";
+import {
+  faChevronRight,
+  faHeart,
+  faRoute,
+} from "@fortawesome/free-solid-svg-icons";
 import { PageData, Trails } from "../../../assets/Data";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Pagination from "../../Pagination";
@@ -21,7 +25,9 @@ const TrailPropose = () => {
     try {
       const favResponse = await favouriteTrailsService.getFavouriteTrails();
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const favIds = favResponse.data.data.map((favoriteTrail: any) => favoriteTrail.trail_id);
+      const favIds = favResponse.data.data.map(
+        (favoriteTrail: any) => favoriteTrail.trail_id,
+      );
       setFavoriteIds(favIds);
       return favIds;
     } catch (error) {
@@ -39,10 +45,9 @@ const TrailPropose = () => {
           pages: response.data.totalPages,
         }));
         await fetchFavoriteTrails();
-        
       } catch (error) {
         console.error("Error fetching data:", error);
-      } 
+      }
     };
 
     fetchData();
@@ -81,58 +86,96 @@ const TrailPropose = () => {
     }
   };
 
-  
   return (
-    <div className="flex flex-col items-center justify-center w-full mt-5 mx-auto">
-      {trails.map((trail) => {
+    <div className="flex flex-col w-full mt-5 mx-auto space-y-3">
+      {trails.map((trail, index) => {
         const isFavorite = favoriteIds.includes(trail.id);
-        console.log(`Trail ${trail.id} (${trail.name}) is favorite:`, isFavorite);
-        
         return (
           <div
             key={trail.id}
-            className="flex bg-white/10 backdrop-blur-lg rounded-lg shadow-lg p-4 mt-5 transition-all duration-300 ease-in-out border border-white/20 hover:bg-white/20 hover:border-white/40 hover:shadow-xl w-full"
+            className={`group relative bg-white/10 backdrop-blur-lg rounded-2xl shadow-lg p-6 transition-all duration-300 ease-in-out border border-white/20 hover:bg-white/20 hover:border-white/40 hover:shadow-2xl hover:scale-[1.02] w-full ${
+              index === 0 ? "animate-fadeInUp" : ""
+            }`}
           >
-            <span className="flex-1 text-lg font-lora text-white">
-              {trail.name}
-            </span>
-            <div className="flex-1 flex justify-center">
-              <div className={`inline-flex items-center px-3 py-1 rounded-full border border-purple-500/20 bg-purple-500/30`}>
-                <span className={`text-sm font-semibold  text-purple-300`}>
-                  {trail.difficulty} 
-                </span>
+            <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+
+            <div className="relative flex items-center gap-6">
+              <div className="flex items-center gap-4 flex-1 min-w-0">
+                <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
+                  <FontAwesomeIcon
+                    icon={faRoute}
+                    className="text-xl text-white"
+                  />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <h3 className="text-xl font-lora text-white truncate font-semibold">
+                    {trail.name}
+                  </h3>
+                  <p className="text-sm text-gray-300 mt-1">
+                    Szlak turystyczny
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-6">
+                <div className="flex flex-col items-center">
+                  <span className="text-xs text-gray-300 mb-2">Trudność</span>
+                  <div className="flex-shrink-0 w-[110px]">
+                    <div className="inline-flex items-center justify-center px-4 py-2 w-full rounded-xl border border-purple-500/30 bg-purple-500/20 backdrop-blur-sm">
+                      <span className="text-sm font-bold text-purple-200 text-center truncate">
+                        {trail.difficulty}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex flex-col items-center">
+                  <span className="text-xs text-gray-300 mb-2">Długość</span>
+                  <div className="flex items-center gap-1 bg-white/10 px-3 py-2 rounded-xl">
+                    <span className="text-lg font-bold text-white whitespace-nowrap">
+                      {trail.length_km} km
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 flex-shrink-0 mt-5">
+                <button
+                  onClick={() => handleFavoriteClick(trail.id)}
+                  className={`p-2 rounded-xl transition-all duration-200 ${
+                    isFavorite
+                      ? "bg-red-500/20 border border-red-500/30 text-red-400 hover:bg-red-500/30"
+                      : "bg-white/10 border border-white/20 text-gray-400 hover:bg-white/20 hover:text-red-400"
+                  }`}
+                  title={
+                    isFavorite ? "Usuń z ulubionych" : "Dodaj do ulubionych"
+                  }
+                >
+                  <FontAwesomeIcon
+                    icon={faHeart}
+                    className="text-lg cursor-pointer"
+                  />
+                </button>
+
+                <button
+                  onClick={() => handleTrailClick(trail.id)}
+                  className="bg-white/20 border border-white/30 text-white px-3 py-2  rounded-xl hover:bg-white/30 hover:border-white/40 transition-all duration-200 flex items-center gap-2 font-medium"
+                  title="Zobacz szczegóły"
+                >
+                  <span>Szczegóły</span>
+                  <FontAwesomeIcon icon={faChevronRight} className="text-sm" />
+                </button>
               </div>
             </div>
-            <span className="flex-1 text-lg font-lora text-white">
-              {trail.length_km} km
-            </span>
-            <span className="flex-1 text-lg font-lora text-white cursor-pointer">
-              <FontAwesomeIcon
-                onClick={() => handleTrailClick(trail.id)}
-                icon={faChevronRight}
-                className="text-white hover:text-purple-400 cursor-pointer text-lg mr-2"
-                title="Zobacz szczegóły"
-              />
-              <FontAwesomeIcon
-                onClick={() => handleFavoriteClick(trail.id)}
-                icon={faHeart}
-                className={`cursor-pointer text-lg ml-2 transition-colors duration-200 ${
-                  isFavorite
-                    ? "text-red-500 hover:text-red-600"
-                    : "text-gray-400 hover:text-red-400"
-                }`}
-                title={isFavorite ? "Usuń z ulubionych" : "Dodaj do ulubionych"}
-              />
-            </span>
           </div>
         );
       })}
-      
-      <Pagination
-        pageData={pageData}
-        setPageData={setPageData}
-        className="mt-5"
-      />
+      {trails.length > 0 && (
+        <div className="flex justify-center mt-8">
+          <Pagination
+            pageData={pageData}
+            setPageData={setPageData}
+            className=""
+          />
+        </div>
+      )}
     </div>
   );
 };

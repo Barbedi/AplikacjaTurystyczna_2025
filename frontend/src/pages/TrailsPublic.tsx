@@ -48,8 +48,7 @@ const TrailsPublic = () => {
   const [trail, setTrail] = useState<ExtendedTrail>(emptyTrail);
   const [isFavorite, setIsFavorite] = useState<boolean>(false);
   const { id } = useParams<{ id: string }>();
-   const { createToast } = useContext(ToastModalContext);
-
+  const { createToast } = useContext(ToastModalContext);
 
   const handleBackClick = () => {
     navigate(-1);
@@ -81,7 +80,7 @@ const TrailsPublic = () => {
       .catch((error) => {
         console.error("Error fetching trail data:", error);
       });
-      
+
     checkIfFavorite();
   }, [id, user, checkIfFavorite]);
   const handleFavoriteClick = async () => {
@@ -238,32 +237,34 @@ const TrailsPublic = () => {
                     </p>
                   </div>
                   <div>
-          <h4 className="text-white/70 text-sm mb-3">Cechy</h4>
-          {trail.features && trail.features.length > 0 ? (
-            <div className="flex flex-wrap gap-1">
-              {trail.features.map((feature, index) => (
-                <div
-                  key={feature.id}
-                  className={`relative overflow-hidden rounded-full px-2 py-1.5 text-sm font-lora
+                    <h4 className="text-white/70 text-sm mb-3">Cechy</h4>
+                    {trail.features && trail.features.length > 0 ? (
+                      <div className="flex flex-wrap gap-1">
+                        {trail.features.map((feature, index) => (
+                          <div
+                            key={feature.id}
+                            className={`relative overflow-hidden rounded-full px-2 py-1.5 text-sm font-lora
                     border backdrop-blur-sm transition-all duration-300 hover:scale-105
                     ${index % 4 === 0 ? "bg-blue-500/20 text-blue-300 border-blue-500/30 hover:bg-blue-500/30" : ""}
                     ${index % 4 === 1 ? "bg-green-500/20 text-green-300 border-green-500/30 hover:bg-green-500/30" : ""}
                     ${index % 4 === 2 ? "bg-purple-500/20 text-purple-300 border-purple-500/30 hover:bg-purple-500/30" : ""}
                     ${index % 4 === 3 ? "bg-yellow-500/20 text-yellow-300 border-yellow-500/30 hover:bg-yellow-500/30" : ""}`}
-                >
-                  <span className="relative z-10">{feature.name}</span>
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300" />
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="flex items-center justify-center p-4 rounded-lg bg-white/5 border border-white/10">
-              <p className="text-white/70 text-sm italic">
-                Brak przypisanych cech do tej trasy
-              </p>
-            </div>
-          )}
-        </div>
+                          >
+                            <span className="relative z-10">
+                              {feature.name}
+                            </span>
+                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300" />
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-center p-4 rounded-lg bg-white/5 border border-white/10">
+                        <p className="text-white/70 text-sm italic">
+                          Brak przypisanych cech do tej trasy
+                        </p>
+                      </div>
+                    )}
+                  </div>
                   <div>
                     <h4 className="text-white/70 text-sm mb-1">Region</h4>
                     <p className="text-white font-medium">{trail.region}</p>
@@ -289,30 +290,36 @@ const TrailsPublic = () => {
                   <div className="h-[312px]">
                     <ElevationProfile
                       route={{
-                       type: "FeatureCollection",
-                      features: [
-                        {
-                          type: "Feature",
-                          geometry: {
-                            type: "LineString",
-                            coordinates: trail.geometry.coordinates.map(
-                              (coord) =>
-                                [coord[0], coord[1], coord[2] || 0] as [number, number, number],
-                            ),
-                          },
-                          properties: {
-                            id: trail.id.toString(),
-                            distance: trail.length_km * 1000,
-                            nodes: trail.geometry.coordinates.length,
-                            summary: {
-                              distance: trail.length_km * 1000,
-                              duration: (trail.duration_minutes || 0) * 60,
+                        type: "FeatureCollection",
+                        features: [
+                          {
+                            type: "Feature",
+                            geometry: {
+                              type: "LineString",
+                              coordinates: trail.geometry.coordinates.map(
+                                (coord) =>
+                                  [coord[0], coord[1], coord[2] || 0] as [
+                                    number,
+                                    number,
+                                    number,
+                                  ],
+                              ),
                             },
-                            segments: [],
-                            elevation: trail.geometry.coordinates.map((coord) => coord[2] || 0),
+                            properties: {
+                              id: trail.id.toString(),
+                              distance: trail.length_km * 1000,
+                              nodes: trail.geometry.coordinates.length,
+                              summary: {
+                                distance: trail.length_km * 1000,
+                                duration: (trail.duration_minutes || 0) * 60,
+                              },
+                              segments: [],
+                              elevation: trail.geometry.coordinates.map(
+                                (coord) => coord[2] || 0,
+                              ),
+                            },
                           },
-                        },
-                      ],
+                        ],
                       }}
                     />
                   </div>
@@ -329,11 +336,11 @@ const TrailsPublic = () => {
                   Mapa trasy
                 </h3>
                 <div className="h-[312px] w-full">
-                  <MapTrails 
-                   trail={trail} 
-                   trailPoints={trail.points || []} 
-                   hoverPoint={null} 
-                 />
+                  <MapTrails
+                    trail={trail}
+                    trailPoints={trail.points || []}
+                    hoverPoint={null}
+                  />
                 </div>
               </div>
               <div

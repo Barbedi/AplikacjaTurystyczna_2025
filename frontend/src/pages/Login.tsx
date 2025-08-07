@@ -58,10 +58,10 @@ const Login = () => {
       }
     } catch (error: unknown) {
       console.error("Błąd podczas logowania:", error);
-      
-      if (error && typeof error === 'object' && 'response' in error) {
+
+      if (error && typeof error === "object" && "response" in error) {
         const axiosError = error as { response?: { status?: number } };
-        
+
         if (axiosError.response?.status === 401) {
           createToast({
             message: "Nieprawidłowy e-mail lub hasło",
@@ -80,7 +80,7 @@ const Login = () => {
           return;
         }
       }
-      
+
       createToast({
         message: "Wystąpił błąd podczas logowania - spróbuj ponownie później",
         icon: faCircleExclamation,
