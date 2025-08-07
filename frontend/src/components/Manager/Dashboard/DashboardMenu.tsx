@@ -106,8 +106,10 @@ const DashboardMenu: React.FC<DashboardMenuProps> = () => {
           <NavLink
             to="plan-route"
             className={({ isActive }) =>
-              `text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl transition duration-300 ${
-                isActive ? "bg-gray-700" : "hover:bg-gray-700"
+              `text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl transition duration-300 border border-transparent ${
+                isActive
+                  ? " bg-white/20 backdrop-blur-lg border border-white/20"
+                  : " hover:bg-white/10 hover:backdrop-blur-lg "
               }`
             }
           >
@@ -126,8 +128,10 @@ const DashboardMenu: React.FC<DashboardMenuProps> = () => {
           <NavLink
             to="my-routes"
             className={({ isActive }) =>
-              `text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl transition duration-300 ${
-                isActive ? "bg-gray-700" : "hover:bg-gray-700"
+              `text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl transition duration-300 border border-transparent ${
+                isActive
+                  ? " bg-white/20 backdrop-blur-lg border border-white/20"
+                  : " hover:bg-white/10 hover:backdrop-blur-lg "
               }`
             }
           >
@@ -144,8 +148,10 @@ const DashboardMenu: React.FC<DashboardMenuProps> = () => {
           <NavLink
             to="favorite-routes"
             className={({ isActive }) =>
-              `text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl transition duration-300 ${
-                isActive ? "bg-gray-700" : "hover:bg-gray-700"
+              `text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl transition duration-300 border border-transparent ${
+                isActive
+                  ? " bg-white/20 backdrop-blur-lg border border-white/20"
+                  : " hover:bg-white/10 hover:backdrop-blur-lg "
               }`
             }
           >
@@ -162,8 +168,10 @@ const DashboardMenu: React.FC<DashboardMenuProps> = () => {
           <NavLink
             to="recommended"
             className={({ isActive }) =>
-              `text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl transition duration-300 ${
-                isActive ? "bg-gray-700" : "hover:bg-gray-700"
+              `text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl transition duration-300 border border-transparent ${
+                isActive
+                  ? " bg-white/20 backdrop-blur-lg border border-white/20"
+                  : " hover:bg-white/10 hover:backdrop-blur-lg "
               }`
             }
           >
@@ -182,8 +190,10 @@ const DashboardMenu: React.FC<DashboardMenuProps> = () => {
           <NavLink
             to="my-peaks"
             className={({ isActive }) =>
-              `text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl transition duration-300 ${
-                isActive ? "bg-gray-700" : "hover:bg-gray-700"
+              `text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl transition duration-300 border border-transparent ${
+                isActive
+                  ? " bg-white/20 backdrop-blur-lg border border-white/20"
+                  : " hover:bg-white/10 hover:backdrop-blur-lg "
               }`
             }
           >
@@ -197,8 +207,10 @@ const DashboardMenu: React.FC<DashboardMenuProps> = () => {
           <NavLink
             to="crown-peaks"
             className={({ isActive }) =>
-              `text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl transition duration-300 ${
-                isActive ? "bg-gray-700" : "hover:bg-gray-700"
+              `text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl transition duration-300 border border-transparent ${
+                isActive
+                  ? " bg-white/20 backdrop-blur-lg border border-white/20"
+                  : " hover:bg-white/10 hover:backdrop-blur-lg "
               }`
             }
           >
@@ -215,8 +227,10 @@ const DashboardMenu: React.FC<DashboardMenuProps> = () => {
           <NavLink
             to="statistics"
             className={({ isActive }) =>
-              `text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl transition duration-300 ${
-                isActive ? "bg-gray-700" : "hover:bg-gray-700"
+              `text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl transition duration-300 border border-transparent ${
+                isActive
+                  ? " bg-white/20 backdrop-blur-lg border border-white/20"
+                  : " hover:bg-white/10 hover:backdrop-blur-lg "
               }`
             }
           >
@@ -235,8 +249,10 @@ const DashboardMenu: React.FC<DashboardMenuProps> = () => {
           <NavLink
             to="community-trails"
             className={({ isActive }) =>
-              `text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl transition duration-300 ${
-                isActive ? "bg-gray-700" : "hover:bg-gray-700"
+              `text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl transition duration-300 border border-transparent ${
+                isActive
+                  ? " bg-white/20 backdrop-blur-lg border border-white/20"
+                  : " hover:bg-white/10 hover:backdrop-blur-lg "
               }`
             }
           >
@@ -253,8 +269,10 @@ const DashboardMenu: React.FC<DashboardMenuProps> = () => {
           <NavLink
             to="my-reviews"
             className={({ isActive }) =>
-              `text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl transition duration-300 ${
-                isActive ? "bg-gray-700" : "hover:bg-gray-700"
+              `text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl transition duration-300 border border-transparent ${
+                isActive
+                  ? " bg-white/20 backdrop-blur-lg border border-white/20"
+                  : " hover:bg-white/10 hover:backdrop-blur-lg "
               }`
             }
           >
@@ -270,8 +288,10 @@ const DashboardMenu: React.FC<DashboardMenuProps> = () => {
           <NavLink
             to="my-profile"
             className={({ isActive }) =>
-              `text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl transition duration-300 ${
-                isActive ? "bg-gray-700" : "hover:bg-gray-700"
+              `text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl transition duration-300 border border-transparent ${
+                isActive
+                  ? " bg-white/20 backdrop-blur-lg border border-white/20"
+                  : " hover:bg-white/10 hover:backdrop-blur-lg "
               }`
             }
           >
@@ -290,7 +310,7 @@ const DashboardMenu: React.FC<DashboardMenuProps> = () => {
               await handleLogout();
               navigate("/");
             }}
-            className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl hover:bg-gray-700 transition duration-300"
+            className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl hover:bg-white/10 hover:backdrop-blur-lg transition duration-300"
           >
             <div
               className={`flex items-center ${!isOpen ? "justify-center" : ""}`}
