@@ -31,13 +31,11 @@ const Statistics = () => {
 
   const fetchStatistics = async () => {
     if (!currentUser?.id) return;
-    
+
     setError(null);
-    
+
     try {
-      const data = await statisticsService.getStatisticsForUser(
-        currentUser.id,
-      );
+      const data = await statisticsService.getStatisticsForUser(currentUser.id);
       setStatistics(data);
     } catch (error) {
       console.error("Failed to fetch statistics:", error);
@@ -48,9 +46,9 @@ const Statistics = () => {
   useEffect(() => {
     const loadStatistics = async () => {
       if (!currentUser?.id) return;
-      
+
       setError(null);
-      
+
       try {
         const data = await statisticsService.getStatisticsForUser(
           currentUser.id,
@@ -72,8 +70,8 @@ const Statistics = () => {
       {error && (
         <div className="bg-red-500/20 border border-red-500/30 rounded-lg p-4 mb-6">
           <div className="text-red-200 text-center">{error}</div>
-          <button 
-            onClick={fetchStatistics} 
+          <button
+            onClick={fetchStatistics}
             className="mt-2 mx-auto block px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
           >
             Spróbuj ponownie

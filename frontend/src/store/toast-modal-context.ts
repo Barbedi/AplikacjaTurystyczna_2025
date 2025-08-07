@@ -1,4 +1,4 @@
-import { createContext,JSX } from "react";
+import { createContext, JSX } from "react";
 import { ToastProps } from "../assets/Data";
 
 interface ToastModalContextProps {

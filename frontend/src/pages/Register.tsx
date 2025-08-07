@@ -85,8 +85,8 @@ const Register = () => {
       }
     } catch (error: unknown) {
       console.error("Błąd rejestracji", error);
-      
-      if (error && typeof error === 'object' && 'response' in error) {
+
+      if (error && typeof error === "object" && "response" in error) {
         const axiosError = error as { response?: { status?: number } };
         if (axiosError.response?.status === 409) {
           createToast({
@@ -98,7 +98,7 @@ const Register = () => {
           return;
         }
       }
-      
+
       createToast({
         message: "Błąd rejestracji - sprawdź konsolę",
         icon: faCircleExclamation,
@@ -109,7 +109,7 @@ const Register = () => {
   };
 
   return (
-    <div className="relative w-full h-screen bg-[url('/assets/img/IMG_4048.JPG')] bg-cover bg-center overflow-hidden">
+    <div className="relative w-full h-screen bg-[url('/assets/img/IMG_4048.webp')] bg-cover bg-center overflow-hidden">
       <a
         href="/"
         className="absolute top-5 left-5 text-white text-2xl flex items-center hover:underline z-20"

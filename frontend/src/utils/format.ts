@@ -10,6 +10,13 @@ export const formatDate = (dateString: string): string =>
     day: "numeric",
     month: "short",
   });
+export const formatDate2 = (dateString: string): string =>
+  new Date(dateString).toLocaleDateString("pl-PL", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+
 export const timeAgo = (dateString: string): string => {
   const now = new Date();
   const past = new Date(dateString);

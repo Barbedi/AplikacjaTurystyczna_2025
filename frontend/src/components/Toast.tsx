@@ -30,7 +30,7 @@ const Toast: React.FC<ToastProps> = ({
     setTimeout(() => {
       setOpen(false);
       onClose();
-    }, 500); 
+    }, 500);
   }, [onClose]);
 
   useEffect(() => {
@@ -58,16 +58,16 @@ const Toast: React.FC<ToastProps> = ({
   };
 
   return (
-            <div
-          className={`fixed top-9 left-1/2 z-50 transform -translate-x-1/2 -translate-y-1/2 transition-transform duration-500 ${
-            closing ? "scale-95 opacity-0" : "scale-100 opacity-100"
-          }`}
-        >
-            <div
-          className={`min-w-3xl w-full max-w-sm border-l-4 rounded shadow-lg p-4 flex flex-col gap-2 ${
-            typeColors[type]
-          }`}
-        >
+    <div
+      className={`fixed top-9 left-1/2 z-50 transform -translate-x-1/2 -translate-y-1/2 transition-transform duration-500 ${
+        closing ? "scale-95 opacity-0" : "scale-100 opacity-100"
+      }`}
+    >
+      <div
+        className={`min-w-3xl w-full max-w-sm border-l-4 rounded shadow-lg p-4 flex flex-col gap-2 ${
+          typeColors[type]
+        }`}
+      >
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-2">
             {icon && <FontAwesomeIcon icon={icon} className="text-lg" />}

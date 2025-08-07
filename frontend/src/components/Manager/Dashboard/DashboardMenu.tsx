@@ -74,11 +74,20 @@ const DashboardMenu: React.FC<DashboardMenuProps> = () => {
     >
       <div className={`p-4 ${!isOpen && "px-2"}`}>
         <div className="flex items-center">
-          <img
-            className="rounded-full h-10 w-10 ml-2 object-cover"
-            src={profileImgUrl || undefined}
-            alt="user"
-          />
+          {profileImgUrl ? (
+            <img
+              className="rounded-full h-10 w-10 ml-2 object-cover"
+              src={profileImgUrl}
+              alt="user"
+            />
+          ) : (
+            <div className="bg-white/10 rounded-full h-10 w-10 flex items-center justify-center">
+              <FontAwesomeIcon
+                icon={faCircleUser}
+                className="text-white/80 text-4xl"
+              />
+            </div>
+          )}
           {isOpen && (
             <h2 className="text-white md:text-sm 2xl:text-lg font-bold ml-4">
               {user?.email}
@@ -97,8 +106,10 @@ const DashboardMenu: React.FC<DashboardMenuProps> = () => {
           <NavLink
             to="plan-route"
             className={({ isActive }) =>
-              `text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl transition duration-300 ${
-                isActive ? "bg-gray-700" : "hover:bg-gray-700"
+              `text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl transition duration-300 border border-transparent ${
+                isActive
+                  ? " bg-white/20 backdrop-blur-lg border border-white/20"
+                  : " hover:bg-white/10 hover:backdrop-blur-lg "
               }`
             }
           >
@@ -109,32 +120,18 @@ const DashboardMenu: React.FC<DashboardMenuProps> = () => {
                 icon={faRoute}
                 className="mr-2 text-lg 2xl:text-xl"
               />
-              {isOpen && "Zaplanuj trase"}
+              {isOpen && "Zaplanuj trasę"}
             </div>
           </NavLink>
-          <NavLink
-            to="community-trails"
-            className={({ isActive }) =>
-              `text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl transition duration-300 ${
-                isActive ? "bg-gray-700" : "hover:bg-gray-700"
-              }`
-            }
-          >
-            <div
-              className={`flex items-center ${!isOpen ? "justify-center" : ""}`}
-            >
-              <FontAwesomeIcon
-                icon={faUsers}
-                className="mr-2 text-lg 2xl:text-xl"
-              />
-              {isOpen && "Społeczność"}
-            </div>
-          </NavLink>
+        </div>
+        <div className="flex flex-col md:mt-2 mt-6 w-full md:space-y-1 space-y-2">
           <NavLink
             to="my-routes"
             className={({ isActive }) =>
-              `text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl transition duration-300 ${
-                isActive ? "bg-gray-700" : "hover:bg-gray-700"
+              `text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl transition duration-300 border border-transparent ${
+                isActive
+                  ? " bg-white/20 backdrop-blur-lg border border-white/20"
+                  : " hover:bg-white/10 hover:backdrop-blur-lg "
               }`
             }
           >
@@ -151,8 +148,10 @@ const DashboardMenu: React.FC<DashboardMenuProps> = () => {
           <NavLink
             to="favorite-routes"
             className={({ isActive }) =>
-              `text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl transition duration-300 ${
-                isActive ? "bg-gray-700" : "hover:bg-gray-700"
+              `text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl transition duration-300 border border-transparent ${
+                isActive
+                  ? " bg-white/20 backdrop-blur-lg border border-white/20"
+                  : " hover:bg-white/10 hover:backdrop-blur-lg "
               }`
             }
           >
@@ -169,8 +168,10 @@ const DashboardMenu: React.FC<DashboardMenuProps> = () => {
           <NavLink
             to="recommended"
             className={({ isActive }) =>
-              `text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl transition duration-300 ${
-                isActive ? "bg-gray-700" : "hover:bg-gray-700"
+              `text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl transition duration-300 border border-transparent ${
+                isActive
+                  ? " bg-white/20 backdrop-blur-lg border border-white/20"
+                  : " hover:bg-white/10 hover:backdrop-blur-lg "
               }`
             }
           >
@@ -189,8 +190,10 @@ const DashboardMenu: React.FC<DashboardMenuProps> = () => {
           <NavLink
             to="my-peaks"
             className={({ isActive }) =>
-              `text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl transition duration-300 ${
-                isActive ? "bg-gray-700" : "hover:bg-gray-700"
+              `text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl transition duration-300 border border-transparent ${
+                isActive
+                  ? " bg-white/20 backdrop-blur-lg border border-white/20"
+                  : " hover:bg-white/10 hover:backdrop-blur-lg "
               }`
             }
           >
@@ -204,8 +207,10 @@ const DashboardMenu: React.FC<DashboardMenuProps> = () => {
           <NavLink
             to="crown-peaks"
             className={({ isActive }) =>
-              `text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl transition duration-300 ${
-                isActive ? "bg-gray-700" : "hover:bg-gray-700"
+              `text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl transition duration-300 border border-transparent ${
+                isActive
+                  ? " bg-white/20 backdrop-blur-lg border border-white/20"
+                  : " hover:bg-white/10 hover:backdrop-blur-lg "
               }`
             }
           >
@@ -222,8 +227,10 @@ const DashboardMenu: React.FC<DashboardMenuProps> = () => {
           <NavLink
             to="statistics"
             className={({ isActive }) =>
-              `text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl transition duration-300 ${
-                isActive ? "bg-gray-700" : "hover:bg-gray-700"
+              `text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl transition duration-300 border border-transparent ${
+                isActive
+                  ? " bg-white/20 backdrop-blur-lg border border-white/20"
+                  : " hover:bg-white/10 hover:backdrop-blur-lg "
               }`
             }
           >
@@ -240,10 +247,51 @@ const DashboardMenu: React.FC<DashboardMenuProps> = () => {
         </div>
         <div className="flex flex-col md:mt-2 mt-6 w-full md:space-y-1 space-y-2">
           <NavLink
+            to="community-trails"
+            className={({ isActive }) =>
+              `text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl transition duration-300 border border-transparent ${
+                isActive
+                  ? " bg-white/20 backdrop-blur-lg border border-white/20"
+                  : " hover:bg-white/10 hover:backdrop-blur-lg "
+              }`
+            }
+          >
+            <div
+              className={`flex items-center ${!isOpen ? "justify-center" : ""}`}
+            >
+              <FontAwesomeIcon
+                icon={faUsers}
+                className="mr-2 text-lg 2xl:text-xl"
+              />
+              {isOpen && "Społeczność"}
+            </div>
+          </NavLink>
+          <NavLink
+            to="my-reviews"
+            className={({ isActive }) =>
+              `text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl transition duration-300 border border-transparent ${
+                isActive
+                  ? " bg-white/20 backdrop-blur-lg border border-white/20"
+                  : " hover:bg-white/10 hover:backdrop-blur-lg "
+              }`
+            }
+          >
+            <div
+              className={`flex items-center ${!isOpen ? "justify-center" : ""}`}
+            >
+              <RateReviewIcon className="mr-2 text-sm 2xl:text-lg" />
+              {isOpen && "Moje opinie"}
+            </div>
+          </NavLink>
+        </div>
+        <div className="flex flex-col md:mt-2 mt-6 w-full md:space-y-1 space-y-2">
+          <NavLink
             to="my-profile"
             className={({ isActive }) =>
-              `text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl transition duration-300 ${
-                isActive ? "bg-gray-700" : "hover:bg-gray-700"
+              `text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl transition duration-300 border border-transparent ${
+                isActive
+                  ? " bg-white/20 backdrop-blur-lg border border-white/20"
+                  : " hover:bg-white/10 hover:backdrop-blur-lg "
               }`
             }
           >
@@ -257,27 +305,12 @@ const DashboardMenu: React.FC<DashboardMenuProps> = () => {
               {isOpen && "Mój profil"}
             </div>
           </NavLink>
-          <NavLink
-            to="my-reviews"
-            className={({ isActive }) =>
-              `text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl transition duration-300 ${
-                isActive ? "bg-gray-700" : "hover:bg-gray-700"
-              }`
-            }
-          >
-            <div
-              className={`flex items-center ${!isOpen ? "justify-center" : ""}`}
-            >
-              <RateReviewIcon className="mr-2 text-sm 2xl:text-lg" />
-              {isOpen && "Moje opinie"}
-            </div>
-          </NavLink>
           <button
             onClick={async () => {
               await handleLogout();
               navigate("/");
             }}
-            className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl hover:bg-gray-700 transition duration-300"
+            className="text-white md:text-sm 2xl:text-lg font-lora py-2 px-4 text-left rounded-2xl hover:bg-white/10 hover:backdrop-blur-lg transition duration-300"
           >
             <div
               className={`flex items-center ${!isOpen ? "justify-center" : ""}`}

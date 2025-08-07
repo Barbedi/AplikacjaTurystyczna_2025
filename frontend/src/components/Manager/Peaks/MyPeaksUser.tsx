@@ -65,16 +65,18 @@ const MyPeaksUser = () => {
   return (
     <div className="flex flex-col  mt-4">
       {loading ? (
-        <div className="flex items-center justify-center w-full p-4 bg-white/10 backdrop-blur-lg rounded-lg shadow-md">
-          <p className="text-white">Ładowanie...</p>
+        <div className="text-white text-center w-full bg-white/10 backdrop-blur-lg rounded-xl shadow-xl p-8 border border-white/20">
+          <p className="text-lg font-lora font-medium text-white/80">
+            Ładowanie szczytów...
+          </p>
         </div>
       ) : myPeaks.length === 0 ? (
-        <div className="flex flex-col items-center justify-center w-full p-4 bg-white/10 backdrop-blur-lg rounded-lg shadow-md">
-          <h2 className="text-lg font-lora text-white">
-            Nie masz jeszcze żadnych szczytów!
-          </h2>
-          <p className="text-sm text-gray-300">
-            Zdobądź swoje pierwsze szczyty!
+        <div className="text-white text-center w-full bg-white/10 backdrop-blur-lg rounded-xl shadow-xl p-8 border border-white/20">
+          <p className="text-lg font-lora font-medium text-white/80">
+            Brak szczytów do wyświetlenia.
+          </p>
+          <p className="text-sm text-white/60 mt-2">
+            Zdobądź swoje pierwsze szczyty i dodaj je tutaj!
           </p>
         </div>
       ) : (

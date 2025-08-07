@@ -1,9 +1,17 @@
 import { useNavigate } from "react-router-dom";
 
 const regions = [
-  { name: "Beskidzie Sadeckim", path: "Beskid Sądecki" },
-  { name: "Tatrach", path: "Tatry" },
-  { name: "Beskidzie Wyspowym", path: "Beskid Wyspowy" },
+  {
+    name: "Beskidzie Sadeckim",
+    path: "Beskid Sądecki",
+    image: "/assets/img/FullSizeRender.webp",
+  },
+  { name: "Tatrach", path: "Tatry", image: "/assets/img/IMG_6488.webp" },
+  {
+    name: "Beskidzie Wyspowym",
+    path: "Beskid Wyspowy",
+    image: "/assets/img/FullSizeRender2.webp",
+  },
 ];
 
 const ExploreRoutes = () => {
@@ -22,7 +30,7 @@ const ExploreRoutes = () => {
           >
             <img
               className="2xl:w-100 2xl:h-100 xl:w-64 xl:h-64 lg:w-50 lg:h-50 md:w-40 md:h-40 rounded-full object-cover"
-              src="/assets/img/FullSizeRender.JPG"
+              src={region.image}
               alt={`Region ${region.name}`}
             />
             <h2 className="text-2xl xl:text-4xl font-lora text-white mt-3 text-center">

@@ -170,7 +170,6 @@ const MyPeaksAdd = () => {
           latitude: parseFloat(formData.latitude),
           longitude: parseFloat(formData.longitude),
           region: formData.region,
-          verified: false,
         };
 
         const response = await peaksService.create(newPeak);
@@ -189,7 +188,8 @@ const MyPeaksAdd = () => {
 
       if (!userId || !peakId) {
         createToast({
-          message: "Nie udało się uzyskać identyfikatora użytkownika lub szczytu.",
+          message:
+            "Nie udało się uzyskać identyfikatora użytkownika lub szczytu.",
           type: "warning",
           icon: faTriangleExclamation,
           timeout: 5000,
@@ -225,7 +225,8 @@ const MyPeaksAdd = () => {
     } catch (error) {
       console.error("Błąd dodawania szczytu:", error);
       createToast({
-        message: "Nie udało się uzyskać identyfikatora użytkownika lub szczytu.",
+        message:
+          "Nie udało się uzyskać identyfikatora użytkownika lub szczytu.",
         type: "danger",
         icon: faCircleExclamation,
         timeout: 5000,

@@ -16,9 +16,8 @@ import {
   faComment,
   faStar,
   faXmark,
-   faTriangleExclamation,
+  faTriangleExclamation,
   faCircleCheck,
-
 } from "@fortawesome/free-solid-svg-icons";
 import Modal from "../../components/Modal";
 import useGetUsers from "../../hooks/user/useGetUser";
@@ -28,7 +27,6 @@ import GallerySection from "../../components/Manager/Trail/GallerySection";
 import ReviewSection from "../../components/Manager/Trail/ReviewSection";
 import TrailInfoSection from "../../components/Manager/Trail/TrailInfoSection";
 import ToastModalContext from "../../store/toast-modal-context";
-
 
 const emptyTrail: ExtendedTrail = {
   id: 0,
@@ -152,7 +150,7 @@ const EditTrailPage = () => {
         rating: rating > 0 ? rating : undefined,
       };
       const response = await reviewService.createReview(review);
-      
+
       if (response.status === 201) {
         setOpenModalComment(false);
         createToast({
@@ -304,11 +302,11 @@ const EditTrailPage = () => {
                   Mapa trasy
                 </h3>
                 <div className="h-[312px] w-full">
-                 <MapTrails 
-                   trail={trail} 
-                   trailPoints={trail.points || []} 
-                   hoverPoint={null} 
-                 />
+                  <MapTrails
+                    trail={trail}
+                    trailPoints={trail.points || []}
+                    hoverPoint={null}
+                  />
                 </div>
               </div>
             )}

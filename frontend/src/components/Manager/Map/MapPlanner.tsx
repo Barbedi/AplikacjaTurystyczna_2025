@@ -18,7 +18,6 @@ import PeaksMap from "./PopupPeaks";
 import ZoomHandler from "./ZoomHandler";
 import trailsService from "../../../services/trails.service";
 
-// Poprawa domyślnych ikon Leaflet
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -33,7 +32,6 @@ L.Icon.Default.mergeOptions({
 
 const { BaseLayer } = LayersControl;
 
-// Marker do dodawania punktów kliknięciem
 const LocationMarker = ({
   addPoint,
 }: {
@@ -47,7 +45,6 @@ const LocationMarker = ({
   return null;
 };
 
-// Marker do usuwania punktów kliknięciem prawym przyciskiem
 const LocationMarkerDelete = ({
   removePointByCoordinates,
 }: {
@@ -61,14 +58,13 @@ const LocationMarkerDelete = ({
   return null;
 };
 
-// Marker hover — memoized aby nie tworzyć na nowo za każdym renderem
 const HoverMarker = ({ position }: { position: [number, number] | null }) => {
   const hoverIcon = useMemo(
     () =>
       L.icon({
         iconUrl: "https://cdn-icons-png.flaticon.com/512/684/684908.png",
         iconSize: [25, 25],
-        iconAnchor: [12.5, 25], 
+        iconAnchor: [12.5, 25],
       }),
     [],
   );
@@ -90,9 +86,9 @@ const MapPlanner = () => {
   const [hoverPoint, setHoverPoint] = useState<[number, number] | null>(null);
   const [peaks, setPeaks] = useState<Peaks[]>([]);
   const [currentZoom, setCurrentZoom] = useState<number>(12);
-  const [, setRouteType] = useState<"one-way" | "loop" | "back-and-forth">(
-    "one-way",
-  );
+  const [routeType, setRouteType] = useState<
+    "one-way" | "loop" | "back-and-forth"
+  >("one-way");
   const [editingTrail, setEditingTrail] = useState<Trails | null>(null);
   const [, setIsLoadingTrail] = useState<boolean>(false);
   const [isDashboardVisible, setDashboardVisible] = useState(true);
@@ -105,7 +101,6 @@ const MapPlanner = () => {
     DETAILS: 14,
   };
 
-  // Ładowanie trasy po ID (edycja)
   useEffect(() => {
     if (!trailId) return;
     setIsLoadingTrail(true);
@@ -141,7 +136,6 @@ const MapPlanner = () => {
       .finally(() => setIsLoadingTrail(false));
   }, [trailId]);
 
-  // Fetch schronisk
   useEffect(() => {
     fetch("http://localhost:6868/shelters")
       .then((res) => res.json())
@@ -149,7 +143,6 @@ const MapPlanner = () => {
       .catch(console.error);
   }, []);
 
-  // Fetch szczytów
   useEffect(() => {
     fetch("http://localhost:6868/peaks")
       .then((res) => res.json())
@@ -157,14 +150,12 @@ const MapPlanner = () => {
       .catch(console.error);
   }, []);
 
-  // Wywołanie backendu dla lokalnego routingu (kiedy mamy min. 2 punkty)
   useEffect(() => {
     if (points.length < 2) {
       setRouteGeoJson(null);
       return;
     }
 
-    // Budujemy start i end
     const pointsPayload = points.map((point) => ({
       lat: point.coordinates[0],
       lng: point.coordinates[1],
@@ -172,10 +163,14 @@ const MapPlanner = () => {
 
     const fetchLocalRoute = async () => {
       try {
+        console.log("Sending route request:", {
+          pointsCount: pointsPayload.length,
+          routeType,
+        });
         const res = await fetch("http://localhost:6868/routing/local", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ points: pointsPayload }),
+          body: JSON.stringify({ points: pointsPayload, routeType }),
         });
         if (!res.ok) {
           console.error("Błąd w odpowiedzi backendu:", res.status);
@@ -183,6 +178,7 @@ const MapPlanner = () => {
           return;
         }
         const data = await res.json();
+        console.log("Received route data:", data.features?.[0]?.properties);
         setRouteGeoJson(data);
       } catch (error) {
         console.error("Błąd fetch:", error);
@@ -191,16 +187,14 @@ const MapPlanner = () => {
     };
 
     fetchLocalRoute();
-  }, [points]);
+  }, [points, routeType]);
 
-  // Dodawanie punktu (kliknięcie na mapie)
   const addPoint = useCallback(
     (newPoint: [number, number]) =>
       setPoints((prev) => [...prev, { coordinates: newPoint, type: "custom" }]),
     [],
   );
 
-  // Usuwanie punktu po indeksie
   const removePoint = useCallback(
     (indexToRemove: number) =>
       setPoints((prev) => prev.filter((_, i) => i !== indexToRemove)),
@@ -209,7 +203,6 @@ const MapPlanner = () => {
 
   const removePointAll = useCallback(() => setPoints([]), []);
 
-  // Usuwanie punktu po współrzędnych (z eventu contextmenu)
   const removePointByCoordinates = useCallback(
     (lat: number, lng: number) =>
       setPoints((prev) =>
@@ -222,7 +215,6 @@ const MapPlanner = () => {
     [],
   );
 
-  // Dodawanie punktów na różne sposoby (wykorzystywane w schroniskach/szczytach)
   const addPointAtStart = useCallback(
     (newPoint: RoutePoint) => setPoints((prev) => [newPoint, ...prev]),
     [],
@@ -239,8 +231,6 @@ const MapPlanner = () => {
     (newPoint: RoutePoint) => setPoints((prev) => [...prev, newPoint]),
     [],
   );
-
-  // Obsługa hover na punkcie
   const handleHoverPoint = useCallback(
     (lat: number | null, lng: number | null) => {
       if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
@@ -267,7 +257,6 @@ const MapPlanner = () => {
     };
   }, []);
 
-  // Aktualizacja trasy po edycji
   const handleTrailUpdated = useCallback((updatedTrail: Trails) => {
     setEditingTrail(updatedTrail);
 
@@ -283,8 +272,6 @@ const MapPlanner = () => {
       setPoints(routePoints);
     }
   }, []);
-
-  // Anulowanie edycji — reset do oryginału i nawigacja
   const handleCancelEdit = useCallback(() => {
     if (editingTrail && editingTrail.points && editingTrail.points.length > 0) {
       const originalPoints: RoutePoint[] = editingTrail.points
@@ -300,76 +287,82 @@ const MapPlanner = () => {
       navigate(`/dashboard/my-routes`);
     }
   }, [editingTrail, navigate]);
+  const routeStyle = useMemo(
+    () => ({ color: "#9333ea", weight: 4, dashArray: "5, 5" }),
+    [],
+  );
+  const startFlagIcon = useMemo(
+    () =>
+      L.icon({
+        iconUrl: "https://cdn-icons-png.flaticon.com/512/2107/2107961.png",
+        iconSize: [30, 30],
+        iconAnchor: [2.5, 30],
+      }),
+    [],
+  );
+  const endFlagIcon = useMemo(
+    () =>
+      L.icon({
+        iconUrl: "https://cdn-icons-png.flaticon.com/512/16982/16982672.png",
+        iconSize: [30, 30],
+        iconAnchor: [2.5, 30],
+      }),
+    [],
+  );
+  const midPointIcon = useMemo(
+    () =>
+      L.icon({
+        iconUrl: "https://cdn-icons-png.flaticon.com/512/17116/17116302.png",
+        iconSize: [30, 30],
+        iconAnchor: [15, 30],
+      }),
+    [],
+  );
 
-  // Styl linii trasy
-  const routeStyle = useMemo(() => ({ color: "#9333ea", weight: 4, dashArray: "5, 5" }), []);
-const startFlagIcon = useMemo(
-  () =>
-    L.icon({
-      iconUrl: "https://cdn-icons-png.flaticon.com/512/2107/2107961.png",
-      iconSize: [30, 30],
-      iconAnchor: [2.5, 30], // środek na dole
-    }),
-  []
-);
-const endFlagIcon = useMemo(
-  () =>
-    L.icon({
-      iconUrl: "https://cdn-icons-png.flaticon.com/512/16982/16982672.png",
-      iconSize: [30, 30],
-      iconAnchor: [2.5, 30], // środek na dole
-    }),
-  []
-);
-const midPointIcon = useMemo(
-  () =>
-    L.icon({
-      iconUrl: "https://cdn-icons-png.flaticon.com/512/17116/17116302.png",
-      iconSize: [30, 30],
-      iconAnchor: [15, 30],
-    }),
-  []
-);
-
-  // Marker punktów trasy
   const pointMarkers = useMemo(
-  () =>
-    points.map((point, idx) => {
-      const [lat, lng] = point.coordinates;
-      const isStart = idx === 0;
-      const isEnd = idx === points.length - 1;
+    () =>
+      points.map((point, idx) => {
+        const [lat, lng] = point.coordinates;
+        const isStart = idx === 0;
+        const isEnd = idx === points.length - 1;
 
-      let icon;
-      if (isStart) icon = startFlagIcon;
-      else if (isEnd) icon = endFlagIcon;
-      else icon = midPointIcon;
+        let icon;
+        if (isStart) icon = startFlagIcon;
+        else if (isEnd) icon = endFlagIcon;
+        else icon = midPointIcon;
 
-      return (
-        <Marker
-          key={`${idx}-${lat}-${lng}`}
-          position={[lat, lng]}
-          icon={icon}
-          eventHandlers={{
-            mouseover: () => setHoveredPoint(idx),
-            mouseout: () => setHoveredPoint(null),
-            contextmenu: () => removePoint(idx),
-          }}
-        >
-          {hoveredPoint === idx && (
-            <Tooltip permanent direction="top" offset={[0, -30]}>
-              {point.name
-                ? `${point.name} (${lat.toFixed(5)}, ${lng.toFixed(5)})`
-                : `Współrzędne: ${lat.toFixed(5)}, ${lng.toFixed(5)})`}
-              <br />
-              Kliknij prawym przyciskiem, aby usunąć
-            </Tooltip>
-          )}
-        </Marker>
-      );
-    }),
-  [points, hoveredPoint, removePoint, startFlagIcon, endFlagIcon, midPointIcon]
-);
-
+        return (
+          <Marker
+            key={`${idx}-${lat}-${lng}`}
+            position={[lat, lng]}
+            icon={icon}
+            eventHandlers={{
+              mouseover: () => setHoveredPoint(idx),
+              mouseout: () => setHoveredPoint(null),
+              contextmenu: () => removePoint(idx),
+            }}
+          >
+            {hoveredPoint === idx && (
+              <Tooltip permanent direction="top" offset={[0, -30]}>
+                {point.name
+                  ? `${point.name} (${lat.toFixed(5)}, ${lng.toFixed(5)})`
+                  : `Współrzędne: ${lat.toFixed(5)}, ${lng.toFixed(5)})`}
+                <br />
+                Kliknij prawym przyciskiem, aby usunąć
+              </Tooltip>
+            )}
+          </Marker>
+        );
+      }),
+    [
+      points,
+      hoveredPoint,
+      removePoint,
+      startFlagIcon,
+      endFlagIcon,
+      midPointIcon,
+    ],
+  );
 
   return (
     <div className="w-full h-full flex flex-col rounded-lg overflow-hidden border border-white/20 shadow-lg">

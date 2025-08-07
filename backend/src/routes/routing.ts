@@ -1,5 +1,6 @@
 import { hikingGraph } from "../server";
 import { findRouteThroughPoints } from "../routing-graph/findRouteThroughPoints";
+import { findLoopRoute } from "../routing-graph/findLoopRoute";
 import express from "express";
 
 const router = express.Router();
@@ -13,7 +14,7 @@ function chunkArray<T>(arr: T[], size: number): T[][] {
 }
 
 router.post("/local", async (req: any, res: any) => {
-  const { points } = req.body;
+  const { points, routeType } = req.body;
 
   if (!points || !Array.isArray(points) || points.length < 2) {
     return res.status(400).json({
@@ -21,9 +22,24 @@ router.post("/local", async (req: any, res: any) => {
     });
   }
 
-  try {
-    const result = findRouteThroughPoints(hikingGraph, points);
+  const finalRouteType = routeType || "one-way";
+  let routePoints = [...points];
+  let result;
 
+  if (finalRouteType === "loop") {
+    // Użyj specjalnej funkcji dla pętli z wykluczeniem krawędzi
+    result = findLoopRoute(hikingGraph, routePoints);
+  } else if (finalRouteType === "back-and-forth") {
+    // Dodaj odwróconą trasę z pominięciem punktu startowego, aby trasa wracała tą samą drogą
+    const reversed = [...points].slice(0, -1).reverse();
+    routePoints = [...points, ...reversed];
+    result = findRouteThroughPoints(hikingGraph, routePoints);
+  } else {
+    // Standardowa trasa one-way
+    result = findRouteThroughPoints(hikingGraph, routePoints);
+  }
+
+  try {
     if (!result.found || !result.path || !Array.isArray(result.path)) {
       return res.status(404).json({
         error: "Nie znaleziono trasy przez wszystkie punkty",
@@ -97,11 +113,9 @@ router.post("/local", async (req: any, res: any) => {
             .status(502)
             .json({ error: "Invalid coordinates format for elevation API" });
         } else {
-          return res
-            .status(502)
-            .json({
-              error: `MapTiler API error: ${response.status} ${response.statusText}`,
-            });
+          return res.status(502).json({
+            error: `MapTiler API error: ${response.status} ${response.statusText}`,
+          });
         }
       }
 
@@ -144,6 +158,7 @@ router.post("/local", async (req: any, res: any) => {
             distance: result.totalDistance,
             nodes: result.path.length,
             elevationPoints: elevationResults.length,
+            routeType: finalRouteType,
           },
         },
       ],

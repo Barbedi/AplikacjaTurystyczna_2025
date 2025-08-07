@@ -33,7 +33,7 @@ const useToast = () => {
         />
       ));
     },
-    []
+    [],
   );
 
   return { toast, createToast } as const;

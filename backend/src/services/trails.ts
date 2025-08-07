@@ -58,10 +58,19 @@ class TrailsService {
     `;
     const result = await db.query(query, [limit]);
 
-    return result.rows.map((row) => ({
-      ...row,
-      geometry: row.geometry ? JSON.parse(row.geometry) : null,
-    }));
+    // Pobierz zdjęcia dla każdej trasy
+    const trails = await Promise.all(
+      result.rows.map(async (row) => {
+        const photos = await this.getTrailPhotos(row.id);
+        return {
+          ...row,
+          geometry: row.geometry ? JSON.parse(row.geometry) : null,
+          photos: photos || [],
+        };
+      }),
+    );
+
+    return trails;
   }
 
   async getTrailById(id: number): Promise<Trails | null> {
