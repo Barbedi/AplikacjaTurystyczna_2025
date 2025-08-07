@@ -1,9 +1,9 @@
 import { useNavigate } from "react-router-dom";
 
 const regions = [
-  { name: "Beskidzie Sadeckim", path: "Beskid Sądecki" , image: "/assets/img/FullSizeRender.jpg" },
-  { name: "Tatrach", path: "Tatry", image: "/assets/img/IMG_6488.JPEG" },
-  { name: "Beskidzie Wyspowym", path: "Beskid Wyspowy", image: "/assets/img/FullSizeRender2.JPG" },
+  { name: "Beskidzie Sadeckim", path: "Beskid Sądecki" , image: "/assets/img/FullSizeRender.webp" },
+  { name: "Tatrach", path: "Tatry", image: "/assets/img/IMG_6488.webp" },
+  { name: "Beskidzie Wyspowym", path: "Beskid Wyspowy", image: "/assets/img/FullSizeRender2.webp" },
 ];
 
 const ExploreRoutes = () => {
