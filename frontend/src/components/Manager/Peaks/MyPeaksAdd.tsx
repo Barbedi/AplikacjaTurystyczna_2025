@@ -104,12 +104,16 @@ const MyPeaksAdd = () => {
     peaksService.getById(peak.id.toString()).then((response) => {
       const details = response.data.data;
       if (details) {
+        // Ustaw region na podstawie wybranego szczytu
+        const selectedRegion = details.region || "Tatry";
+        setRegion(selectedRegion);
+        
         setFormData({
           name: details.name || "",
           elevation: details.elevation?.toString() || "",
           latitude: details.latitude?.toString() || "",
           longitude: details.longitude?.toString() || "",
-          region: region || "",
+          region: selectedRegion,
           description: details.description || "",
           photo_url: details.photo_url || "",
         });
@@ -348,7 +352,8 @@ const MyPeaksAdd = () => {
               >
                 <option value="" disabled className="text-gray-500">Wybierz region</option>
                 <option value="Tatry" className="text-black">Tatry</option>
-                <option value="Beskid Sądecki" className="text-black">Beskid Sądecki</option>
+                <option value="Pasmo Radziejowej" className="text-black">Pasmo Radziejowej</option>
+                
               </select>
             </div>
             <textarea
