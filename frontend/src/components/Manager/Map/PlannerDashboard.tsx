@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faChevronLeft,
   faChevronRight,
-  faDownload,
+
   faMountain,
   faList,
   faMapLocationDot,
@@ -340,11 +340,7 @@ const PlannerDashboard: React.FC<PlannerDashboardProps> = ({
                 title="Anuluj edycję"
               />
             )}
-            <FontAwesomeIcon
-              icon={faDownload}
-              title="Pobierz trasę"
-              className="text-black text-2xl cursor-pointer ml-2"
-            />
+            
             <FontAwesomeIcon
               icon={faTrash}
               onClick={onRemovePointAll}

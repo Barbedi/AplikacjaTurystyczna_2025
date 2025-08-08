@@ -7,7 +7,7 @@ import {
   faCircleExclamation,
   faCircleCheck,
 } from "@fortawesome/free-solid-svg-icons";
-import { useState, useEffect, useRef, useContext } from "react";
+import { useState, useEffect, useRef, useContext,useCallback } from "react";
 import peaksService from "../../../services/peaks.service";
 import userpeaksService from "../../../services/userpeaks.service";
 import { Peaks } from "../../../assets/Data";
@@ -27,6 +27,7 @@ const MyPeaksAdd = () => {
   const [userId, setUserId] = useState<number | null>(null);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [selectedFileName, setSelectedFileName] = useState<string>("");
+  const [region, setRegion] = useState<string>("Tatry");
   const { createToast } = useContext(ToastModalContext);
 
   const [formData, setFormData] = useState({
@@ -34,7 +35,7 @@ const MyPeaksAdd = () => {
     elevation: "",
     latitude: "",
     longitude: "",
-    region: "",
+    region: "Tatry",
     description: "",
     photo_url: "",
   });
@@ -103,12 +104,16 @@ const MyPeaksAdd = () => {
     peaksService.getById(peak.id.toString()).then((response) => {
       const details = response.data.data;
       if (details) {
+        // Ustaw region na podstawie wybranego szczytu
+        const selectedRegion = details.region || "Tatry";
+        setRegion(selectedRegion);
+        
         setFormData({
           name: details.name || "",
           elevation: details.elevation?.toString() || "",
           latitude: details.latitude?.toString() || "",
           longitude: details.longitude?.toString() || "",
-          region: details.region || "",
+          region: selectedRegion,
           description: details.description || "",
           photo_url: details.photo_url || "",
         });
@@ -122,12 +127,13 @@ const MyPeaksAdd = () => {
     setSearchTerm("");
     setSelectedImage(null);
     setSelectedFileName("");
+    setRegion("Tatry");
     setFormData({
       name: "",
       elevation: "",
       latitude: "",
       longitude: "",
-      region: "",
+      region: "Tatry",
       description: "",
       photo_url: "",
     });
@@ -153,6 +159,16 @@ const MyPeaksAdd = () => {
       setSelectedFileName(file.name);
     }
   };
+  const handleRegionChange = useCallback(
+      (selectedRegion: string) => {
+        setRegion(selectedRegion);
+        setFormData(prev => ({
+          ...prev,
+          region: selectedRegion
+        }));
+      },
+      [],
+    );
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -325,14 +341,21 @@ const MyPeaksAdd = () => {
             />
           </div>
           <div className="flex flex-col w-1/2 justify-start items-start">
-            <input
-              type="text"
-              onChange={(e) => handleInputChange(e, "region")}
-              value={formData.region}
-              required
-              placeholder="Region"
-              className="w-full mb-4 p-3 text-white bg-white/5 rounded-md focus:border-none outline-0 transition-all"
-            />
+            <div className="mb-4 w-full">
+              <select
+                className="w-full p-3 text-white bg-white/5 rounded-md focus:border-none outline-0 transition-all"
+                value={region}
+                required
+                onChange={(e) =>
+                  handleRegionChange(e.target.value)
+                }
+              >
+                <option value="" disabled className="text-gray-500">Wybierz region</option>
+                <option value="Tatry" className="text-black">Tatry</option>
+                <option value="Pasmo Radziejowej" className="text-black">Pasmo Radziejowej</option>
+                
+              </select>
+            </div>
             <textarea
               placeholder="Krótki opis szczytu"
               onChange={(e) => handleInputChange(e, "description")}
