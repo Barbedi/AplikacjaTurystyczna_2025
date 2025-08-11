@@ -155,7 +155,7 @@ const TrailPeak = () => {
                 <div className="flex items-center gap-3 flex-shrink-0 mt-6">
                   <button
                     onClick={() => chooseTrail(trail)}
-                    className="bg-white/20 border border-white/30 text-white px-3 py-2 rounded-xl hover:bg-white/30 hover:border-white/40 transition-all duration-200 flex items-center gap-2 font-medium"
+                    className="cursor-pointer bg-white/20 border border-white/30 text-white px-3 py-2 rounded-xl hover:bg-white/30 hover:border-white/40 transition-all duration-200 flex items-center gap-2 font-medium"
                     title="Zobacz szczegóły"
                   >
                     <span>Szczegóły</span>
@@ -166,7 +166,7 @@ const TrailPeak = () => {
                   </button>
                   <button
                     onClick={() => editTrail(trail)}
-                    className="px-3 py-2 rounded-xl transition-all duration-200 bg-white/20 border border-white/30 text-white hover:bg-purple-500/20 hover:border-purple-500/30 hover:text-purple-500"
+                    className="cursor-pointer px-3 py-2 rounded-xl transition-all duration-200 bg-white/20 border border-white/30 text-white hover:bg-purple-500/20 hover:border-purple-500/30 hover:text-purple-500"
                     title="Edytuj trasę"
                   >
                     <FontAwesomeIcon
@@ -179,7 +179,7 @@ const TrailPeak = () => {
                       setSelectedTrailId(trail.id);
                       setIsOpenModal(true);
                     }}
-                    className="px-3 py-2 rounded-xl transition-all duration-200 bg-white/20 border border-white/30 text-white hover:bg-red-500/20 hover:border-red-500/30 hover:text-red-500"
+                    className="cursor-pointer px-3 py-2 rounded-xl transition-all duration-200 bg-white/20 border border-white/30 text-white hover:bg-red-500/20 hover:border-red-500/30 hover:text-red-500"
                     title="Usuń trasę"
                   >
                     <FontAwesomeIcon
