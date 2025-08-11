@@ -42,5 +42,15 @@ class PeaksService {
   getCrownBeskid = (page: number = 1) => {
     return httpCommon.get(`/peaks/crown-beskid?page=${page}`);
   };
+
+  // Pobieranie zdjęć szczytu - może być implementowane w przyszłości
+  getPeakImages = (id: string) => {
+    return httpCommon.get(`/peaks/${id}/images`);
+  };
+
+  // Pobieranie wszystkich zdjęć dla szczytu
+  getPeakPhotos = (id: string) => {
+    return httpCommon.get(`/peaks/${id}/photos`);
+  };
 }
 export default new PeaksService();

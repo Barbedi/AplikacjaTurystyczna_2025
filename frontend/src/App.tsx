@@ -28,6 +28,7 @@ import EditCrownPage from "./pages/Manager/EditCrownPage";
 import EditTrailPage from "./pages/Manager/EditTrailPage";
 import RegionPage from "./pages/Region";
 import CommunityList from "./pages/Manager/CommunityList";
+import PeaksPublic from "./pages/PeaksPublic";
 
 const router = createBrowserRouter([
   { path: "*", Component: Root, errorElement: <ErrorBoundary /> },
@@ -42,10 +43,16 @@ function Root() {
       <Route index element={<Home />} />
       <Route path="login" element={<Login />} />
       <Route path="register" element={<Register />} />
-      <Route path="trails">
+      <Route path="trails">  
         <Route index element={<TrailsPublic />} />
         <Route path=":id" element={<TrailsPublic />} />
       </Route>
+
+      <Route path="peaks">
+        <Route index element={<PeaksPublic />} />
+        <Route path=":id" element={<PeaksPublic />} />
+      </Route>
+
       <Route path="dashboard" element={<Manager />}>
         <Route index element={<Dashboard />} />
         <Route path="plan-route" element={<PlanRoute />} />

@@ -442,6 +442,66 @@ router.get("/:id", async (req, res, next) => {
 
 /**
  * @swagger
+ * /peaks/{id}/photos:
+ *   get:
+ *     summary: Get all photos for a specific peak
+ *     tags:
+ *       - Peaks
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: Peak ID
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: List of photos for the peak
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       photo_url:
+ *                         type: string
+ *                       visited_at:
+ *                         type: string
+ *                         format: date
+ *                       description:
+ *                         type: string
+ *                       user_email:
+ *                         type: string
+ *       404:
+ *         description: Peak not found
+ *       500:
+ *         description: Internal server error
+ */
+
+router.get("/:id/photos", async (req, res, next) => {
+  try {
+    const peakId = parseInt(req.params.id);
+    if (isNaN(peakId)) {
+      throw new Err("Invalid ID", 400);
+    }
+
+    const result = await peaksService.getPeakPhotos(peakId);
+    res.status(200).json(result);
+  } catch (error) {
+    if (error instanceof Err) {
+      res.status(error.statusCode || 500).json({ message: error.message });
+    } else {
+      next(error);
+    }
+  }
+});
+
+/**
+ * @swagger
  * /peaks/{id}:
  *   patch:
  *     summary: Update peak by ID

@@ -88,6 +88,25 @@ async function getUserPeakById(userId: number, peakId: number) {
   };
 }
 
+// Pobieranie wszystkich zdjęć dla szczytu
+async function getPeakPhotos(peakId: number) {
+  const query = `
+    SELECT up.photo_url, up.visited_at, up.description, u.email as user_email
+    FROM user_peaks up
+    JOIN users u ON up.user_id = u.id
+    WHERE up.peak_id = $1 AND up.photo_url IS NOT NULL
+    ORDER BY up.visited_at DESC
+  `;
+  const result = await db.query(query, [peakId]);
+  const rows = result.rows;
+
+  return {
+    data: rows,
+    message: "Successfully fetched peak photos",
+    total: rows.length,
+  };
+}
+
 // Tworzenie nowego szczytu
 async function createPeak(peakInfo: Peaks) {
   if (!peakInfo || !peakInfo.name || !peakInfo.elevation) {
@@ -357,6 +376,7 @@ export default {
   getPeaksByCollectionId,
   searchPeaks,
   getUserPeakById,
+  getPeakPhotos,
   updateUserPeakPhoto,
   updateUserPeakVerification,
 };
