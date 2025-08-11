@@ -8,7 +8,7 @@ import {
   faCircleExclamation,
   faCircleCheck,
 } from "@fortawesome/free-solid-svg-icons";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import logowanieService from "../services/logowanie.service";
 import { useNavigate } from "react-router-dom";
 import ToastModalContext from "../store/toast-modal-context";
@@ -17,7 +17,7 @@ const Login = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { createToast } = React.useContext(ToastModalContext);
+  const { createToast } =useContext(ToastModalContext);
 
   const emailInputHandler = (ev: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(ev.target.value);

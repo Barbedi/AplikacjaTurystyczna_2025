@@ -37,6 +37,7 @@ services:
       - ./app/dist/files/profiles:/app/dist/files/profiles
       - ./app/dist/files/verifications:/app/dist/files/verifications  
       - ./app/dist/files/trails:/app/dist/files/trails
+      - ./app/dist/files/peaks:/app/dist/files/peaks
       - ./backend/data/exportMain.geojson:/app/data/exportMain.geojson:ro
     environment:
       - DB_HOST=${DB_HOST}

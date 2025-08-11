@@ -294,10 +294,11 @@ const EditCrownPage = () => {
                 )}
                 {isMyPeak && (
                   <span
-                    className={`ml-2 px-2 py-1 rounded-full text-xs font-medium bg-green-500/20 text-green-300 border border-green-500/30
-                  `}
+                    className={`ml-2 px-2 py-1 rounded-full text-xs font-medium ${
+                      myPeak ? "bg-green-500/20 text-green-300 border border-green-500/30" : "bg-red-500/20 text-red-300 border border-red-500/30"
+                    }`}
                   >
-                    {"Zdobyty"}
+                    {myPeak ? "Zdobyty" : "Niezdobyty"}
                   </span>
                 )}
               </div>

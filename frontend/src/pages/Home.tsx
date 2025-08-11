@@ -4,6 +4,7 @@ import {
   faMagnifyingGlass,
   faChevronRight,
   faXmark,
+  faTriangleExclamation,
 } from "@fortawesome/free-solid-svg-icons";
 import PlanRoute from "../components/PlanRoute";
 import ProposedRoutes from "../components/ProposedRoutes";
@@ -14,6 +15,7 @@ import { useContext, useState, useEffect } from "react";
 import AuthContext from "../store/auth-context";
 import peaksService from "../services/peaks.service";
 import { Peaks } from "../assets/Data";
+import ToastModalContext from "../store/toast-modal-context";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -22,6 +24,7 @@ const Home = () => {
   const [showResults, setShowResults] = useState(false);
   const [results, setResults] = useState<Peaks[]>([]);
   const { checkAuth } = useContext(AuthContext);
+  const { createToast } = useContext(ToastModalContext);
   const handleClickPlanRoute = async () => {
     const isAuth = await checkAuth();
     if (isAuth) {
@@ -37,12 +40,12 @@ const Home = () => {
     setShowResults(false);
   };
 
-  const selectPeak = (peak: Peaks) => {
-    console.log("Selected peak:", peak);
+  // const selectPeak = (peak: Peaks) => {
+  //   console.log("Selected peak:", peak);
 
-    setSearchTerm(peak.name);
-    setShowResults(false);
-  };
+  //   setSearchTerm(peak.name);
+  //   setShowResults(false);
+  // };
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -72,6 +75,28 @@ const Home = () => {
       setShowResults(false);
     }
   }, [delayedSearchTerm]);
+
+
+  const handleSelectedPeak = async (peak: Peaks) => {
+    setSearchTerm(peak.name);
+    setShowResults(false);
+    const isAuth = await checkAuth();
+    if (isAuth) {
+      navigate(`/dashboard/my-peaks/${peak.id}`, {
+        state: { peak },
+      });
+    } else {
+      navigate(`/peaks/${peak.id}`, {
+        state: { peak },
+      });
+      createToast({
+        message: "Zaloguj się, aby zobaczyć szczegóły",
+        icon: faTriangleExclamation,
+        type: "warning",
+        timeout: 5000,
+      });
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-grad1 to-grad2 pb-24 md:pb-0">
@@ -114,7 +139,7 @@ const Home = () => {
                   <div
                     key={peak.id}
                     className="p-2 hover:bg-white/20 cursor-pointer text-white border-b border-white/5"
-                    onClick={() => selectPeak(peak)}
+                    onClick={() => handleSelectedPeak(peak)}
                   >
                     <div className="font-medium">{peak.name}</div>
                     <div className="text-xs text-gray-300">
