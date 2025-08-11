@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState, useCallback } from "react";
 import trailsService from "../../../services/trails.service";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -10,10 +10,16 @@ import { PageData, Trails } from "../../../assets/Data";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Pagination from "../../Pagination";
 import favouriteTrailsService from "../../../services/favouriteTrails.service";
+import useGetUsers from "../../../hooks/user/useGetUser";
+import AuthContext from "../../../store/auth-context";
+import { experienceMap, fitnessMap,getAllowedTrailLevels,mapDifficultyToNumber } from "../../../utils/proposeTrail";
 
 const TrailPropose = () => {
   const navigate = useNavigate();
+  const { user } = useContext(AuthContext);
+  const { getUserByEmail, usersData } = useGetUsers();
   const [trails, setTrails] = useState<Trails[]>([]);
+  const [allTrails, setAllTrails] = useState<Trails[]>([]);
   const [searchParams, setSearchParams] = useSearchParams();
   const [favoriteIds, setFavoriteIds] = useState<number[]>([]);
   const [pageData, setPageData] = useState<PageData>({
@@ -21,11 +27,21 @@ const TrailPropose = () => {
     pages: 1,
   });
 
-  const fetchFavoriteTrails = async () => {
+  const TRAILS_PER_PAGE = 5;
+
+  useEffect(() => {
+    if (user?.email) {
+      getUserByEmail(user.email);
+    }
+  }, [user?.email, getUserByEmail]);
+
+  const currentUser = usersData?.[0][0];
+
+  const fetchFavoriteTrails = useCallback(async () => {
     try {
       const favResponse = await favouriteTrailsService.getFavouriteTrails();
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const favIds = favResponse.data.data.map(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (favoriteTrail: any) => favoriteTrail.trail_id,
       );
       setFavoriteIds(favIds);
@@ -34,24 +50,68 @@ const TrailPropose = () => {
       console.error("Error fetching favorite trails:", error);
       return [];
     }
-  };
+  }, []);
+
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchAllTrails = async () => {
       try {
-        const response = await trailsService.getTrailsByPublic(pageData.page);
-        setTrails(response.data.data);
-        setPageData((prev) => ({
-          ...prev,
-          pages: response.data.totalPages,
-        }));
+        let allTrailsData: Trails[] = [];
+        let currentPage = 1;
+        let totalPages = 1;
+        do {
+          const response = await trailsService.getTrailsByPublic(currentPage);
+          allTrailsData = [...allTrailsData, ...response.data.data];
+          totalPages = response.data.totalPages;
+          currentPage++;
+        } while (currentPage <= totalPages);
+
+        setAllTrails(allTrailsData);
         await fetchFavoriteTrails();
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
 
-    fetchData();
-  }, [pageData.page]);
+    fetchAllTrails();
+  }, [fetchFavoriteTrails]);
+
+  useEffect(() => {
+    let filteredTrails = allTrails;
+    if (currentUser && allTrails.length > 0) {
+      if (!currentUser.level_of_experience || !currentUser.fitness_level) {
+        setTrails([]);
+        setPageData({
+          page: 1,
+          pages: 1
+        });
+        return;
+      }
+      
+      const exp = experienceMap[currentUser.level_of_experience ?? "beginner"];
+      const fit = fitnessMap[currentUser.fitness_level ?? "beginner"];
+      const [minDiff, maxDiff] = getAllowedTrailLevels(exp, fit);
+
+      filteredTrails = allTrails.filter((trail: Trails) => {
+        const numericDiff = mapDifficultyToNumber(trail.difficulty.toLowerCase());
+        return numericDiff >= minDiff && numericDiff <= maxDiff;
+      });
+    }
+    const totalFilteredTrails = filteredTrails.length;
+    const totalPages = Math.ceil(totalFilteredTrails / TRAILS_PER_PAGE);
+    
+    const currentPageNumber = pageData.page > totalPages ? 1 : pageData.page;
+    
+    setPageData({
+      page: currentPageNumber,
+      pages: totalPages || 1
+    });
+
+    const startIndex = (currentPageNumber - 1) * TRAILS_PER_PAGE;
+    const endIndex = startIndex + TRAILS_PER_PAGE;
+    const trailsForCurrentPage = filteredTrails.slice(startIndex, endIndex);
+    
+    setTrails(trailsForCurrentPage);
+  }, [allTrails, currentUser, pageData.page, TRAILS_PER_PAGE]);
 
   useEffect(() => {
     const currentPage = parseInt(searchParams.get("page") || "1");
@@ -88,18 +148,40 @@ const TrailPropose = () => {
 
   return (
     <div className="flex flex-col w-full mt-5 mx-auto space-y-3">
-      {trails.map((trail, index) => {
-        const isFavorite = favoriteIds.includes(trail.id);
-        return (
-          <div
-            key={trail.id}
-            className={`group relative bg-white/10 backdrop-blur-lg rounded-2xl shadow-lg p-6 transition-all duration-300 ease-in-out border border-white/20 hover:bg-white/20 hover:border-white/40 hover:shadow-2xl hover:scale-[1.02] w-full ${
-              index === 0 ? "animate-fadeInUp" : ""
-            }`}
+      {trails.length === 0 && currentUser && (!currentUser.level_of_experience || !currentUser.fitness_level) ? (
+        <div className="bg-white/10 backdrop-blur-lg rounded-2xl shadow-lg p-8 border border-white/20 text-center">
+          <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
+            <FontAwesomeIcon
+              icon={faRoute}
+              className="text-2xl text-white"
+            />
+          </div>
+          <h3 className="text-xl font-bold text-white mb-2">
+            Brak tras do odpowiedniego poziomu
+          </h3>
+          <p className="text-gray-300 mb-4">
+            Aby zobaczyć trasy dostosowane do Twojego poziomu, uzupełnij swój profil.
+          </p>
+          <button
+            onClick={() => navigate('/dashboard/my-profile')}
+            className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-xl transition-all duration-200 font-medium"
           >
-            <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            Uzupełnij profil
+          </button>
+        </div>
+      ) : (
+        trails.map((trail, index) => {
+          const isFavorite = favoriteIds.includes(trail.id);
+          return (
+            <div
+              key={trail.id}
+              className={`group relative bg-white/10 backdrop-blur-lg rounded-2xl shadow-lg p-6 transition-all duration-300 ease-in-out border border-white/20 hover:bg-white/20 hover:border-white/40 hover:shadow-2xl hover:scale-[1.02] w-full ${
+                index === 0 ? "animate-fadeInUp" : ""
+              }`}
+            >
+              <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
 
-            <div className="relative flex items-center gap-6">
+              <div className="relative flex items-center gap-6">
               <div className="flex items-center gap-4 flex-1 min-w-0">
                 <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
                   <FontAwesomeIcon
@@ -112,7 +194,7 @@ const TrailPropose = () => {
                     {trail.name}
                   </h3>
                   <p className="text-sm text-gray-300 mt-1">
-                    Szlak turystyczny
+                    Szlak turystyczny  
                   </p>
                 </div>
               </div>
@@ -156,7 +238,7 @@ const TrailPropose = () => {
 
                 <button
                   onClick={() => handleTrailClick(trail.id)}
-                  className="bg-white/20 border border-white/30 text-white px-3 py-2  rounded-xl hover:bg-white/30 hover:border-white/40 transition-all duration-200 flex items-center gap-2 font-medium"
+                  className="cursor-pointer bg-white/20 border border-white/30 text-white px-3 py-2  rounded-xl hover:bg-white/30 hover:border-white/40 transition-all duration-200 flex items-center gap-2 font-medium"
                   title="Zobacz szczegóły"
                 >
                   <span>Szczegóły</span>
@@ -166,7 +248,8 @@ const TrailPropose = () => {
             </div>
           </div>
         );
-      })}
+        })
+      )}
       {trails.length > 0 && (
         <div className="flex justify-center mt-8">
           <Pagination

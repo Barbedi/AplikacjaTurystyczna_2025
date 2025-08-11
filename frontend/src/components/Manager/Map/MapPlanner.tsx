@@ -377,7 +377,7 @@ const MapPlanner = () => {
         <LayersControl position="topright">
           <BaseLayer checked name="MapTiler Outdoor">
             <TileLayer
-              url="https://api.maptiler.com/maps/outdoor-v2/{z}/{x}/{y}.png?key=LXZqP992yx8E1L0p04Uy"
+              url="https://api.maptiler.com/maps/outdoor-v2/{z}/{x}/{y}.png?key=DdJo20VMMy7tFRXLTfO6"
               attribution='&copy; <a href="https://www.maptiler.com/">MapTiler</a>'
               tileSize={512}
               zoomOffset={-1}
