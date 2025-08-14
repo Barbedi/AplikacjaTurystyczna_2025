@@ -152,7 +152,10 @@ const PeakItem = ({ fetchPeaks }: PeakItemProps) => {
                         titleAccess="Zweryfikowane"
                       />
                     ) : (
-                      <span className="text-lg font-bold text-white">Nie</span>
+                      <VerifiedIcon
+                        className="text-red-500"
+                        titleAccess="Niezweryfikowane"
+                      />
                     )}
                   </div>
                 </div>
