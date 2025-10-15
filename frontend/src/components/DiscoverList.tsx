@@ -12,14 +12,23 @@ const DiscoverList = () => {
     const fetchTrails = async () => {
       try {
         const response = await trailsService.getTrailsByPublic();
-        setTrails(response.data.data);
+  
+        const data = response?.data?.data;
+        if (Array.isArray(data)) {
+          setTrails(data);
+        } else {
+          console.warn("⚠️ trailsService.getTrailsByPublic() zwróciło coś innego niż tablicę:", data);
+          setTrails([]); // zabezpieczenie, żeby .map nie wywalił błędu
+        }
       } catch (error) {
-        console.error("Error fetching trails:", error);
+        console.error("❌ Błąd podczas pobierania szlaków:", error);
+        setTrails([]); // zabezpieczenie w razie błędu
       }
     };
-
+  
     fetchTrails();
   }, []);
+  
 
   const handleTrailClick = (trailId: number) => {
     navigate(`/trails/${trailId}`);
@@ -27,7 +36,7 @@ const DiscoverList = () => {
 
   return (
     <div className="flex flex-col items-center justify-center w-full mt-5 mx-auto">
-      {trails.map((trail) => (
+     {Array.isArray(trails) && trails.map((trail) => (
         <div
           key={trail.id}
           className={`flex bg-white/10 backdrop-blur-lg rounded-lg shadow-lg p-4 mt-5 transition-all duration-300 ease-in-out hover:shadow-xl w-full

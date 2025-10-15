@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">AplikacjaTurystyczna_2025</string>
+    <string name="title_activity_main">AplikacjaTurystyczna_2025</string>
+    <string name="package_name">com.bbednarek.aplikacjaturystyczna2025</string>
+    <string name="custom_url_scheme">com.bbednarek.aplikacjaturystyczna2025</string>
+</resources>

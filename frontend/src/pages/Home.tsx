@@ -7,7 +7,7 @@ import {
   faTriangleExclamation,
 } from "@fortawesome/free-solid-svg-icons";
 import PlanRoute from "../components/PlanRoute";
-import ProposedRoutes from "../components/ProposedRoutes";
+// import ProposedRoutes from "../components/ProposedRoutes";
 import ExploreRoutes from "../components/ExploreRoutes";
 import Footer from "../components/Footer";
 import { useNavigate } from "react-router-dom";
@@ -99,7 +99,7 @@ const Home = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-grad1 to-grad2 pb-24 md:pb-0">
+    <div className="min-h-screen  pb-24 md:pb-0">
       <Navbar />
       <div className="relative bg-[url('/assets/img/IMG_4048.webp')] bg-cover bg-center bg-no-repeat h-[60vh] md:h-[70vh] w-[90%] mx-auto rounded-2xl shadow-xl my-3 duration-300">
         <div className="relative z-20 flex flex-col items-start justify-center h-full px-6 md:px-16 text-white duration-300">
@@ -183,7 +183,7 @@ const Home = () => {
             Proponowane trasy
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 w-full h-full">
-            <ProposedRoutes />
+            {/* <ProposedRoutes /> */}
           </div>
         </div>
       </div>
