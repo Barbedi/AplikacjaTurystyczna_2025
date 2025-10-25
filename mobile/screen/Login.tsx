@@ -2,7 +2,6 @@ import "./global.css";
 import { useState } from "react";
 import { View, Text, TextInput, Pressable, KeyboardAvoidingView, Platform } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { Button } from '@react-navigation/elements';
 
 export default function App() {
   const [email, setEmail] = useState("");
