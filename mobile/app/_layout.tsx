@@ -20,6 +20,7 @@ export default function RootLayout() {
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="login" />
       <Stack.Screen name="(dashboard)" />
+      <Stack.Screen name="(screen)" />
     </Stack>
   );
 }
