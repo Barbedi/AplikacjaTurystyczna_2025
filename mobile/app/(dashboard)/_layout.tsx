@@ -32,9 +32,10 @@ export default function DashboardLayout() {
               intensity={80}
               style={{
                 flex: 1,
-                backgroundColor: Platform.OS === "ios" 
-                  ? "rgba(255, 255, 255, 0.1)" 
-                  : "rgba(30, 30, 30, 0.95)",
+                backgroundColor:
+                  Platform.OS === "ios"
+                    ? "rgba(255, 255, 255, 0.1)"
+                    : "rgba(30, 30, 30, 0.95)",
                 borderWidth: 1,
                 borderColor: "rgba(255, 255, 255, 0.2)",
               }}
@@ -48,7 +49,7 @@ export default function DashboardLayout() {
           borderTopWidth: 0,
           elevation: 0,
           height: 60,
-          bottom: insets.bottom +5,
+          bottom: insets.bottom + 5,
           left: 0,
           right: 0,
           paddingBottom: 10,
@@ -62,8 +63,8 @@ export default function DashboardLayout() {
       <Tabs.Screen
         name="home"
         options={{
-            title: "Home",
-            tabBarLabel: "Home",
+          title: "Home",
+          tabBarLabel: "Home",
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
               name={focused ? "home" : "home-outline"}
@@ -84,7 +85,6 @@ export default function DashboardLayout() {
               size={28}
               color={color}
             />
-
           ),
         }}
       />

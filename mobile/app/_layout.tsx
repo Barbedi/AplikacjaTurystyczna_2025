@@ -3,7 +3,6 @@ import { useFonts } from "expo-font";
 import { useEffect } from "react";
 import { Ionicons } from "@expo/vector-icons";
 
-
 export default function RootLayout() {
   const [fontsLoaded] = useFonts(Ionicons.font);
 

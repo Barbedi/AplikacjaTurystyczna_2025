@@ -1,13 +1,20 @@
 import "../global.css";
 import { useState } from "react";
-import { View, Text, TextInput, Pressable, KeyboardAvoidingView, Platform } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  Pressable,
+  KeyboardAvoidingView,
+  Platform,
+} from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { Button } from '@react-navigation/elements';
+import { Button } from "@react-navigation/elements";
 import { useNavigation } from "@react-navigation/native";
-import { useRouter } from 'expo-router';
+import { useRouter } from "expo-router";
 
 export default function Login() {
-    const router = useRouter();
+  const router = useRouter();
   const navigation = useNavigation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -19,18 +26,17 @@ export default function Login() {
 
   return (
     <LinearGradient
-    colors={["#5996eb", "#1a2b5c", "#050c28"]}
+      colors={["#5996eb", "#1a2b5c", "#050c28"]}
       className="flex-1"
-
     >
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         className="flex-1 justify-center items-center px-6"
       >
         <View className="bg-white/20 backdrop-blur-sm  p-6 rounded-2xl w-full max-w-sm ">
-        <Text className="text-white text-4xl font-bold text-center mb-8 tracking-wide drop-shadow-md">
-          Zaloguj się
-        </Text>
+          <Text className="text-white text-4xl font-bold text-center mb-8 tracking-wide drop-shadow-md">
+            Zaloguj się
+          </Text>
           <TextInput
             placeholder="Email"
             placeholderTextColor="#e5e7eb"

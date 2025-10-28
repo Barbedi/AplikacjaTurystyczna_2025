@@ -10,9 +10,17 @@ export default function Menu() {
   const modules = [
     { title: "Zaplanuj trasy", route: "/(screen)/map", icon: "route" },
     { title: "Nagraj trasę", route: "/(screen)/record", icon: "video" },
-    { title: "Moje trasy", route: "/(screen)/myRoutes", icon: "location-pin-lock" },
+    {
+      title: "Moje trasy",
+      route: "/(screen)/myRoutes",
+      icon: "location-pin-lock",
+    },
     { title: "Ulubione trasy", route: "/(screen)/favourites", icon: "heart" },
-    { title: "Moje szczyty", route: "/(screen)/peaks", icon: "map-location-dot" },
+    {
+      title: "Moje szczyty",
+      route: "/(screen)/peaks",
+      icon: "map-location-dot",
+    },
     { title: "Korona Gór", route: "/(screen)/crown", icon: "mountain-sun" },
     { title: "Statystyki", route: "/(screen)/stats", icon: "chart-simple" },
     { title: "Moje opinie", route: "/(screen)/reviews", icon: "comment" },
@@ -24,7 +32,7 @@ export default function Menu() {
         <ScrollView
           contentContainerStyle={{
             padding: 20,
-            flexGrow: 1, 
+            flexGrow: 1,
           }}
           showsVerticalScrollIndicator={false}
         >

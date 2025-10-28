@@ -6,14 +6,13 @@ export default function ScreenLayout() {
   return (
     <Stack
       screenOptions={{
-        headerShown: true, 
-        headerTintColor: "#c084fc", 
+        headerShown: true,
+        headerTintColor: "#c084fc",
         headerTitleStyle: {
           fontWeight: "500",
           color: "#c084fc",
         },
-        headerTransparent: true, 
-        
+        headerTransparent: true,
       }}
     />
   );
