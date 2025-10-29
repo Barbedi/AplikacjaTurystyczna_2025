@@ -6,6 +6,7 @@ import { useSharedValue } from "react-native-reanimated";
 import Carousel from "react-native-reanimated-carousel";
 import React from "react";
 
+
 const { width } = Dimensions.get("window");
 
 const defaultDataWith6Colors = [
@@ -16,7 +17,6 @@ const defaultDataWith6Colors = [
   "#F5D399",
   "#F1F1F1",
 ];
-
 const Home = () => {
   const progress = useSharedValue<number>(0);
   const modules = [
@@ -29,11 +29,10 @@ const Home = () => {
     <LinearGradient colors={["#5996eb", "#050c28"]} className="flex-1">
       <SafeAreaView className="flex-1">
         <ScrollView
-          contentContainerStyle={{ padding: 20, flexGrow: 1 }}
+          contentContainerStyle={{ padding: 20, flexGrow: 1,paddingBottom: 60 }}
           showsVerticalScrollIndicator={false}
         >
           <View className="flex flex-col">
-            {/* Nagłówek */}
             <View className="flex flex-row items-center gap-3">
               <View className="w-19 h-19 rounded-full overflow-hidden bg-white/30 items-center justify-center">
                 <FontAwesome6 name="circle-user" size={40} color="#ffffffaa" />
@@ -45,9 +44,26 @@ const Home = () => {
                 </Text>
               </View>
             </View>
+            <View className="w-full mt-7 h-12 rounded-full bg-white/30 px-5 flex-row items-center">
+              <FontAwesome6 name="magnifying-glass" size={18} color="#fff" />
+              <Text className="text-white/80 text-base ml-3">Wyszukaj...</Text>
+            </View>
+            <View className="w-full mt-2  rounded-2xl p-4">
+            <Text className="text-xl font-semibold text-white  mx-2">
+              Aktualna pogoda w Twojej lokalizacji
+            </Text>
 
-            {/* Regiony */}
-            <View className="mt-7 bg-white/20 backdrop-blur-sm p-4 rounded-2xl">
+            <View className="flex flex-row items-center">
+              <View className="w-20 h-20 rounded-full  items-center justify-center">
+                <FontAwesome6 name="sun" size={48} color="#FFD700" />
+              </View>
+              <View className="ml-7 justify-center">
+                <Text className="text-white text-4xl font-bold">22&#8451;</Text>
+                <Text className="text-white/80 text-lg font-medium">Słonecznie</Text>
+              </View>
+            </View>
+          </View>
+            <View className="mt-5 bg-white/20 backdrop-blur-sm p-4 rounded-2xl">
               <View className="mb-2 flex flex-col">
                 <Text className="text-xl mx-2 font-semibold text-white">
                   Odkryj trasy w ...
@@ -70,28 +86,36 @@ const Home = () => {
                 </View>
               </View>
             </View>
-            <View className="mt-4 p-4">
-              <Text className="text-xl mx-2 font-semibold text-white mb-3">
+            <View className="mt-3 p-4">
+              <Text className="text-xl mx-2 font-semibold text-white">
                 Proponowane trasy
               </Text>
               <View className="flex justify-center items-center">
 
               <Carousel
-                width={width * 0.6}
+                width={width} 
+                height={300}
+                style={{ alignSelf: "center" }}
                 data={defaultDataWith6Colors}
+                mode="parallax"
                 loop
                 autoPlay
+                autoPlayInterval={3000}
                 scrollAnimationDuration={1000}
+                pagingEnabled={false}
                 renderItem={({ item }) => (
-                  <View
-                    className="rounded-2xl items-center justify-center p-5 h-96 bg-white/20"
+                  <View className="rounded-2xl items-center justify-center  bg-white/20 flex-1">
+                    <View className="w-[90%] h-52 rounded-2xl bg-black/40 items-center justify-center">
+                        <Text className="text-white">zdjęcie</Text>
+                    </View>
+                    <Text className="text-white  text-lg font-semibold mt-3">{item}</Text>
                     
-                  >
-                    <Text className="text-white text-lg font-semibold">
-                      {item}
-                    </Text>
                   </View>
                 )}
+                modeConfig={{
+                  parallaxScrollingScale: 0.9, 
+                  parallaxScrollingOffset: 52, 
+                }}
               />
               </View>
             </View>

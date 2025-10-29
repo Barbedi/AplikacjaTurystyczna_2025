@@ -2,6 +2,7 @@ import express from "express";
 const router = express.Router();
 import loginService from "../services/login";
 import jwt from "jsonwebtoken";
+
 /**
  * @openapi
  * /login:
@@ -29,23 +30,6 @@ import jwt from "jsonwebtoken";
  *     responses:
  *       200:
  *         description: Użytkownik został pomyślnie zalogowany. Zwraca dane użytkownika i status autoryzacji.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 auth:
- *                   type: boolean
- *                   example: true
- *                 user:
- *                   type: object
- *                   properties:
- *                     email:
- *                       type: string
- *                       example: user@example.com
- *                     role:
- *                       type: string
- *                       example: client
  *       401:
  *         description: Nieprawidłowy e-mail lub hasło.
  *       404:
@@ -69,34 +53,39 @@ router.post("/", async function (req, res, next) {
     const token = jwt.sign(
       { id: userId, email: userEmail, role: userRole },
       process.env["SECRET_TOKEN"] as string,
-      { expiresIn: 86400 },
+      { expiresIn: "15m" } 
     );
 
     const refreshToken = jwt.sign(
       { id: userId, email: userEmail, role: userRole },
       process.env["REFRESH_SECRET_TOKEN"] as string,
-      { expiresIn: 60 * 60 * 24 * 365 },
+      { expiresIn: "7d" }
     );
-
     res.set({
       Authorization: `Bearer ${token}`,
       "Refresh-Token": `Bearer ${refreshToken}`,
     });
 
+    const isProd = process.env["NODE_ENV"] === "production";
+
     res.cookie("jwt", token, {
-      expires: new Date(Date.now() + 60000),
       httpOnly: true,
-      secure: false,
+      sameSite: isProd ? "none" : "lax",  // ← lax dla dev
+      secure: isProd,                      // ← false w dev
+      maxAge: 15 * 60 * 1000,
     });
 
     res.cookie("refreshJwt", refreshToken, {
-      expires: new Date(Date.now() + 604800000),
       httpOnly: true,
-      secure: false,
+      sameSite: isProd ? "none" : "lax",  // ← lax dla dev
+      secure: isProd,                      // ← false w dev
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     res.status(200).json({
       auth: true,
+      token,          
+      refreshToken,   
       user: {
         id: userId,
         email: userEmail,
@@ -109,3 +98,4 @@ router.post("/", async function (req, res, next) {
 });
 
 export default router;
+
