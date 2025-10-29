@@ -1,11 +1,15 @@
-import { View, Text, ScrollView, Dimensions } from "react-native";
+import { View, Text, ScrollView, Dimensions, Image } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FontAwesome6 } from "@expo/vector-icons";
 import { useSharedValue } from "react-native-reanimated";
 import Carousel from "react-native-reanimated-carousel";
 import React from "react";
-
+import { useEffect } from "react";
+import { getAuthenticatedUser } from "@/src/config/api";
+import useGetUsers from "@/src/hooks/useGetUser";
+import { useState } from "react";
+import filesService from "@/src/services/file.service";
 
 const { width } = Dimensions.get("window");
 
@@ -18,7 +22,35 @@ const defaultDataWith6Colors = [
   "#F1F1F1",
 ];
 const Home = () => {
-  const progress = useSharedValue<number>(0);
+  const { usersData, loading, getUserByEmail } = useGetUsers();
+  const [profileImgUrl, setProfileImgUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    const loadUser = async () => {
+      try {
+        const authData = await getAuthenticatedUser();
+        if (authData?.user?.email) {
+          await getUserByEmail(authData.user.email);
+        }
+      } catch (error) {
+        console.error("Błąd ładowania użytkownika:", error);
+      }
+    };
+
+    loadUser();
+  }, [getUserByEmail]);
+
+  const user = usersData?.[0]?.[0];
+
+  useEffect(() => {
+    if (user?.profile_image) {
+      const imgUrl = filesService.getImgUrl(user.profile_image);
+      setProfileImgUrl(imgUrl);
+    } else {
+      setProfileImgUrl(null);
+    }
+  }, [user]);
+
   const modules = [
     { title: "Tatry" },
     { title: "Beskid Sądecki" },
@@ -29,16 +61,34 @@ const Home = () => {
     <LinearGradient colors={["#5996eb", "#050c28"]} className="flex-1">
       <SafeAreaView className="flex-1">
         <ScrollView
-          contentContainerStyle={{ padding: 20, flexGrow: 1,paddingBottom: 60 }}
+          contentContainerStyle={{
+            padding: 20,
+            flexGrow: 1,
+            paddingBottom: 60,
+          }}
           showsVerticalScrollIndicator={false}
         >
           <View className="flex flex-col">
             <View className="flex flex-row items-center gap-3">
-              <View className="w-19 h-19 rounded-full overflow-hidden bg-white/30 items-center justify-center">
-                <FontAwesome6 name="circle-user" size={40} color="#ffffffaa" />
-              </View>
+              {profileImgUrl ? (
+                <Image
+                  source={{ uri: profileImgUrl }}
+                  className="w-14 h-14 rounded-full"
+                  style={{ objectFit: "cover" }}
+                />
+              ) : (
+                <View className="w-14 h-14 rounded-full overflow-hidden bg-white/30 items-center justify-center">
+                  <FontAwesome6
+                    name="circle-user"
+                    size={40}
+                    color="#ffffffaa"
+                  />
+                </View>
+              )}
               <View className="flex flex-col">
-                <Text className="text-md text-white/80">Witaj Jan</Text>
+                <Text className="text-md text-white/80">
+                  Witaj {user?.name}
+                </Text>
                 <Text className="text-lg text-white font-semibold">
                   Miło Cię widzieć!
                 </Text>
@@ -49,20 +99,24 @@ const Home = () => {
               <Text className="text-white/80 text-base ml-3">Wyszukaj...</Text>
             </View>
             <View className="w-full mt-2  rounded-2xl p-4">
-            <Text className="text-xl font-semibold text-white  mx-2">
-              Aktualna pogoda w Twojej lokalizacji
-            </Text>
+              <Text className="text-xl font-semibold text-white  mx-2">
+                Aktualna pogoda w Twojej lokalizacji
+              </Text>
 
-            <View className="flex flex-row items-center">
-              <View className="w-20 h-20 rounded-full  items-center justify-center">
-                <FontAwesome6 name="sun" size={48} color="#FFD700" />
-              </View>
-              <View className="ml-7 justify-center">
-                <Text className="text-white text-4xl font-bold">22&#8451;</Text>
-                <Text className="text-white/80 text-lg font-medium">Słonecznie</Text>
+              <View className="flex flex-row items-center">
+                <View className="w-20 h-20 rounded-full  items-center justify-center">
+                  <FontAwesome6 name="sun" size={48} color="#FFD700" />
+                </View>
+                <View className="ml-7 justify-center">
+                  <Text className="text-white text-4xl font-bold">
+                    22&#8451;
+                  </Text>
+                  <Text className="text-white/80 text-lg font-medium">
+                    Słonecznie
+                  </Text>
+                </View>
               </View>
             </View>
-          </View>
             <View className="mt-5 bg-white/20 backdrop-blur-sm p-4 rounded-2xl">
               <View className="mb-2 flex flex-col">
                 <Text className="text-xl mx-2 font-semibold text-white">
@@ -91,32 +145,32 @@ const Home = () => {
                 Proponowane trasy
               </Text>
               <View className="flex justify-center items-center">
-
-              <Carousel
-                width={width} 
-                height={300}
-                style={{ alignSelf: "center" }}
-                data={defaultDataWith6Colors}
-                mode="parallax"
-                loop
-                autoPlay
-                autoPlayInterval={3000}
-                scrollAnimationDuration={1000}
-                pagingEnabled={false}
-                renderItem={({ item }) => (
-                  <View className="rounded-2xl items-center justify-center  bg-white/20 flex-1">
-                    <View className="w-[90%] h-52 rounded-2xl bg-black/40 items-center justify-center">
+                <Carousel
+                  width={width}
+                  height={300}
+                  style={{ alignSelf: "center" }}
+                  data={defaultDataWith6Colors}
+                  mode="parallax"
+                  loop
+                  autoPlay
+                  autoPlayInterval={3000}
+                  scrollAnimationDuration={1000}
+                  pagingEnabled={false}
+                  renderItem={({ item }) => (
+                    <View className="rounded-2xl items-center justify-center  bg-white/20 flex-1">
+                      <View className="w-[90%] h-52 rounded-2xl bg-black/40 items-center justify-center">
                         <Text className="text-white">zdjęcie</Text>
+                      </View>
+                      <Text className="text-white  text-lg font-semibold mt-3">
+                        {item}
+                      </Text>
                     </View>
-                    <Text className="text-white  text-lg font-semibold mt-3">{item}</Text>
-                    
-                  </View>
-                )}
-                modeConfig={{
-                  parallaxScrollingScale: 0.9, 
-                  parallaxScrollingOffset: 52, 
-                }}
-              />
+                  )}
+                  modeConfig={{
+                    parallaxScrollingScale: 0.9,
+                    parallaxScrollingOffset: 52,
+                  }}
+                />
               </View>
             </View>
           </View>

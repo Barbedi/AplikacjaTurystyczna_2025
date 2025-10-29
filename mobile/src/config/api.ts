@@ -5,14 +5,12 @@ import * as SecureStore from "expo-secure-store";
 const ACCESS_TOKEN_KEY = "HIKEUP_ACCESS_TOKEN";
 const REFRESH_TOKEN_KEY = "HIKEUP_REFRESH_TOKEN";
 
-// --- Inicjalizacja instancji ---
 export const api = axios.create({
   baseURL: API_URL,
   headers: { "Content-Type": "application/json" },
   timeout: 15000,
 });
 
-// --- Ustawianie tokena ---
 let authToken: string | null = null;
 
 export const setAuthToken = (token: string | null) => {
@@ -24,10 +22,10 @@ export const setAuthToken = (token: string | null) => {
   }
 };
 
-// --- SecureStore: zapis / odczyt / czyszczenie ---
 export const saveTokens = async (token: string, refreshToken?: string) => {
   await SecureStore.setItemAsync(ACCESS_TOKEN_KEY, token);
-  if (refreshToken) await SecureStore.setItemAsync(REFRESH_TOKEN_KEY, refreshToken);
+  if (refreshToken)
+    await SecureStore.setItemAsync(REFRESH_TOKEN_KEY, refreshToken);
   setAuthToken(token);
 };
 
@@ -43,7 +41,6 @@ export const clearTokens = async () => {
   setAuthToken(null);
 };
 
-// --- Logowanie ---
 export const loginUser = async (email: string, password: string) => {
   const res = await api.post("/login", { email, password });
   const { token, refreshToken } = res.data;
@@ -52,22 +49,19 @@ export const loginUser = async (email: string, password: string) => {
   return res.data;
 };
 
-// --- Uwierzytelnienie ---
 export const getAuthenticatedUser = async () => {
   const res = await api.get("/authenticate");
   return res.data;
 };
 
-// --- Wylogowanie ---
 export const logoutUser = async () => {
   try {
-    await api.post("/logout");
+    await api.get("/logout");
   } finally {
     await clearTokens();
   }
 };
 
-// --- Odświeżanie tokena ---
 const refreshAccessToken = async (): Promise<string | null> => {
   const refreshToken = await SecureStore.getItemAsync(REFRESH_TOKEN_KEY);
   if (!refreshToken) return null;
@@ -84,7 +78,6 @@ const refreshAccessToken = async (): Promise<string | null> => {
   }
 };
 
-// --- Interceptor dla 401 ---
 interface RetryableAxiosRequest extends AxiosRequestConfig {
   _retry?: boolean;
   headers?: Record<string, any>;
@@ -111,5 +104,5 @@ api.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  }
+  },
 );

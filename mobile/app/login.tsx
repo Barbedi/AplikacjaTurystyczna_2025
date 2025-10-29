@@ -24,17 +24,12 @@ export default function Login() {
   const handleLogin = async () => {
     try {
       const data = await loginUser(email, password);
-      const user = data.user;
-  
-      Alert.alert("Zalogowano!", `Witaj ${user.email} 👋`);
-      router.replace("/(dashboard)/home"); 
-  
+      console.log("✅ Zalogowano pomyślnie:", data);
+      router.replace("/(dashboard)/home");
     } catch (err: any) {
       console.error("Błąd logowania:", err.response?.data || err.message);
-      Alert.alert("Błąd logowania", "Nieprawidłowe dane lub brak połączenia z serwerem");
     }
   };
-  
 
   return (
     <LinearGradient
