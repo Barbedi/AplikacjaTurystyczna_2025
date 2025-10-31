@@ -10,6 +10,7 @@ import { getAuthenticatedUser } from "@/src/config/api";
 import useGetUsers from "@/src/hooks/useGetUser";
 import { useState } from "react";
 import filesService from "@/src/services/file.service";
+import TrailsCarousel from "@/src/components/home/TrailsCarousel";
 
 const { width } = Dimensions.get("window");
 
@@ -140,39 +141,7 @@ const Home = () => {
                 </View>
               </View>
             </View>
-            <View className="mt-3 p-4">
-              <Text className="text-xl mx-2 font-semibold text-white">
-                Proponowane trasy
-              </Text>
-              <View className="flex justify-center items-center">
-                <Carousel
-                  width={width}
-                  height={300}
-                  style={{ alignSelf: "center" }}
-                  data={defaultDataWith6Colors}
-                  mode="parallax"
-                  loop
-                  autoPlay
-                  autoPlayInterval={3000}
-                  scrollAnimationDuration={1000}
-                  pagingEnabled={false}
-                  renderItem={({ item }) => (
-                    <View className="rounded-2xl items-center justify-center  bg-white/20 flex-1">
-                      <View className="w-[90%] h-52 rounded-2xl bg-black/40 items-center justify-center">
-                        <Text className="text-white">zdjęcie</Text>
-                      </View>
-                      <Text className="text-white  text-lg font-semibold mt-3">
-                        {item}
-                      </Text>
-                    </View>
-                  )}
-                  modeConfig={{
-                    parallaxScrollingScale: 0.9,
-                    parallaxScrollingOffset: 52,
-                  }}
-                />
-              </View>
-            </View>
+              <TrailsCarousel />
           </View>
         </ScrollView>
       </SafeAreaView>
