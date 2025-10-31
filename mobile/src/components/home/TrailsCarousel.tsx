@@ -1,9 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Dimensions, ActivityIndicator, Image } from "react-native";
+import {
+  View,
+  Text,
+  Dimensions,
+  ActivityIndicator,
+  Image,
+  Pressable,
+} from "react-native";
 import Carousel from "react-native-reanimated-carousel";
 import { useSharedValue } from "react-native-reanimated";
 import filesService from "@/src/services/file.service";
 import { api } from "@/src/config/api";
+import { useRouter } from "expo-router";
 
 const { width } = Dimensions.get("window");
 
@@ -14,10 +22,11 @@ interface Trail {
   photos?: { image_name: string }[];
 }
 
-export default function TrailsCarousel() {
+const TrailsCarousel = () => {
   const [trails, setTrails] = useState<Trail[]>([]);
   const [loading, setLoading] = useState(true);
   const progress = useSharedValue<number>(0);
+  const router = useRouter(); // <== DODAJ TO
 
   useEffect(() => {
     const fetchTrails = async () => {
@@ -59,29 +68,41 @@ export default function TrailsCarousel() {
         scrollAnimationDuration={1000}
         pagingEnabled={false}
         renderItem={({ item }) => {
-          const photo = item.photos && item.photos.length > 0 ? item.photos[0] : null;
-          const imageUrl = photo ? filesService.getTrailImgUrl(photo.image_name) : null;
-          
+          const photo =
+            item.photos && item.photos.length > 0 ? item.photos[0] : null;
+          const imageUrl = photo
+            ? filesService.getTrailImgUrl(photo.image_name)
+            : null;
+
           return (
-            <View className="rounded-2xl items-center justify-center bg-white/10 p-3 flex-1">
-              <View className="w-full h-56 rounded-2xl overflow-hidden  items-center justify-center">
+            <Pressable
+              onPress={() => router.push(`/route/${item.id}`)} // ⬅️ kliknięcie otwiera stronę trasy
+              className="rounded-2xl items-center justify-center bg-white/10 p-3 flex-1"
+            >
+              <View className="w-full h-56 rounded-2xl overflow-hidden items-center justify-center">
                 {imageUrl ? (
                   <Image
                     className="rounded-2xl"
                     source={{ uri: imageUrl }}
-                    style={{ width: '100%', height: '100%' }}
+                    style={{ width: "100%", height: "100%" }}
                     resizeMode="cover"
                   />
                 ) : (
                   <Text className="text-white">Brak zdjęcia</Text>
                 )}
-                <View className="absolute bottom-0 left-0 right-0 bg-white/80  px-4 py-3 rounded-2xl w-full" style={{ backgroundColor: 'rgba(0, 0, 0, 0.6)' }}>
-                  <Text className="text-white text-2xl font-semibold text-center" numberOfLines={2}>
+                <View
+                  className="absolute bottom-0 left-0 right-0 px-4 py-3 rounded-2xl w-full"
+                  style={{ backgroundColor: "rgba(0, 0, 0, 0.6)" }}
+                >
+                  <Text
+                    className="text-white text-2xl font-semibold text-center"
+                    numberOfLines={2}
+                  >
                     {item.name}
                   </Text>
                 </View>
               </View>
-            </View>
+            </Pressable>
           );
         }}
         modeConfig={{
@@ -91,4 +112,6 @@ export default function TrailsCarousel() {
       />
     </View>
   );
-}
+};
+
+export default TrailsCarousel;

@@ -2,8 +2,6 @@ import { View, Text, ScrollView, Dimensions, Image } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FontAwesome6 } from "@expo/vector-icons";
-import { useSharedValue } from "react-native-reanimated";
-import Carousel from "react-native-reanimated-carousel";
 import React from "react";
 import { useEffect } from "react";
 import { getAuthenticatedUser } from "@/src/config/api";
@@ -11,19 +9,11 @@ import useGetUsers from "@/src/hooks/useGetUser";
 import { useState } from "react";
 import filesService from "@/src/services/file.service";
 import TrailsCarousel from "@/src/components/home/TrailsCarousel";
+import Discover from "@/src/components/home/Discover";
+import WeatherWidgetMobile from "@/src/components/home/Weather";
 
-const { width } = Dimensions.get("window");
-
-const defaultDataWith6Colors = [
-  "#B0604D",
-  "#899F9C",
-  "#B3C680",
-  "#5C6265",
-  "#F5D399",
-  "#F1F1F1",
-];
 const Home = () => {
-  const { usersData, loading, getUserByEmail } = useGetUsers();
+  const { usersData, getUserByEmail } = useGetUsers();
   const [profileImgUrl, setProfileImgUrl] = useState<string | null>(null);
 
   useEffect(() => {
@@ -51,12 +41,6 @@ const Home = () => {
       setProfileImgUrl(null);
     }
   }, [user]);
-
-  const modules = [
-    { title: "Tatry" },
-    { title: "Beskid Sądecki" },
-    { title: "Beskid Wyspowy" },
-  ];
 
   return (
     <LinearGradient colors={["#5996eb", "#050c28"]} className="flex-1">
@@ -99,49 +83,9 @@ const Home = () => {
               <FontAwesome6 name="magnifying-glass" size={18} color="#fff" />
               <Text className="text-white/80 text-base ml-3">Wyszukaj...</Text>
             </View>
-            <View className="w-full mt-2  rounded-2xl p-4">
-              <Text className="text-xl font-semibold text-white  mx-2">
-                Aktualna pogoda w Twojej lokalizacji
-              </Text>
-
-              <View className="flex flex-row items-center">
-                <View className="w-20 h-20 rounded-full  items-center justify-center">
-                  <FontAwesome6 name="sun" size={48} color="#FFD700" />
-                </View>
-                <View className="ml-7 justify-center">
-                  <Text className="text-white text-4xl font-bold">
-                    22&#8451;
-                  </Text>
-                  <Text className="text-white/80 text-lg font-medium">
-                    Słonecznie
-                  </Text>
-                </View>
-              </View>
-            </View>
-            <View className="mt-5 bg-white/20 backdrop-blur-sm p-4 rounded-2xl">
-              <View className="mb-2 flex flex-col">
-                <Text className="text-xl mx-2 font-semibold text-white">
-                  Odkryj trasy w ...
-                </Text>
-                <View className="flex flex-row mt-3 justify-center items-center">
-                  {modules.map((item, index) => (
-                    <View key={index} className="mx-3">
-                      <View className="flex flex-col items-center">
-                        <View className="w-28 aspect-square rounded-xl bg-black/40 items-center justify-center">
-                          <Text className="text-white">zdjęcie</Text>
-                        </View>
-                        <View className="mt-2">
-                          <Text className="text-white font-medium text-center">
-                            {item.title}
-                          </Text>
-                        </View>
-                      </View>
-                    </View>
-                  ))}
-                </View>
-              </View>
-            </View>
-              <TrailsCarousel />
+             <WeatherWidgetMobile />
+            <Discover />
+            <TrailsCarousel />
           </View>
         </ScrollView>
       </SafeAreaView>
