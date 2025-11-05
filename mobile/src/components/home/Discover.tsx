@@ -1,4 +1,4 @@
-import { View, Text, Image } from "react-native";
+import { View, Text, Image, ScrollView } from "react-native";
 import { useEffect } from "react";
 
 const images = {
@@ -8,18 +8,9 @@ const images = {
 };
 
 const modules = [
-  {
-    title: "Tatry",
-    photo: images.tatry,
-  },
-  {
-    title: "Beskid Sądecki",
-    photo: images.sadecki,
-  },
-  {
-    title: "Beskid Wyspowy",
-    photo: images.wyspowy,
-  },
+  { title: "Tatry", photo: images.tatry },
+  { title: "Beskid Sądecki", photo: images.sadecki },
+  { title: "Beskid Wyspowy", photo: images.wyspowy },
 ];
 
 const Discover = () => {
@@ -31,33 +22,36 @@ const Discover = () => {
 
   return (
     <View className="mt-5 bg-white/20 backdrop-blur-sm p-4 rounded-2xl">
-      <View className="mb-2 flex flex-col">
-        <Text className="text-xl mx-2 font-semibold text-white">
-          Odkryj trasy w ...
-        </Text>
-        <View className="flex flex-row mt-3 justify-center items-center">
-          {modules.map((item, index) => (
-            <View key={index} className="mx-3">
-              <View className="flex flex-col items-center">
-                <View className="w-28 aspect-square rounded-xl bg-black/40 items-center justify-center">
-                  <Image
-                    source={item.photo}
-                    style={{ width: "100%", height: "100%", borderRadius: 10 }}
-                    resizeMode="cover"
-                    className="rounded-2xl"
-                  />
-                </View>
-                <View className="mt-2">
-                  <Text className="text-white font-medium text-center">
-                    {item.title}
-                  </Text>
-                </View>
-              </View>
+      <Text className="text-xl font-semibold text-white mb-3 mx-2">
+        Odkryj trasy w ...
+      </Text>
+
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={{ paddingHorizontal: 9, gap: 15 }}
+      >
+        {modules.map((item, index) => (
+          <View key={index} className="w-28 items-center mt-5">
+            <View className="w-28 h-28 rounded-xl overflow-hidden bg-black/30">
+              <Image
+                source={item.photo}
+                style={{ width: "100%", height: "100%" }}
+                resizeMode="cover"
+              />
             </View>
-          ))}
-        </View>
-      </View>
+
+            <Text
+              className="text-white font-medium text-center mt-2"
+              numberOfLines={2}
+            >
+              {item.title}
+            </Text>
+          </View>
+        ))}
+      </ScrollView>
     </View>
   );
 };
+
 export default Discover;
