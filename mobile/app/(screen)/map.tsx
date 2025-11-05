@@ -8,10 +8,7 @@ const MAP_STYLE = `https://api.maptiler.com/maps/outdoor-v2/style.json?key=${MAP
 export default function MapScreen() {
   return (
     <View style={{ flex: 1 }}>
-      <MapView
-        style={{ flex: 1 }}
-        mapStyle={MAP_STYLE}   
-      >
+      <MapView style={{ flex: 1 }} mapStyle={MAP_STYLE}>
         <Camera zoomLevel={11} centerCoordinate={[19.95, 49.29]} />
       </MapView>
     </View>

@@ -38,7 +38,9 @@ const StatsScreen = () => {
       if (!currentUser?.id) return;
       setLoading(true);
       try {
-        const data = await statisticsService.getStatisticsForUser(currentUser.id);
+        const data = await statisticsService.getStatisticsForUser(
+          currentUser.id,
+        );
         setStatistics(data);
       } catch (err) {
         console.error(err);
@@ -53,7 +55,10 @@ const StatsScreen = () => {
 
   if (loading || userLoading) {
     return (
-      <LinearGradient colors={["#5996eb", "#050c28"]} className="flex-1 items-center justify-center">
+      <LinearGradient
+        colors={["#5996eb", "#050c28"]}
+        className="flex-1 items-center justify-center"
+      >
         <ActivityIndicator color="#fff" size="large" />
       </LinearGradient>
     );
@@ -61,9 +66,14 @@ const StatsScreen = () => {
 
   return (
     <LinearGradient colors={["#5996eb", "#050c28"]} className="flex-1">
-      <SafeAreaView edges={['bottom', 'left', 'right']} className="flex-1">
+      <SafeAreaView edges={["bottom", "left", "right"]} className="flex-1">
         <ScrollView
-          contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 10, paddingBottom: 20, flexGrow: 1 }}
+          contentContainerStyle={{
+            paddingHorizontal: 20,
+            paddingTop: 10,
+            paddingBottom: 20,
+            flexGrow: 1,
+          }}
           showsVerticalScrollIndicator={false}
         >
           {error && (
@@ -73,32 +83,63 @@ const StatsScreen = () => {
           )}
           <View className="bg-white/10 rounded-2xl border border-white/30 p-4 mb-5">
             <Text className="text-white text-2xl font-bold text-center mb-4">
-              <FontAwesome6 name="mountain-sun" size={20} color="#fff" /> Korona Gór Polski
+              <FontAwesome6 name="mountain-sun" size={20} color="#fff" /> Korona
+              Gór Polski
             </Text>
 
             <View className="flex-row  justify-between mb-3">
-              <StatBox label="Zdobyte" value={statistics?.crowns.kgp.visited || 0} />
-              <StatBox label="Wszystkie" value={statistics?.crowns.kgp.all || 0} />
-              <StatBox label="Ukończono" value={`${(statistics?.crowns.kgp.percent ?? 0).toFixed(1)}%`} />
+              <StatBox
+                label="Zdobyte"
+                value={statistics?.crowns.kgp.visited || 0}
+              />
+              <StatBox
+                label="Wszystkie"
+                value={statistics?.crowns.kgp.all || 0}
+              />
+              <StatBox
+                label="Ukończono"
+                value={`${(statistics?.crowns.kgp.percent ?? 0).toFixed(1)}%`}
+              />
             </View>
-
           </View>
 
           <View className="bg-white/10 rounded-2xl border border-white/30 p-4 mb-5">
             <Text className="text-white text-2xl font-bold text-center mb-4">
-              <FontAwesome6 name="mountain" size={20} color="#fff" /> Korona Beskidu Sądeckiego
+              <FontAwesome6 name="mountain" size={20} color="#fff" /> Korona
+              Beskidu Sądeckiego
             </Text>
 
             <View className="flex-row justify-between mb-3">
-              <StatBox label="Zdobyte" value={statistics?.crowns.kbs.visited || 0} />
-              <StatBox label="Wszystkie" value={statistics?.crowns.kbs.all || 0} />
-              <StatBox label="Ukończono" value={`${(statistics?.crowns.kbs.percent ?? 0).toFixed(1)}%`} />
+              <StatBox
+                label="Zdobyte"
+                value={statistics?.crowns.kbs.visited || 0}
+              />
+              <StatBox
+                label="Wszystkie"
+                value={statistics?.crowns.kbs.all || 0}
+              />
+              <StatBox
+                label="Ukończono"
+                value={`${(statistics?.crowns.kbs.percent ?? 0).toFixed(1)}%`}
+              />
             </View>
           </View>
           <View className="flex-col mt-2">
-            <InfoCard label="Zdobyte szczyty" icon="crown" value={statistics?.allUserPeaks || 0} />
-            <InfoCard label="Trasy" icon="route" value={statistics?.allUserTrails || 0} />
-            <InfoCard label="Udostępnione" icon="share" value={statistics?.allUserTrailsShared || 0} />
+            <InfoCard
+              label="Zdobyte szczyty"
+              icon="crown"
+              value={statistics?.allUserPeaks || 0}
+            />
+            <InfoCard
+              label="Trasy"
+              icon="route"
+              value={statistics?.allUserTrails || 0}
+            />
+            <InfoCard
+              label="Udostępnione"
+              icon="share"
+              value={statistics?.allUserTrailsShared || 0}
+            />
             <InfoCard
               label="Najdłuższa trasa"
               icon="person-walking"
@@ -120,6 +161,5 @@ const StatsScreen = () => {
     </LinearGradient>
   );
 };
-
 
 export default StatsScreen;

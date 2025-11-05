@@ -83,7 +83,7 @@ const Home = () => {
               <FontAwesome6 name="magnifying-glass" size={18} color="#fff" />
               <Text className="text-white/80 text-base ml-3">Wyszukaj...</Text>
             </View>
-             <WeatherWidgetMobile />
+            <WeatherWidgetMobile />
             <Discover />
             <TrailsCarousel />
           </View>
