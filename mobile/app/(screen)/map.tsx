@@ -1,16 +1,19 @@
-import { View, Text } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
-import { SafeAreaView } from "react-native-safe-area-context";
+import React from "react";
+import { View } from "react-native";
+import { Camera, MapView } from "@maplibre/maplibre-react-native";
 
-const MapScreen = () => {
+const MAPTILER_KEY = process.env.EXPO_MAPTILER_KEY;
+const MAP_STYLE = `https://api.maptiler.com/maps/outdoor-v2/style.json?key=${MAPTILER_KEY}`;
+
+export default function MapScreen() {
   return (
-    <LinearGradient colors={["#5996eb", "#050c28"]} className="flex-1">
-      <SafeAreaView style={{ flex: 1 }}>
-        <View className="flex-1 items-center justify-center">
-          <Text>Map Screen</Text>
-        </View>
-      </SafeAreaView>
-    </LinearGradient>
+    <View style={{ flex: 1 }}>
+      <MapView
+        style={{ flex: 1 }}
+        mapStyle={MAP_STYLE}   
+      >
+        <Camera zoomLevel={11} centerCoordinate={[19.95, 49.29]} />
+      </MapView>
+    </View>
   );
-};
-export default MapScreen;
+}

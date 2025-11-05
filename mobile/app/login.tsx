@@ -7,11 +7,13 @@ import {
   Pressable,
   KeyboardAvoidingView,
   Platform,
+  Alert,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { Button } from "@react-navigation/elements";
 import { useNavigation } from "@react-navigation/native";
 import { useRouter } from "expo-router";
+import { loginUser, getAuthenticatedUser } from "@/src/config/api";
+import type { AuthResponse } from "@/src/types";
 
 export default function Login() {
   const router = useRouter();
@@ -19,9 +21,14 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = () => {
-    console.log("Logging in with:", email, password);
-    router.replace("/(dashboard)/home");
+  const handleLogin = async () => {
+    try {
+      const data = await loginUser(email, password);
+      console.log("✅ Zalogowano pomyślnie:", data);
+      router.replace("/(dashboard)/home");
+    } catch (err: any) {
+      console.error("Błąd logowania:", err.response?.data || err.message);
+    }
   };
 
   return (

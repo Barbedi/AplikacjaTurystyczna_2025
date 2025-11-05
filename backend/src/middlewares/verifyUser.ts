@@ -9,65 +9,67 @@ declare module "express-serve-static-core" {
   }
 }
 
-export function verifyUser(req: Request, _res: Response, next: NextFunction) {
-  const token = req.cookies["jwt"];
-  const authHeader = req.headers.authorization;
+/**
+ * Middleware sprawdzający autoryzację użytkownika.
+ * Obsługuje:
+ *  - cookie (dla web)
+ *  - Authorization header (dla mobile)
+ *  - automatyczne odświeżenie tokena, jeśli brak ważnego access tokena
+ */
+export async function verifyUser(req: Request, res: Response, next: NextFunction) {
+  const token = req.cookies?.["jwt"];
+  const authHeader = req.headers?.authorization;
+  const bearerToken = authHeader?.startsWith("Bearer ") ? authHeader.split(" ")[1] : null;
 
   console.log("🔐 verifyUser()");
-  console.log("Token (cookie):", token);
-  console.log("Authorization Header:", authHeader);
+  console.log("Token (cookie):", token ? "✅ obecny" : "❌ brak");
+  console.log("Authorization Header:", bearerToken ? "✅ obecny" : "❌ brak");
 
-  if (!token && !authHeader) {
-    console.log("Brak tokena – próba odświeżenia");
-    refreshToken(req, _res, next);
+  // 🔄 Brak tokena -> próbujemy odświeżyć (np. po wygaśnięciu access tokena)
+  if (!token && !bearerToken) {
+    console.log("Brak tokena – próba odświeżenia przez refreshToken()");
+    return refreshToken(req, res, next);
   }
 
-  if (token) {
-    jwt.verify(
-      token,
-      process.env["SECRET_TOKEN"] as string,
-      (err: jwt.VerifyErrors | null, user: string | object | undefined) => {
-        if (err) {
-          console.log("❌ Token invalid:", err.message);
-          const error = new Err("Forbidden", 403);
-          return next(error);
-        }
-        console.log("✅ Token verified:", user);
-        req.user = user;
-        return next();
-      },
-    );
-  } else if (authHeader) {
-    const token = authHeader.split(" ")[1] as string;
-    jwt.verify(
-      token,
-      process.env["SECRET_TOKEN"] as string,
-      (err: jwt.VerifyErrors | null, user: string | object | undefined) => {
-        if (err) {
-          const error = new Err("Forbidden", 403);
-          return next(error);
-        }
+  const accessToken = token || bearerToken;
+  if (!accessToken) {
+    return next(new Err("No access token provided", 401));
+  }
 
-        req.user = user;
-        return next();
-      },
-    );
+  try {
+    const decoded = jwt.verify(
+      accessToken,
+      process.env["SECRET_TOKEN"] as string
+    ) as { id: number; email: string; role: string };
+
+    console.log("✅ Token verified:", decoded);
+    req.user = decoded;
+    return next();
+  } catch (err: any) {
+    console.warn("❌ Token invalid:", err.message);
+
+    // Jeśli token wygasł → spróbuj automatycznie odświeżyć
+    if (err.name === "TokenExpiredError") {
+      console.log("⏳ Token expired – odświeżam...");
+      return refreshToken(req, res, next);
+    }
+
+    return next(new Err("Forbidden", 403));
   }
 }
 
+/**
+ * Sprawdza, czy użytkownik ma odpowiednią rolę.
+ */
 export function requireRole(userRole: string, requiredRole: string | string[]) {
-  const role = requiredRole;
+  if (!requiredRole) return;
 
-  if (!role) {
-    return;
-  }
-
-  if (Array.isArray(role)) {
-    if (!role.includes(userRole)) {
+  if (Array.isArray(requiredRole)) {
+    if (!requiredRole.includes(userRole)) {
       throw new Err("Forbidden", 403);
     }
   } else {
-    if (userRole !== role) {
+    if (userRole !== requiredRole) {
       throw new Err("Forbidden", 403);
     }
   }
