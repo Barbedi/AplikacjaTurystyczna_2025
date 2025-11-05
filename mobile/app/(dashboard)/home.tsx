@@ -1,0 +1,96 @@
+import { View, Text, ScrollView, Dimensions, Image } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { FontAwesome6 } from "@expo/vector-icons";
+import React from "react";
+import { useEffect } from "react";
+import { getAuthenticatedUser } from "@/src/config/api";
+import useGetUsers from "@/src/hooks/useGetUser";
+import { useState } from "react";
+import filesService from "@/src/services/file.service";
+import TrailsCarousel from "@/src/components/home/TrailsCarousel";
+import Discover from "@/src/components/home/Discover";
+import WeatherWidgetMobile from "@/src/components/home/Weather";
+
+const Home = () => {
+  const { usersData, getUserByEmail } = useGetUsers();
+  const [profileImgUrl, setProfileImgUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    const loadUser = async () => {
+      try {
+        const authData = await getAuthenticatedUser();
+        if (authData?.user?.email) {
+          await getUserByEmail(authData.user.email);
+        }
+      } catch (error) {
+        console.error("Błąd ładowania użytkownika:", error);
+      }
+    };
+
+    loadUser();
+  }, [getUserByEmail]);
+
+  const user = usersData?.[0]?.[0];
+
+  useEffect(() => {
+    if (user?.profile_image) {
+      const imgUrl = filesService.getImgUrl(user.profile_image);
+      setProfileImgUrl(imgUrl);
+    } else {
+      setProfileImgUrl(null);
+    }
+  }, [user]);
+
+  return (
+    <LinearGradient colors={["#5996eb", "#050c28"]} className="flex-1">
+      <SafeAreaView className="flex-1">
+        <ScrollView
+          contentContainerStyle={{
+            padding: 20,
+            flexGrow: 1,
+            paddingBottom: 60,
+          }}
+          showsVerticalScrollIndicator={false}
+        >
+          <View className="flex flex-col">
+            <View className="flex flex-row items-center gap-3">
+              {profileImgUrl ? (
+                <Image
+                  source={{ uri: profileImgUrl }}
+                  className="w-14 h-14 rounded-full"
+                  style={{ objectFit: "cover" }}
+                />
+              ) : (
+                <View className="w-14 h-14 rounded-full overflow-hidden bg-white/30 items-center justify-center">
+                  <FontAwesome6
+                    name="circle-user"
+                    size={40}
+                    color="#ffffffaa"
+                  />
+                </View>
+              )}
+              <View className="flex flex-col">
+                <Text className="text-md text-white/80">
+                  Witaj {user?.name}
+                </Text>
+                <Text className="text-lg text-white font-semibold">
+                  Miło Cię widzieć!
+                </Text>
+              </View>
+            </View>
+            <View className="w-full mt-7 h-12 rounded-full bg-white/30 px-5 flex-row items-center">
+              <FontAwesome6 name="magnifying-glass" size={18} color="#fff" />
+              <Text className="text-white/80 text-base ml-3">Wyszukaj...</Text>
+            </View>
+             <WeatherWidgetMobile />
+            <Discover />
+            <TrailsCarousel />
+          </View>
+        </ScrollView>
+      </SafeAreaView>
+    </LinearGradient>
+  );
+};
+
+export default Home;

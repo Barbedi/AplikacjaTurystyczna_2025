@@ -31,7 +31,7 @@ services:
     env_file:
       - .env
     ports:
-      - "6868:6868"
+      - "0.0.0.0:6868:6868"
     volumes:
       - ./app/dist/files:/app/dist/files
       - ./app/dist/files/profiles:/app/dist/files/profiles

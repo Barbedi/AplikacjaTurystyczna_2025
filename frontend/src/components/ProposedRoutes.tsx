@@ -34,6 +34,7 @@ const ProposedRoutes = () => {
           className="relative w-full flex flex-col group hover:scale-105 duration-300 h-full xl:items-center xl:text-center pb-10 bg-accent/60 rounded-2xl shadow-2xl overflow-hidden"
         >
           <img
+          loading="lazy"
             className="w-full h-60 object-cover"
             src={
               trail.photos && trail.photos.length > 0

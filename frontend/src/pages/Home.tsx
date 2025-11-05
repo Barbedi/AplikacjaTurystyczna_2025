@@ -99,7 +99,7 @@ const Home = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-grad1 to-grad2 pb-24 md:pb-0">
+    <div className="min-h-screen  pb-24 md:pb-0">
       <Navbar />
       <div className="relative bg-[url('/assets/img/IMG_4048.webp')] bg-cover bg-center bg-no-repeat h-[60vh] md:h-[70vh] w-[90%] mx-auto rounded-2xl shadow-xl my-3 duration-300">
         <div className="relative z-20 flex flex-col items-start justify-center h-full px-6 md:px-16 text-white duration-300">

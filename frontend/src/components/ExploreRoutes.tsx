@@ -29,6 +29,7 @@ const ExploreRoutes = () => {
             className="flex flex-col items-center p-4 hover:scale-105 duration-300 ease-in-out hover:underline decoration-2 cursor-pointer"
           >
             <img
+              loading="lazy"
               className="2xl:w-100 2xl:h-100 xl:w-64 xl:h-64 lg:w-50 lg:h-50 md:w-40 md:h-40 rounded-full object-cover"
               src={region.image}
               alt={`Region ${region.name}`}
