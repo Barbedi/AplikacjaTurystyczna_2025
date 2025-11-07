@@ -146,7 +146,9 @@ const StatsScreen = () => {
                 <View className="bg-yellow-500/20 w-10 h-10 rounded-full items-center justify-center">
                   <FontAwesome6 name="crown" size={18} color="#eab308" />
                 </View>
-                <Text className="text-white font-semibold">Zdobyte szczyty</Text>
+                <Text className="text-white font-semibold">
+                  Zdobyte szczyty
+                </Text>
               </View>
               <Text className="text-2xl font-bold text-white">
                 {statistics?.allUserPeaks || 0}
@@ -180,9 +182,15 @@ const StatsScreen = () => {
             <View className="bg-white/10 rounded-xl p-4 flex-row items-center justify-between">
               <View className="flex-row items-center gap-3">
                 <View className="bg-orange-500/20 w-10 h-10 rounded-full items-center justify-center">
-                  <FontAwesome6 name="person-walking" size={18} color="#f97316" />
+                  <FontAwesome6
+                    name="person-walking"
+                    size={18}
+                    color="#f97316"
+                  />
                 </View>
-                <Text className="text-white font-semibold">Najdłuższa trasa</Text>
+                <Text className="text-white font-semibold">
+                  Najdłuższa trasa
+                </Text>
               </View>
               <Text className="text-2xl font-bold text-white">
                 {statistics?.longestTrail?.length_km || 0} km
@@ -194,7 +202,9 @@ const StatsScreen = () => {
                 <View className="bg-purple-500/20 w-10 h-10 rounded-full items-center justify-center">
                   <FontAwesome6 name="mountain" size={18} color="#a855f7" />
                 </View>
-                <Text className="text-white font-semibold">Najwyższy szczyt</Text>
+                <Text className="text-white font-semibold">
+                  Najwyższy szczyt
+                </Text>
               </View>
               <Text className="text-2xl font-bold text-white">
                 {statistics?.highestPeak?.elevation || 0} m

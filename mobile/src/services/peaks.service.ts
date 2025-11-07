@@ -1,4 +1,4 @@
-import { api } from "@/src/config/api"; 
+import { api } from "@/src/config/api";
 import { Peaks } from "@/src/types";
 
 class PeaksService {

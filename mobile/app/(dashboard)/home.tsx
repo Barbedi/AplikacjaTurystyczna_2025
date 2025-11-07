@@ -73,25 +73,24 @@ const Home = () => {
                   </View>
                 )}
                 <View className="flex flex-col">
-                  <Text className="text-sm text-white/70">
-                    Witaj ponownie
-                  </Text>
+                  <Text className="text-sm text-white/70">Witaj ponownie</Text>
                   <Text className="text-xl text-white font-bold">
                     {user?.name || "Użytkowniku"}
                   </Text>
                 </View>
               </View>
-              
+
               {/* Ikona powiadomień */}
               <View className="bg-white/20 w-12 h-12 rounded-full items-center justify-center">
                 <FontAwesome6 name="bell" size={20} color="#fff" />
               </View>
             </View>
 
-  
             <View className="w-full h-14 rounded-2xl bg-white/20 px-5 flex-row items-center gap-3 ">
               <FontAwesome6 name="magnifying-glass" size={18} color="#ffffff" />
-              <Text className="text-white/70 text-base">Szukaj tras, szczytów...</Text>
+              <Text className="text-white/70 text-base">
+                Szukaj tras, szczytów...
+              </Text>
             </View>
 
             <WeatherWidgetMobile />

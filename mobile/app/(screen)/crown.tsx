@@ -13,7 +13,7 @@ const CrownScreen = () => {
   useEffect(() => {
     Image.prefetch(Image.resolveAssetSource(images.kgp).uri);
     Image.prefetch(Image.resolveAssetSource(images.kbs).uri);
-    Image.prefetch(Image.resolveAssetSource(images.kbw).uri)
+    Image.prefetch(Image.resolveAssetSource(images.kbw).uri);
   }, []);
 
   return (
@@ -104,7 +104,9 @@ const CrownScreen = () => {
                     borderRadius: 12,
                   }}
                 >
-                  <Text className="text-white text-xs font-bold">NIEDOSTĘPNE</Text>
+                  <Text className="text-white text-xs font-bold">
+                    NIEDOSTĘPNE
+                  </Text>
                 </View>
                 <View
                   style={{

@@ -33,10 +33,12 @@ const TrailsCarousel = () => {
       try {
         const res = await api.get("/trails/random?limit=5");
         setTrails(res.data);
-        
+
         // Prefetch pierwszego zdjęcia dla szybszego wyświetlenia
         if (res.data[0]?.photos?.[0]) {
-          const firstImageUrl = filesService.getTrailImgUrl(res.data[0].photos[0].image_name);
+          const firstImageUrl = filesService.getTrailImgUrl(
+            res.data[0].photos[0].image_name,
+          );
           Image.prefetch(firstImageUrl);
         }
       } catch (error) {

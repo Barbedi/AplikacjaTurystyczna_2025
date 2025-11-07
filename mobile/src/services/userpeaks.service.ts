@@ -1,5 +1,4 @@
-import { api } from "@/src/config/api"; 
-
+import { api } from "@/src/config/api";
 
 class UserPeaksService {
   getUserPeaks = (userId: number, page: number = 1) => {
