@@ -83,9 +83,9 @@ const TrailsCarousel = () => {
           return (
             <Pressable
               onPress={() => router.push(`/route/${item.id}`)} // ⬅️ kliknięcie otwiera stronę trasy
-              className="rounded-2xl items-center justify-center bg-white/10 p-3 flex-1"
+              className="rounded-2xl items-center justify-center bg-white/10 p-2 flex-1"
             >
-              <View className="w-full h-56 rounded-2xl overflow-hidden items-center justify-center bg-gray-800/50">
+              <View className="w-full h-52 rounded-2xl overflow-hidden items-center justify-center ">
                 {imageUrl ? (
                   <Image
                     className="rounded-2xl"
