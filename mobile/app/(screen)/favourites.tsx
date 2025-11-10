@@ -1,4 +1,4 @@
-import { View, Text, ScrollView } from "react-native";
+import { View, Text, ScrollView, Pressable } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
 import FontAwesome6 from "@expo/vector-icons/build/FontAwesome6";
@@ -7,12 +7,15 @@ import useGetUsers from "@/src/hooks/useGetUser";
 import favouriteTrailsService from "@/src/services/favouriteTrails.service";
 import trailsService from "@/src/services/trails.service";
 import { getAuthenticatedUser } from "@/src/config/api";
+import ConfirmDeleteModal from "@/src/components/ConfirmDeleteModal";
 
 const FavouritesScreen = () => {
   const { getUserByEmail, usersData, loading: userLoading } = useGetUsers();
   const [trails, setTrails] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedTrailId, setSelectedTrailId] = useState<number | null>(null);
 
   useEffect(() => {
     const loadUser = async () => {
@@ -60,6 +63,16 @@ const FavouritesScreen = () => {
 
     if (currentUser?.id) loadStats();
   }, [currentUser?.id]);
+
+  const handleDeleteTrail = async (trailId: number) => {
+    try {
+      await favouriteTrailsService.removeFavouriteTrail(trailId);
+      setTrails(trails.filter((trail) => trail.id !== trailId));
+      setModalVisible(false);
+    } catch (error) {
+      console.error("Error deleting trail:", error);
+    }
+  };
   return (
     <LinearGradient colors={["#5996eb", "#050c28"]} className="flex-1">
       <SafeAreaView edges={["bottom", "left", "right"]} className="flex-1">
@@ -119,9 +132,16 @@ const FavouritesScreen = () => {
                         </Text>
                       </View>
                     </View>
-                    <View className="bg-red-500/20 w-10 h-10 rounded-full items-center justify-center">
-                      <FontAwesome6 name="trash" size={18} color="#ef4444" />
+                    <Pressable onPress={() => {
+                      if (trail.id) {
+                        setSelectedTrailId(trail.id);
+                        setModalVisible(true);
+                      }
+                    }}>
+                    <View  className="bg-red-500/20 w-10 h-10 rounded-full items-center justify-center">
+                      <FontAwesome6 name="trash" size={16} color="#ef4444" />
                     </View>
+                    </Pressable>
                   </View>
                   <View className="flex-row items-center gap-2 mt-1">
                     <FontAwesome6 name="calendar" size={12} color="#ffffff70" />
@@ -147,6 +167,17 @@ const FavouritesScreen = () => {
                 </Text>
               </View>
             ) : null}
+            <ConfirmDeleteModal
+          visible={modalVisible}
+          title="Usuń trasę z ulubionych?"
+          message="Czy na pewno chcesz usunąć tę trasę z ulubionych? Tej operacji nie można cofnąć."
+          onCancel={() => setModalVisible(false)}
+          onConfirm={() => {
+            if (selectedTrailId !== null) {
+              handleDeleteTrail(selectedTrailId);
+            }
+          }}
+        />
           </View>
         </ScrollView>
       </SafeAreaView>

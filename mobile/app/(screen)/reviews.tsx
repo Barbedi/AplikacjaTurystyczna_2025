@@ -1,4 +1,4 @@
-import { View, Text, ScrollView } from "react-native";
+import { View, Text, ScrollView,Pressable } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
@@ -7,12 +7,16 @@ import useGetUsers from "@/src/hooks/useGetUser";
 import reviewService from "@/src/services/review.service";
 import { getAuthenticatedUser } from "@/src/config/api";
 import { Review } from "../../src/types";
+import ConfirmDeleteModal from "../../src/components/ConfirmDeleteModal";
+
 
 const ReviewsScreen = () => {
   const { getUserByEmail, usersData, loading: userLoading } = useGetUsers();
   const [reviews, setReviews] = useState<Review[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedReviewId, setSelectedReviewId] = useState<number | null>(null);
 
   useEffect(() => {
     const loadUser = async () => {
@@ -51,6 +55,15 @@ const ReviewsScreen = () => {
 
     if (currentUser?.id) loadStats();
   }, [currentUser?.id]);
+  const handleDeleteReview = async (reviewId: number) => {
+    try {
+      await reviewService.deleteReview(reviewId);
+      setReviews(reviews.filter((review) => review.id !== reviewId));
+      setModalVisible(false);
+    } catch (error) {
+      console.error("Error deleting review:", error);
+    }
+  };
   return (
     <LinearGradient colors={["#5996eb", "#050c28"]} className="flex-1">
       <SafeAreaView edges={["bottom", "left", "right"]} className="flex-1">
@@ -145,9 +158,16 @@ const ReviewsScreen = () => {
                         ).toLocaleDateString("pl-PL")}
                       </Text>
                     </View>
-                    <View className="bg-red-500/20 w-10 h-10 rounded-full items-center justify-center">
+                    <Pressable onPress={() => {
+                      if (review.id) {
+                        setSelectedReviewId(review.id);
+                        setModalVisible(true);
+                      }
+                    }}>
+                    <View  className="bg-red-500/20 w-10 h-10 rounded-full items-center justify-center">
                       <FontAwesome6 name="trash" size={16} color="#ef4444" />
                     </View>
+                    </Pressable>
                   </View>
                 </View>
               ))
@@ -157,6 +177,17 @@ const ReviewsScreen = () => {
               </Text>
             ) : null}
           </View>
+          <ConfirmDeleteModal
+          visible={modalVisible}
+          title="Usuń recenzję?"
+          message="Czy na pewno chcesz usunąć tę recenzję? Tej operacji nie można cofnąć."
+          onCancel={() => setModalVisible(false)}
+          onConfirm={() => {
+            if (selectedReviewId !== null) {
+              handleDeleteReview(selectedReviewId);
+            }
+          }}
+        />
         </ScrollView>
       </SafeAreaView>
     </LinearGradient>

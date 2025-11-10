@@ -54,7 +54,7 @@ export default function WeatherWidgetMobile() {
           <Text className="text-white text-3xl font-bold">
             {Math.round(weather.main.temp)}°C
           </Text>
-          <Text className="text-white/80 capitalize">
+          <Text className="text-white/70 capitalize">
             {weather.weather[0].description}
           </Text>
         </View>
