@@ -1,6 +1,5 @@
 import { api } from "../config/api";
-import { Trails, NewTrail, TrailsResponse, RoutePoint} from "../types";
-
+import { Trails, NewTrail, TrailsResponse, RoutePoint } from "../types";
 
 class TrailsService {
   getTrails = () => {

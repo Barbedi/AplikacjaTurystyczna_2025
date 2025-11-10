@@ -2,7 +2,7 @@ import { View, Text, ScrollView } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
 import FontAwesome6 from "@expo/vector-icons/build/FontAwesome6";
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import useGetUsers from "@/src/hooks/useGetUser";
 import favouriteTrailsService from "@/src/services/favouriteTrails.service";
 import trailsService from "@/src/services/trails.service";
@@ -10,57 +10,56 @@ import { getAuthenticatedUser } from "@/src/config/api";
 
 const FavouritesScreen = () => {
   const { getUserByEmail, usersData, loading: userLoading } = useGetUsers();
-   const [trails, setTrails] = useState<any[]>([]);
-   const [error, setError] = useState<string | null>(null);
+  const [trails, setTrails] = useState<any[]>([]);
+  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
-
-   useEffect(() => {
-      const loadUser = async () => {
-        try {
-          const authData = await getAuthenticatedUser();
-          if (authData?.user?.email) {
-            await getUserByEmail(authData.user.email);
-          }
-        } catch (error) {
-          console.error("Błąd ładowania użytkownika:", error);
-          setError("Nie udało się załadować danych użytkownika.");
+  useEffect(() => {
+    const loadUser = async () => {
+      try {
+        const authData = await getAuthenticatedUser();
+        if (authData?.user?.email) {
+          await getUserByEmail(authData.user.email);
         }
-      };
-  
-      loadUser();
-    }, [getUserByEmail]);
-  
-    const currentUser = usersData?.[0]?.[0];
-  
-    useEffect(() => {
-      const loadStats = async () => {
-        if (!currentUser?.id) return;
-        setLoading(true);
-        try {
-          const response = await favouriteTrailsService.getFavouriteTrails();
-          const favouriteList = response.data.data;
+      } catch (error) {
+        console.error("Błąd ładowania użytkownika:", error);
+        setError("Nie udało się załadować danych użytkownika.");
+      }
+    };
 
-          const fullTrailResponses = await Promise.all(
-            favouriteList.map((fav: any) =>
-              trailsService.getTrailById(fav.trail_id).then(res => ({
-                ...res.data,
-                added_at: fav.added_at
-              })),
-            ),
-          );
+    loadUser();
+  }, [getUserByEmail]);
 
-          setTrails(fullTrailResponses);
-        } catch (err) {
-          console.error("Error loading trails:", err);
-          setError("Nie udało się załadować ulubionych tras.");
-        } finally {
-          setLoading(false);
-        }
-      };
-  
-      if (currentUser?.id) loadStats();
-    }, [currentUser?.id]);
+  const currentUser = usersData?.[0]?.[0];
+
+  useEffect(() => {
+    const loadStats = async () => {
+      if (!currentUser?.id) return;
+      setLoading(true);
+      try {
+        const response = await favouriteTrailsService.getFavouriteTrails();
+        const favouriteList = response.data.data;
+
+        const fullTrailResponses = await Promise.all(
+          favouriteList.map((fav: any) =>
+            trailsService.getTrailById(fav.trail_id).then((res) => ({
+              ...res.data,
+              added_at: fav.added_at,
+            })),
+          ),
+        );
+
+        setTrails(fullTrailResponses);
+      } catch (err) {
+        console.error("Error loading trails:", err);
+        setError("Nie udało się załadować ulubionych tras.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (currentUser?.id) loadStats();
+  }, [currentUser?.id]);
   return (
     <LinearGradient colors={["#5996eb", "#050c28"]} className="flex-1">
       <SafeAreaView edges={["bottom", "left", "right"]} className="flex-1">
@@ -94,7 +93,12 @@ const FavouritesScreen = () => {
                 >
                   <View className="flex-row items-center gap-3 mb-3">
                     <View className="bg-red-500/20 w-12 h-12 rounded-full items-center justify-center">
-                      <FontAwesome6 name="heart" size={24} color="#ef4444" solid />
+                      <FontAwesome6
+                        name="heart"
+                        size={24}
+                        color="#ef4444"
+                        solid
+                      />
                     </View>
                     <View className="flex-1">
                       <Text className="text-xl font-bold text-white">
@@ -122,7 +126,8 @@ const FavouritesScreen = () => {
                   <View className="flex-row items-center gap-2 mt-1">
                     <FontAwesome6 name="calendar" size={12} color="#ffffff70" />
                     <Text className="text-white/70 text-xs">
-                      Dodano: {new Date(trail.added_at).toLocaleDateString('pl-PL')}
+                      Dodano:{" "}
+                      {new Date(trail.added_at).toLocaleDateString("pl-PL")}
                     </Text>
                   </View>
 

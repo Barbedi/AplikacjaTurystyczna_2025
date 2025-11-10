@@ -45,8 +45,8 @@ export default function Login() {
         {/* Logo/Icon Section */}
         <View className="mb-8 items-center">
           <View className="w-28 h-28 rounded-full items-center justify-center mb-4 overflow-hidden bg-white/10 border-2 border-white/30">
-            <Image 
-              source={require('../assets/android-chrome-512x512.png')}
+            <Image
+              source={require("../assets/android-chrome-512x512.png")}
               style={{ width: 100, height: 100 }}
               resizeMode="contain"
             />
@@ -93,7 +93,7 @@ export default function Login() {
             className="w-full bg-gradient-to-r from-blue-600 to-blue-500 py-3 rounded-2xl items-center active:opacity-80 "
             style={({ pressed }) => ({
               opacity: pressed ? 0.8 : 1,
-              backgroundColor: pressed ? '#1e40af' : '#2563eb',
+              backgroundColor: pressed ? "#1e40af" : "#2563eb",
             })}
           >
             <View className="flex-row items-center gap-2">
@@ -114,7 +114,9 @@ export default function Login() {
         <View className="mt-6 flex-row items-center">
           <Text className="text-white/60 text-base">Nie masz konta? </Text>
           <Pressable>
-            <Text className="text-white font-bold text-base">Zarejestruj się</Text>
+            <Text className="text-white font-bold text-base">
+              Zarejestruj się
+            </Text>
           </Pressable>
         </View>
       </KeyboardAvoidingView>
