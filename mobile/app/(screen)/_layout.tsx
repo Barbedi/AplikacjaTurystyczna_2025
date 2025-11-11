@@ -16,16 +16,15 @@ export default function ScreenLayout() {
       }}
     >
       <Stack.Screen
-        name="stats"
+        name="crown"
         options={{
-          title: "Statystyki",
-          headerTitleAlign: "center",
+          headerShown: false,
         }}
       />
       <Stack.Screen
-        name="crown"
+        name="stats"
         options={{
-          title: "Korona Gór",
+          title: "Statystyki",
           headerTitleAlign: "center",
         }}
       />

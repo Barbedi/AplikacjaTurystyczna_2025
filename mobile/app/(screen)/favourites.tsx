@@ -132,15 +132,17 @@ const FavouritesScreen = () => {
                         </Text>
                       </View>
                     </View>
-                    <Pressable onPress={() => {
-                      if (trail.id) {
-                        setSelectedTrailId(trail.id);
-                        setModalVisible(true);
-                      }
-                    }}>
-                    <View  className="bg-red-500/20 w-10 h-10 rounded-full items-center justify-center">
-                      <FontAwesome6 name="trash" size={16} color="#ef4444" />
-                    </View>
+                    <Pressable
+                      onPress={() => {
+                        if (trail.id) {
+                          setSelectedTrailId(trail.id);
+                          setModalVisible(true);
+                        }
+                      }}
+                    >
+                      <View className="bg-red-500/20 w-10 h-10 rounded-full items-center justify-center">
+                        <FontAwesome6 name="trash" size={16} color="#ef4444" />
+                      </View>
                     </Pressable>
                   </View>
                   <View className="flex-row items-center gap-2 mt-1">
@@ -168,16 +170,16 @@ const FavouritesScreen = () => {
               </View>
             ) : null}
             <ConfirmDeleteModal
-          visible={modalVisible}
-          title="Usuń trasę z ulubionych?"
-          message="Czy na pewno chcesz usunąć tę trasę z ulubionych? Tej operacji nie można cofnąć."
-          onCancel={() => setModalVisible(false)}
-          onConfirm={() => {
-            if (selectedTrailId !== null) {
-              handleDeleteTrail(selectedTrailId);
-            }
-          }}
-        />
+              visible={modalVisible}
+              title="Usuń trasę z ulubionych?"
+              message="Czy na pewno chcesz usunąć tę trasę z ulubionych? Tej operacji nie można cofnąć."
+              onCancel={() => setModalVisible(false)}
+              onConfirm={() => {
+                if (selectedTrailId !== null) {
+                  handleDeleteTrail(selectedTrailId);
+                }
+              }}
+            />
           </View>
         </ScrollView>
       </SafeAreaView>

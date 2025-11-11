@@ -1,4 +1,4 @@
-import { View, Text, ScrollView,Pressable } from "react-native";
+import { View, Text, ScrollView, Pressable } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
@@ -8,7 +8,6 @@ import reviewService from "@/src/services/review.service";
 import { getAuthenticatedUser } from "@/src/config/api";
 import { Review } from "../../src/types";
 import ConfirmDeleteModal from "../../src/components/ConfirmDeleteModal";
-
 
 const ReviewsScreen = () => {
   const { getUserByEmail, usersData, loading: userLoading } = useGetUsers();
@@ -158,15 +157,17 @@ const ReviewsScreen = () => {
                         ).toLocaleDateString("pl-PL")}
                       </Text>
                     </View>
-                    <Pressable onPress={() => {
-                      if (review.id) {
-                        setSelectedReviewId(review.id);
-                        setModalVisible(true);
-                      }
-                    }}>
-                    <View  className="bg-red-500/20 w-10 h-10 rounded-full items-center justify-center">
-                      <FontAwesome6 name="trash" size={16} color="#ef4444" />
-                    </View>
+                    <Pressable
+                      onPress={() => {
+                        if (review.id) {
+                          setSelectedReviewId(review.id);
+                          setModalVisible(true);
+                        }
+                      }}
+                    >
+                      <View className="bg-red-500/20 w-10 h-10 rounded-full items-center justify-center">
+                        <FontAwesome6 name="trash" size={16} color="#ef4444" />
+                      </View>
                     </Pressable>
                   </View>
                 </View>
@@ -178,16 +179,16 @@ const ReviewsScreen = () => {
             ) : null}
           </View>
           <ConfirmDeleteModal
-          visible={modalVisible}
-          title="Usuń recenzję?"
-          message="Czy na pewno chcesz usunąć tę recenzję? Tej operacji nie można cofnąć."
-          onCancel={() => setModalVisible(false)}
-          onConfirm={() => {
-            if (selectedReviewId !== null) {
-              handleDeleteReview(selectedReviewId);
-            }
-          }}
-        />
+            visible={modalVisible}
+            title="Usuń recenzję?"
+            message="Czy na pewno chcesz usunąć tę recenzję? Tej operacji nie można cofnąć."
+            onCancel={() => setModalVisible(false)}
+            onConfirm={() => {
+              if (selectedReviewId !== null) {
+                handleDeleteReview(selectedReviewId);
+              }
+            }}
+          />
         </ScrollView>
       </SafeAreaView>
     </LinearGradient>

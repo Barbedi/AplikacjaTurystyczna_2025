@@ -57,14 +57,14 @@ const MyRoutesScreen = () => {
     if (currentUser?.id) loadStats();
   }, [currentUser?.id]);
   const handleDeleteTrail = async (trailId: number) => {
-      try {
-        await trailsService.deleteTrail(trailId);
-        setTrails(trails.filter((trail) => trail.id !== trailId));
-        setModalVisible(false);
-      } catch (error) {
-        console.error("Error deleting trail:", error);
-      }
-    };
+    try {
+      await trailsService.deleteTrail(trailId);
+      setTrails(trails.filter((trail) => trail.id !== trailId));
+      setModalVisible(false);
+    } catch (error) {
+      console.error("Error deleting trail:", error);
+    }
+  };
   return (
     <LinearGradient colors={["#5996eb", "#050c28"]} className="flex-1">
       <SafeAreaView edges={["bottom", "left", "right"]} className="flex-1">
@@ -126,15 +126,17 @@ const MyRoutesScreen = () => {
                       </View>
                     </View>
 
-                    <Pressable onPress={() => {
-                      if (trail.id) {
-                        setSelectedTrailId(trail.id);
-                        setModalVisible(true);
-                      }
-                    }}>
-                    <View  className="bg-red-500/20 w-10 h-10 rounded-full items-center justify-center">
-                      <FontAwesome6 name="trash" size={16} color="#ef4444" />
-                    </View>
+                    <Pressable
+                      onPress={() => {
+                        if (trail.id) {
+                          setSelectedTrailId(trail.id);
+                          setModalVisible(true);
+                        }
+                      }}
+                    >
+                      <View className="bg-red-500/20 w-10 h-10 rounded-full items-center justify-center">
+                        <FontAwesome6 name="trash" size={16} color="#ef4444" />
+                      </View>
                     </Pressable>
                   </View>
                   <Text className="text-sm text-gray-400 text-center mt-2">
@@ -155,16 +157,16 @@ const MyRoutesScreen = () => {
             ) : null}
           </View>
           <ConfirmDeleteModal
-          visible={modalVisible}
-          title="Usuń trasę?"
-          message="Czy na pewno chcesz usunąć tę trasę? Tej operacji nie można cofnąć."
-          onCancel={() => setModalVisible(false)}
-          onConfirm={() => {
-            if (selectedTrailId !== null) {
-              handleDeleteTrail(selectedTrailId);
-            }
-          }}
-        />
+            visible={modalVisible}
+            title="Usuń trasę?"
+            message="Czy na pewno chcesz usunąć tę trasę? Tej operacji nie można cofnąć."
+            onCancel={() => setModalVisible(false)}
+            onConfirm={() => {
+              if (selectedTrailId !== null) {
+                handleDeleteTrail(selectedTrailId);
+              }
+            }}
+          />
         </ScrollView>
       </SafeAreaView>
     </LinearGradient>

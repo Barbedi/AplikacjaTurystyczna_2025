@@ -30,7 +30,7 @@ const ConfirmDeleteModal: React.FC<ConfirmDeleteModalProps> = ({
         style={{ backgroundColor: "rgba(0, 0, 0, 0.4)" }}
       >
         <LinearGradient
-          colors={[ "#999999","#5996eb"]}
+          colors={["#999999", "#5996eb"]}
           className="rounded-2xl p-5 border-2 border-white/20 w-full max-w-sm"
           style={{ borderRadius: 16 }}
         >
