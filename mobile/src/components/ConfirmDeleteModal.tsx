@@ -26,12 +26,12 @@ const ConfirmDeleteModal: React.FC<ConfirmDeleteModalProps> = ({
       onRequestClose={onCancel}
     >
       <View
-        className="flex-1 justify-center items-center px-6"
+        className="flex-1 justify-center items-center p-6 "
         style={{ backgroundColor: "rgba(0, 0, 0, 0.4)" }}
       >
         <LinearGradient
           colors={[ "#999999","#5996eb"]}
-          className="rounded-2xl p-6 border-2 border-white/20 w-full max-w-sm"
+          className="rounded-2xl p-5 border-2 border-white/20 w-full max-w-sm"
           style={{ borderRadius: 16 }}
         >
           <View className="items-center mb-4">

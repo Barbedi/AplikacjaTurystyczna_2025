@@ -4,8 +4,6 @@ import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FontAwesome6 } from "@expo/vector-icons";
 import useGetUsers from "@/src/hooks/useGetUser";
-import StatBox from "@/src/components/statistics/statBox";
-import InfoCard from "@/src/components/statistics/infoCard";
 import statisticsService from "@/src/services/statictic.service";
 import { getAuthenticatedUser } from "@/src/config/api";
 
@@ -138,8 +136,6 @@ const StatsScreen = () => {
               </View>
             </View>
           </View>
-
-          {/* Pozostałe statystyki */}
           <View className="flex-col gap-3">
             <View className="bg-white/10 rounded-xl p-4 flex-row items-center justify-between">
               <View className="flex-row items-center gap-3">

@@ -1,4 +1,4 @@
-import { View, Text, ScrollView } from "react-native";
+import { View, Text, ScrollView, Pressable } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
 import FontAwesome6 from "@expo/vector-icons/build/FontAwesome6";
@@ -7,12 +7,15 @@ import useGetUsers from "@/src/hooks/useGetUser";
 import { Trails } from "@/src/types";
 import trailsService from "@/src/services/trails.service";
 import { getAuthenticatedUser } from "@/src/config/api";
+import ConfirmDeleteModal from "@/src/components/ConfirmDeleteModal";
 
 const MyRoutesScreen = () => {
   const { getUserByEmail, usersData, loading: userLoading } = useGetUsers();
   const [trails, setTrails] = useState<Trails[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedTrailId, setSelectedTrailId] = useState<number | null>(null);
 
   useEffect(() => {
     const loadUser = async () => {
@@ -53,6 +56,15 @@ const MyRoutesScreen = () => {
 
     if (currentUser?.id) loadStats();
   }, [currentUser?.id]);
+  const handleDeleteTrail = async (trailId: number) => {
+      try {
+        await trailsService.deleteTrail(trailId);
+        setTrails(trails.filter((trail) => trail.id !== trailId));
+        setModalVisible(false);
+      } catch (error) {
+        console.error("Error deleting trail:", error);
+      }
+    };
   return (
     <LinearGradient colors={["#5996eb", "#050c28"]} className="flex-1">
       <SafeAreaView edges={["bottom", "left", "right"]} className="flex-1">
@@ -114,9 +126,16 @@ const MyRoutesScreen = () => {
                       </View>
                     </View>
 
-                    <View className="bg-red-500/20 w-10 h-10 rounded-full items-center justify-center">
-                      <FontAwesome6 name="trash" size={18} color="#ef4444" />
+                    <Pressable onPress={() => {
+                      if (trail.id) {
+                        setSelectedTrailId(trail.id);
+                        setModalVisible(true);
+                      }
+                    }}>
+                    <View  className="bg-red-500/20 w-10 h-10 rounded-full items-center justify-center">
+                      <FontAwesome6 name="trash" size={16} color="#ef4444" />
                     </View>
+                    </Pressable>
                   </View>
                   <Text className="text-sm text-gray-400 text-center mt-2">
                     Dotknij aby zobaczyć szczegóły trasy
@@ -127,7 +146,7 @@ const MyRoutesScreen = () => {
               <View className="flex-1 items-center justify-center py-10">
                 <FontAwesome6 name="mountain" size={48} color="#ffffff40" />
                 <Text className="text-white/60 text-center mt-4 text-lg">
-                  Nie zdobyłeś jeszcze żadnych szczytów
+                  Nie stworzyłeś jeszcze żadnej trasy.
                 </Text>
                 <Text className="text-white/40 text-center mt-2 text-sm">
                   Rozpocznij swoją przygodę górską!
@@ -135,6 +154,17 @@ const MyRoutesScreen = () => {
               </View>
             ) : null}
           </View>
+          <ConfirmDeleteModal
+          visible={modalVisible}
+          title="Usuń trasę?"
+          message="Czy na pewno chcesz usunąć tę trasę? Tej operacji nie można cofnąć."
+          onCancel={() => setModalVisible(false)}
+          onConfirm={() => {
+            if (selectedTrailId !== null) {
+              handleDeleteTrail(selectedTrailId);
+            }
+          }}
+        />
         </ScrollView>
       </SafeAreaView>
     </LinearGradient>
