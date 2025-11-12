@@ -16,8 +16,8 @@ interface PeakWithVerification {
 }
 
 const SadeckiCrown = () => {
-    const router = useRouter();
-    const { getUserByEmail, usersData } = useGetUsers();
+  const router = useRouter();
+  const { getUserByEmail, usersData } = useGetUsers();
   const [peaks, setPeaks] = useState<PeakWithVerification[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -42,10 +42,10 @@ const SadeckiCrown = () => {
   useEffect(() => {
     const loadPeaks = async () => {
       if (!currentUser?.id) return;
-      
+
       setLoading(true);
       try {
-        const response = await peaksService.getCrownBeskid(page);
+        const response = await peaksService.getCrownBeskid(1, true);
         const peaksData = response.data.data;
 
         const peaksWithVerification = await Promise.all(
@@ -79,7 +79,7 @@ const SadeckiCrown = () => {
 
     if (currentUser?.id) loadPeaks();
   }, [currentUser?.id, page]);
- return (
+  return (
     <LinearGradient colors={["#5996eb", "#050c28"]} className="flex-1">
       <SafeAreaView edges={["bottom", "left", "right"]} className="flex-1">
         <ScrollView
@@ -107,13 +107,18 @@ const SadeckiCrown = () => {
             {!loading && !error && peaks && peaks.length > 0 ? (
               peaks.map((peak) => (
                 <Pressable
+                  onPress={() => router.push(`/crown/${peak.id}`)}
                   key={peak.id}
                   className="w-full bg-white/10 rounded-2xl p-5 border-l-4 border-purple-500 active:bg-white/20"
                 >
                   <View className="flex-row items-center justify-between mb-3">
                     <View className="flex-row items-center gap-3 flex-1">
                       <View className="bg-purple-500/20 w-12 h-12 rounded-full items-center justify-center">
-                        <FontAwesome6 name="mountain" size={24} color="#a855f7" />
+                        <FontAwesome6
+                          name="mountain"
+                          size={24}
+                          color="#a855f7"
+                        />
                       </View>
                       <View className="flex-1">
                         <Text className="text-xl font-bold text-white">

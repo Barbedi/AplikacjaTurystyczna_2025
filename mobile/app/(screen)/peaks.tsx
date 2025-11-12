@@ -41,8 +41,6 @@ const PeaksScreen = () => {
 
         setPeaks(data || []);
       } catch (err) {
-        console.error(err);
-        setError("Nie udało się załadować szczytów.");
       } finally {
         setLoading(false);
       }
@@ -125,9 +123,9 @@ const PeaksScreen = () => {
               ))
             ) : !loading && !error ? (
               <View className="flex-1 items-center justify-center py-10">
-                <FontAwesome6 name="mountain" size={48} color="#ffffff40" />
+                <FontAwesome6 name="heart" size={48} color="#ffffff40" />
                 <Text className="text-white/60 text-center mt-4 text-lg">
-                  Nie zdobyłeś jeszcze żadnych szczytów
+                  Nie polubiłeś żadnej trasy.
                 </Text>
                 <Text className="text-white/40 text-center mt-2 text-sm">
                   Rozpocznij swoją przygodę górską!

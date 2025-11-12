@@ -8,6 +8,7 @@ import favouriteTrailsService from "@/src/services/favouriteTrails.service";
 import trailsService from "@/src/services/trails.service";
 import { getAuthenticatedUser } from "@/src/config/api";
 import ConfirmDeleteModal from "@/src/components/ConfirmDeleteModal";
+import { FavoriteTrails } from "@/src/types";
 
 const FavouritesScreen = () => {
   const { getUserByEmail, usersData, loading: userLoading } = useGetUsers();
@@ -39,28 +40,44 @@ const FavouritesScreen = () => {
     const loadStats = async () => {
       if (!currentUser?.id) return;
       setLoading(true);
-      try {
-        const response = await favouriteTrailsService.getFavouriteTrails();
-        const favouriteList = response.data.data;
+      const fetchFavouriteTrails = async () => {
+        try {
+          setLoading(true);
+          const response = await favouriteTrailsService.getFavouriteTrails();
+          const favouriteList = response.data.data;
 
-        const fullTrailResponses = await Promise.all(
-          favouriteList.map((fav: any) =>
-            trailsService.getTrailById(fav.trail_id).then((res) => ({
-              ...res.data,
-              added_at: fav.added_at,
-            })),
-          ),
-        );
+          if (!favouriteList || favouriteList.length === 0) {
+            setTrails([]);
+            return;
+          }
 
-        setTrails(fullTrailResponses);
-      } catch (err) {
-        console.error("Error loading trails:", err);
-        setError("Nie udało się załadować ulubionych tras.");
-      } finally {
-        setLoading(false);
-      }
+          const fullTrailResponses = await Promise.all(
+            favouriteList.map((fav: FavoriteTrails) =>
+              trailsService
+                .getTrailById(fav.trail_id)
+                .then((res) => ({
+                  ...res.data,
+                  added_at: fav.added_at,
+                }))
+                .catch((err) => {
+                  console.error(`Error loading trail ${fav.trail_id}:`, err);
+                  return null;
+                }),
+            ),
+          );
+
+          const validTrails = fullTrailResponses.filter(
+            (trail) => trail !== null,
+          );
+          setTrails(validTrails);
+        } catch (err) {
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      fetchFavouriteTrails();
     };
-
     if (currentUser?.id) loadStats();
   }, [currentUser?.id]);
 
@@ -162,10 +179,10 @@ const FavouritesScreen = () => {
               <View className="flex-1 items-center justify-center py-10">
                 <FontAwesome6 name="heart" size={48} color="#ffffff40" />
                 <Text className="text-white/60 text-center mt-4 text-lg">
-                  Brak ulubionych tras
+                  Nie polubiłeś żadnej trasy.
                 </Text>
                 <Text className="text-white/40 text-center mt-2 text-sm">
-                  Dodaj trasy do ulubionych, aby je tutaj zobaczyć!
+                  Rozpocznij swoją przygodę górską!
                 </Text>
               </View>
             ) : null}

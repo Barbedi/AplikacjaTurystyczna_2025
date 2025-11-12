@@ -43,7 +43,7 @@ const MyRoutesScreen = () => {
         const response = await trailsService.getTrailsByUser(
           currentUser.id.toString(),
         );
-        const { data, limit } = response.data;
+        const { data } = response.data;
 
         setTrails(data || []);
       } catch (err) {
@@ -146,7 +146,11 @@ const MyRoutesScreen = () => {
               ))
             ) : !loading && !error ? (
               <View className="flex-1 items-center justify-center py-10">
-                <FontAwesome6 name="mountain" size={48} color="#ffffff40" />
+                <FontAwesome6
+                  name="location-pin-lock"
+                  size={48}
+                  color="#ffffff40"
+                />
                 <Text className="text-white/60 text-center mt-4 text-lg">
                   Nie stworzyłeś jeszcze żadnej trasy.
                 </Text>

@@ -45,8 +45,6 @@ const ReviewsScreen = () => {
 
         setReviews(reviewList);
       } catch (err) {
-        console.error("Error loading reviews:", err);
-        setError("Nie udało się załadować recenzji.");
       } finally {
         setLoading(false);
       }
@@ -173,9 +171,15 @@ const ReviewsScreen = () => {
                 </View>
               ))
             ) : !loading && !error ? (
-              <Text className="text-white text-center">
-                Nie masz jeszcze żadnych recenzji.
-              </Text>
+              <View className="flex-1 items-center justify-center py-10">
+                <FontAwesome6 name="comment" size={48} color="#ffffff40" />
+                <Text className="text-white/60 text-center mt-4 text-lg">
+                  Nie masz jeszcze żadnych recenzji.
+                </Text>
+                <Text className="text-white/40 text-center mt-2 text-sm">
+                  Rozpocznij swoją przygodę górską!
+                </Text>
+              </View>
             ) : null}
           </View>
           <ConfirmDeleteModal

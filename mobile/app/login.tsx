@@ -42,14 +42,9 @@ export default function Login() {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         className="flex-1 justify-center items-center px-6"
       >
-        {/* Logo/Icon Section */}
         <View className="mb-8 items-center">
-          <View className="w-28 h-28 rounded-full items-center justify-center mb-4 overflow-hidden bg-white/10 border-2 border-white/30">
-            <Image
-              source={require("../assets/android-chrome-512x512.png")}
-              style={{ width: 100, height: 100 }}
-              resizeMode="contain"
-            />
+          <View className=" items-center justify-center mb-3 ">
+            <Text className="text-7xl text-white font-bold">HikeUp</Text>
           </View>
           <Text className="text-white/70 text-md  tracking-wide">
             Twoje góry. Twoja przygoda. Twój start.
@@ -101,19 +96,15 @@ export default function Login() {
               <FontAwesome6 name="arrow-right" size={18} color="#ffffff" />
             </View>
           </Pressable>
-
-          {/* Forgot Password */}
           <Pressable className="mt-4">
             <Text className="text-white/60 text-center text-sm">
               Zapomniałeś hasła?
             </Text>
           </Pressable>
         </View>
-
-        {/* Register Link */}
         <View className="mt-6 flex-row items-center">
           <Text className="text-white/60 text-base">Nie masz konta? </Text>
-          <Pressable>
+          <Pressable onPress={() => router.replace("/register")}>
             <Text className="text-white font-bold text-base">
               Zarejestruj się
             </Text>

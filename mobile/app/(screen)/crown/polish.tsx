@@ -8,6 +8,7 @@ import useGetUsers from "@/src/hooks/useGetUser";
 import peaksService from "@/src/services/peaks.service";
 import userpeaksService from "@/src/services/userpeaks.service";
 import { getAuthenticatedUser } from "@/src/config/api";
+import { all } from "axios";
 
 interface PeakWithVerification {
   id: number;
@@ -43,10 +44,10 @@ const PolishCrown = () => {
   useEffect(() => {
     const loadPeaks = async () => {
       if (!currentUser?.id) return;
-      
+
       setLoading(true);
       try {
-        const response = await peaksService.getCrownPoland(page);
+        const response = await peaksService.getCrownPoland(1, true);
         const peaksData = response.data.data;
 
         const peaksWithVerification = await Promise.all(
@@ -109,13 +110,18 @@ const PolishCrown = () => {
             {!loading && !error && peaks && peaks.length > 0 ? (
               peaks.map((peak) => (
                 <Pressable
+                  onPress={() => router.push(`/crown/${peak.id}`)}
                   key={peak.id}
                   className="w-full bg-white/10 rounded-2xl p-5 border-l-4 border-yellow-500 active:bg-white/20"
                 >
                   <View className="flex-row items-center justify-between mb-3">
                     <View className="flex-row items-center gap-3 flex-1">
                       <View className="bg-yellow-500/20 w-12 h-12 rounded-full items-center justify-center">
-                        <FontAwesome6 name="mountain" size={24} color="#eab308" />
+                        <FontAwesome6
+                          name="mountain"
+                          size={24}
+                          color="#eab308"
+                        />
                       </View>
                       <View className="flex-1">
                         <Text className="text-xl font-bold text-white">

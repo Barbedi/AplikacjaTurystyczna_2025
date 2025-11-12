@@ -36,11 +36,11 @@ class PeaksService {
       verified: verified,
     });
   };
-  getCrownPoland = (page: number = 1) => {
-    return api.get(`/peaks/crown-poland?page=${page}`);
+  getCrownPoland = (page: number = 1, all: boolean = false) => {
+    return api.get(`/peaks/crown-poland?page=${page}&all=${all}`);
   };
-  getCrownBeskid = (page: number = 1) => {
-    return api.get(`/peaks/crown-beskid?page=${page}`);
+  getCrownBeskid = (page: number = 1, all: boolean = false) => {
+    return api.get(`/peaks/crown-beskid?page=${page}&all=${all}`);
   };
 
   // Pobieranie zdjęć szczytu - może być implementowane w przyszłości
