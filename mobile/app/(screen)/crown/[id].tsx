@@ -4,12 +4,14 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useEffect, useState } from "react";
 import peaksService from "@/src/services/peaks.service";
 import { SafeAreaView } from "react-native-safe-area-context";
+import FontAwesome6 from "@expo/vector-icons/build/FontAwesome6";
+import { Peaks } from "@/src/types";
 
 const PeakDetails = () => {
   const navigation = useNavigation();
   const { id } = useLocalSearchParams();
   const router = useRouter();
-  const [peak, setPeak] = useState<any>(null);
+  const [peak, setPeak] = useState<Peaks>();
 
   useEffect(() => {
     const fetchPeak = async () => {
@@ -41,11 +43,29 @@ const PeakDetails = () => {
           }}
           showsVerticalScrollIndicator={false}
         >
-          <Text className="text-3xl font-bold text-white mb-2">
-            {peak.name}
-          </Text>
-          <Text className="text-white/80 mb-4">{peak.elevation} m n.p.m.</Text>
-          <Text className="text-white/70">{peak.region}</Text>
+            <View className="flex justify-center items-center">
+            <FontAwesome6
+                          name="mountain"
+                          size={90}
+                          color="#ffffff"
+                        />
+            <View className="bg-white/10 w-full p-5 rounded-2xl justify-center items-center">
+                <Text className="text-lg text-white font-bold">
+                    Informacje o szczycie:
+                </Text>
+                <View className="flex-row gap-5">
+                <Text className="text-white mt-2 ">Wysokość:
+                    <Text className="text-yellow-400 font-semibold ">
+                    {peak.elevation} m n.p.m
+                    </Text>
+                </Text>
+                <Text className="text-white mt-2">Region: {peak.region}</Text>
+                </View>
+            </View>
+
+            </View>
+        
+          
         </ScrollView>
       </SafeAreaView>
     </LinearGradient>

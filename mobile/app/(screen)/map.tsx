@@ -1,16 +1,41 @@
-import React from "react";
-import { View } from "react-native";
-import { Camera, MapView } from "@maplibre/maplibre-react-native";
+import { StyleSheet, View } from 'react-native';
 
-// const MAPTILER_KEY = process.env.EXPO_MAPTILER_KEY;
-// const MAP_STYLE = `https://api.maptiler.com/maps/outdoor-v2/style.json?key=${MAPTILER_KEY}`;
+import { MapView, Camera } from "@maplibre/maplibre-react-native";
 
-export default function MapScreen() {
+export default function App() {
+
+  const MAPTILER_API_KEY = "DdJo20VMMy7tFRXLTfO6";
+
   return (
-    <View style={{ flex: 1 }}>
-      {/* <MapView style={{ flex: 1 }} mapStyle={MAP_STYLE}>
-        <Camera zoomLevel={11} centerCoordinate={[19.95, 49.29]} />
-      </MapView> */}
+    <View style={styles.container}>
+      <View style={styles.mapcontainer}>
+        <MapView 
+          style={styles.map} 
+          mapStyle={`https://api.maptiler.com/maps/outdoor-v2/{z}/{x}/{y}.png?key=DdJo20VMMy7tFRXLTfO6`}
+          logoEnabled={false}
+          attributionPosition={{bottom: 8, right: 8}}>
+            <Camera
+  centerCoordinate={[2, 41.5]}
+  zoomLevel={8}
+/>
+        </MapView>
+      </View>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  mapcontainer: {
+    width: '100%',
+    height: '100%',
+  },
+  map: {
+    flex: 1,
+  },
+});
