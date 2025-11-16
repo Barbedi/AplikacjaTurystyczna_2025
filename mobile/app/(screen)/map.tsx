@@ -1,31 +1,37 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
-import  MapLibreGL from "@maplibre/maplibre-react-native";
-
+import {
+  Camera,
+  MapView,
+  RasterSource,
+  RasterLayer,
+} from "@maplibre/maplibre-react-native";
 export default function MapScreen() {
   const MAPTILER_KEY = "DdJo20VMMy7tFRXLTfO6"; // twój klucz
 
   return (
     <View style={styles.container}>
-      <MapLibreGL.MapView style={styles.map}>
-        <MapLibreGL.Camera
-          zoomLevel={10}
-          centerCoordinate={[19.94, 50.06]} // Kraków
+      <MapView style={styles.map}>
+        <Camera
+          centerCoordinate={[19.945, 49.299]}
+          zoomLevel={12}
+          animationDuration={2000}
+          animationMode="easeTo"
         />
 
-        <MapLibreGL.RasterSource
+        <RasterSource
           id="maptiler-outdoor"
-          tileSize={256}
+          tileSize={512}
           tileUrlTemplates={[
             `https://api.maptiler.com/maps/outdoor-v2/{z}/{x}/{y}.png?key=${MAPTILER_KEY}`,
           ]}
         >
-          <MapLibreGL.RasterLayer
+          <RasterLayer
             id="maptiler-outdoor-layer"
             sourceID="maptiler-outdoor"
           />
-        </MapLibreGL.RasterSource>
-      </MapLibreGL.MapView>
+        </RasterSource>
+      </MapView>
     </View>
   );
 }

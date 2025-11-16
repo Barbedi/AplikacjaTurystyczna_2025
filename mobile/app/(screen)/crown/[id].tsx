@@ -43,29 +43,23 @@ const PeakDetails = () => {
           }}
           showsVerticalScrollIndicator={false}
         >
-            <View className="flex justify-center items-center">
-            <FontAwesome6
-                          name="mountain"
-                          size={90}
-                          color="#ffffff"
-                        />
+          <View className="flex justify-center items-center">
+            <FontAwesome6 name="mountain" size={90} color="#ffffff" />
             <View className="bg-white/10 w-full p-5 rounded-2xl justify-center items-center">
-                <Text className="text-lg text-white font-bold">
-                    Informacje o szczycie:
-                </Text>
-                <View className="flex-row gap-5">
-                <Text className="text-white mt-2 ">Wysokość:
-                    <Text className="text-yellow-400 font-semibold ">
+              <Text className="text-lg text-white font-bold">
+                Informacje o szczycie:
+              </Text>
+              <View className="flex-row gap-5">
+                <Text className="text-white mt-2 ">
+                  Wysokość:
+                  <Text className="text-yellow-400 font-semibold ">
                     {peak.elevation} m n.p.m
-                    </Text>
+                  </Text>
                 </Text>
                 <Text className="text-white mt-2">Region: {peak.region}</Text>
-                </View>
+              </View>
             </View>
-
-            </View>
-        
-          
+          </View>
         </ScrollView>
       </SafeAreaView>
     </LinearGradient>
