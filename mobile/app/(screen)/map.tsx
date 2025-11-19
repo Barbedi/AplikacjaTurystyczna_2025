@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, StyleSheet } from "react-native";
 import {
   MapView,
@@ -9,16 +9,15 @@ import {
   LineLayer,
   CircleLayer,
 } from "@maplibre/maplibre-react-native";
-import { Shelters } from "../../src/types";
-import { useEffect } from "react";
+import { Shelters, Peaks } from "../../src/types";
 
 const MapScreen = () => {
   const MAPTILER_KEY = "DdJo20VMMy7tFRXLTfO6";
-   const [shelters, setShelters] = useState<Shelters[]>([]);
-
-  const [clickedPoints, setClickedPoints] = useState<
-    [number, number][]
-  >([]);
+  const [shelters, setShelters] = useState<Shelters[]>([]);
+  const [peaks, setPeaks] = useState<Peaks[]>([]);
+  const [routeGeoJson, setRouteGeoJson] = useState<any>(null);
+  const [routeType] = useState<"one-way" | "loop" | "back-and-forth">("one-way");
+  const [clickedPoints, setClickedPoints] = useState<[number, number][]>([]);
 
   const handlePress = (e: any) => {
     const { geometry } = e;
@@ -27,21 +26,54 @@ const MapScreen = () => {
       setClickedPoints((prev) => [...prev, coord]);
     }
   };
+
   useEffect(() => {
-  fetch("http://localhost:6868/shelters")
-    .then(res => res.json())
-    .then(json => setShelters(json.data))
-    .catch(console.error);
-}, []);
+    fetch("http://10.0.2.2:6868/shelters")
+      .then((res) => res.json())
+      .then((json) => setShelters(json.data))
+      .catch(console.error);
+  }, []);
+  useEffect(() => {
+    fetch("http://10.0.2.2:6868/peaks")
+      .then((res) => res.json())
+      .then((json) => setPeaks(json.data))
+      .catch(console.error);
+  }, []);
 
-  const lineGeoJSON = {
-    type: "Feature",
-    geometry: {
-      type: "LineString",
-      coordinates: clickedPoints,
-    },
-  };
+  useEffect(() => {
+    if (clickedPoints.length < 2) {
+      setRouteGeoJson(null);
+      return;
+    }
 
+    const pointsPayload = clickedPoints.map((coord) => ({
+      lat: coord[1],
+      lng: coord[0],
+    }));
+
+    const fetchLocalRoute = async () => {
+      try {
+        const res = await fetch("http://10.0.2.2:6868/routing/local", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ points: pointsPayload, routeType }),
+        });
+        if (!res.ok) {
+          console.error("Błąd w odpowiedzi backendu:", res.status);
+          setRouteGeoJson(null);
+          return;
+        }
+        const data = await res.json();
+        setRouteGeoJson(data);
+      } catch (error) {
+        console.error("Błąd fetch:", error);
+        setRouteGeoJson(null);
+      }
+    };
+
+    fetchLocalRoute();
+  }, [clickedPoints, routeType]);
+  
   return (
     <View style={styles.container}>
       <MapView
@@ -63,6 +95,55 @@ const MapScreen = () => {
         >
           <RasterLayer id="baseLayer" sourceID="base" />
         </RasterSource>
+       
+        {shelters.map((shelter) => (
+          <ShapeSource
+            key={`shelter-${shelter.id}`}
+            id={`shelter-source-${shelter.id}`}
+            shape={{
+              type: "Feature",
+              properties: { name: shelter.name },
+              geometry: {
+                type: "Point",
+                coordinates: [shelter.longitude, shelter.latitude],
+              },
+            }}
+          >
+            <CircleLayer
+              id={`shelter-circle-${shelter.id}`}
+              style={{
+                circleRadius: 5,
+                circleColor: "#ef4444",
+                circleStrokeWidth: 2,
+                circleStrokeColor: "#ffffff",
+              }}
+            />
+          </ShapeSource>
+        ))}
+        {peaks.map((peak) => (
+          <ShapeSource
+            key={`peak-${peak.id}`}
+            id={`peak-source-${peak.id}`}
+            shape={{
+              type: "Feature",
+              properties: { name: peak.name },
+              geometry: {
+                type: "Point",
+                coordinates: [peak.longitude, peak.latitude],
+              },
+            }}
+          >
+            <CircleLayer
+              id={`peak-circle-${peak.id}`}
+              style={{
+                circleRadius: 5,
+                circleColor: "#2563eb",
+                circleStrokeWidth: 2,
+                circleStrokeColor: "#ffffff",
+              }}
+            />
+          </ShapeSource>
+        ))}
 
         {clickedPoints.map((p, i) => (
           <ShapeSource
@@ -89,28 +170,19 @@ const MapScreen = () => {
           </ShapeSource>
         ))}
 
-{clickedPoints.length >= 2 && (
-  <ShapeSource
-    id="line"
-    shape={{
-      type: "Feature",
-      properties: {},
-      geometry: {
-        type: "LineString",
-        coordinates: clickedPoints,
-      },
-    }}
-  >
-    <LineLayer
-      id="linelayer"
-      style={{
-        lineColor: "#9333ea",
-        lineWidth: 3,
-      }}
-    />
-  </ShapeSource>
-)}
-
+        {routeGeoJson && (
+          <ShapeSource id="route" shape={routeGeoJson}>
+            <LineLayer
+              id="route-line"
+              style={{
+                lineColor: "#9333ea",
+                lineWidth: 4,
+                lineJoin: "round",
+                lineCap: "round",
+              }}
+            />
+          </ShapeSource>
+        )}
       </MapView>
     </View>
   );

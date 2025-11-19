@@ -6,12 +6,15 @@ import peaksService from "@/src/services/peaks.service";
 import { SafeAreaView } from "react-native-safe-area-context";
 import FontAwesome6 from "@expo/vector-icons/build/FontAwesome6";
 import { Peaks } from "@/src/types";
+import MapInfo from "@/src/components/map/mapinfo";
+
 
 const PeakDetails = () => {
   const navigation = useNavigation();
   const { id } = useLocalSearchParams();
   const router = useRouter();
   const [peak, setPeak] = useState<Peaks>();
+  const [isMapVisible, setIsMapVisible] = useState(true);
 
   useEffect(() => {
     const fetchPeak = async () => {
@@ -58,6 +61,36 @@ const PeakDetails = () => {
                 </Text>
                 <Text className="text-white mt-2">Region: {peak.region}</Text>
               </View>
+            </View>
+            <View className="flex-row gap-5 mt-5 w-full justify-center p-2">
+              <Pressable 
+                className={`w-1/2 py-2 rounded-lg ${isMapVisible ? 'bg-white/10' : ''}`}
+                onPress={() => setIsMapVisible(true)}
+              >
+                <Text className="text-xl text-center font-semibold text-white ">
+                  Mapa
+                </Text>
+              </Pressable>
+              <Pressable 
+                className={`w-1/2 py-2 rounded-lg ${!isMapVisible ? 'bg-white/10' : ''}`}
+                onPress={() => setIsMapVisible(false)}
+              >
+                <Text className="text-xl text-center font-semibold text-white ">
+                  Zdjęcie
+                </Text>
+              </Pressable>
+            </View>
+            <View className="mt-5 w-full h-[490px]">
+              {isMapVisible ? (
+                <View className="flex-1 rounded-2xl overflow-hidden">
+                  <MapInfo />
+                </View>
+              ) : (
+                <View className="bg-white/10 p-5 rounded-2xl h-full justify-center items-center">
+                  <Text className="text-white text-center text-xl">Brak Zdjęcia</Text>
+                  <Text className="text-white text-center mt-2">Dodaj zdjęcie szczytu</Text>
+                </View>
+              )}
             </View>
           </View>
         </ScrollView>
