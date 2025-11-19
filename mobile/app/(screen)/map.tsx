@@ -16,7 +16,9 @@ const MapScreen = () => {
   const [shelters, setShelters] = useState<Shelters[]>([]);
   const [peaks, setPeaks] = useState<Peaks[]>([]);
   const [routeGeoJson, setRouteGeoJson] = useState<any>(null);
-  const [routeType] = useState<"one-way" | "loop" | "back-and-forth">("one-way");
+  const [routeType] = useState<"one-way" | "loop" | "back-and-forth">(
+    "one-way",
+  );
   const [clickedPoints, setClickedPoints] = useState<[number, number][]>([]);
 
   const handlePress = (e: any) => {
@@ -73,18 +75,11 @@ const MapScreen = () => {
 
     fetchLocalRoute();
   }, [clickedPoints, routeType]);
-  
+
   return (
     <View style={styles.container}>
-      <MapView
-        style={styles.map}
-        logoEnabled={false}
-        onPress={handlePress}
-      >
-        <Camera
-          centerCoordinate={[19.945, 49.299]}
-          zoomLevel={12}
-        />
+      <MapView style={styles.map} logoEnabled={false} onPress={handlePress}>
+        <Camera centerCoordinate={[19.945, 49.299]} zoomLevel={12} />
 
         <RasterSource
           id="base"
@@ -95,7 +90,7 @@ const MapScreen = () => {
         >
           <RasterLayer id="baseLayer" sourceID="base" />
         </RasterSource>
-       
+
         {shelters.map((shelter) => (
           <ShapeSource
             key={`shelter-${shelter.id}`}
@@ -186,12 +181,11 @@ const MapScreen = () => {
       </MapView>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
   map: { flex: 1 },
 });
-
 
 export default MapScreen;

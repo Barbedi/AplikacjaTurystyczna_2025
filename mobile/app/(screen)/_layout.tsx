@@ -21,10 +21,18 @@ export default function ScreenLayout() {
           headerShown: false,
         }}
       />
+      
       <Stack.Screen
         name="stats"
         options={{
           title: "Statystyki",
+          headerTitleAlign: "center",
+        }}
+      />
+      <Stack.Screen
+        name="record-summary"
+        options={{
+          title: "Podsumowanie Trasy",
           headerTitleAlign: "center",
         }}
       />
