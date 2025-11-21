@@ -49,7 +49,7 @@ const Charts = () => {
           yAxisColor="transparent"
           yAxisTextStyle={{ color: '#94a3b8', fontSize: 11 }}
         
-          rulesColor="#ffffff"
+          rulesColor="#ffffff30"
           rulesType="solid"
           
           yAxisOffset={800}

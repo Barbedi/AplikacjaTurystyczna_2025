@@ -14,6 +14,9 @@ const TrailsDetails = () => {
   const { id } = useLocalSearchParams();
   const router = useRouter();
   const [trail, setTrail] = useState<Trails>();
+  const [isMapVisible, setIsMapVisible] = useState(true);
+  const [isProfileVisible, setIsProfileVisible] = useState(false);
+  const [isPhotosVisible, setIsPhotosVisible] = useState(false);
 
    useEffect(() => {
       const fetchPeak = async () => {
@@ -86,10 +89,83 @@ const TrailsDetails = () => {
                 </View>
               </View>
             </View>
-            <View className="bg-white/15 rounded-2xl p-5 w-full mt-5">
-          <Charts />
+           <View className="bg-white/10 rounded-2xl p-2 mt-3 w-full flex-row">
+  <Pressable
+    className={`flex-1 py-2 rounded-xl justify-center items-center mr-2 ${isMapVisible ? "bg-yellow-400" : "bg-transparent"}`}
+    onPress={() => {
+      setIsMapVisible(true);
+      setIsProfileVisible(false);
+      setIsPhotosVisible(false);
+    }}
+  >
+    <FontAwesome6
+      name="map-location-dot"
+      size={20}
+      color={isMapVisible ? "#050c28" : "#ffffff"}
+    />
+    <Text className={`text-center text-sm font-bold mt-1 ${isMapVisible ? "text-slate-900" : "text-white"}`}>
+      Mapa
+    </Text>
+  </Pressable>
+
+  <Pressable
+    className={`flex-1 py-2 rounded-xl justify-center items-center mx-1 ${isProfileVisible ? "bg-yellow-400" : "bg-transparent"}`}
+    onPress={() => {
+      setIsMapVisible(false);
+      setIsProfileVisible(true);
+      setIsPhotosVisible(false);
+    }}
+  >
+    <FontAwesome6
+      name="chart-area"
+      size={20}
+      color={isProfileVisible ? "#050c28" : "#ffffff"}
+    />
+    <Text className={`text-center text-sm font-bold mt-1 ${isProfileVisible ? "text-slate-900" : "text-white"}`}>
+      Profil
+    </Text>
+  </Pressable>
+
+  <Pressable
+    className={`flex-1 py-2 rounded-xl justify-center items-center ml-2 ${isPhotosVisible ? "bg-yellow-400" : "bg-transparent"}`}
+    onPress={() => {
+      setIsMapVisible(false);
+      setIsProfileVisible(false);
+      setIsPhotosVisible(true);
+    }}
+  >
+    <FontAwesome6
+      name="images"
+      size={20}
+      color={isPhotosVisible ? "#050c28" : "#ffffff"}
+    />
+    <Text className={`text-center text-sm font-bold mt-1 ${isPhotosVisible ? "text-slate-900" : "text-white"}`}>
+      Zdjęcia
+    </Text>
+  </Pressable>
+</View>
+
+
+            <View className="mt-5 w-full">
+              {isMapVisible && (
+                <View className="bg-white/10 rounded-2xl p-5 w-full items-center">
+                  <Text className="text-white text-lg">Tu będzie mapa</Text>
+                </View>
+              )}
+              {isProfileVisible && (
+                <View className="bg-white/15 rounded-2xl p-5 w-full overflow-hidden justify-center items-center">
+                  <Charts />
+                </View>
+              )}
+              {isPhotosVisible && (
+                <View className="bg-white/10 rounded-2xl p-5 w-full items-center">
+                  <Text className="text-white text-lg">Tu będą zdjęcia</Text>
+                </View>
+              )}
+            </View>
           </View>
-          </View>
+
+          
         </ScrollView>
       </SafeAreaView>
     </LinearGradient>
