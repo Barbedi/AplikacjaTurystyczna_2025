@@ -45,8 +45,7 @@ export default function ScreenLayout() {
       <Stack.Screen
         name="favourites"
         options={{
-          title: "Ulubione trasy",
-          headerTitleAlign: "center",
+          headerShown: false,
         }}
       />
       <Stack.Screen
