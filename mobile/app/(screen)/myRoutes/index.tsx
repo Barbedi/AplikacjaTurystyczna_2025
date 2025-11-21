@@ -94,7 +94,7 @@ const MyRoutesScreen = () => {
 
             {!loading && !error && trails && trails.length > 0 ? (
               trails.map((trail) => (
-                <Pressable 
+                <Pressable
                   onPress={() => router.push(`/myRoutes/${trail.id}`)}
                   key={trail.id}
                   className="w-full bg-white/10 rounded-2xl p-5 border-l-4 border-green-500"

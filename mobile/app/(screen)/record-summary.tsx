@@ -8,7 +8,7 @@ import ModalAccept from "@/src/components/ModalAcpet";
 
 const RecordSummaryScreen = () => {
   const router = useRouter();
-    const [modalVisible, setModalVisible] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const stats = [
     { icon: "route", label: "Dystans", value: "12.4", unit: "km" },
@@ -46,11 +46,7 @@ const RecordSummaryScreen = () => {
                 className="bg-white/10 rounded-2xl p-5 mb-4 w-[48%] backdrop-blur"
               >
                 <View className="flex-row items-center mb-3">
-                  <FontAwesome6
-                    name={stat.icon}
-                    size={20}
-                    color="#60a5fa"
-                  />
+                  <FontAwesome6 name={stat.icon} size={20} color="#60a5fa" />
                   <Text className="text-white/70 ml-2 text-sm">
                     {stat.label}
                   </Text>
@@ -92,7 +88,10 @@ const RecordSummaryScreen = () => {
             </View>
           </View>
           <View className="gap-3 mb-4">
-            <Pressable onPress={() => setModalVisible(true)} className="bg-purple-600 rounded-2xl p-4 flex-row items-center justify-center active:bg-purple-700">
+            <Pressable
+              onPress={() => setModalVisible(true)}
+              className="bg-purple-600 rounded-2xl p-4 flex-row items-center justify-center active:bg-purple-700"
+            >
               <FontAwesome6 name="floppy-disk" size={20} color="#ffffff" />
               <Text className="text-white text-lg font-semibold ml-3">
                 Zapisz trasę
@@ -106,7 +105,7 @@ const RecordSummaryScreen = () => {
               </Text>
             </Pressable>
 
-            <Pressable 
+            <Pressable
               onPress={() => router.back()}
               className="bg-white/5 rounded-2xl p-4 items-center active:bg-white/10"
             >

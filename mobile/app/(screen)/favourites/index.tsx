@@ -120,7 +120,7 @@ const FavouritesScreen = () => {
             {!loading && !error && trails && trails.length > 0 ? (
               trails.map((trail) => (
                 <Pressable
-                onPress={() => router.push(`/favourites/${trail.id}`)}
+                  onPress={() => router.push(`/favourites/${trail.id}`)}
                   key={trail.id}
                   className="w-full bg-white/10 rounded-2xl p-5 border-l-4 border-red-500"
                 >

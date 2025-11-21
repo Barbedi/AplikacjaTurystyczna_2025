@@ -27,7 +27,7 @@ export default function ScreenLayout() {
           headerShown: false,
         }}
       />
-      
+
       <Stack.Screen
         name="stats"
         options={{
@@ -55,7 +55,7 @@ export default function ScreenLayout() {
           headerTitleAlign: "center",
         }}
       />
-      
+
       <Stack.Screen
         name="peaks"
         options={{

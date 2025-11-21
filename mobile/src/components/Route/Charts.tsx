@@ -23,7 +23,6 @@ interface ElevationDataProps {
   trail?: Trails;
 }
 
-
 const useChartData = (trail: Trails | undefined, chartWidth: number) => {
   return useMemo(() => {
     const defaultResult = {
@@ -40,12 +39,13 @@ const useChartData = (trail: Trails | undefined, chartWidth: number) => {
     const coords = trail.geometry.coordinates as [number, number, number][];
     const totalDistanceKm = Number(trail.length_km) || 0;
 
-    const step = coords.length > CHART_CONFIG.layout.maxPoints 
-      ? Math.ceil(coords.length / CHART_CONFIG.layout.maxPoints) 
-      : 1;
+    const step =
+      coords.length > CHART_CONFIG.layout.maxPoints
+        ? Math.ceil(coords.length / CHART_CONFIG.layout.maxPoints)
+        : 1;
 
     const sampledCoords = coords.filter((_, index) => index % step === 0);
-    
+
     const lastCoord = coords[coords.length - 1];
     if (sampledCoords[sampledCoords.length - 1] !== lastCoord) {
       sampledCoords.push(lastCoord);
@@ -61,26 +61,39 @@ const useChartData = (trail: Trails | undefined, chartWidth: number) => {
     const maxElevation = Math.max(...elevations);
     const elevationRange = maxElevation - minElevation;
 
-    const yAxisOffset = Math.floor(Math.max(0, minElevation - (elevationRange * CHART_CONFIG.layout.yAxisBuffer.bottom)));
-    const maxValue = Math.ceil(maxElevation + (elevationRange * CHART_CONFIG.layout.yAxisBuffer.top));
-    
+    const yAxisOffset = Math.floor(
+      Math.max(
+        0,
+        minElevation - elevationRange * CHART_CONFIG.layout.yAxisBuffer.bottom,
+      ),
+    );
+    const maxValue = Math.ceil(
+      maxElevation + elevationRange * CHART_CONFIG.layout.yAxisBuffer.top,
+    );
+
     const spacing = chartWidth / sampledCoords.length;
 
     const elevationData = sampledCoords.map((coord, idx) => {
-      const distance = ((idx / (sampledCoords.length - 1)) * totalDistanceKm).toFixed(1);
-      
+      const distance = (
+        (idx / (sampledCoords.length - 1)) *
+        totalDistanceKm
+      ).toFixed(1);
+
       const labelFrequency = Math.ceil(sampledCoords.length / 4);
-      const showLabel = idx === 0 || idx === sampledCoords.length - 1 || idx % labelFrequency === 0;
+      const showLabel =
+        idx === 0 ||
+        idx === sampledCoords.length - 1 ||
+        idx % labelFrequency === 0;
 
       return {
         value: coord[2] || 0,
         label: showLabel ? `${distance} km` : "",
-        labelTextStyle: { 
-          color: CHART_CONFIG.colors.text, 
+        labelTextStyle: {
+          color: CHART_CONFIG.colors.text,
           width: 40,
           marginLeft: -20,
-          textAlign: 'center' as const, 
-          fontSize: 10 
+          textAlign: "center" as const,
+          fontSize: 10,
         },
       };
     });
@@ -96,14 +109,19 @@ const useChartData = (trail: Trails | undefined, chartWidth: number) => {
   }, [trail, chartWidth]);
 };
 
-
 const Charts = ({ trail }: ElevationDataProps) => {
   const screenWidth = Dimensions.get("window").width;
 
-  const chartWidth = screenWidth - 48; 
+  const chartWidth = screenWidth - 48;
 
-  const { elevationData, yAxisOffset, maxValue, spacing, totalDistanceKm, hasData } = 
-    useChartData(trail, chartWidth);
+  const {
+    elevationData,
+    yAxisOffset,
+    maxValue,
+    spacing,
+    totalDistanceKm,
+    hasData,
+  } = useChartData(trail, chartWidth);
 
   if (!hasData) {
     return (
@@ -118,12 +136,12 @@ const Charts = ({ trail }: ElevationDataProps) => {
       <Text className="text-white text-lg mb-4 font-semibold">
         Profil wysokościowy
       </Text>
-      <View 
-        style={{ 
-          overflow: 'hidden', 
-          marginRight: 15, 
+      <View
+        style={{
+          overflow: "hidden",
+          marginRight: 15,
           marginVertical: -10,
-          marginLeft: 20 
+          marginLeft: 20,
         }}
       >
         <LineChart
@@ -147,7 +165,10 @@ const Charts = ({ trail }: ElevationDataProps) => {
           yAxisColor={CHART_CONFIG.colors.axis}
           rulesColor={CHART_CONFIG.colors.axis}
           rulesType="solid"
-          yAxisTextStyle={{ color: CHART_CONFIG.colors.textMuted, fontSize: 10 }}
+          yAxisTextStyle={{
+            color: CHART_CONFIG.colors.textMuted,
+            fontSize: 10,
+          }}
           noOfSections={5}
           xAxisIndicesWidth={2}
         />
