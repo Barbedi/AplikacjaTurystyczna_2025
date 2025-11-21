@@ -9,6 +9,7 @@ import trailsService from "@/src/services/trails.service";
 import { getAuthenticatedUser } from "@/src/config/api";
 import ConfirmDeleteModal from "@/src/components/ConfirmDeleteModal";
 import { FavoriteTrails } from "@/src/types";
+import { useRouter } from "expo-router";
 
 const FavouritesScreen = () => {
   const { getUserByEmail, usersData, loading: userLoading } = useGetUsers();
@@ -18,6 +19,7 @@ const FavouritesScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedTrailId, setSelectedTrailId] = useState<number | null>(null);
 
+  const router = useRouter();
   useEffect(() => {
     const loadUser = async () => {
       try {
@@ -117,7 +119,8 @@ const FavouritesScreen = () => {
 
             {!loading && !error && trails && trails.length > 0 ? (
               trails.map((trail) => (
-                <View
+                <Pressable
+                onPress={() => router.push(`/favourites/${trail.id}`)}
                   key={trail.id}
                   className="w-full bg-white/10 rounded-2xl p-5 border-l-4 border-red-500"
                 >
@@ -173,7 +176,7 @@ const FavouritesScreen = () => {
                   <Text className="text-sm text-gray-400 text-center mt-2">
                     Dotknij aby zobaczyć szczegóły trasy
                   </Text>
-                </View>
+                </Pressable>
               ))
             ) : !loading && !error ? (
               <View className="flex-1 items-center justify-center py-10">

@@ -22,6 +22,13 @@ export default function ScreenLayout() {
         }}
       />
       <Stack.Screen
+        name="myRoutes"
+        options={{
+          headerShown: false,
+        }}
+      />
+      
+      <Stack.Screen
         name="stats"
         options={{
           title: "Statystyki",
@@ -29,10 +36,16 @@ export default function ScreenLayout() {
         }}
       />
       <Stack.Screen
+        name="record-summary"
+        options={{
+          title: "Podsumowanie Trasy",
+          headerTitleAlign: "center",
+        }}
+      />
+      <Stack.Screen
         name="favourites"
         options={{
-          title: "Ulubione trasy",
-          headerTitleAlign: "center",
+          headerShown: false,
         }}
       />
       <Stack.Screen
@@ -42,13 +55,7 @@ export default function ScreenLayout() {
           headerTitleAlign: "center",
         }}
       />
-      <Stack.Screen
-        name="myRoutes"
-        options={{
-          title: "Moje Trasy",
-          headerTitleAlign: "center",
-        }}
-      />
+      
       <Stack.Screen
         name="peaks"
         options={{
