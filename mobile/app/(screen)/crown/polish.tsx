@@ -8,7 +8,6 @@ import useGetUsers from "@/src/hooks/useGetUser";
 import peaksService from "@/src/services/peaks.service";
 import userpeaksService from "@/src/services/userpeaks.service";
 import { getAuthenticatedUser } from "@/src/config/api";
-import { all } from "axios";
 
 interface PeakWithVerification {
   id: number;

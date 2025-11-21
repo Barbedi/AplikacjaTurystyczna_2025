@@ -21,6 +21,12 @@ export default function ScreenLayout() {
           headerShown: false,
         }}
       />
+      <Stack.Screen
+        name="myRoutes"
+        options={{
+          headerShown: false,
+        }}
+      />
       
       <Stack.Screen
         name="stats"
@@ -50,13 +56,7 @@ export default function ScreenLayout() {
           headerTitleAlign: "center",
         }}
       />
-      <Stack.Screen
-        name="myRoutes"
-        options={{
-          title: "Moje Trasy",
-          headerTitleAlign: "center",
-        }}
-      />
+      
       <Stack.Screen
         name="peaks"
         options={{
