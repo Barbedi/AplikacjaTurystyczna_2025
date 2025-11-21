@@ -248,9 +248,26 @@ async function getPeaksByCollectionId(
   collectionId: number,
   page = 1,
   limit = 6,
+  all: boolean = false,
 ) {
-  if (page < 1 || limit < 1) {
+  if (!all && (page < 1 || limit < 1)) {
     throw new Err("Invalid page or limit", 400);
+  }
+
+  if (all) {
+    const queryAll = `
+      SELECT p.id, p.name, p.elevation, p.region, p.latitude, p.longitude
+      FROM peaks p
+      JOIN peak_collection_peaks pcp ON p.id = pcp.peak_id
+      WHERE pcp.collection_id = $1
+      ORDER BY p.elevation DESC
+    `;
+    const resultAll = await db.query(queryAll, [collectionId]);
+    return {
+      data: resultAll.rows,
+      message: `Successfully fetched all peaks from collection ${collectionId}`,
+      total: resultAll.rows.length,
+    };
   }
 
   const offset = helper.getOffset(page, limit);
@@ -282,6 +299,7 @@ async function getPeaksByCollectionId(
     limit,
   };
 }
+
 //szukanie szczytów
 async function searchPeaks(query: string) {
   if (!query || query.trim() === "") {

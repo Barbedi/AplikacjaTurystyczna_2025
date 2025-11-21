@@ -61,15 +61,18 @@ router.get("/", async (_req, res, next) => {
  */
 router.get("/crown-poland", async (req, res, next) => {
   try {
-    const { page, limit } = req.query;
-    const parsedPage = page ? parseInt(page as string) : undefined;
-    const parsedLimit = limit ? parseInt(limit as string) : undefined;
+    const { page, limit, all } = req.query;
+    const parsedPage = page ? parseInt(page as string) : 1;
+    const parsedLimit = limit ? parseInt(limit as string) : 6;
+    const allFlag = all === "true"; // ✅ jawne przekształcenie
 
     const result = await peaksService.getPeaksByCollectionId(
       1,
       parsedPage,
       parsedLimit,
+      allFlag, // ✅ przekazujesz do środka
     );
+
     res.status(200).json(result);
   } catch (error) {
     if (error instanceof Err) {
@@ -103,14 +106,16 @@ router.get("/crown-poland", async (req, res, next) => {
  */
 router.get("/crown-beskid", async (req, res, next) => {
   try {
-    const { page, limit } = req.query;
+    const { page, limit,all } = req.query;
     const parsedPage = page ? parseInt(page as string) : undefined;
     const parsedLimit = limit ? parseInt(limit as string) : undefined;
+    const allFlag = all === "true"; // ✅ jawne przekształcenie
 
     const result = await peaksService.getPeaksByCollectionId(
       2,
       parsedPage,
       parsedLimit,
+      allFlag, // ✅ przekazujesz do środka
     );
     res.status(200).json(result);
   } catch (error) {

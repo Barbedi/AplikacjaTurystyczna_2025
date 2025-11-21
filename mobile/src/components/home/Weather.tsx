@@ -12,7 +12,7 @@ export default function WeatherWidgetMobile() {
     const fetchWeather = async () => {
       try {
         const res = await fetch(
-          `https://api.openweathermap.org/data/2.5/weather?q=${CITY}&appid=${API_KEY}&units=metric&lang=pl`
+          `https://api.openweathermap.org/data/2.5/weather?q=${CITY}&appid=${API_KEY}&units=metric&lang=pl`,
         );
         const data = await res.json();
         setWeather(data);
@@ -54,7 +54,7 @@ export default function WeatherWidgetMobile() {
           <Text className="text-white text-3xl font-bold">
             {Math.round(weather.main.temp)}°C
           </Text>
-          <Text className="text-white/80 capitalize">
+          <Text className="text-white/70 capitalize">
             {weather.weather[0].description}
           </Text>
         </View>

@@ -8,12 +8,14 @@ import {
   KeyboardAvoidingView,
   Platform,
   Alert,
+  Image,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
 import { useRouter } from "expo-router";
 import { loginUser, getAuthenticatedUser } from "@/src/config/api";
 import type { AuthResponse } from "@/src/types";
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 
 export default function Login() {
   const router = useRouter();
@@ -40,33 +42,72 @@ export default function Login() {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         className="flex-1 justify-center items-center px-6"
       >
-        <View className="bg-white/20 backdrop-blur-sm  p-6 rounded-2xl w-full max-w-sm ">
-          <Text className="text-white text-4xl font-bold text-center mb-8 tracking-wide drop-shadow-md">
+        <View className="mb-8 items-center">
+          <View className=" items-center justify-center mb-3 ">
+            <Text className="text-7xl text-white font-bold">HikeUp</Text>
+          </View>
+          <Text className="text-white/70 text-md  tracking-wide">
+            Twoje góry. Twoja przygoda. Twój start.
+          </Text>
+        </View>
+
+        <View className="bg-white/15 backdrop-blur-lg p-8 rounded-3xl w-full max-w-sm border border-white/20">
+          <Text className="text-white text-3xl font-bold text-center mb-6 tracking-wide">
             Zaloguj się
           </Text>
-          <TextInput
-            placeholder="Email"
-            placeholderTextColor="#e5e7eb"
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-            autoCapitalize="none"
-            className="w-full mb-4 px-4 py-3 rounded-xl bg-white/10 text-white border border-white/20"
-          />
+          <View className="mb-4">
+            <View className="flex-row items-center bg-white/10 rounded-2xl border border-white/20 px-4 py-3">
+              <FontAwesome6 name="envelope" size={18} color="#ffffff80" />
+              <TextInput
+                placeholder="Email"
+                placeholderTextColor="#ffffff80"
+                value={email}
+                onChangeText={setEmail}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                className="flex-1 ml-3 text-white text-base"
+              />
+            </View>
+          </View>
+          <View className="mb-6">
+            <View className="flex-row items-center bg-white/10 rounded-2xl border border-white/20 px-4 py-3">
+              <FontAwesome6 name="lock" size={18} color="#ffffff80" />
+              <TextInput
+                placeholder="Hasło"
+                placeholderTextColor="#ffffff80"
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry
+                className="flex-1 ml-3 text-white text-base"
+              />
+            </View>
+          </View>
 
-          <TextInput
-            placeholder="Hasło"
-            placeholderTextColor="#e5e7eb"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-            className="w-full mb-6 px-4 py-3 rounded-xl bg-white/10 text-white border border-white/20"
-          />
           <Pressable
             onPress={handleLogin}
-            className="w-full bg-blue-600 py-3 rounded-2xl items-center active:bg-blue-700"
+            className="w-full bg-gradient-to-r from-blue-600 to-blue-500 py-3 rounded-2xl items-center active:opacity-80 "
+            style={({ pressed }) => ({
+              opacity: pressed ? 0.8 : 1,
+              backgroundColor: pressed ? "#1e40af" : "#2563eb",
+            })}
           >
-            <Text className="text-white text-lg font-semibold">Zaloguj</Text>
+            <View className="flex-row items-center gap-2">
+              <Text className="text-white text-lg font-bold">Zaloguj się</Text>
+              <FontAwesome6 name="arrow-right" size={18} color="#ffffff" />
+            </View>
+          </Pressable>
+          <Pressable className="mt-4">
+            <Text className="text-white/60 text-center text-sm">
+              Zapomniałeś hasła?
+            </Text>
+          </Pressable>
+        </View>
+        <View className="mt-6 flex-row items-center">
+          <Text className="text-white/60 text-base">Nie masz konta? </Text>
+          <Pressable onPress={() => router.replace("/register")}>
+            <Text className="text-white font-bold text-base">
+              Zarejestruj się
+            </Text>
           </Pressable>
         </View>
       </KeyboardAvoidingView>
