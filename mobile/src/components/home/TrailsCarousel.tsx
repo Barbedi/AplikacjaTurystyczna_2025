@@ -33,6 +33,14 @@ const TrailsCarousel = () => {
       try {
         const res = await api.get("/trails/random?limit=5");
         setTrails(res.data);
+
+        // Prefetch pierwszego zdjęcia dla szybszego wyświetlenia
+        if (res.data[0]?.photos?.[0]) {
+          const firstImageUrl = filesService.getTrailImgUrl(
+            res.data[0].photos[0].image_name,
+          );
+          Image.prefetch(firstImageUrl);
+        }
       } catch (error) {
         console.error("❌ Błąd pobierania tras:", error);
       } finally {
@@ -77,9 +85,9 @@ const TrailsCarousel = () => {
           return (
             <Pressable
               onPress={() => router.push(`/route/${item.id}`)} // ⬅️ kliknięcie otwiera stronę trasy
-              className="rounded-2xl items-center justify-center bg-white/10 p-3 flex-1"
+              className="rounded-2xl items-center justify-center bg-white/10 p-2 flex-1"
             >
-              <View className="w-full h-56 rounded-2xl overflow-hidden items-center justify-center">
+              <View className="w-full h-52 rounded-2xl overflow-hidden items-center justify-center ">
                 {imageUrl ? (
                   <Image
                     className="rounded-2xl"

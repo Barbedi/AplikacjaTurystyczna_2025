@@ -15,64 +15,68 @@ export default function ScreenLayout() {
         },
       }}
     >
-      <Stack.Screen 
-        name="stats" 
-        options={{ 
+      <Stack.Screen
+        name="crown"
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="myRoutes"
+        options={{
+          headerShown: false,
+        }}
+      />
+      
+      <Stack.Screen
+        name="stats"
+        options={{
           title: "Statystyki",
-          headerTitleAlign: "center"
+          headerTitleAlign: "center",
         }}
       />
-      <Stack.Screen 
-        name="crown" 
-        options={{ 
-          title: "Korona Gór",
-          headerTitleAlign: "center"
+      <Stack.Screen
+        name="record-summary"
+        options={{
+          title: "Podsumowanie Trasy",
+          headerTitleAlign: "center",
         }}
       />
-      <Stack.Screen 
-        name="favourites" 
-        options={{ 
-          title: "Ulubione",
-          headerTitleAlign: "center"
+      <Stack.Screen
+        name="favourites"
+        options={{
+          headerShown: false,
         }}
       />
-      <Stack.Screen 
-        name="map" 
-        options={{ 
+      <Stack.Screen
+        name="map"
+        options={{
           title: "Mapa",
-          headerTitleAlign: "center"
+          headerTitleAlign: "center",
         }}
       />
-      <Stack.Screen 
-        name="myRoutes" 
-        options={{ 
-          title: "Moje Trasy",
-          headerTitleAlign: "center"
-        }}
-      />
-      <Stack.Screen 
-        name="peaks" 
-        options={{ 
+      
+      <Stack.Screen
+        name="peaks"
+        options={{
           title: "Szczyty",
-          headerTitleAlign: "center"
+          headerTitleAlign: "center",
         }}
       />
-      <Stack.Screen 
-        name="record" 
-        options={{ 
+      <Stack.Screen
+        name="record"
+        options={{
           title: "Nagraj Trasę",
-          headerTitleAlign: "center"
+          headerTitleAlign: "center",
         }}
       />
-      <Stack.Screen 
-        name="reviews" 
-        options={{ 
+      <Stack.Screen
+        name="reviews"
+        options={{
           title: "Recenzje",
-          headerTitleAlign: "center"
+          headerTitleAlign: "center",
         }}
       />
     </Stack>
-    
-    
   );
 }
