@@ -7,6 +7,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import FontAwesome6 from "@expo/vector-icons/build/FontAwesome6";
 import { Trails } from "@/src/types";
 import Charts from "@/src/components/Route/Charts";
+import MapsRoute from "@/src/components/Route/MapsRoute";
+import Photo from "@/src/components/Route/Photo";
 
 
 const TrailsDetails = () => {
@@ -91,7 +93,7 @@ const TrailsDetails = () => {
             </View>
            <View className="bg-white/10 rounded-2xl p-2 mt-3 w-full flex-row">
   <Pressable
-    className={`flex-1 py-2 rounded-xl justify-center items-center mr-2 ${isMapVisible ? "bg-yellow-400" : "bg-transparent"}`}
+    className={`flex-1 py-2 rounded-xl justify-center items-center mr-2 ${isMapVisible ? "bg-purple-500" : "bg-transparent"}`}
     onPress={() => {
       setIsMapVisible(true);
       setIsProfileVisible(false);
@@ -101,15 +103,15 @@ const TrailsDetails = () => {
     <FontAwesome6
       name="map-location-dot"
       size={20}
-      color={isMapVisible ? "#050c28" : "#ffffff"}
+      color={isMapVisible ? "#ffffff" : "#ffffff"}
     />
-    <Text className={`text-center text-sm font-bold mt-1 ${isMapVisible ? "text-slate-900" : "text-white"}`}>
+    <Text className={`text-center text-sm font-bold mt-1 ${isMapVisible ? "text-white" : "text-white"}`}>
       Mapa
     </Text>
   </Pressable>
 
   <Pressable
-    className={`flex-1 py-2 rounded-xl justify-center items-center mx-1 ${isProfileVisible ? "bg-yellow-400" : "bg-transparent"}`}
+    className={`flex-1 py-2 rounded-xl justify-center items-center mx-1 ${isProfileVisible ? "bg-purple-500" : "bg-transparent"}`}
     onPress={() => {
       setIsMapVisible(false);
       setIsProfileVisible(true);
@@ -119,15 +121,15 @@ const TrailsDetails = () => {
     <FontAwesome6
       name="chart-area"
       size={20}
-      color={isProfileVisible ? "#050c28" : "#ffffff"}
+      color={isProfileVisible ? "#ffffff" : "#ffffff"}
     />
-    <Text className={`text-center text-sm font-bold mt-1 ${isProfileVisible ? "text-slate-900" : "text-white"}`}>
+    <Text className={`text-center text-sm font-bold mt-1 ${isProfileVisible ? "text-white" : "text-white"}`}>
       Profil
     </Text>
   </Pressable>
 
   <Pressable
-    className={`flex-1 py-2 rounded-xl justify-center items-center ml-2 ${isPhotosVisible ? "bg-yellow-400" : "bg-transparent"}`}
+    className={`flex-1 py-2 rounded-xl justify-center items-center ml-2 ${isPhotosVisible ? "bg-purple-500" : "bg-transparent"}`}
     onPress={() => {
       setIsMapVisible(false);
       setIsProfileVisible(false);
@@ -137,9 +139,9 @@ const TrailsDetails = () => {
     <FontAwesome6
       name="images"
       size={20}
-      color={isPhotosVisible ? "#050c28" : "#ffffff"}
+      color={isPhotosVisible ? "#ffffff" : "#ffffff"}
     />
-    <Text className={`text-center text-sm font-bold mt-1 ${isPhotosVisible ? "text-slate-900" : "text-white"}`}>
+    <Text className={`text-center text-sm font-bold mt-1 ${isPhotosVisible ? "text-white" : "text-white"}`}>
       Zdjęcia
     </Text>
   </Pressable>
@@ -148,18 +150,22 @@ const TrailsDetails = () => {
 
             <View className="mt-5 w-full">
               {isMapVisible && (
-                <View className="bg-white/10 rounded-2xl p-5 w-full items-center">
-                  <Text className="text-white text-lg">Tu będzie mapa</Text>
+                <View className="bg-white/10 rounded-2xl overflow-hidden w-full h-96">
+                  <MapsRoute
+                    trail={trail}
+                    peakCoordinate={trail?.geometry?.coordinates?.[0] as [number, number]}
+                    trailPoints={trail?.points}
+                  />
                 </View>
               )}
               {isProfileVisible && (
                 <View className="bg-white/15 rounded-2xl p-5 w-full overflow-hidden justify-center items-center">
-                  <Charts />
+                  <Charts trail={trail} />
                 </View>
               )}
               {isPhotosVisible && (
-                <View className="bg-white/10 rounded-2xl p-5 w-full items-center">
-                  <Text className="text-white text-lg">Tu będą zdjęcia</Text>
+                <View className=" w-full items-center">
+                  <Photo  />
                 </View>
               )}
             </View>
