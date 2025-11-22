@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { View, StyleSheet } from "react-native";
 import {
   MapView,
@@ -10,9 +10,13 @@ import {
   CircleLayer,
 } from "@maplibre/maplibre-react-native";
 import { Shelters, Peaks } from "../../src/types";
+import BottomSheet from "@gorhom/bottom-sheet";
+import RouteBottomSheet from "../../src/components/map/RouteBottomSheet";
 
 const MapScreen = () => {
   const MAPTILER_KEY = "DdJo20VMMy7tFRXLTfO6";
+  const bottomSheetRef = useRef<BottomSheet>(null);
+  
   const [shelters, setShelters] = useState<Shelters[]>([]);
   const [peaks, setPeaks] = useState<Peaks[]>([]);
   const [routeGeoJson, setRouteGeoJson] = useState<any>(null);
@@ -78,8 +82,15 @@ const MapScreen = () => {
 
   return (
     <View style={styles.container}>
-      <MapView style={styles.map} logoEnabled={false} onPress={handlePress}>
-        <Camera centerCoordinate={[19.945, 49.299]} zoomLevel={12} />
+      <MapView 
+      style={styles.map} 
+      logoEnabled={false}
+       onPress={handlePress}>
+        <Camera
+        defaultSettings={{
+         centerCoordinate:[19.945, 49.299],
+          zoomLevel:12
+          }}/>
 
         <RasterSource
           id="base"
@@ -179,13 +190,32 @@ const MapScreen = () => {
           </ShapeSource>
         )}
       </MapView>
+      <RouteBottomSheet
+        ref={bottomSheetRef}
+        clickedPoints={clickedPoints}
+        onClearRoute={() => {
+          setClickedPoints([]);
+          setRouteGeoJson(null);
+          bottomSheetRef.current?.close();
+        }}
+        onRemovePoint={(index) => {
+          setClickedPoints((prev) => prev.filter((_, i) => i !== index));
+        }}
+        onSaveRoute={() => {
+          
+          console.log("Zapisywanie trasy...");
+        }}
+      />
     </View>
+    
   );
 };
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
   map: { flex: 1 },
+ 
 });
 
 export default MapScreen;
+
