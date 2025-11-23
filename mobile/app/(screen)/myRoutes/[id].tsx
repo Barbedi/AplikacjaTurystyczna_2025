@@ -68,6 +68,12 @@ const TrailsDetails = () => {
                   {trail?.difficulty}
                 </Text>
               </View>
+              <View className="flex-row bg-yellow-500/30 px-2 py-1.5 rounded-full items-center justify-center mb-3">
+                <FontAwesome6 name="calendar" size={15} color="#eab308" />
+                <Text className=" text-md font-bold ml-1 text-yellow-500">
+                  {trail?.created_at?.split("T")[0]}
+                </Text>
+              </View>
             </View>
             <View className=" flex-col gap-4  w-full p-5 rounded-2xl justify-center items-center">
               <View className="flex-row gap-4">

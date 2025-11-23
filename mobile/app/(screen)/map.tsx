@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Alert } from "react-native";
 import {
   MapView,
   Camera,
@@ -12,25 +12,62 @@ import {
 import { Shelters, Peaks } from "../../src/types";
 import BottomSheet from "@gorhom/bottom-sheet";
 import RouteBottomSheet from "../../src/components/map/RouteBottomSheet";
+import ModalShelterPeak from "../../src/components/map/modalShelterPeak";
+import trailsService from "../../src/services/trails.service";
+import { getAuthenticatedUser } from "../../src/config/api";
+import useGetUsers from "../../src/hooks/useGetUser";
 
 const MapScreen = () => {
   const MAPTILER_KEY = "DdJo20VMMy7tFRXLTfO6";
   const bottomSheetRef = useRef<BottomSheet>(null);
-  
+  const { getUserByEmail, usersData } = useGetUsers();
+
   const [shelters, setShelters] = useState<Shelters[]>([]);
   const [peaks, setPeaks] = useState<Peaks[]>([]);
   const [routeGeoJson, setRouteGeoJson] = useState<any>(null);
   const [routeType] = useState<"one-way" | "loop" | "back-and-forth">(
     "one-way",
   );
-  const [clickedPoints, setClickedPoints] = useState<[number, number][]>([]);
+  const [clickedPoints, setClickedPoints] = useState<
+    Array<{ coords: [number, number]; name?: string }>
+  >([]);
+  const [saving, setSaving] = useState(false);
+  const [selectedFeature, setSelectedFeature] = useState<{
+    type: "shelter" | "peak";
+    data: Shelters | Peaks;
+  } | null>(null);
+
+  useEffect(() => {
+    const loadUser = async () => {
+      try {
+        const authData = await getAuthenticatedUser();
+        if (authData?.user?.email) {
+          await getUserByEmail(authData.user.email);
+        }
+      } catch (error) {
+        console.error("B\u0142\u0105d \u0142adowania u\u017cytkownika:", error);
+      }
+    };
+    loadUser();
+  }, [getUserByEmail]);
+
+  const currentUser = usersData?.[0]?.[0];
 
   const handlePress = (e: any) => {
     const { geometry } = e;
+    // Add route point on map click
     if (geometry?.coordinates) {
       const coord = geometry.coordinates;
-      setClickedPoints((prev) => [...prev, coord]);
+      setClickedPoints((prev) => [...prev, { coords: coord }]);
     }
+  };
+
+  const handleShelterPress = (shelter: Shelters) => {
+    setSelectedFeature({ type: "shelter", data: shelter });
+  };
+
+  const handlePeakPress = (peak: Peaks) => {
+    setSelectedFeature({ type: "peak", data: peak });
   };
 
   useEffect(() => {
@@ -52,9 +89,9 @@ const MapScreen = () => {
       return;
     }
 
-    const pointsPayload = clickedPoints.map((coord) => ({
-      lat: coord[1],
-      lng: coord[0],
+    const pointsPayload = clickedPoints.map((point) => ({
+      lat: point.coords[1],
+      lng: point.coords[0],
     }));
 
     const fetchLocalRoute = async () => {
@@ -82,15 +119,13 @@ const MapScreen = () => {
 
   return (
     <View style={styles.container}>
-      <MapView 
-      style={styles.map} 
-      logoEnabled={false}
-       onPress={handlePress}>
+      <MapView style={styles.map} logoEnabled={false} onPress={handlePress}>
         <Camera
-        defaultSettings={{
-         centerCoordinate:[19.945, 49.299],
-          zoomLevel:12
-          }}/>
+          defaultSettings={{
+            centerCoordinate: [19.945, 49.299],
+            zoomLevel: 12,
+          }}
+        />
 
         <RasterSource
           id="base"
@@ -106,6 +141,7 @@ const MapScreen = () => {
           <ShapeSource
             key={`shelter-${shelter.id}`}
             id={`shelter-source-${shelter.id}`}
+            onPress={() => handleShelterPress(shelter)}
             shape={{
               type: "Feature",
               properties: { name: shelter.name },
@@ -130,6 +166,7 @@ const MapScreen = () => {
           <ShapeSource
             key={`peak-${peak.id}`}
             id={`peak-source-${peak.id}`}
+            onPress={() => handlePeakPress(peak)}
             shape={{
               type: "Feature",
               properties: { name: peak.name },
@@ -160,7 +197,7 @@ const MapScreen = () => {
               properties: {},
               geometry: {
                 type: "Point",
-                coordinates: p,
+                coordinates: p.coords,
               },
             }}
           >
@@ -190,9 +227,21 @@ const MapScreen = () => {
           </ShapeSource>
         )}
       </MapView>
+
+      <ModalShelterPeak
+        visible={selectedFeature !== null}
+        selectedFeature={selectedFeature}
+        onClose={() => setSelectedFeature(null)}
+        onAddToRoute={(coords, name) => {
+          setClickedPoints((prev) => [...prev, { coords, name }]);
+        }}
+      />
+
       <RouteBottomSheet
         ref={bottomSheetRef}
         clickedPoints={clickedPoints}
+        routeGeoJson={routeGeoJson}
+        saving={saving}
         onClearRoute={() => {
           setClickedPoints([]);
           setRouteGeoJson(null);
@@ -201,21 +250,88 @@ const MapScreen = () => {
         onRemovePoint={(index) => {
           setClickedPoints((prev) => prev.filter((_, i) => i !== index));
         }}
-        onSaveRoute={() => {
-          
-          console.log("Zapisywanie trasy...");
+        onSaveRoute={async (routeData) => {
+          console.log("Zapisywanie trasy:", routeData);
+
+          if (!currentUser?.id) {
+            Alert.alert("Błąd", "Musisz być zalogowany, aby zapisać trasę");
+            return;
+          }
+
+          if (saving) return;
+          setSaving(true);
+
+          try {
+            const coordinates =
+              routeData.geometry?.features?.[0]?.geometry?.coordinates || [];
+
+            const difficulty =
+              Array.isArray(routeData.difficulty) &&
+              routeData.difficulty.length > 0
+                ? routeData.difficulty.join(", ")
+                : "średni";
+
+            const points = routeData.points.map(
+              (
+                p: { coords: [number, number]; name?: string },
+                index: number,
+              ) => ({
+                coordinates: [p.coords[1], p.coords[0]],
+                name: p.name || `Punkt ${index + 1}`,
+                point_order: index,
+              }),
+            );
+
+            const trailPayload = {
+              name: routeData.name,
+              description: `Trasa utworzona przez planera tras`,
+              difficulty: difficulty,
+              length_km: routeData.stats.distance / 1000,
+              elevation_gain: routeData.stats.elevationGain,
+              region: routeData.region,
+              route_type: routeData.routeType,
+              geometry: {
+                type: "LineString",
+                coordinates: coordinates,
+              },
+              created_by: currentUser.id.toString(),
+              duration_minutes: routeData.stats.duration,
+              public: false,
+              points: points,
+            };
+
+            const response = await trailsService.createTrail(trailPayload);
+
+            if (response.status === 201) {
+              Alert.alert("Sukces", "Trasa została zapisana pomyślnie!", [
+                {
+                  text: "OK",
+                  onPress: () => {
+                    setClickedPoints([]);
+                    setRouteGeoJson(null);
+                    bottomSheetRef.current?.close();
+                  },
+                },
+              ]);
+            }
+          } catch (error: any) {
+            console.error("Błąd zapisywania trasy:", error);
+            Alert.alert(
+              "Błąd",
+              error.response?.data?.message || "Nie udało się zapisać trasy",
+            );
+          } finally {
+            setSaving(false);
+          }
         }}
       />
     </View>
-    
   );
 };
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
   map: { flex: 1 },
- 
 });
 
 export default MapScreen;
-
