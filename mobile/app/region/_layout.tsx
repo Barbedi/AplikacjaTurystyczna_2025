@@ -2,7 +2,7 @@ import { Stack, useRouter } from "expo-router";
 import { Pressable } from "react-native";
 import { FontAwesome6 } from "@expo/vector-icons";
 
-export default function CrownLayout() {
+export default function RegionLayout() {
   const router = useRouter();
 
   return (
@@ -15,9 +15,9 @@ export default function CrownLayout() {
       }}
     >
       <Stack.Screen
-        name="[id]"
+        name="[name]"
         options={{
-          title: "Moje Trasy",
+          title: "Trasy",
           headerLeft: () => (
             <Pressable onPress={() => router.back()} className="ml-2">
               <FontAwesome6 name="arrow-left" size={20} color="#fff" />

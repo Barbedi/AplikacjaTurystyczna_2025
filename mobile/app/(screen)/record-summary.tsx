@@ -5,6 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { useRouter } from "expo-router";
 import ModalAccept from "@/src/components/ModalAcpet";
+import MapInfo from "@/src/components/map/mapinfo";
 
 const RecordSummaryScreen = () => {
   const router = useRouter();
@@ -66,9 +67,8 @@ const RecordSummaryScreen = () => {
             <Text className="text-white text-lg font-semibold mb-3">
               Twoja trasa
             </Text>
-            <View className="bg-white/5 rounded-xl h-48 items-center justify-center">
-              <FontAwesome6 name="map-location-dot" size={50} color="#60a5fa" />
-              <Text className="text-white/50 mt-2">Podgląd mapy</Text>
+            <View className=" h-48 flex-1 rounded-2xl overflow-hidden">
+              <MapInfo />
             </View>
           </View>
           <View className="bg-white/10 rounded-2xl p-5 mb-6 backdrop-blur">

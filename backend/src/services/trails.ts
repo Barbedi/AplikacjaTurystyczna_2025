@@ -134,6 +134,26 @@ class TrailsService {
       limit,
     };
   }
+  async getTrailsByRegionAll(region: string) {
+  const query = `
+    SELECT *, ST_AsGeoJSON(geometry) as geometry FROM trails
+    WHERE region = $1 AND is_public = true
+    ORDER BY created_at DESC
+  `;
+
+  const result = await db.query(query, [region]);
+
+  const trails = result.rows.map((row) => ({
+    ...row,
+    geometry: row.geometry ? JSON.parse(row.geometry) : null,
+  }));
+
+  return {
+    data: trails,
+    message: `Successfully fetched trails for region ${region}`,
+  };
+}
+
 
   async getTrailsByUser(userId: string, page = 1, limit = 7) {
     if (page < 1 || limit < 1) {

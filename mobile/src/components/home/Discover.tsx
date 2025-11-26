@@ -1,5 +1,6 @@
-import { View, Text, Image, ScrollView } from "react-native";
+import { View, Text, Image, ScrollView, Pressable } from "react-native";
 import { useEffect } from "react";
+import { useRouter } from "expo-router";
 
 const images = {
   tatry: require("../../../assets/DiscoverPhoto/FullSizeRender.webp"),
@@ -14,6 +15,8 @@ const modules = [
 ];
 
 const Discover = () => {
+  const router = useRouter();
+
   useEffect(() => {
     Image.prefetch(Image.resolveAssetSource(images.tatry).uri);
     Image.prefetch(Image.resolveAssetSource(images.sadecki).uri);
@@ -32,7 +35,11 @@ const Discover = () => {
         contentContainerStyle={{ paddingHorizontal: 9, gap: 15 }}
       >
         {modules.map((item, index) => (
-          <View key={index} className="w-28 items-center mt-5">
+          <Pressable
+            key={index}
+            className="w-28 items-center mt-5"
+            onPress={() => router.push(`/region/${item.title}`)}
+          >
             <View className="w-28 h-28 rounded-xl overflow-hidden bg-black/30">
               <Image
                 source={item.photo}
@@ -47,7 +54,7 @@ const Discover = () => {
             >
               {item.title}
             </Text>
-          </View>
+          </Pressable>
         ))}
       </ScrollView>
     </View>

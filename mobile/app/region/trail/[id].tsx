@@ -69,6 +69,11 @@ const TrailsDetails = () => {
                 </Text>
               </View>
             </View>
+            <View className="mt-4 w-full bg-white/10 p-4 rounded-2xl">
+              <Text className="text-white/90 text-sm leading-6 text-center">
+                {trail?.description || "Brak opisu trasy."}
+              </Text>
+            </View>
             <View className=" flex-col gap-4  w-full p-5 rounded-2xl justify-center items-center">
               <View className="flex-row gap-4">
                 <View className="bg-white/30 p-5 w-1/2 h-24 rounded-2xl items-center justify-start">

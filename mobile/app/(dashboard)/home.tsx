@@ -1,4 +1,11 @@
-import { View, Text, ScrollView, Dimensions, Image } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  Dimensions,
+  Image,
+  Pressable,
+} from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FontAwesome6 } from "@expo/vector-icons";
@@ -11,10 +18,12 @@ import filesService from "@/src/services/file.service";
 import TrailsCarousel from "@/src/components/home/TrailsCarousel";
 import Discover from "@/src/components/home/Discover";
 import WeatherWidgetMobile from "@/src/components/home/Weather";
+import { useRouter } from "expo-router";
 
 const Home = () => {
   const { usersData, getUserByEmail } = useGetUsers();
   const [profileImgUrl, setProfileImgUrl] = useState<string | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const loadUser = async () => {
@@ -54,24 +63,27 @@ const Home = () => {
           showsVerticalScrollIndicator={false}
         >
           <View className="flex flex-col gap-5">
-            {/* Header z profilem */}
             <View className="flex flex-row items-center justify-between">
               <View className="flex flex-row items-center gap-3">
-                {profileImgUrl ? (
-                  <Image
-                    source={{ uri: profileImgUrl }}
-                    className="w-16 h-16 rounded-full border-2 border-white/30"
-                    style={{ objectFit: "cover" }}
-                  />
-                ) : (
-                  <View className="w-16 h-16 rounded-full bg-white/20 items-center justify-center border-2 border-white/30">
-                    <FontAwesome6
-                      name="circle-user"
-                      size={40}
-                      color="#ffffffaa"
+                <Pressable
+                  onPress={() => router.replace("/(dashboard)/profile")}
+                >
+                  {profileImgUrl ? (
+                    <Image
+                      source={{ uri: profileImgUrl }}
+                      className="w-16 h-16 rounded-full border-2 border-white/30"
+                      style={{ objectFit: "cover" }}
                     />
-                  </View>
-                )}
+                  ) : (
+                    <View className="w-16 h-16 rounded-full bg-white/20 items-center justify-center border-2 border-white/30">
+                      <FontAwesome6
+                        name="circle-user"
+                        size={40}
+                        color="#ffffffaa"
+                      />
+                    </View>
+                  )}
+                </Pressable>
                 <View className="flex flex-col">
                   <Text className="text-sm text-white/70">Witaj ponownie</Text>
                   <Text className="text-xl text-white font-bold">
