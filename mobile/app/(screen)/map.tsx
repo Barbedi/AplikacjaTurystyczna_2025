@@ -55,7 +55,6 @@ const MapScreen = () => {
 
   const handlePress = (e: any) => {
     const { geometry } = e;
-    // Add route point on map click
     if (geometry?.coordinates) {
       const coord = geometry.coordinates;
       setClickedPoints((prev) => [...prev, { coords: coord }]);

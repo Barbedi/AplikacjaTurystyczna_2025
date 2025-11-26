@@ -155,6 +155,7 @@ export interface UserPeak {
   description?: string;
   photo_url?: string;
   verified?: boolean;
+  peak_elevation?: number;
 }
 
 export interface UserPeaks {

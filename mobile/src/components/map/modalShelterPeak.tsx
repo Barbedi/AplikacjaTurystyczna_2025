@@ -38,22 +38,25 @@ const ModalShelterPeak = ({
       onRequestClose={onClose}
     >
       <Pressable
-        className="flex-1 bg-black/50 justify-center items-center"
         onPress={onClose}
+        className="flex-1 justify-center items-center"
+        style={{ backgroundColor: "rgba(0, 0, 0, 0.6)" }}
       >
         <Pressable
-          className="bg-white rounded-2xl p-5 w-[85%] max-w-[400px]"
+          className="bg-white rounded-3xl p-6 w-[80%] max-w-[360px]"
           style={{
+            backgroundColor: "white",
             shadowColor: "#000",
             shadowOffset: { width: 0, height: 2 },
             shadowOpacity: 0.25,
             shadowRadius: 4,
-            elevation: 5,
+            elevation: 4,
+            marginHorizontal: 20,
           }}
           onPress={(e) => e.stopPropagation()}
         >
-          <View className="flex-row mb-4">
-            <Text className="text-xl font-bold text-slate-800 text-center flex-1">
+          <View className="flex-row mb-4 ">
+            <Text className="text-xl font-bold text-black text-center flex-1">
               {selectedFeature?.type === "shelter" ? (
                 <FontAwesome6 name="tent" size={19} color="black" />
               ) : (

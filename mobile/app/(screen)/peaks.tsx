@@ -1,4 +1,4 @@
-import { View, Text, ScrollView } from "react-native";
+import { View, Text, ScrollView, Pressable } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FontAwesome6 } from "@expo/vector-icons";
@@ -6,12 +6,21 @@ import { useEffect, useState } from "react";
 import useGetUsers from "@/src/hooks/useGetUser";
 import userpeaksService from "@/src/services/userpeaks.service";
 import { getAuthenticatedUser } from "@/src/config/api";
+import { UserPeak } from "@/src/types";
+import PeaksBottomSheet from "@/src/components/peak/PeaksBottomSheet";
+import BottomSheet from "@gorhom/bottom-sheet";
+import { useRef } from "react";
 
 const PeaksScreen = () => {
   const { getUserByEmail, usersData, loading: userLoading } = useGetUsers();
-  const [peaks, setPeaks] = useState<any>(null);
+  const [myPeaks, setMyPeaks] = useState<UserPeak[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const bottomSheetRef = useRef<BottomSheet>(null);
+
+  const handleOpenBottomSheet = () => {
+    bottomSheetRef.current?.expand();
+  };
 
   useEffect(() => {
     const loadUser = async () => {
@@ -39,7 +48,7 @@ const PeaksScreen = () => {
         const response = await userpeaksService.getUserPeaks(currentUser.id);
         const { data, total, limit } = response.data;
 
-        setPeaks(data || []);
+        setMyPeaks(data || []);
       } catch (err) {
       } finally {
         setLoading(false);
@@ -73,8 +82,8 @@ const PeaksScreen = () => {
               </View>
             )}
 
-            {!loading && !error && peaks && peaks.length > 0 ? (
-              peaks.map((peak: any, index: number) => (
+            {!loading && !error && myPeaks ? (
+              myPeaks.map((peak: UserPeak, index: number) => (
                 <View
                   key={index}
                   className="w-full bg-white/10 rounded-2xl p-5 border-l-4 border-yellow-500"
@@ -84,7 +93,7 @@ const PeaksScreen = () => {
                       <View className="bg-yellow-500/20 w-12 h-12 rounded-full items-center justify-center">
                         <FontAwesome6 name="crown" size={24} color="#eab308" />
                         <Text className=" absolute top-5 right-4.1 text-white font-semibold text-xs">
-                          {peak.times_visited}{" "}
+                          {peak.times_visited}
                         </Text>
                       </View>
                       <View>
@@ -92,7 +101,7 @@ const PeaksScreen = () => {
                           {peak.peak_name || "Nieznany szczyt"}
                         </Text>
                         <Text className="text-sm text-white/70">
-                          {peak.elevation || "?"} m n.p.m.
+                          {peak.peak_elevation || "?"} m n.p.m.
                         </Text>
                       </View>
                     </View>
@@ -135,6 +144,15 @@ const PeaksScreen = () => {
           </View>
         </ScrollView>
       </SafeAreaView>
+
+      <Pressable
+        onPress={handleOpenBottomSheet}
+        className="absolute bottom-6 self-center bg-blue-500 w-16 h-16 rounded-full items-center justify-center shadow-lg shadow-blue-900 elevation-5"
+      >
+        <FontAwesome6 name="plus" size={24} color="white" />
+      </Pressable>
+
+      <PeaksBottomSheet ref={bottomSheetRef} />
     </LinearGradient>
   );
 };
