@@ -11,15 +11,18 @@ import {
 } from "@maplibre/maplibre-react-native";
 import { Shelters, Peaks } from "../../src/types";
 import BottomSheet from "@gorhom/bottom-sheet";
-import RouteBottomSheet from "../../src/components/map/RouteBottomSheet";
+import RouteBottomSheet, {
+  RouteBottomSheetRef,
+} from "../../src/components/map/RouteBottomSheet";
 import ModalShelterPeak from "../../src/components/map/modalShelterPeak";
 import trailsService from "../../src/services/trails.service";
 import { getAuthenticatedUser } from "../../src/config/api";
 import useGetUsers from "../../src/hooks/useGetUser";
+import FeaturesListService from "../../src/services/featuresList.service";
 
 const MapScreen = () => {
   const MAPTILER_KEY = "DdJo20VMMy7tFRXLTfO6";
-  const bottomSheetRef = useRef<BottomSheet>(null);
+  const bottomSheetRef = useRef<RouteBottomSheetRef>(null);
   const { getUserByEmail, usersData } = useGetUsers();
 
   const [shelters, setShelters] = useState<Shelters[]>([]);
@@ -264,11 +267,7 @@ const MapScreen = () => {
             const coordinates =
               routeData.geometry?.features?.[0]?.geometry?.coordinates || [];
 
-            const difficulty =
-              Array.isArray(routeData.difficulty) &&
-              routeData.difficulty.length > 0
-                ? routeData.difficulty.join(", ")
-                : "średni";
+            const difficulty = routeData.difficulty || "Średnia";
 
             const points = routeData.points.map(
               (
@@ -302,12 +301,36 @@ const MapScreen = () => {
             const response = await trailsService.createTrail(trailPayload);
 
             if (response.status === 201) {
+              const newTrailId =
+                response.data?.data?.id ||
+                response.data?.id ||
+                response.data?.trail?.id;
+
+              if (
+                newTrailId &&
+                routeData.features &&
+                routeData.features.length > 0
+              ) {
+                try {
+                  const featureIds = routeData.features.map((id: string) =>
+                    parseInt(id),
+                  );
+                  await FeaturesListService.updateTrailFeatures(
+                    newTrailId,
+                    featureIds,
+                  );
+                } catch (featError) {
+                  console.error("Błąd zapisywania cech:", featError);
+                }
+              }
+
               Alert.alert("Sukces", "Trasa została zapisana pomyślnie!", [
                 {
                   text: "OK",
                   onPress: () => {
                     setClickedPoints([]);
                     setRouteGeoJson(null);
+                    bottomSheetRef.current?.resetForm();
                     bottomSheetRef.current?.close();
                   },
                 },

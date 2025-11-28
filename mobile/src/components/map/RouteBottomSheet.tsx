@@ -21,7 +21,12 @@ interface RouteBottomSheetProps {
   saving?: boolean;
 }
 
-const RouteBottomSheet = forwardRef<BottomSheet, RouteBottomSheetProps>(
+export interface RouteBottomSheetRef {
+  close: () => void;
+  resetForm: () => void;
+}
+
+const RouteBottomSheet = forwardRef<RouteBottomSheetRef, RouteBottomSheetProps>(
   (
     {
       clickedPoints,
@@ -33,6 +38,7 @@ const RouteBottomSheet = forwardRef<BottomSheet, RouteBottomSheetProps>(
     },
     ref,
   ) => {
+    const bottomSheetRef = React.useRef<BottomSheet>(null);
     const snapPoints = useMemo(() => ["25%", "50%", "80%"], []);
     const [routeName, setRouteName] = useState("");
     const [openType, setOpenType] = useState(false);
@@ -62,7 +68,17 @@ const RouteBottomSheet = forwardRef<BottomSheet, RouteBottomSheetProps>(
       { id: number; name: string; weight: number }[]
     >([]);
 
-    // Fetch features from API
+    React.useImperativeHandle(ref, () => ({
+      close: () => {
+        bottomSheetRef.current?.close();
+      },
+      resetForm: () => {
+        setRouteName("");
+        setRegionValue("tatry");
+        setTypeValue("one-way");
+        setDifficultyValue([]);
+      },
+    }));
     useEffect(() => {
       FeaturesListService.getAll()
         .then((res) => {
@@ -115,7 +131,6 @@ const RouteBottomSheet = forwardRef<BottomSheet, RouteBottomSheetProps>(
       };
     }, [routeGeoJson]);
 
-    // Calculate difficulty based on selected features
     const calculatedDifficulty = useMemo(() => {
       if (!routeStats || fullFeaturesData.length === 0) return "Nieznana";
       
@@ -149,7 +164,8 @@ const RouteBottomSheet = forwardRef<BottomSheet, RouteBottomSheetProps>(
         points: clickedPoints,
         routeType: typeValue,
         region: regionValue,
-        difficulty: difficultyValue,
+        difficulty: calculatedDifficulty,
+        features: difficultyValue,
         geometry: routeGeoJson,
         stats: routeStats,
       };
@@ -158,7 +174,7 @@ const RouteBottomSheet = forwardRef<BottomSheet, RouteBottomSheetProps>(
 
     return (
       <BottomSheet
-        ref={ref}
+        ref={bottomSheetRef}
         snapPoints={snapPoints}
         index={0}
         enablePanDownToClose={false}
@@ -375,9 +391,8 @@ const RouteBottomSheet = forwardRef<BottomSheet, RouteBottomSheetProps>(
               />
             </View>
 
-            {/* Difficulty Display */}
             <View className="mb-4 bg-white/10 p-4 rounded-2xl">
-              <Text className="text-white/70 text-center text-sm mb-2">
+              <Text className="text-white text-center text-sm mb-2">
                 Poziom trudności:
               </Text>
               <View 
@@ -396,7 +411,7 @@ const RouteBottomSheet = forwardRef<BottomSheet, RouteBottomSheetProps>(
                 </Text>
               </View>
               {difficultyValue.length === 0 && (
-                <Text className="text-white/50 text-xs text-center mt-2">
+                <Text className="text-white/70 text-xs text-center mt-2">
                   Wybierz cechy techniczne aby uzyskać dokładniejszą ocenę
                 </Text>
               )}

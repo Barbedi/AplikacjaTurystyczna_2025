@@ -2,7 +2,7 @@ export function calculateDifficulty(
   distance: number,
   elevationGain: number,
   duration: number,
-  selectedFeatures: string | number[],
+  selectedFeatures: (string | number)[],
   localFeatures: { id: number; name: string; weight: number }[],
 ): string {
   let score = 0;
@@ -19,9 +19,12 @@ export function calculateDifficulty(
   else if (duration > 5) score += 1;
 
   for (const featureId of selectedFeatures) {
-    const found = localFeatures.find((f) =>
-      typeof featureId === "string" ? f.name === featureId : f.id === featureId,
-    );
+    const found = localFeatures.find((f) => {
+      if (typeof featureId === "string") {
+        return f.name === featureId || f.id.toString() === featureId;
+      }
+      return f.id === featureId;
+    });
     if (found) score += found.weight;
   }
 
@@ -35,16 +38,16 @@ export function calculateDifficulty(
 export function getDifficultyColor(difficulty: string) {
   switch (difficulty) {
     case "Bardzo trudna":
-      return "#ef4444";
+      return "#ff2d95"; 
     case "Trudna":
-      return "#f97316";
+      return "#ff8f00"; 
     case "Średnia":
-      return "#eab308";
+      return "#ffee32"; 
     case "Łatwa":
-      return "#22c55e";
+      return "#2fffd7"; 
     case "Bardzo łatwa":
-      return "#3b82f6";
+      return "#9333ea"; 
     default:
-      return "#6b7280";
+      return "#d1d5db"; 
   }
 }
