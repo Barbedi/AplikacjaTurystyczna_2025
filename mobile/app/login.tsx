@@ -16,6 +16,7 @@ import { useRouter } from "expo-router";
 import { loginUser, getAuthenticatedUser } from "@/src/config/api";
 import type { AuthResponse } from "@/src/types";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
+import { toast } from "@/src/utils/toast";
 
 export default function Login() {
   const router = useRouter();
@@ -23,15 +24,27 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = async () => {
-    try {
-      const data = await loginUser(email, password);
-      console.log("✅ Zalogowano pomyślnie:", data);
-      router.replace("/(dashboard)/home");
-    } catch (err: any) {
-      console.error("Błąd logowania:", err.response?.data || err.message);
+ const handleLogin = async () => {
+  try {
+    const data = await loginUser(email, password);
+    toast.success("Zalogowano pomyślnie", "Witaj w HikeUp!");
+    router.replace("/(dashboard)/home");
+
+  } catch (err: any) {
+    console.log("Login error:", err);
+    if (err?.response?.status === 401) {
+      toast.info("Nieprawidłowy email lub hasło", "Spróbuj ponownie");
+      return;
     }
-  };
+
+    if (err?.message === "Network Error") {
+      toast.error("Brak połączenia z internetem", "Sprawdź sieć");
+      return;
+    }
+    toast.error("Wystąpił nieoczekiwany błąd", "Spróbuj ponownie później");
+  }
+};
+
 
   return (
     <LinearGradient

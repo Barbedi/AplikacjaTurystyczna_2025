@@ -80,7 +80,8 @@ const TrailsDetails = () => {
                 <View className="bg-white/30 p-5 w-1/2 h-24 rounded-2xl items-center justify-start">
                   <Text className="text-white text-md">Czas przejścia</Text>
                   <Text className="text-white text-2xl font-bold">
-                    {trail?.duration_minutes} min
+                    {Math.floor((trail?.duration_minutes || 0) / 60)}h{" "}
+                    {(trail?.duration_minutes || 0) % 60}min
                   </Text>
                 </View>
               </View>

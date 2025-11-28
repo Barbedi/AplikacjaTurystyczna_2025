@@ -40,22 +40,23 @@ const PeaksScreen = () => {
 
   const currentUser = usersData?.[0]?.[0];
 
+  const loadPeaks = async (silent = false) => {
+    if (!currentUser?.id) return;
+    if (!silent) setLoading(true);
+    try {
+      const response = await userpeaksService.getUserPeaks(currentUser.id);
+      const { data } = response.data;
+      setMyPeaks(data || []);
+    } catch (err) {
+      console.error("Błąd ładowania szczytów:", err);
+      setError("Nie udało się załadować szczytów.");
+    } finally {
+      if (!silent) setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const loadStats = async () => {
-      if (!currentUser?.id) return;
-      setLoading(true);
-      try {
-        const response = await userpeaksService.getUserPeaks(currentUser.id);
-        const { data, total, limit } = response.data;
-
-        setMyPeaks(data || []);
-      } catch (err) {
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (currentUser?.id) loadStats();
+    if (currentUser?.id) loadPeaks();
   }, [currentUser?.id]);
   return (
     <LinearGradient colors={["#5996eb", "#050c28"]} className="flex-1">
@@ -152,7 +153,7 @@ const PeaksScreen = () => {
         <FontAwesome6 name="plus" size={24} color="white" />
       </Pressable>
 
-      <PeaksBottomSheet ref={bottomSheetRef} />
+      <PeaksBottomSheet ref={bottomSheetRef} onPeakAdded={() => loadPeaks(true)} />
     </LinearGradient>
   );
 };

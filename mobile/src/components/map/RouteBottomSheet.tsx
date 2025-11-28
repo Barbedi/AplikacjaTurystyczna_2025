@@ -441,6 +441,7 @@ const RouteBottomSheet = forwardRef<RouteBottomSheetRef, RouteBottomSheetProps>(
                     {routeStats.duration > 0
                       ? `${routeStats.duration} min`
                       : "-- min"}
+                      
                   </Text>
                 </View>
                 <View className="flex-row justify-between mb-2">

@@ -21,6 +21,7 @@ import { useRouter } from "expo-router";
 import { logoutUser } from "@/src/config/api";
 import { Users } from "@/src/types";
 import useUpdateUser from "@/src/hooks/useUpdateUser";
+import { toast } from "@/src/utils/toast";
 
 const ProfileScreen = () => {
   const router = useRouter();
@@ -72,14 +73,30 @@ const ProfileScreen = () => {
       setFitness(user.fitness_level);
     }
   }, [user]);
-  const handleLogout = async () => {
-    try {
-      await logoutUser();
+ const handleLogout = async () => {
+  try {
+    await logoutUser();
+    toast.success("Wylogowano pomyślnie", "Do zobaczenia!");
+    router.replace("/login");
+
+  } catch (err: any) {
+    console.error("Błąd wylogowania:", err);
+
+    if (err?.response?.status === 401 || err?.response?.status === 403) {
+      toast.info("Twoja sesja wygasła", "Wylogowanie nie powiodło się");
       router.replace("/login");
-    } catch (err: any) {
-      console.error(" Błąd wylogowania:", err);
+      return;
     }
-  };
+
+    if (err?.message?.toLowerCase().includes("network")) {
+      toast.error("Brak połączenia z internetem", "Wylogowanie nie powiodło się");
+      return;
+    }
+
+    toast.error("Nie udało się wylogować", "Spróbuj ponownie później");
+  }
+};
+
   const handleEditMode = () => {
     setEditMode(true);
   };
@@ -107,11 +124,11 @@ const ProfileScreen = () => {
       if (message) {
         setEditMode(false);
         await getUserByEmail(user.email || "");
-        Alert.alert("Sukces", "Profil został zaktualizowany");
+        toast.success("Profil został zaktualizowany");
       }
     } catch (error) {
       console.error("Error saving profile changes:", error);
-      Alert.alert("Błąd", "Nie udało się zapisać zmian");
+      toast.error("Nie udało się zapisać zmian");
     } finally {
       setIsSaving(false);
     }

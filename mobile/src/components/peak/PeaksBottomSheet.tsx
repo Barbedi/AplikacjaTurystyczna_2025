@@ -22,11 +22,14 @@ import userpeaksService from "@/src/services/userpeaks.service";
 import { Peaks } from "@/src/types";
 import { getAuthenticatedUser } from "@/src/config/api";
 import useGetUsers from "@/src/hooks/useGetUser";
+import { toast } from "@/src/utils/toast";
 
-interface PeaksBottomSheetProps {}
+interface PeaksBottomSheetProps {
+  onPeakAdded?: () => void;
+}
 
 const PeaksBottomSheet = forwardRef<BottomSheet, PeaksBottomSheetProps>(
-  (props, ref) => {
+  ({ onPeakAdded }, ref) => {
     const [searchTerm, setSearchTerm] = useState("");
     const [delayedSearchTerm, setDelayedSearchTerm] = useState("");
     const [results, setResults] = useState<Peaks[]>([]);
@@ -178,9 +181,12 @@ const PeaksBottomSheet = forwardRef<BottomSheet, PeaksBottomSheetProps>(
           formData.photo_url
         );
 
+        toast.success("Szczyt został dodany", "Gratualcje zdobycia nowego szczytu");
+        onPeakAdded?.();
         clearForm();
       } catch (err) {
         console.error("Błąd:", err);
+        toast.error("Nie udało się dodać szczytu");
       }
 
       setSaving(false);
