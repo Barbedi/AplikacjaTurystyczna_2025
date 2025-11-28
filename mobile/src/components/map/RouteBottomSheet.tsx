@@ -1,4 +1,4 @@
-import React, { forwardRef, useMemo, useState } from "react";
+import React, { forwardRef, useMemo, useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -9,6 +9,8 @@ import {
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { FontAwesome6 } from "@expo/vector-icons";
 import DropDownPicker from "react-native-dropdown-picker";
+import FeaturesListService from "@/src/services/featuresList.service";
+import { calculateDifficulty, getDifficultyColor } from "@/src/utils/calculateDifficulty";
 
 interface RouteBottomSheetProps {
   clickedPoints: Array<{ coords: [number, number]; name?: string }>;
@@ -56,7 +58,32 @@ const RouteBottomSheet = forwardRef<BottomSheet, RouteBottomSheetProps>(
       { label: "Beskid Sądecki", value: "sadecki" },
     ]);
 
-    // Calculate route statistics
+    const [fullFeaturesData, setFullFeaturesData] = useState<
+      { id: number; name: string; weight: number }[]
+    >([]);
+
+    // Fetch features from API
+    useEffect(() => {
+      FeaturesListService.getAll()
+        .then((res) => {
+          const featuresData = res.data.data || [];
+          setFullFeaturesData(featuresData);
+          const formattedFeatures = featuresData.map((feature: any) => ({
+            label: feature.name,
+            value: feature.id.toString(),
+          }));
+          setRouteDifficulties(formattedFeatures);
+        })
+        .catch((err) => {
+          console.error("Error loading features:", err);
+          setRouteDifficulties([
+            { label: "Łatwy", value: "easy" },
+            { label: "Średni", value: "medium" },
+            { label: "Trudny", value: "hard" },
+          ]);
+        });
+    }, []);
+
     const routeStats = useMemo(() => {
       if (!routeGeoJson?.features?.[0]) {
         return { distance: 0, elevationGain: 0, elevationLoss: 0, duration: 0 };
@@ -87,6 +114,22 @@ const RouteBottomSheet = forwardRef<BottomSheet, RouteBottomSheetProps>(
         duration: Math.round(duration * 60),
       };
     }, [routeGeoJson]);
+
+    // Calculate difficulty based on selected features
+    const calculatedDifficulty = useMemo(() => {
+      if (!routeStats || fullFeaturesData.length === 0) return "Nieznana";
+      
+      const distanceKm = routeStats.distance / 1000;
+      const durationHours = routeStats.duration / 60;
+      
+      return calculateDifficulty(
+        distanceKm,
+        routeStats.elevationGain,
+        durationHours,
+        difficultyValue,
+        fullFeaturesData
+      );
+    }, [routeStats, difficultyValue, fullFeaturesData]);
 
     if (clickedPoints.length < 2) {
       return null;
@@ -278,7 +321,7 @@ const RouteBottomSheet = forwardRef<BottomSheet, RouteBottomSheetProps>(
 
             <View className="mb-4">
               <Text className="text-white/70 mb-2 text-sm font-semibold">
-                Ustal poziom trudności
+                Cechy trasy
               </Text>
               <DropDownPicker
                 open={openDifficulty}
@@ -288,9 +331,11 @@ const RouteBottomSheet = forwardRef<BottomSheet, RouteBottomSheetProps>(
                 setOpen={setOpenDifficulty}
                 setValue={setDifficultyValue}
                 setItems={setRouteDifficulties}
-                placeholder="Wybierz poziom trudności"
+                placeholder="Wybierz cechy trasy"
                 listMode="SCROLLVIEW"
-                zIndex={1000}
+                zIndex={6000}
+                mode="BADGE"
+                badgeDotColors={["#eab308", "#f97316", "#ef4444"]}
                 scrollViewProps={{
                   nestedScrollEnabled: true,
                 }}
@@ -307,6 +352,7 @@ const RouteBottomSheet = forwardRef<BottomSheet, RouteBottomSheetProps>(
                   borderColor: "rgba(255,255,255,0.2)",
                   borderRadius: 12,
                   marginTop: 4,
+                  maxHeight: 250,
                 }}
                 textStyle={{
                   color: "white",
@@ -327,6 +373,38 @@ const RouteBottomSheet = forwardRef<BottomSheet, RouteBottomSheetProps>(
                   color: "#1e293b",
                 }}
               />
+            </View>
+
+            {/* Difficulty Display */}
+            <View className="mb-4 bg-white/10 p-4 rounded-2xl">
+              <Text className="text-white/70 text-center text-sm mb-2">
+                Poziom trudności:
+              </Text>
+              <View 
+                className="px-4 py-2 rounded-full self-center"
+                style={{ 
+                  backgroundColor: `${getDifficultyColor(calculatedDifficulty)}33`,
+                  borderWidth: 1,
+                  borderColor: getDifficultyColor(calculatedDifficulty)
+                }}
+              >
+                <Text 
+                  className="font-bold text-center"
+                  style={{ color: getDifficultyColor(calculatedDifficulty) }}
+                >
+                  {calculatedDifficulty}
+                </Text>
+              </View>
+              {difficultyValue.length === 0 && (
+                <Text className="text-white/50 text-xs text-center mt-2">
+                  Wybierz cechy techniczne aby uzyskać dokładniejszą ocenę
+                </Text>
+              )}
+              {difficultyValue.length > 0 && (
+                <Text className="text-white/70 text-xs text-center mt-2">
+                  Wybrane cechy: {difficultyValue.length}
+                </Text>
+              )}
             </View>
 
             <View className="mb-4">
