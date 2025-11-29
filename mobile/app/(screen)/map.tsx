@@ -19,6 +19,7 @@ import trailsService from "../../src/services/trails.service";
 import { getAuthenticatedUser } from "../../src/config/api";
 import useGetUsers from "../../src/hooks/useGetUser";
 import FeaturesListService from "../../src/services/featuresList.service";
+import { toast } from "../../src/utils/toast";
 
 const MapScreen = () => {
   const MAPTILER_KEY = "DdJo20VMMy7tFRXLTfO6";
@@ -256,7 +257,7 @@ const MapScreen = () => {
           console.log("Zapisywanie trasy:", routeData);
 
           if (!currentUser?.id) {
-            Alert.alert("Błąd", "Musisz być zalogowany, aby zapisać trasę");
+            toast.error("Musisz być zalogowany, aby zapisać trasę");
             return;
           }
 
@@ -324,22 +325,16 @@ const MapScreen = () => {
                 }
               }
 
-              Alert.alert("Sukces", "Trasa została zapisana pomyślnie!", [
-                {
-                  text: "OK",
-                  onPress: () => {
-                    setClickedPoints([]);
-                    setRouteGeoJson(null);
-                    bottomSheetRef.current?.resetForm();
-                    bottomSheetRef.current?.close();
-                  },
-                },
-              ]);
+              toast.success("Trasa została zapisana pomyślnie!" ,"Gratulacje!");
+              setClickedPoints([]);
+              setRouteGeoJson(null);
+              bottomSheetRef.current?.resetForm();
+              bottomSheetRef.current?.close();
             }
           } catch (error: any) {
             console.error("Błąd zapisywania trasy:", error);
-            Alert.alert(
-              "Błąd",
+            toast.error(
+              "Nie udało się zapisać trasy",
               error.response?.data?.message || "Nie udało się zapisać trasy",
             );
           } finally {
