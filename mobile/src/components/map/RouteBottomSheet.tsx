@@ -190,7 +190,7 @@ const RouteBottomSheet = forwardRef<RouteBottomSheetRef, RouteBottomSheetProps>(
             <TextInput
               value={routeName}
               onChangeText={setRouteName}
-              className="bg-white/30 p-3 rounded-2xl mb-4"
+              className="bg-white/30 p-3 rounded-2xl mb-4 text-white"
               placeholder="Nazwa trasy"
               placeholderTextColor="#ffffff"
             />

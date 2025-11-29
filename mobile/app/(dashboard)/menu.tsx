@@ -30,6 +30,13 @@ export default function Menu() {
       bgColor: "bg-green-500/20",
     },
     {
+      title: "Propozycje tras",
+      route: "/(screen)/proposed",
+      icon: "person-hiking",
+      color: "#D9C650",
+      bgColor: "bg-yellow-500/20",
+    },
+    {
       title: "Ulubione trasy",
       route: "/(screen)/favourites",
       icon: "heart",
@@ -72,6 +79,7 @@ export default function Menu() {
         <ScrollView
           contentContainerStyle={{
             padding: 20,
+            paddingBottom: 100,
             flexGrow: 1,
           }}
           showsVerticalScrollIndicator={false}
