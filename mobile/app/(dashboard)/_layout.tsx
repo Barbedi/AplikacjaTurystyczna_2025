@@ -1,8 +1,8 @@
-import { Tabs } from "expo-router";
+import { MaterialTopTabs } from "@/src/components/MaterialTopTabs";
 import { Ionicons } from "@expo/vector-icons";
-import { View, Animated } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { View, Animated, TouchableOpacity, StyleSheet } from "react-native";
 import { useEffect, useRef, ComponentProps } from "react";
+import { MaterialTopTabBarProps } from "@react-navigation/material-top-tabs";
 
 type IoniconsName = ComponentProps<typeof Ionicons>['name'];
 
@@ -20,14 +20,12 @@ interface TabConfig {
   outlineIcon: IoniconsName;
 }
 
-// --- Konfiguracja ---
 const tabsConfig: TabConfig[] = [
   { name: "home", title: "Home", icon: "home", outlineIcon: "home-outline" },
   { name: "menu", title: "Menu", icon: "list", outlineIcon: "list-outline" },
   { name: "profile", title: "Profile", icon: "person", outlineIcon: "person-outline" },
 ];
 
-// --- Komponent Ikony ---
 function AnimatedTabBarIcon({ focused, name, outlineName }: AnimatedTabBarIconProps) {
   const scaleAnim = useRef(new Animated.Value(focused ? 1 : 0.9)).current;
   const fadeAnim = useRef(new Animated.Value(focused ? 1 : 0.6)).current;
@@ -68,55 +66,108 @@ function AnimatedTabBarIcon({ focused, name, outlineName }: AnimatedTabBarIconPr
   );
 }
 
-// --- Główny Layout ---
-export default function DashboardLayout() {
+function CustomTabBar({ state, descriptors, navigation }: MaterialTopTabBarProps) {
   return (
-    <Tabs
-      screenOptions={{
-        headerShown: false,
-        tabBarShowLabel: false,
-        tabBarStyle: {
-          position: "absolute",
-          backgroundColor: "#1a2b5c90",
-          width: "80%",
-          marginHorizontal: "10.5%",
-          bottom: 20,
-          borderTopWidth: 0,
-          elevation: 15,
-          height: 55,
-          borderRadius: 35,
-          shadowColor: "#000",
-          shadowOpacity: 0.3,
-          shadowRadius: 10,
-          shadowOffset: { width: 0, height: 5 },
-          paddingBottom: 0,
-          borderWidth: 1,
-          borderColor: "rgba(255,255,255,0.1)",
-          margin:0,
-          padding:0,
-        },
-        tabBarItemStyle: {
-          paddingVertical: 10,
-          height: 55,
-          margin:0,
-          padding:0,
-          
+    <View style={styles.tabBarContainer}>
+      {state.routes.map((route, index) => {
+        const { options } = descriptors[route.key];
+        const isFocused = state.index === index;
 
-        },
-      }}
-    >
-      {tabsConfig.map((tab) => (
-        <Tabs.Screen
-          key={tab.name}
-          name={tab.name}
-          options={{
-            title: tab.title,
-            tabBarIcon: ({ focused }) => (
-              <AnimatedTabBarIcon focused={focused} name={tab.icon} outlineName={tab.outlineIcon} />
-            ),
-          }}
-        />
-      ))}
-    </Tabs>
+        const onPress = () => {
+          const event = navigation.emit({
+            type: 'tabPress',
+            target: route.key,
+            canPreventDefault: true,
+          });
+
+          if (!isFocused && !event.defaultPrevented) {
+            navigation.navigate(route.name, route.params);
+          }
+        };
+
+        const onLongPress = () => {
+          navigation.emit({
+            type: 'tabLongPress',
+            target: route.key,
+          });
+        };
+
+        // Find the icon name from tabsConfig based on route.name
+        const tabConfig = tabsConfig.find(t => t.name === route.name);
+        // If route is not in config (e.g. index), skip or handle default
+        if (!tabConfig) return null;
+
+        return (
+          <TouchableOpacity
+            key={route.key}
+            accessibilityRole="button"
+            accessibilityState={isFocused ? { selected: true } : {}}
+            accessibilityLabel={options.tabBarAccessibilityLabel}
+            onPress={onPress}
+            onLongPress={onLongPress}
+            style={styles.tabItem}
+            activeOpacity={1}
+          >
+             <AnimatedTabBarIcon
+                focused={isFocused}
+                name={tabConfig.icon}
+                outlineName={tabConfig.outlineIcon}
+             />
+          </TouchableOpacity>
+        );
+      })}
+    </View>
   );
 }
+
+export default function DashboardLayout() {
+  return (
+    <View style={{ flex: 1, position: 'relative' }}>
+      <MaterialTopTabs
+        tabBarPosition="bottom"
+        tabBar={(props) => <CustomTabBar {...props} />}
+        screenOptions={{
+          swipeEnabled: true,
+          animationEnabled: true,
+        }}
+      >
+        {tabsConfig.map((tab) => (
+          <MaterialTopTabs.Screen
+            key={tab.name}
+            name={tab.name}
+            options={{
+              title: tab.title,
+            }}
+          />
+        ))}
+      </MaterialTopTabs>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  tabBarContainer: {
+    position: "absolute",
+    backgroundColor: "#1a2b5c",
+    width: "80%",
+    alignSelf: "center",
+    bottom: 20,
+    elevation: 20,
+    zIndex: 100,
+    height: 55,
+    borderRadius: 35,
+    shadowColor: "#000",
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 5 },
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+  },
+  tabItem: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: '100%',
+  }
+});
