@@ -38,16 +38,16 @@ export function calculateDifficulty(
 export function getDifficultyColor(difficulty: string) {
   switch (difficulty) {
     case "Bardzo trudna":
-      return "#ff2d95"; 
+      return "#ff2d95";
     case "Trudna":
-      return "#ff8f00"; 
+      return "#ff8f00";
     case "Średnia":
-      return "#ffee32"; 
+      return "#ffee32";
     case "Łatwa":
-      return "#2fffd7"; 
+      return "#2fffd7";
     case "Bardzo łatwa":
-      return "#9333ea"; 
+      return "#9333ea";
     default:
-      return "#d1d5db"; 
+      return "#d1d5db";
   }
 }

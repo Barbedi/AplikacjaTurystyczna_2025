@@ -65,9 +65,7 @@ const Home = () => {
           <View className="flex flex-col gap-5">
             <View className="flex flex-row items-center justify-between">
               <View className="flex flex-row items-center gap-3">
-                <Pressable
-                  onPress={() => router.replace("/(dashboard)/profile")}
-                >
+                <Pressable onPress={() => router.push("/(dashboard)/profile")}>
                   {profileImgUrl ? (
                     <Image
                       source={{ uri: profileImgUrl }}
@@ -91,8 +89,6 @@ const Home = () => {
                   </Text>
                 </View>
               </View>
-
-              {/* Ikona powiadomień */}
               <View className="bg-white/20 w-12 h-12 rounded-full items-center justify-center">
                 <FontAwesome6 name="bell" size={20} color="#fff" />
               </View>

@@ -325,7 +325,7 @@ const MapScreen = () => {
                 }
               }
 
-              toast.success("Trasa została zapisana pomyślnie!" ,"Gratulacje!");
+              toast.success("Trasa została zapisana pomyślnie!", "Gratulacje!");
               setClickedPoints([]);
               setRouteGeoJson(null);
               bottomSheetRef.current?.resetForm();

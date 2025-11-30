@@ -33,20 +33,19 @@ export function CustomToast({
   };
 
   return (
-   <View className={`w-[90%] bg-black/70 rounded-2xl p-4 flex-row items-center gap-3 border  border-l-4 ${getColor()}`}>
-    {getIcon()}
-  <View className="flex-shrink">
-    <Text
-      className={`text-white text-lg font-bold ${text2 ? "mb-0.5" : ""}`}
+    <View
+      className={`w-[90%] bg-black/70 rounded-2xl p-4 flex-row items-center gap-3 border  border-l-4 ${getColor()}`}
     >
-      {text1}
-    </Text>
+      {getIcon()}
+      <View className="flex-shrink">
+        <Text
+          className={`text-white text-lg font-bold ${text2 ? "mb-0.5" : ""}`}
+        >
+          {text1}
+        </Text>
 
-    {text2 && (
-      <Text className="text-sm text-white">{text2}</Text>
-    )}
-  </View>
-</View>
-
+        {text2 && <Text className="text-sm text-white">{text2}</Text>}
+      </View>
+    </View>
   );
 }

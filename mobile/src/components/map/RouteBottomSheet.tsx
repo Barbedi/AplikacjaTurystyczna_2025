@@ -10,7 +10,10 @@ import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { FontAwesome6 } from "@expo/vector-icons";
 import DropDownPicker from "react-native-dropdown-picker";
 import FeaturesListService from "@/src/services/featuresList.service";
-import { calculateDifficulty, getDifficultyColor } from "@/src/utils/calculateDifficulty";
+import {
+  calculateDifficulty,
+  getDifficultyColor,
+} from "@/src/utils/calculateDifficulty";
 
 interface RouteBottomSheetProps {
   clickedPoints: Array<{ coords: [number, number]; name?: string }>;
@@ -133,16 +136,16 @@ const RouteBottomSheet = forwardRef<RouteBottomSheetRef, RouteBottomSheetProps>(
 
     const calculatedDifficulty = useMemo(() => {
       if (!routeStats || fullFeaturesData.length === 0) return "Nieznana";
-      
+
       const distanceKm = routeStats.distance / 1000;
       const durationHours = routeStats.duration / 60;
-      
+
       return calculateDifficulty(
         distanceKm,
         routeStats.elevationGain,
         durationHours,
         difficultyValue,
-        fullFeaturesData
+        fullFeaturesData,
       );
     }, [routeStats, difficultyValue, fullFeaturesData]);
 
@@ -395,15 +398,15 @@ const RouteBottomSheet = forwardRef<RouteBottomSheetRef, RouteBottomSheetProps>(
               <Text className="text-white text-center text-sm mb-2">
                 Poziom trudności:
               </Text>
-              <View 
+              <View
                 className="px-4 py-2 rounded-full self-center"
-                style={{ 
+                style={{
                   backgroundColor: `${getDifficultyColor(calculatedDifficulty)}33`,
                   borderWidth: 1,
-                  borderColor: getDifficultyColor(calculatedDifficulty)
+                  borderColor: getDifficultyColor(calculatedDifficulty),
                 }}
               >
-                <Text 
+                <Text
                   className="font-bold text-center"
                   style={{ color: getDifficultyColor(calculatedDifficulty) }}
                 >
@@ -441,7 +444,6 @@ const RouteBottomSheet = forwardRef<RouteBottomSheetRef, RouteBottomSheetProps>(
                     {routeStats.duration > 0
                       ? `${routeStats.duration} min`
                       : "-- min"}
-                      
                   </Text>
                 </View>
                 <View className="flex-row justify-between mb-2">

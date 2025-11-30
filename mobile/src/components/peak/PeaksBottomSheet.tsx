@@ -141,7 +141,12 @@ const PeaksBottomSheet = forwardRef<BottomSheet, PeaksBottomSheetProps>(
     }, []);
 
     const handleSubmit = async () => {
-      if (!formData.name || !formData.elevation || !formData.latitude || !formData.longitude) {
+      if (
+        !formData.name ||
+        !formData.elevation ||
+        !formData.latitude ||
+        !formData.longitude
+      ) {
         console.error("Wszystkie pola są wymagane");
         return;
       }
@@ -178,10 +183,13 @@ const PeaksBottomSheet = forwardRef<BottomSheet, PeaksBottomSheetProps>(
           peakId,
           userId,
           formData.description,
-          formData.photo_url
+          formData.photo_url,
         );
 
-        toast.success("Szczyt został dodany", "Gratualcje zdobycia nowego szczytu");
+        toast.success(
+          "Szczyt został dodany",
+          "Gratualcje zdobycia nowego szczytu",
+        );
         onPeakAdded?.();
         clearForm();
       } catch (err) {
@@ -203,10 +211,12 @@ const PeaksBottomSheet = forwardRef<BottomSheet, PeaksBottomSheetProps>(
         enablePanDownToClose={true}
         handleIndicatorStyle={{ backgroundColor: "white" }}
       >
-        <View className="flex-1" style={{ 
-          
-          backgroundColor: "#3b82f6" 
-        }}>
+        <View
+          className="flex-1"
+          style={{
+            backgroundColor: "#3b82f6",
+          }}
+        >
           <BottomSheetScrollView contentContainerStyle={{ padding: 20 }}>
             <View>
               <View className="mb-6">
@@ -224,7 +234,11 @@ const PeaksBottomSheet = forwardRef<BottomSheet, PeaksBottomSheetProps>(
               </View>
               <View className="bg-white/10 backdrop-blur-lg rounded-3xl p-4 mb-4 border border-white/20">
                 <View className="flex-row items-center mb-2">
-                  <FontAwesome6 name="magnifying-glass" size={14} color="white" />
+                  <FontAwesome6
+                    name="magnifying-glass"
+                    size={14}
+                    color="white"
+                  />
                   <Text className="text-white/90 ml-2 font-semibold text-sm">
                     Wyszukaj szczyt
                   </Text>
@@ -248,14 +262,24 @@ const PeaksBottomSheet = forwardRef<BottomSheet, PeaksBottomSheetProps>(
                           key={peak.id}
                           onPress={() => selectPeak(peak)}
                           className="p-3 border-b border-gray-100"
-                          style={{ backgroundColor: idx % 2 === 0 ? "#f9fafb" : "white" }}
+                          style={{
+                            backgroundColor:
+                              idx % 2 === 0 ? "#f9fafb" : "white",
+                          }}
                         >
                           <View className="flex-row items-center">
-                            <FontAwesome6 name="mountain" size={12} color="#5996eb" />
-                            <Text className="text-gray-900 font-semibold ml-2">{peak.name}</Text>
+                            <FontAwesome6
+                              name="mountain"
+                              size={12}
+                              color="#5996eb"
+                            />
+                            <Text className="text-gray-900 font-semibold ml-2">
+                              {peak.name}
+                            </Text>
                           </View>
                           <Text className="text-gray-500 text-xs mt-1 ml-5">
-                            {peak.elevation} m n.p.m. • {peak.region || "Nieznany region"}
+                            {peak.elevation} m n.p.m. •{" "}
+                            {peak.region || "Nieznany region"}
                           </Text>
                         </Pressable>
                       ))}
@@ -271,14 +295,22 @@ const PeaksBottomSheet = forwardRef<BottomSheet, PeaksBottomSheetProps>(
                     Szczegóły szczytu
                   </Text>
                 </View>
-                
+
                 <View className="mb-3">
-                  <Text className="text-white/70 text-xs mb-1 ml-1">Wysokość</Text>
+                  <Text className="text-white/70 text-xs mb-1 ml-1">
+                    Wysokość
+                  </Text>
                   <View className="bg-white/20 rounded-xl flex-row items-center px-3">
-                    <FontAwesome6 name="arrow-up" size={12} color="rgba(255,255,255,0.7)" />
+                    <FontAwesome6
+                      name="arrow-up"
+                      size={12}
+                      color="rgba(255,255,255,0.7)"
+                    />
                     <TextInput
                       value={formData.elevation}
-                      onChangeText={(txt) => setFormData((p) => ({ ...p, elevation: txt }))}
+                      onChangeText={(txt) =>
+                        setFormData((p) => ({ ...p, elevation: txt }))
+                      }
                       className="flex-1 p-3 text-white font-medium"
                       placeholder="np. 2499"
                       placeholderTextColor="rgba(255,255,255,0.5)"
@@ -290,11 +322,15 @@ const PeaksBottomSheet = forwardRef<BottomSheet, PeaksBottomSheetProps>(
 
                 <View className="flex-row gap-3 mb-3">
                   <View className="flex-1">
-                    <Text className="text-white/70 text-xs mb-1 ml-1">Szerokość</Text>
+                    <Text className="text-white/70 text-xs mb-1 ml-1">
+                      Szerokość
+                    </Text>
                     <View className="bg-white/20 rounded-xl">
                       <TextInput
                         value={formData.latitude}
-                        onChangeText={(txt) => setFormData((p) => ({ ...p, latitude: txt }))}
+                        onChangeText={(txt) =>
+                          setFormData((p) => ({ ...p, latitude: txt }))
+                        }
                         className="p-3 text-white font-medium text-center"
                         placeholder="49.xxxx"
                         placeholderTextColor="rgba(255,255,255,0.5)"
@@ -303,11 +339,15 @@ const PeaksBottomSheet = forwardRef<BottomSheet, PeaksBottomSheetProps>(
                     </View>
                   </View>
                   <View className="flex-1">
-                    <Text className="text-white/70 text-xs mb-1 ml-1">Długość</Text>
+                    <Text className="text-white/70 text-xs mb-1 ml-1">
+                      Długość
+                    </Text>
                     <View className="bg-white/20 rounded-xl">
                       <TextInput
                         value={formData.longitude}
-                        onChangeText={(txt) => setFormData((p) => ({ ...p, longitude: txt }))}
+                        onChangeText={(txt) =>
+                          setFormData((p) => ({ ...p, longitude: txt }))
+                        }
                         className="p-3 text-white font-medium text-center"
                         placeholder="19.xxxx"
                         placeholderTextColor="rgba(255,255,255,0.5)"
@@ -318,7 +358,9 @@ const PeaksBottomSheet = forwardRef<BottomSheet, PeaksBottomSheetProps>(
                 </View>
 
                 <View className="mb-3">
-                  <Text className="text-white/70 text-xs mb-1 ml-1">Region</Text>
+                  <Text className="text-white/70 text-xs mb-1 ml-1">
+                    Region
+                  </Text>
                   <View className="bg-white/20 rounded-xl overflow-hidden">
                     <Picker
                       selectedValue={region}
@@ -326,18 +368,25 @@ const PeaksBottomSheet = forwardRef<BottomSheet, PeaksBottomSheetProps>(
                       style={{ color: "white" }}
                     >
                       <Picker.Item label="Tatry" value="Tatry" />
-                      <Picker.Item label="Pasmo Radziejowej" value="Pasmo Radziejowej" />
+                      <Picker.Item
+                        label="Pasmo Radziejowej"
+                        value="Pasmo Radziejowej"
+                      />
                       <Picker.Item label="Beskidy" value="Beskidy" />
                     </Picker>
                   </View>
                 </View>
 
                 <View>
-                  <Text className="text-white/70 text-xs mb-1 ml-1">Opis (opcjonalnie)</Text>
+                  <Text className="text-white/70 text-xs mb-1 ml-1">
+                    Opis (opcjonalnie)
+                  </Text>
                   <View className="bg-white/20 rounded-xl">
                     <TextInput
                       value={formData.description}
-                      onChangeText={(txt) => setFormData((p) => ({ ...p, description: txt }))}
+                      onChangeText={(txt) =>
+                        setFormData((p) => ({ ...p, description: txt }))
+                      }
                       className="p-3 text-white"
                       placeholder="Twoje notatki o szczycie..."
                       placeholderTextColor="rgba(255,255,255,0.5)"
@@ -351,10 +400,7 @@ const PeaksBottomSheet = forwardRef<BottomSheet, PeaksBottomSheetProps>(
 
               {/* Action Buttons */}
               <View className="flex-row gap-3">
-                <Pressable
-                  className="flex-1"
-                  onPress={clearForm}
-                >
+                <Pressable className="flex-1" onPress={clearForm}>
                   <View className="bg-white/15 p-4 rounded-2xl border border-white/20">
                     <View className="flex-row gap-2 justify-center items-center">
                       <FontAwesome6 name="xmark" size={16} color="white" />
@@ -374,7 +420,11 @@ const PeaksBottomSheet = forwardRef<BottomSheet, PeaksBottomSheetProps>(
                       {saving ? (
                         <ActivityIndicator color="#5996eb" />
                       ) : (
-                        <FontAwesome6 name="check-circle" size={16} color="#5996eb" />
+                        <FontAwesome6
+                          name="check-circle"
+                          size={16}
+                          color="#5996eb"
+                        />
                       )}
                       <Text className="text-[#5996eb] font-bold">
                         {saving ? "Zapisywanie..." : "Dodaj szczyt"}
@@ -388,7 +438,7 @@ const PeaksBottomSheet = forwardRef<BottomSheet, PeaksBottomSheetProps>(
         </View>
       </BottomSheet>
     );
-  }
+  },
 );
 
 PeaksBottomSheet.displayName = "PeaksBottomSheet";

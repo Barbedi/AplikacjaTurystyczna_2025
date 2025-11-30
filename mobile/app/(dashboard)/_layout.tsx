@@ -3,8 +3,9 @@ import { Ionicons } from "@expo/vector-icons";
 import { View, Animated, TouchableOpacity, StyleSheet } from "react-native";
 import { useEffect, useRef, ComponentProps } from "react";
 import { MaterialTopTabBarProps } from "@react-navigation/material-top-tabs";
+import { BlurView } from "expo-blur";
 
-type IoniconsName = ComponentProps<typeof Ionicons>['name'];
+type IoniconsName = ComponentProps<typeof Ionicons>["name"];
 
 // --- Typy i Interfejsy ---
 interface AnimatedTabBarIconProps {
@@ -23,33 +24,60 @@ interface TabConfig {
 const tabsConfig: TabConfig[] = [
   { name: "home", title: "Home", icon: "home", outlineIcon: "home-outline" },
   { name: "menu", title: "Menu", icon: "list", outlineIcon: "list-outline" },
-  { name: "profile", title: "Profile", icon: "person", outlineIcon: "person-outline" },
+  {
+    name: "profile",
+    title: "Profile",
+    icon: "person",
+    outlineIcon: "person-outline",
+  },
 ];
 
-function AnimatedTabBarIcon({ focused, name, outlineName }: AnimatedTabBarIconProps) {
+function AnimatedTabBarIcon({
+  focused,
+  name,
+  outlineName,
+}: AnimatedTabBarIconProps) {
   const scaleAnim = useRef(new Animated.Value(focused ? 1 : 0.9)).current;
   const fadeAnim = useRef(new Animated.Value(focused ? 1 : 0.6)).current;
   const pressAnim = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
     Animated.parallel([
-      Animated.spring(scaleAnim, { toValue: focused ? 1 : 0.9, useNativeDriver: true, tension: 80, friction: 7 }),
-      Animated.timing(fadeAnim, { toValue: focused ? 1 : 0.6, duration: 200, useNativeDriver: true }),
+      Animated.spring(scaleAnim, {
+        toValue: focused ? 1 : 0.9,
+        useNativeDriver: true,
+        tension: 80,
+        friction: 7,
+      }),
+      Animated.timing(fadeAnim, {
+        toValue: focused ? 1 : 0.6,
+        duration: 200,
+        useNativeDriver: true,
+      }),
     ]).start();
   }, [focused]);
 
   const handlePressIn = () => {
-    Animated.spring(pressAnim, { toValue: 0.85, useNativeDriver: true, speed: 20, bounciness: 2 }).start();
+    Animated.spring(pressAnim, {
+      toValue: 0.85,
+      useNativeDriver: true,
+      speed: 20,
+      bounciness: 2,
+    }).start();
   };
 
   const handlePressOut = () => {
-    Animated.spring(pressAnim, { toValue: 1, useNativeDriver: true, speed: 20, bounciness: 6 }).start();
+    Animated.spring(pressAnim, {
+      toValue: 1,
+      useNativeDriver: true,
+      speed: 20,
+      bounciness: 6,
+    }).start();
   };
 
   return (
     <Animated.View
       style={{
-        backgroundColor: focused ? "#ffffff" : "transparent",
         width: 45,
         height: 45,
         borderRadius: 25,
@@ -57,16 +85,32 @@ function AnimatedTabBarIcon({ focused, name, outlineName }: AnimatedTabBarIconPr
         alignItems: "center",
         transform: [{ scale: scaleAnim }, { scale: pressAnim }],
         opacity: fadeAnim,
+        overflow: "hidden",
       }}
       onTouchStart={handlePressIn}
       onTouchEnd={handlePressOut}
     >
-      <Ionicons name={focused ? name : outlineName} size={24} color={focused ? "#1a2b5c" : "#ffffff"} />
+      {focused && (
+        <BlurView intensity={15} tint="light" style={StyleSheet.absoluteFill} />
+      )}
+      {focused && (
+        <View
+          style={[
+            StyleSheet.absoluteFill,
+            { backgroundColor: "rgba(255,255,255,0.2)" },
+          ]}
+        />
+      )}
+      <Ionicons name={focused ? name : outlineName} size={24} color="#ffffff" />
     </Animated.View>
   );
 }
 
-function CustomTabBar({ state, descriptors, navigation }: MaterialTopTabBarProps) {
+function CustomTabBar({
+  state,
+  descriptors,
+  navigation,
+}: MaterialTopTabBarProps) {
   return (
     <View style={styles.tabBarContainer}>
       {state.routes.map((route, index) => {
@@ -75,7 +119,7 @@ function CustomTabBar({ state, descriptors, navigation }: MaterialTopTabBarProps
 
         const onPress = () => {
           const event = navigation.emit({
-            type: 'tabPress',
+            type: "tabPress",
             target: route.key,
             canPreventDefault: true,
           });
@@ -87,14 +131,11 @@ function CustomTabBar({ state, descriptors, navigation }: MaterialTopTabBarProps
 
         const onLongPress = () => {
           navigation.emit({
-            type: 'tabLongPress',
+            type: "tabLongPress",
             target: route.key,
           });
         };
-
-        // Find the icon name from tabsConfig based on route.name
-        const tabConfig = tabsConfig.find(t => t.name === route.name);
-        // If route is not in config (e.g. index), skip or handle default
+        const tabConfig = tabsConfig.find((t) => t.name === route.name);
         if (!tabConfig) return null;
 
         return (
@@ -108,11 +149,11 @@ function CustomTabBar({ state, descriptors, navigation }: MaterialTopTabBarProps
             style={styles.tabItem}
             activeOpacity={1}
           >
-             <AnimatedTabBarIcon
-                focused={isFocused}
-                name={tabConfig.icon}
-                outlineName={tabConfig.outlineIcon}
-             />
+            <AnimatedTabBarIcon
+              focused={isFocused}
+              name={tabConfig.icon}
+              outlineName={tabConfig.outlineIcon}
+            />
           </TouchableOpacity>
         );
       })}
@@ -122,7 +163,7 @@ function CustomTabBar({ state, descriptors, navigation }: MaterialTopTabBarProps
 
 export default function DashboardLayout() {
   return (
-    <View style={{ flex: 1, position: 'relative' }}>
+    <View style={{ flex: 1, position: "relative" }}>
       <MaterialTopTabs
         tabBarPosition="bottom"
         tabBar={(props) => <CustomTabBar {...props} />}
@@ -160,14 +201,14 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 10,
     shadowOffset: { width: 0, height: 5 },
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
   },
   tabItem: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: '100%',
-  }
+    alignItems: "center",
+    justifyContent: "center",
+    height: "100%",
+  },
 });

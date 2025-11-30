@@ -153,7 +153,10 @@ const PeaksScreen = () => {
         <FontAwesome6 name="plus" size={24} color="white" />
       </Pressable>
 
-      <PeaksBottomSheet ref={bottomSheetRef} onPeakAdded={() => loadPeaks(true)} />
+      <PeaksBottomSheet
+        ref={bottomSheetRef}
+        onPeakAdded={() => loadPeaks(true)}
+      />
     </LinearGradient>
   );
 };

@@ -10,7 +10,7 @@ import { getAuthenticatedUser } from "@/src/config/api";
 import ConfirmDeleteModal from "@/src/components/ConfirmDeleteModal";
 import { FavoriteTrails } from "@/src/types";
 import { useRouter } from "expo-router";
-import { toast } from "@/src/utils/toast";  
+import { toast } from "@/src/utils/toast";
 
 const FavouritesScreen = () => {
   const { getUserByEmail, usersData, loading: userLoading } = useGetUsers();

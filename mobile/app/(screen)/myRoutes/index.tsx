@@ -62,7 +62,7 @@ const MyRoutesScreen = () => {
   const handleDeleteTrail = async (trailId: number) => {
     try {
       await trailsService.deleteTrail(trailId);
-      toast.success("Trasa została usunięta",);
+      toast.success("Trasa została usunięta");
       setTrails(trails.filter((trail) => trail.id !== trailId));
       setModalVisible(false);
     } catch (error) {

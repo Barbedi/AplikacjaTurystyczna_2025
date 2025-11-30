@@ -73,29 +73,31 @@ const ProfileScreen = () => {
       setFitness(user.fitness_level);
     }
   }, [user]);
- const handleLogout = async () => {
-  try {
-    await logoutUser();
-    toast.success("Wylogowano pomyślnie", "Do zobaczenia!");
-    router.replace("/login");
-
-  } catch (err: any) {
-    console.error("Błąd wylogowania:", err);
-
-    if (err?.response?.status === 401 || err?.response?.status === 403) {
-      toast.info("Twoja sesja wygasła", "Wylogowanie nie powiodło się");
+  const handleLogout = async () => {
+    try {
+      await logoutUser();
+      toast.success("Wylogowano pomyślnie", "Do zobaczenia!");
       router.replace("/login");
-      return;
-    }
+    } catch (err: any) {
+      console.error("Błąd wylogowania:", err);
 
-    if (err?.message?.toLowerCase().includes("network")) {
-      toast.error("Brak połączenia z internetem", "Wylogowanie nie powiodło się");
-      return;
-    }
+      if (err?.response?.status === 401 || err?.response?.status === 403) {
+        toast.info("Twoja sesja wygasła", "Wylogowanie nie powiodło się");
+        router.replace("/login");
+        return;
+      }
 
-    toast.error("Nie udało się wylogować", "Spróbuj ponownie później");
-  }
-};
+      if (err?.message?.toLowerCase().includes("network")) {
+        toast.error(
+          "Brak połączenia z internetem",
+          "Wylogowanie nie powiodło się",
+        );
+        return;
+      }
+
+      toast.error("Nie udało się wylogować", "Spróbuj ponownie później");
+    }
+  };
 
   const handleEditMode = () => {
     setEditMode(true);

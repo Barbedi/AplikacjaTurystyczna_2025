@@ -7,7 +7,6 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import Toast from "react-native-toast-message";
 import { CustomToast } from "@/src/components/CustomToast";
 
-
 const toastConfig = {
   success: (props: any) => <CustomToast {...props} type="success" />,
   error: (props: any) => <CustomToast {...props} type="error" />,
