@@ -1,13 +1,18 @@
 import { MaterialTopTabs } from "@/src/components/MaterialTopTabs";
 import { Ionicons } from "@expo/vector-icons";
-import { View, Animated, TouchableOpacity, StyleSheet } from "react-native";
+import {
+  View,
+  Animated,
+  TouchableOpacity,
+  StyleSheet,
+  Text,
+} from "react-native";
 import { useEffect, useRef, ComponentProps } from "react";
 import { MaterialTopTabBarProps } from "@react-navigation/material-top-tabs";
 import { BlurView } from "expo-blur";
 
 type IoniconsName = ComponentProps<typeof Ionicons>["name"];
 
-// --- Typy i Interfejsy ---
 interface AnimatedTabBarIconProps {
   focused: boolean;
   name: IoniconsName;
@@ -26,11 +31,25 @@ const tabsConfig: TabConfig[] = [
   { name: "menu", title: "Menu", icon: "list", outlineIcon: "list-outline" },
   {
     name: "profile",
-    title: "Profile",
+    title: "Profil",
     icon: "person",
     outlineIcon: "person-outline",
   },
 ];
+function ActiveTabBubble({
+  icon,
+  title,
+}: {
+  icon: IoniconsName;
+  title: string;
+}) {
+  return (
+    <View style={styles.activeBubble}>
+      <Ionicons name={icon} size={18} color="#ffffff" />
+      <Text style={styles.activeBubbleText}>{title}</Text>
+    </View>
+  );
+}
 
 function AnimatedTabBarIcon({
   focused,
@@ -105,7 +124,6 @@ function AnimatedTabBarIcon({
     </Animated.View>
   );
 }
-
 function CustomTabBar({
   state,
   descriptors,
@@ -116,6 +134,9 @@ function CustomTabBar({
       {state.routes.map((route, index) => {
         const { options } = descriptors[route.key];
         const isFocused = state.index === index;
+
+        const tabConfig = tabsConfig.find((t) => t.name === route.name);
+        if (!tabConfig) return null;
 
         const onPress = () => {
           const event = navigation.emit({
@@ -129,38 +150,31 @@ function CustomTabBar({
           }
         };
 
-        const onLongPress = () => {
-          navigation.emit({
-            type: "tabLongPress",
-            target: route.key,
-          });
-        };
-        const tabConfig = tabsConfig.find((t) => t.name === route.name);
-        if (!tabConfig) return null;
-
         return (
           <TouchableOpacity
             key={route.key}
-            accessibilityRole="button"
-            accessibilityState={isFocused ? { selected: true } : {}}
-            accessibilityLabel={options.tabBarAccessibilityLabel}
             onPress={onPress}
-            onLongPress={onLongPress}
             style={styles.tabItem}
             activeOpacity={1}
           >
-            <AnimatedTabBarIcon
-              focused={isFocused}
-              name={tabConfig.icon}
-              outlineName={tabConfig.outlineIcon}
-            />
+            {isFocused ? (
+              <ActiveTabBubble
+                icon={tabConfig.icon}
+                title={tabConfig.title}
+              />
+            ) : (
+              <AnimatedTabBarIcon
+                focused={isFocused}
+                name={tabConfig.icon}
+                outlineName={tabConfig.outlineIcon}
+              />
+            )}
           </TouchableOpacity>
         );
       })}
     </View>
   );
 }
-
 export default function DashboardLayout() {
   return (
     <View style={{ flex: 1, position: "relative" }}>
@@ -176,16 +190,13 @@ export default function DashboardLayout() {
           <MaterialTopTabs.Screen
             key={tab.name}
             name={tab.name}
-            options={{
-              title: tab.title,
-            }}
+            options={{ title: tab.title }}
           />
         ))}
       </MaterialTopTabs>
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   tabBarContainer: {
     position: "absolute",
@@ -205,10 +216,26 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     alignItems: "center",
   },
+
   tabItem: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    height: "100%",
+  },
+
+  activeBubble: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 14,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "#ffffff30", 
+    gap: 6,
+  },
+
+  activeBubbleText: {
+    color: "#ffffff",
+    fontSize: 14,
+    fontWeight: "600",
   },
 });

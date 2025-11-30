@@ -200,7 +200,7 @@ const ProfileScreen = () => {
             <Text className="text-lg font-semibold text-white mb-4 border-b border-white/10 pb-2">
               Dane profilu
             </Text>
-            <View className="bg-white/5 rounded-xl p-4 mb-4">
+            <View className="bg-white/5 rounded-xl p-4 mb-4 border-l-4 border-white">
               <View className="flex-row items-center mb-2">
                 <FontAwesome6 name="user" size={18} color="#ffffffaa" />
                 <Text className="text-white/70 ml-2">Imię i nazwisko</Text>
@@ -219,7 +219,7 @@ const ProfileScreen = () => {
                 <Text className="text-white text-base">{user?.name}</Text>
               )}
             </View>
-            <View className="bg-white/5 rounded-xl p-4 mb-4">
+            <View className="bg-white/5 rounded-xl p-4 mb-4 border-l-4 border-white">
               <View className="flex-row items-center mb-2">
                 <FontAwesome6 name="envelope" size={18} color="#ffffffaa" />
                 <Text className="text-white/70 ml-2">Email</Text>
@@ -228,7 +228,7 @@ const ProfileScreen = () => {
                 {user?.email}
               </TextInput>
             </View>
-            <View className="bg-white/5 rounded-xl p-4 mb-4">
+            <View className="bg-white/5 rounded-xl p-4 mb-4 border-l-4 border-white">
               <View className="flex-row items-center mb-2">
                 <FontAwesome6
                   name="person-hiking"
@@ -278,7 +278,7 @@ const ProfileScreen = () => {
                 </Picker>
               </View>
             </View>
-            <View className="bg-white/5 rounded-xl p-4 mb-4">
+            <View className="bg-white/5 rounded-xl p-4 mb-4 border-l-4 border-white">
               <View className="flex-row items-center mb-2">
                 <FontAwesome6
                   name="person-running"

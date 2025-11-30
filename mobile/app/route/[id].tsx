@@ -9,6 +9,8 @@ import { Trails } from "@/src/types";
 import Charts from "@/src/components/Route/Charts";
 import MapsRoute from "@/src/components/Route/MapsRoute";
 import Photo from "@/src/components/Route/Photo";
+import { getRouteTypeLabel } from "@/src/utils/routeTypeLabels";
+import { RouteType } from "@/src/types";
 
 const TrailsDetails = () => {
   const navigation = useNavigation();
@@ -72,13 +74,19 @@ const TrailsDetails = () => {
             <View className=" flex-col gap-4  w-full p-5 rounded-2xl justify-center items-center">
               <View className="flex-row gap-4">
                 <View className="bg-white/30 p-5 w-1/2 h-24 rounded-2xl items-center justify-start">
-                  <Text className="text-white text-md">Długość</Text>
+                  <View className="flex-row items-center gap-1">
+                    <FontAwesome6 name="route" size={15} color="#ffffff" />
+                    <Text className="text-white text-md ">Długość</Text>
+                  </View>
                   <Text className="text-white text-2xl font-bold">
                     {trail?.length_km} km
                   </Text>
                 </View>
                 <View className="bg-white/30 p-5 w-1/2 h-24 rounded-2xl items-center justify-start">
-                  <Text className="text-white text-md">Czas przejścia</Text>
+                  <View className="flex-row items-center gap-1">
+                    <FontAwesome6 name="clock" size={15} color="#ffffff" />
+                    <Text className="text-white text-md ">Czas przejścia</Text>
+                  </View>
                   <Text className="text-white text-2xl font-bold">
                     {Math.floor((trail?.duration_minutes || 0) / 60)}h{" "}
                     {(trail?.duration_minutes || 0) % 60}min
@@ -87,15 +95,25 @@ const TrailsDetails = () => {
               </View>
               <View className="flex-row gap-4">
                 <View className="bg-white/30 p-5 w-1/2 h-24 rounded-2xl items-center justify-start">
-                  <Text className="text-white text-md">Przewyższenie</Text>
+                  <View className="flex-row items-center gap-1">
+                    <FontAwesome6 name="mountain" size={15} color="#ffffff" />
+                    <Text className="text-white text-md ">Przewyższenie</Text>
+                  </View>
                   <Text className="text-white text-2xl font-bold">
                     {trail?.elevation_gain} m
                   </Text>
                 </View>
                 <View className="bg-white/30 p-5 w-1/2 h-24 rounded-2xl items-center justify-start">
-                  <Text className="text-white text-md">Typ trasy</Text>
-                  <Text className="text-white text-2xl font-bold">
-                    {trail?.route_type}
+                  <View className="flex-row items-center gap-1">
+                    <FontAwesome6 name="map" size={15} color="#ffffff" />
+                    <Text className="text-white text-md ">Typ trasy</Text>
+                  </View>
+                  <Text
+                    className="text-white text-2xl font-bold text-center"
+                    numberOfLines={2}
+                    adjustsFontSizeToFit
+                  >
+                    {getRouteTypeLabel(trail?.route_type as RouteType)}
                   </Text>
                 </View>
               </View>

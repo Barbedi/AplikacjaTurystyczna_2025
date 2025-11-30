@@ -89,9 +89,11 @@ const Home = () => {
                   </Text>
                 </View>
               </View>
+              <Pressable onPress={() => router.push("/(screen)/notifications")}>
               <View className="bg-white/20 w-12 h-12 rounded-full items-center justify-center">
                 <FontAwesome6 name="bell" size={20} color="#fff" />
               </View>
+              </Pressable>
             </View>
 
             <View className="w-full h-14 rounded-2xl bg-white/20 px-5 flex-row items-center gap-3 ">

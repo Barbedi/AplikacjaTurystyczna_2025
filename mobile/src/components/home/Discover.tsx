@@ -24,7 +24,7 @@ const Discover = () => {
   }, []);
 
   return (
-    <View className="mt-5 bg-white/20 backdrop-blur-sm p-4 rounded-2xl">
+    <View className="bg-white/20 backdrop-blur-sm p-4 rounded-2xl">
       <Text className="text-xl font-semibold text-white mb-3 mx-2">
         Odkryj trasy w ...
       </Text>
@@ -37,10 +37,10 @@ const Discover = () => {
         {modules.map((item, index) => (
           <Pressable
             key={index}
-            className="w-28 items-center mt-5"
+            className="w-28 items-center mt-2"
             onPress={() => router.push(`/region/${item.title}`)}
           >
-            <View className="w-28 h-28 rounded-xl overflow-hidden bg-black/30">
+            <View className="w-28 h-28 rounded-full overflow-hidden bg-black/30">
               <Image
                 source={item.photo}
                 style={{ width: "100%", height: "100%" }}

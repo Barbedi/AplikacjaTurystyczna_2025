@@ -33,6 +33,13 @@ export default function ScreenLayout() {
           headerShown: false,
         }}
       />
+      <Stack.Screen
+        name="notifications"
+        options={{
+          title: "Powiadomienia",
+          headerTitleAlign: "center",
+        }}
+      />
 
       <Stack.Screen
         name="stats"

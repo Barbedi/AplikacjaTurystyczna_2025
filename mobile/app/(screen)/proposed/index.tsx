@@ -233,25 +233,27 @@ const ProposedScreen = () => {
                           </Text>
                         </View>
                       </View>
-                      <Pressable
-                        onPress={(e) => {
-                          e.stopPropagation();
-                          toggleFavorite(trail.id);
-                        }}
-                        className="p-2 -mr-2 -mt-2"
-                      >
-                        <FontAwesome6
-                          name="heart"
-                          size={20}
-                          color={
-                            favoriteIds.includes(trail.id)
-                              ? "#ef4444"
-                              : "#ffffff40"
-                          }
-                          solid={favoriteIds.includes(trail.id)}
-                        />
-                      </Pressable>
+
                     </View>
+
+                    <Pressable
+                      onPress={(e) => {
+                        e.stopPropagation();
+                        toggleFavorite(trail.id);
+                      }}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 z-10"
+                    >
+                      <FontAwesome6
+                        name="heart"
+                        size={26}
+                        color={
+                          favoriteIds.includes(trail.id)
+                            ? "#ef4444"
+                            : "#ffffff40"
+                        }
+                        solid={favoriteIds.includes(trail.id)}
+                      />
+                    </Pressable>
 
                     <View className="flex-row items-center gap-3 mt-3">
                       <View className="bg-white/5 px-3 py-1.5 rounded-lg flex-row items-center gap-2">
@@ -278,7 +280,7 @@ const ProposedScreen = () => {
                           color="#a78bfa"
                         />
                         <Text className="text-purple-300 font-semibold text-xs">
-                          {trail.difficulty}
+                          {trail.difficulty || "Nieznany"}
                         </Text>
                       </View>
                     </View>
