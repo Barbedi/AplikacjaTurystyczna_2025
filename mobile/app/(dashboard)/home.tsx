@@ -18,27 +18,30 @@ import filesService from "@/src/services/file.service";
 import TrailsCarousel from "@/src/components/home/TrailsCarousel";
 import Discover from "@/src/components/home/Discover";
 import WeatherWidgetMobile from "@/src/components/home/Weather";
-import { useRouter } from "expo-router";
+import { useRouter, useFocusEffect } from "expo-router";
+import { useCallback } from "react";
 
 const Home = () => {
   const { usersData, getUserByEmail } = useGetUsers();
   const [profileImgUrl, setProfileImgUrl] = useState<string | null>(null);
   const router = useRouter();
 
-  useEffect(() => {
-    const loadUser = async () => {
-      try {
-        const authData = await getAuthenticatedUser();
-        if (authData?.user?.email) {
-          await getUserByEmail(authData.user.email);
+  useFocusEffect(
+    useCallback(() => {
+      const loadUser = async () => {
+        try {
+          const authData = await getAuthenticatedUser();
+          if (authData?.user?.email) {
+            await getUserByEmail(authData.user.email);
+          }
+        } catch (error) {
+          console.error("Błąd ładowania użytkownika:", error);
         }
-      } catch (error) {
-        console.error("Błąd ładowania użytkownika:", error);
-      }
-    };
+      };
 
-    loadUser();
-  }, [getUserByEmail]);
+      loadUser();
+    }, [getUserByEmail])
+  );
 
   const user = usersData?.[0]?.[0];
 

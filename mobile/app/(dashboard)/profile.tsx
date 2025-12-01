@@ -22,6 +22,7 @@ import { logoutUser } from "@/src/config/api";
 import { Users } from "@/src/types";
 import useUpdateUser from "@/src/hooks/useUpdateUser";
 import { toast } from "@/src/utils/toast";
+import * as ImagePicker from "expo-image-picker";
 
 const ProfileScreen = () => {
   const router = useRouter();
@@ -32,7 +33,7 @@ const ProfileScreen = () => {
   const [editMode, setEditMode] = useState(false);
   const [editedUser, setEditedUser] = useState<Users | null>(null);
   const [isSaving, setIsSaving] = useState(false);
-  const { updateUser } = useUpdateUser();
+  const { updateUser, updateUserImg } = useUpdateUser();
 
   const handleInputChange = (field: keyof Users, value: string) => {
     if (!editedUser) return;
@@ -73,6 +74,96 @@ const ProfileScreen = () => {
       setFitness(user.fitness_level);
     }
   }, [user]);
+
+  const processImageResult = async (result: ImagePicker.ImagePickerResult) => {
+    if (!result.canceled && result.assets[0]) {
+        const asset = result.assets[0];
+        if (asset.fileSize && asset.fileSize > 5 * 1024 * 1024) {
+             toast.error("Plik jest zbyt duży", "Maksymalny rozmiar to 5MB");
+             return;
+        }
+
+        const fileToUpload = {
+            uri: asset.uri,
+            name: asset.fileName || "profile.jpg",
+            type: asset.mimeType || "image/jpeg",
+        };
+
+        try {
+            const response = await filesService.uploadProfile(fileToUpload);
+            const filename = response.data.file?.filename;
+
+            if (!filename) throw new Error("Brak nazwy pliku w odpowiedzi");
+
+            const imageUrl = filesService.getImgUrl(filename);
+            setProfileImgUrl(imageUrl);
+
+            if (user?.id) {
+                await updateUserImg(user.id, filename);
+                await getUserByEmail(user.email || "");
+                toast.success("Zdjęcie profilowe zostało zmienione");
+            }
+        } catch (uploadError) {
+            console.error("Upload error:", uploadError);
+            toast.error("Błąd przesyłania zdjęcia", "Spróbuj ponownie później");
+        }
+      }
+  };
+
+  const handlePhotoClick = async () => {
+    Alert.alert(
+      "Zmień zdjęcie profilowe",
+      "Wybierz źródło zdjęcia",
+      [
+        {
+          text: "Anuluj",
+          style: "cancel",
+        },
+        {
+          text: "Zrób zdjęcie",
+          onPress: async () => {
+            try {
+              const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
+              if (permissionResult.granted === false) {
+                toast.error("Brak dostępu do aparatu", "Wymagane uprawnienia");
+                return;
+              }
+
+              const result = await ImagePicker.launchCameraAsync({
+                mediaTypes: ['images'],
+                allowsEditing: true,
+                aspect: [1, 1],
+                quality: 0.8,
+              });
+              await processImageResult(result);
+            } catch (error) {
+               console.error("Camera error:", error);
+               toast.error("Błąd aparatu");
+            }
+          },
+        },
+        {
+          text: "Wybierz z galerii",
+          onPress: async () => {
+            try {
+                const result = await ImagePicker.launchImageLibraryAsync({
+                    mediaTypes: ['images'],
+                    allowsEditing: true,
+                    aspect: [1, 1],
+                    quality: 0.8,
+                  });
+                  await processImageResult(result);
+            } catch (error) {
+                console.error("Gallery error:", error);
+                toast.error("Błąd galerii");
+            }
+          },
+        },
+      ]
+    );
+    
+  };
+
   const handleLogout = async () => {
     try {
       await logoutUser();
@@ -144,21 +235,26 @@ const ProfileScreen = () => {
         >
           <View className="flex-col items-center gap-6 lg:flex-row lg:justify-between">
             <View className="flex-col items-center gap-2 ">
-              {profileImgUrl ? (
-                <Image
-                  source={{ uri: profileImgUrl }}
-                  className="w-28 h-28 rounded-full "
-                  style={{ objectFit: "cover" }}
-                />
-              ) : (
-                <View className="w-32 h-32 rounded-full overflow-hidden bg-white/10 items-center justify-center">
-                  <FontAwesome6
-                    name="circle-user"
-                    size={70}
-                    color="#ffffffaa"
+              <Pressable onPress={handlePhotoClick} className="relative">
+                {profileImgUrl ? (
+                  <Image
+                    source={{ uri: profileImgUrl }}
+                    className="w-28 h-28 rounded-full "
+                    style={{ objectFit: "cover" }}
                   />
+                ) : (
+                  <View className="w-32 h-32 rounded-full overflow-hidden bg-white/10 items-center justify-center">
+                    <FontAwesome6
+                      name="circle-user"
+                      size={70}
+                      color="#ffffffaa"
+                    />
+                  </View>
+                )}
+                <View className="absolute bottom-0 right-0 bg-blue-500 p-2 rounded-full border-2 border-[#050c28]">
+                    <FontAwesome6 name="camera" size={14} color="white" />
                 </View>
-              )}
+              </Pressable>
               <Text className="text-2xl font-bold text-white">
                 {user?.name}
               </Text>

@@ -56,6 +56,7 @@ export interface Trails {
   };
   created_by: string;
   created_at: string;
+  main_photo?: string;
   points?: TrailPoint[];
   photos?: Photo[];
   duration_minutes: number;

@@ -19,6 +19,7 @@ interface Trail {
   id: number;
   name: string;
   description?: string;
+  main_photo?: string;
   photos?: { image_name: string }[];
 }
 
@@ -35,9 +36,9 @@ const TrailsCarousel = () => {
         setTrails(res.data);
 
         // Prefetch pierwszego zdjęcia dla szybszego wyświetlenia
-        if (res.data[0]?.photos?.[0]) {
+        if (res.data[0]?.main_photo) {
           const firstImageUrl = filesService.getTrailImgUrl(
-            res.data[0].photos[0].image_name,
+            res.data[0].main_photo,
           );
           Image.prefetch(firstImageUrl);
         }
@@ -87,7 +88,7 @@ const TrailsCarousel = () => {
               onPress={() => router.push(`/route/${item.id}`)}
               className="rounded-2xl items-center justify-center bg-white/10 p-2 flex-1"
             >
-              <View className="w-full h-52 rounded-2xl overflow-hidden items-center justify-center ">
+              <View className="w-full h-300 rounded-2xl overflow-hidden items-center justify-center ">
                 {imageUrl ? (
                   <Image
                     className="rounded-2xl"
@@ -99,11 +100,11 @@ const TrailsCarousel = () => {
                   <Text className="text-white">Brak zdjęcia</Text>
                 )}
                 <View
-                  className="absolute bottom-0 left-0 right-0 px-4 py-3 rounded-2xl w-full"
+                  className="absolute bottom-0 left-0 right-0 px-4 py-3 rounded-b-2xl w-full"
                   style={{ backgroundColor: "rgba(0, 0, 0, 0.6)" }}
                 >
                   <Text
-                    className="text-white text-2xl font-semibold text-center"
+                    className="text-white text-2xl font-bold text-center"
                     numberOfLines={2}
                   >
                     {item.name}

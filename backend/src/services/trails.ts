@@ -82,8 +82,8 @@ class TrailsService {
     if (result.rows[0]) {
       const row = result.rows[0];
       const points = await TrailPointsService.getPointsByTrailId(id);
-      const photos = await this.getTrailPhotos(id);
-
+      const allPhotos = await this.getTrailPhotos(id);
+      const photos = allPhotos.filter(p => p.image_name !== row.main_photo);
       const featuresResult = await db.query(
         `SELECT f.* FROM trail_features f
        JOIN trail_trail_features tf ON f.id = tf.feature_id
@@ -292,35 +292,41 @@ class TrailsService {
 
   // Usuń zdjęcie trasy
   async deleteTrailPhoto(id: number, photoName: string): Promise<void> {
+  // SPRAWDŹ, czy to main_photo
+  const trail = await db.query("SELECT main_photo FROM trails WHERE id = $1", [id]);
+
+  if (trail.rows[0].main_photo === photoName) {
+    throw new Err("Cannot delete main photo", 400);
+  }
+
+  const result = await db.query(
+    "DELETE FROM photos WHERE trail_id = $1 AND image_name = $2 RETURNING *",
+    [id, photoName],
+  );
+
+  if (result.rowCount === 0) {
+    throw new Err("Photo not found", 404);
+  }
+}
+  async updateTrailPhotos(trailId: number, photos: { image_name: string; created_at: string }[]) {
+  const existing = await db.query("SELECT COUNT(*) FROM photos WHERE trail_id = $1", [trailId]);
+  const count = Number(existing.rows[0].count);
+
+  if (count >= 3) {
+    throw new Err("Maximum 3 photos allowed", 400);
+  }
+
+  // Wstaw normalnie
+  const insertPromises = photos.map(async (photo) => {
     const result = await db.query(
-      "DELETE FROM photos WHERE trail_id = $1 AND image_name = $2 RETURNING *",
-      [id, photoName],
+      "INSERT INTO photos (trail_id, image_name, created_at) VALUES ($1, $2, $3) RETURNING *",
+      [trailId, photo.image_name, photo.created_at],
     );
-    if (result.rowCount === 0) {
-      throw new Err("Photo not found", 404);
-    }
-  }
-  // Update trail photos
-  async updateTrailPhotos(
-    trailId: number,
-    photos: { image_name: string; created_at: string }[],
-  ) {
-    const trailCheck = await db.query("SELECT id FROM trails WHERE id = $1", [
-      trailId,
-    ]);
-    if (trailCheck.rowCount === 0) {
-      throw new Err("Trail not found", 404);
-    }
-    const insertPromises = photos.map(async (photo) => {
-      const result = await db.query(
-        "INSERT INTO photos (trail_id, image_name, created_at) VALUES ($1, $2, $3) RETURNING *",
-        [trailId, photo.image_name, photo.created_at],
-      );
-      return result.rows[0];
-    });
-    const insertedPhotos = await Promise.all(insertPromises);
-    return insertedPhotos;
-  }
+    return result.rows[0];
+  });
+
+  return await Promise.all(insertPromises);
+}
 
   // Get photos for a trail
   async getTrailPhotos(trailId: number) {

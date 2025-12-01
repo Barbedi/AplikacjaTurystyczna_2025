@@ -198,7 +198,18 @@ const TrailsDetails = () => {
               )}
               {isPhotosVisible && (
                 <View className=" w-full items-center">
-                  <Photo />
+                  <Photo 
+                    trailId={trail?.id || 0} 
+                    initialPhotos={trail?.photos} 
+                    onPhotosUpdate={(updatedTrail) => {
+                        if (updatedTrail) {
+                            setTrail(updatedTrail);
+                        } else if (id) {
+                            const trailId = Array.isArray(id) ? parseInt(id[0]) : parseInt(id as string);
+                            trailsService.getTrailById(trailId).then(res => setTrail(res.data));
+                        }
+                    }}
+                  />
                 </View>
               )}
             </View>
