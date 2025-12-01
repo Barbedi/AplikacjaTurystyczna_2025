@@ -10,6 +10,7 @@ import { UserPeak } from "@/src/types";
 import PeaksBottomSheet from "@/src/components/peak/PeaksBottomSheet";
 import BottomSheet from "@gorhom/bottom-sheet";
 import { useRef } from "react";
+import { router } from "expo-router";
 
 const PeaksScreen = () => {
   const { getUserByEmail, usersData, loading: userLoading } = useGetUsers();
@@ -85,7 +86,8 @@ const PeaksScreen = () => {
 
             {!loading && !error && myPeaks ? (
               myPeaks.map((peak: UserPeak, index: number) => (
-                <View
+                <Pressable
+                  onPress={() => router.push(`/peaks/${peak.peak_id}`)}
                   key={index}
                   className="w-full bg-white/10 rounded-2xl p-5 border-l-4 border-yellow-500"
                 >
@@ -129,7 +131,10 @@ const PeaksScreen = () => {
                         : "Brak daty"}
                     </Text>
                   </View>
-                </View>
+                  <Text className="text-sm text-gray-400 text-center mt-2">
+                    Dotknij aby zobaczyć szczegóły trasy
+                  </Text>
+                </Pressable>
               ))
             ) : !loading && !error ? (
               <View className="flex-1 items-center justify-center py-10">

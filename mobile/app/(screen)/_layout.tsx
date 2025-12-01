@@ -72,8 +72,7 @@ export default function ScreenLayout() {
       <Stack.Screen
         name="peaks"
         options={{
-          title: "Szczyty",
-          headerTitleAlign: "center",
+          headerShown: false,
         }}
       />
       <Stack.Screen
