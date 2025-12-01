@@ -1,7 +1,7 @@
-import { useLocalSearchParams, useRouter, useNavigation, useFocusEffect } from "expo-router";
+import { useLocalSearchParams, useRouter, useNavigation } from "expo-router";
 import { View, Text, Pressable, ScrollView } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import trailsService from "@/src/services/trails.service";
 import { SafeAreaView } from "react-native-safe-area-context";
 import FontAwesome6 from "@expo/vector-icons/build/FontAwesome6";
@@ -20,25 +20,23 @@ const TrailsDetails = () => {
   const [isProfileVisible, setIsProfileVisible] = useState(false);
   const [isPhotosVisible, setIsPhotosVisible] = useState(false);
 
-  useFocusEffect(
-    useCallback(() => {
-      const fetchPeak = async () => {
-        try {
-          const trailId = Array.isArray(id)
-            ? parseInt(id[0])
-            : parseInt(id as string);
-          const res = await trailsService.getTrailById(trailId);
-          setTrail(res.data);
-          navigation.setOptions({
-            title: res.data.name || "Trasa",
-          });
-        } catch (error) {
-          console.error("Błąd pobierania trasy:", error);
-        }
-      };
-      if (id) fetchPeak();
-    }, [id])
-  );
+  useEffect(() => {
+    const fetchPeak = async () => {
+      try {
+        const trailId = Array.isArray(id)
+          ? parseInt(id[0])
+          : parseInt(id as string);
+        const res = await trailsService.getTrailById(trailId);
+        setTrail(res.data);
+        navigation.setOptions({
+          title: res.data.name || "Trasa",
+        });
+      } catch (error) {
+        console.error("Błąd pobierania trasy:", error);
+      }
+    };
+    if (id) fetchPeak();
+  }, [id]);
 
   return (
     <LinearGradient colors={["#5996eb", "#050c28"]} className="flex-1">
@@ -71,12 +69,11 @@ const TrailsDetails = () => {
                   {trail?.difficulty}
                 </Text>
               </View>
-              <View className="flex-row bg-yellow-500/30 px-2 py-1.5 rounded-full items-center justify-center mb-3">
-                <FontAwesome6 name="calendar" size={15} color="#eab308" />
-                <Text className=" text-md font-bold ml-1 text-yellow-500">
-                  {trail?.created_at?.split("T")[0]}
-                </Text>
-              </View>
+            </View>
+            <View className="mt-4 w-full bg-white/10 p-4 rounded-2xl">
+              <Text className="text-white/90 text-sm leading-6 text-center">
+                {trail?.description || "Brak opisu trasy."}
+              </Text>
             </View>
             <View className=" flex-col gap-4  w-full p-5 rounded-2xl justify-center items-center">
               <View className="flex-row gap-4">
@@ -206,18 +203,7 @@ const TrailsDetails = () => {
               )}
               {isPhotosVisible && (
                 <View className=" w-full items-center">
-                  <Photo 
-                    trailId={trail?.id || 0} 
-                    initialPhotos={trail?.photos} 
-                    onPhotosUpdate={(updatedTrail) => {
-                        if (updatedTrail) {
-                            setTrail(updatedTrail);
-                        } else if (id) {
-                            const trailId = Array.isArray(id) ? parseInt(id[0]) : parseInt(id as string);
-                            trailsService.getTrailById(trailId).then(res => setTrail(res.data));
-                        }
-                    }}
-                  />
+                  <Photo />
                 </View>
               )}
             </View>

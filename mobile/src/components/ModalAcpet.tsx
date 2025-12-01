@@ -43,7 +43,7 @@ const SaveTrailModal: React.FC<SaveTrailModalProps> = ({
         style={{ backgroundColor: "rgba(0, 0, 0, 0.6)" }}
       >
         <LinearGradient
-          colors={["#999999", "#5996eb"]}
+          colors={["#3b82f6", "#5996eb"]}
           className="rounded-3xl w-full max-w-sm overflow-hidden"
           style={{ borderRadius: 24 }}
         >

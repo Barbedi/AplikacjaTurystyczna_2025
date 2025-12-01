@@ -49,6 +49,7 @@ export interface Trails {
   duration_minutes: number;
   public?: boolean;
   features?: { id: number; name: string; weight: number }[];
+  main_photo?: string;
 }
 
 export type NewTrail = Omit<Trails, "id" | "created_at" | "points" | "photos">;

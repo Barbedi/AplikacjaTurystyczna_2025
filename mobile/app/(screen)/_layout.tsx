@@ -22,9 +22,22 @@ export default function ScreenLayout() {
         }}
       />
       <Stack.Screen
+        name="proposed"
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
         name="myRoutes"
         options={{
           headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="notifications"
+        options={{
+          title: "Powiadomienia",
+          headerTitleAlign: "center",
         }}
       />
 

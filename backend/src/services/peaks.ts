@@ -34,6 +34,7 @@ async function getPeakByUserId(userId: number, page = 1, limit = 12) {
   SELECT DISTINCT ON (p.id)
   p.id AS peak_id,
   p.name AS peak_name,
+  p.elevation AS peak_elevation,
   up.visited_at AS last_visited,
   up.description,
   up.photo_url,

@@ -37,8 +37,8 @@ const ProposedRoutes = () => {
           loading="lazy"
             className="w-full h-60 object-cover"
             src={
-              trail.photos && trail.photos.length > 0
-                ? filesService.getTrailImgUrl(trail.photos[0].image_name)
+              trail.main_photo
+                ? filesService.getTrailImgUrl(trail.main_photo)
                 : "/assets/img/IMG_5962.jpg"
             }
             alt={trail.name}
