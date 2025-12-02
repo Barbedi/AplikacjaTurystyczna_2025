@@ -14,7 +14,11 @@
       "backgroundColor": "#5996eb"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "Aplikacja potrzebuje dostępu do lokalizacji, aby weryfikować zdjęcia szczytów.",
+        "NSCameraUsageDescription": "Aplikacja potrzebuje dostępu do aparatu, aby robić zdjęcia szczytów."
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -23,7 +27,12 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.anonymous.HikeUp"
+      "package": "com.anonymous.HikeUp",
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "CAMERA"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon-32x32.png"
