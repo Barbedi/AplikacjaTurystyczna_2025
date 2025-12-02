@@ -39,7 +39,8 @@ const PeaksBottomSheet = forwardRef<BottomSheet, PeaksBottomSheetProps>(
     const [region, setRegion] = useState("Tatry");
     const [saving, setSaving] = useState(false);
     const [userId, setUserId] = useState<number | null>(null);
-    const [selectedImage, setSelectedImage] = useState<ImagePicker.ImagePickerAsset | null>(null);
+    const [selectedImage, setSelectedImage] =
+      useState<ImagePicker.ImagePickerAsset | null>(null);
 
     const { getUserByEmail, usersData } = useGetUsers();
 
@@ -123,8 +124,9 @@ const PeaksBottomSheet = forwardRef<BottomSheet, PeaksBottomSheetProps>(
     };
 
     const pickImage = async () => {
-      const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-      
+      const permissionResult =
+        await ImagePicker.requestMediaLibraryPermissionsAsync();
+
       if (permissionResult.granted === false) {
         toast.error("Brak uprawnień do dostępu do galerii");
         return;
@@ -204,7 +206,7 @@ const PeaksBottomSheet = forwardRef<BottomSheet, PeaksBottomSheetProps>(
         if (!peakId) throw new Error("Brak ID nowego szczytu");
 
         let photoUrl = formData.photo_url;
-        
+
         if (selectedImage) {
           try {
             const uploadRes = await filesService.uploadPeakImage({
@@ -212,7 +214,7 @@ const PeaksBottomSheet = forwardRef<BottomSheet, PeaksBottomSheetProps>(
               name: selectedImage.fileName || `peak_${Date.now()}.jpg`,
               type: "image/jpeg",
             });
-            
+
             const filename = uploadRes?.data?.file?.filename;
             if (filename) {
               photoUrl = filename;
@@ -419,20 +421,20 @@ const PeaksBottomSheet = forwardRef<BottomSheet, PeaksBottomSheetProps>(
                     </Picker>
                   </View>
                 </View>
-                <Pressable 
+                <Pressable
                   className="mb-3 bg-white/20 rounded-xl p-4 flex justify-center items-center"
                   onPress={pickImage}
                 >
                   <View className="flex-row items-center gap-2">
-                    <FontAwesome6 
-                      name={selectedImage ? "check-circle" : "image"} 
-                      size={16} 
-                      color={selectedImage ? "#22c55e" : "white"} 
+                    <FontAwesome6
+                      name={selectedImage ? "check-circle" : "image"}
+                      size={16}
+                      color={selectedImage ? "#22c55e" : "white"}
                     />
                     <Text className="text-white font-medium text-sm">
-                      {selectedImage 
-                        ? `Wybrane: ${selectedImage.fileName || 'zdjecie.jpg'}` 
-                        : 'Dodaj zdjęcie'}
+                      {selectedImage
+                        ? `Wybrane: ${selectedImage.fileName || "zdjecie.jpg"}`
+                        : "Dodaj zdjęcie"}
                     </Text>
                   </View>
                 </Pressable>

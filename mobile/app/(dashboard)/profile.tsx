@@ -77,91 +77,87 @@ const ProfileScreen = () => {
 
   const processImageResult = async (result: ImagePicker.ImagePickerResult) => {
     if (!result.canceled && result.assets[0]) {
-        const asset = result.assets[0];
-        if (asset.fileSize && asset.fileSize > 5 * 1024 * 1024) {
-             toast.error("Plik jest zbyt duży", "Maksymalny rozmiar to 5MB");
-             return;
-        }
-
-        const fileToUpload = {
-            uri: asset.uri,
-            name: asset.fileName || "profile.jpg",
-            type: asset.mimeType || "image/jpeg",
-        };
-
-        try {
-            const response = await filesService.uploadProfile(fileToUpload);
-            const filename = response.data.file?.filename;
-
-            if (!filename) throw new Error("Brak nazwy pliku w odpowiedzi");
-
-            const imageUrl = filesService.getImgUrl(filename);
-            setProfileImgUrl(imageUrl);
-
-            if (user?.id) {
-                await updateUserImg(user.id, filename);
-                await getUserByEmail(user.email || "");
-                toast.success("Zdjęcie profilowe zostało zmienione");
-            }
-        } catch (uploadError) {
-            console.error("Upload error:", uploadError);
-            toast.error("Błąd przesyłania zdjęcia", "Spróbuj ponownie później");
-        }
+      const asset = result.assets[0];
+      if (asset.fileSize && asset.fileSize > 5 * 1024 * 1024) {
+        toast.error("Plik jest zbyt duży", "Maksymalny rozmiar to 5MB");
+        return;
       }
+
+      const fileToUpload = {
+        uri: asset.uri,
+        name: asset.fileName || "profile.jpg",
+        type: asset.mimeType || "image/jpeg",
+      };
+
+      try {
+        const response = await filesService.uploadProfile(fileToUpload);
+        const filename = response.data.file?.filename;
+
+        if (!filename) throw new Error("Brak nazwy pliku w odpowiedzi");
+
+        const imageUrl = filesService.getImgUrl(filename);
+        setProfileImgUrl(imageUrl);
+
+        if (user?.id) {
+          await updateUserImg(user.id, filename);
+          await getUserByEmail(user.email || "");
+          toast.success("Zdjęcie profilowe zostało zmienione");
+        }
+      } catch (uploadError) {
+        console.error("Upload error:", uploadError);
+        toast.error("Błąd przesyłania zdjęcia", "Spróbuj ponownie później");
+      }
+    }
   };
 
   const handlePhotoClick = async () => {
-    Alert.alert(
-      "Zmień zdjęcie profilowe",
-      "Wybierz źródło zdjęcia",
-      [
-        {
-          text: "Anuluj",
-          style: "cancel",
-        },
-        {
-          text: "Zrób zdjęcie",
-          onPress: async () => {
-            try {
-              const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
-              if (permissionResult.granted === false) {
-                toast.error("Brak dostępu do aparatu", "Wymagane uprawnienia");
-                return;
-              }
+    Alert.alert("Zmień zdjęcie profilowe", "Wybierz źródło zdjęcia", [
+      {
+        text: "Anuluj",
+        style: "cancel",
+      },
+      {
+        text: "Zrób zdjęcie",
+        onPress: async () => {
+          try {
+            const permissionResult =
+              await ImagePicker.requestCameraPermissionsAsync();
+            if (permissionResult.granted === false) {
+              toast.error("Brak dostępu do aparatu", "Wymagane uprawnienia");
+              return;
+            }
 
-              const result = await ImagePicker.launchCameraAsync({
-                mediaTypes: ['images'],
-                allowsEditing: true,
-                aspect: [1, 1],
-                quality: 0.8,
-              });
-              await processImageResult(result);
-            } catch (error) {
-               console.error("Camera error:", error);
-               toast.error("Błąd aparatu");
-            }
-          },
+            const result = await ImagePicker.launchCameraAsync({
+              mediaTypes: ["images"],
+              allowsEditing: true,
+              aspect: [1, 1],
+              quality: 0.8,
+            });
+            await processImageResult(result);
+          } catch (error) {
+            console.error("Camera error:", error);
+            toast.error("Błąd aparatu");
+          }
         },
-        {
-          text: "Wybierz z galerii",
-          onPress: async () => {
-            try {
-                const result = await ImagePicker.launchImageLibraryAsync({
-                    mediaTypes: ['images'],
-                    allowsEditing: true,
-                    aspect: [1, 1],
-                    quality: 0.8,
-                  });
-                  await processImageResult(result);
-            } catch (error) {
-                console.error("Gallery error:", error);
-                toast.error("Błąd galerii");
-            }
-          },
+      },
+      {
+        text: "Wybierz z galerii",
+        onPress: async () => {
+          try {
+            const result = await ImagePicker.launchImageLibraryAsync({
+              mediaTypes: ["images"],
+              allowsEditing: true,
+              aspect: [1, 1],
+              quality: 0.8,
+            });
+            await processImageResult(result);
+          } catch (error) {
+            console.error("Gallery error:", error);
+            toast.error("Błąd galerii");
+          }
         },
-      ]
-    );
-    
+      },
+    ]);
   };
 
   const handleLogout = async () => {
@@ -252,7 +248,7 @@ const ProfileScreen = () => {
                   </View>
                 )}
                 <View className="absolute bottom-0 right-0 bg-blue-500 p-2 rounded-full border-2 border-[#050c28]">
-                    <FontAwesome6 name="camera" size={14} color="white" />
+                  <FontAwesome6 name="camera" size={14} color="white" />
                 </View>
               </Pressable>
               <Text className="text-2xl font-bold text-white">

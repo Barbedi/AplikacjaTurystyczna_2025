@@ -52,5 +52,13 @@ class PeaksService {
   getPeakPhotos = (id: string) => {
     return httpCommon.get(`/peaks/${id}/photos`);
   };
+
+  // Weryfikacja zdjęcia szczytu przez GPS
+  verifyPhoto = (filename: string, peak_id: number) => {
+    return httpCommon.post("/peaks/verify-photo", {
+      filename,
+      peak_id,
+    });
+  };
 }
 export default new PeaksService();

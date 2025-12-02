@@ -71,7 +71,7 @@ LIMIT $2 OFFSET $3
 async function getUserPeakById(userId: number, peakId: number) {
   const query = `
     SELECT p.id, p.name, p.elevation, p.region, p.latitude, p.longitude,
-           up.visited_at, up.description, up.photo_url, up.verified
+           up.visited_at, up.description, up.photo_url, up.verified, up.distance_from_peak
     FROM peaks p
     JOIN user_peaks up ON p.id = up.peak_id
     WHERE up.user_id = $1 AND p.id = $2
@@ -358,24 +358,35 @@ async function updateUserPeakVerification(
   userId: number,
   peakId: number,
   verified: boolean,
+  distanceFromPeak?: number,
 ) {
   // Najpierw spróbuj zaktualizować
   const updateQuery = `
     UPDATE user_peaks 
-    SET verified = $1 
-    WHERE user_id = $2 AND peak_id = $3
+    SET verified = $1, distance_from_peak = $2
+    WHERE user_id = $3 AND peak_id = $4
     RETURNING *;
   `;
-  let result = await db.query(updateQuery, [verified, userId, peakId]);
+  let result = await db.query(updateQuery, [
+    verified,
+    distanceFromPeak ?? null,
+    userId,
+    peakId,
+  ]);
 
   // Jeśli nie ma rekordu, utwórz go
   if (result.rows.length === 0) {
     const insertQuery = `
-      INSERT INTO user_peaks (user_id, peak_id, visited_at, verified)
-      VALUES ($1, $2, NOW(), $3)
+      INSERT INTO user_peaks (user_id, peak_id, visited_at, verified, distance_from_peak)
+      VALUES ($1, $2, NOW(), $3, $4)
       RETURNING *;
     `;
-    result = await db.query(insertQuery, [userId, peakId, verified]);
+    result = await db.query(insertQuery, [
+      userId,
+      peakId,
+      verified,
+      distanceFromPeak ?? null,
+    ]);
   }
 
   return {

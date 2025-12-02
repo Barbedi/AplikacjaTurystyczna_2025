@@ -43,9 +43,16 @@ class PeaksService {
     return api.get(`/peaks/crown-beskid?page=${page}&all=${all}`);
   };
 
-  // Pobieranie zdjęć szczytu - może być implementowane w przyszłości
   getPeakImages = (id: string) => {
     return api.get(`/peaks/${id}/images`);
+  };
+
+  // Weryfikacja zdjęcia szczytu przez GPS
+  verifyPhoto = (filename: string, peak_id: number) => {
+    return api.post("/peaks/verify-photo", {
+      filename,
+      peak_id,
+    });
   };
 
   // Pobieranie wszystkich zdjęć dla szczytu

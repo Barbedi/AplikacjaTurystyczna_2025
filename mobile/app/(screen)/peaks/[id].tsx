@@ -19,24 +19,24 @@ const PeakDetails = () => {
   const [peak, setPeak] = useState<Peaks>();
   const [userPeak, setUserPeak] = useState<UserPeak>();
   const [isMapVisible, setIsMapVisible] = useState(true);
-   const { getUserByEmail, usersData, loading: userLoading } = useGetUsers();
+  const { getUserByEmail, usersData, loading: userLoading } = useGetUsers();
 
   useEffect(() => {
-      const loadUser = async () => {
-        try {
-          const authData = await getAuthenticatedUser();
-          if (authData?.user?.email) {
-            await getUserByEmail(authData.user.email);
-          }
-        } catch (error) {
-          console.error("Błąd ładowania użytkownika:", error);
+    const loadUser = async () => {
+      try {
+        const authData = await getAuthenticatedUser();
+        if (authData?.user?.email) {
+          await getUserByEmail(authData.user.email);
         }
-      };
-  
-      loadUser();
-    }, [getUserByEmail]);
+      } catch (error) {
+        console.error("Błąd ładowania użytkownika:", error);
+      }
+    };
 
-    const currentUser = usersData?.[0]?.[0];
+    loadUser();
+  }, [getUserByEmail]);
+
+  const currentUser = usersData?.[0]?.[0];
   useEffect(() => {
     const fetchPeak = async () => {
       try {
@@ -56,7 +56,10 @@ const PeakDetails = () => {
       if (!currentUser?.id || !id) return;
 
       try {
-        const res = await userpeaksService.getUserPeakById(currentUser.id, Number(id));
+        const res = await userpeaksService.getUserPeakById(
+          currentUser.id,
+          Number(id),
+        );
         setUserPeak(res.data.data);
       } catch (error) {
         console.log("Brak zdobycia użytkownika.");
@@ -92,17 +95,31 @@ const PeakDetails = () => {
               <View className="flex-row flex-wrap justify-between gap-y-4">
                 <View className="w-[48%] bg-white/10 p-4 rounded-2xl items-center border border-white/5">
                   <FontAwesome6 name="mountain" size={20} color="#60a5fa" />
-                  <Text className="text-white/60 text-xs uppercase">Wysokość</Text>
-                  <Text className="text-white text-lg font-bold">{peak.elevation} m</Text>
+                  <Text className="text-white/60 text-xs uppercase">
+                    Wysokość
+                  </Text>
+                  <Text className="text-white text-lg font-bold">
+                    {peak.elevation} m
+                  </Text>
                 </View>
                 <View className="w-[48%] bg-white/10 p-4 rounded-2xl items-center border border-white/5">
-                  <FontAwesome6 name="map-location-dot" size={20} color="#c084fc" />
-                  <Text className="text-white/60 text-xs uppercase">Region</Text>
-                  <Text className="text-white text-lg font-bold">{peak.region}</Text>
-                </View> 
+                  <FontAwesome6
+                    name="map-location-dot"
+                    size={20}
+                    color="#c084fc"
+                  />
+                  <Text className="text-white/60 text-xs uppercase">
+                    Region
+                  </Text>
+                  <Text className="text-white text-lg font-bold">
+                    {peak.region}
+                  </Text>
+                </View>
                 <View className="w-[48%] bg-white/10 p-4 rounded-2xl items-center border border-white/5">
                   <FontAwesome6 name="trophy" size={20} color="#facc15" />
-                  <Text className="text-white/60 text-xs uppercase">Status</Text>
+                  <Text className="text-white/60 text-xs uppercase">
+                    Status
+                  </Text>
                   <Text className="text-white text-lg font-bold">
                     {userPeak ? "Zdobyty" : "Niezdobyty"}
                   </Text>
@@ -116,9 +133,22 @@ const PeakDetails = () => {
                 </View>
               </View>
             </View>
+            {userPeak?.description && (
+              <View className="mt-5 w-full bg-white/10 rounded-2xl p-4 border border-white/20">
+                <View className="flex-row items-center gap-2 mb-3">
+                  <FontAwesome6 name="comment" size={16} color="#60a5fa" />
+                  <Text className="text-white font-bold text-lg">
+                    Mój komentarz
+                  </Text>
+                </View>
+                <Text className="text-white/90 leading-6">
+                  {userPeak.description}
+                </Text>
+              </View>
+            )}
             <View className="flex-row gap-5 mt-5 w-full justify-center p-2">
               <Pressable
-                className={`w-1/2 py-2 rounded-lg ${isMapVisible ? "bg-white/10" : ""}`}
+                className={`w-1/2 py-2  rounded-lg ${isMapVisible ? "bg-white/10 border border-white/20" : ""}`}
                 onPress={() => setIsMapVisible(true)}
               >
                 <Text className="text-xl text-center font-semibold text-white">
@@ -127,7 +157,7 @@ const PeakDetails = () => {
               </Pressable>
 
               <Pressable
-                className={`w-1/2 py-2 rounded-lg ${!isMapVisible ? "bg-white/10" : ""}`}
+                className={`w-1/2 py-2 rounded-lg ${!isMapVisible ? "bg-white/10 border border-white/20" : ""}`}
                 onPress={() => setIsMapVisible(false)}
               >
                 <Text className="text-xl text-center font-semibold text-white">
@@ -149,14 +179,17 @@ const PeakDetails = () => {
                 </View>
               ) : userPeak?.photo_url ? (
                 <Image
-                  source={{ uri: filesService.getPeakImgUrl(userPeak.photo_url) }}
+                  source={{
+                    uri: filesService.getPeakImgUrl(userPeak.photo_url),
+                  }}
                   className="w-full h-full rounded-2xl"
                   resizeMode="cover"
                 />
-               
               ) : (
                 <View className="bg-white/10 p-5 rounded-2xl h-full justify-center items-center">
-                  <Text className="text-white text-center">Nie dodano zdjęcia</Text>
+                  <Text className="text-white text-center">
+                    Nie dodano zdjęcia
+                  </Text>
                 </View>
               )}
             </View>

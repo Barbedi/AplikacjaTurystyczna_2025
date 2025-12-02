@@ -100,7 +100,10 @@ const PeaksScreen = () => {
                     </View>
                     <View className="flex-1">
                       <View className="flex-row items-center justify-between mb-1">
-                        <Text className="text-2xl font-bold text-white flex-1 mr-2" numberOfLines={2}>
+                        <Text
+                          className="text-2xl font-bold text-white flex-1 mr-2"
+                          numberOfLines={2}
+                        >
                           {peak.peak_name || "Nieznany szczyt"}
                         </Text>
                         <View className="bg-green-500/20 px-3 py-1 rounded-full">

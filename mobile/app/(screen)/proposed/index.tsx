@@ -233,7 +233,6 @@ const ProposedScreen = () => {
                           </Text>
                         </View>
                       </View>
-
                     </View>
 
                     <Pressable

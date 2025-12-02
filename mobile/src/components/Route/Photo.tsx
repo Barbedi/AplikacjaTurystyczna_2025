@@ -107,31 +107,27 @@ const Photo = ({ trailId, initialPhotos = [], onPhotosUpdate }: PhotoProps) => {
   };
 
   const removeImage = (photoName: string) => {
-    Alert.alert(
-      "Usuń zdjęcie",
-      "Czy na pewno chcesz usunąć to zdjęcie?",
-      [
-        { text: "Anuluj", style: "cancel" },
-        {
-          text: "Usuń",
-          style: "destructive",
-          onPress: async () => {
-            try {
-              await trailsService.deleteTrailPhoto(trailId, photoName);
+    Alert.alert("Usuń zdjęcie", "Czy na pewno chcesz usunąć to zdjęcie?", [
+      { text: "Anuluj", style: "cancel" },
+      {
+        text: "Usuń",
+        style: "destructive",
+        onPress: async () => {
+          try {
+            await trailsService.deleteTrailPhoto(trailId, photoName);
 
-              const updatedTrail = await trailsService.getTrailById(trailId);
+            const updatedTrail = await trailsService.getTrailById(trailId);
 
-              setPhotos(updatedTrail.data.photos || []);
-              toast.success("Zdjęcie usunięte");
+            setPhotos(updatedTrail.data.photos || []);
+            toast.success("Zdjęcie usunięte");
 
-              onPhotosUpdate?.(updatedTrail.data);
-            } catch (error) {
-              toast.error("Nie udało się usunąć zdjęcia");
-            }
-          },
+            onPhotosUpdate?.(updatedTrail.data);
+          } catch (error) {
+            toast.error("Nie udało się usunąć zdjęcia");
+          }
         },
-      ]
-    );
+      },
+    ]);
   };
 
   return (

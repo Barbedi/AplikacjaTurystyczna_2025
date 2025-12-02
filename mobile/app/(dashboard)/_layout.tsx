@@ -158,10 +158,7 @@ function CustomTabBar({
             activeOpacity={1}
           >
             {isFocused ? (
-              <ActiveTabBubble
-                icon={tabConfig.icon}
-                title={tabConfig.title}
-              />
+              <ActiveTabBubble icon={tabConfig.icon} title={tabConfig.title} />
             ) : (
               <AnimatedTabBarIcon
                 focused={isFocused}
@@ -229,7 +226,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     height: 40,
     borderRadius: 20,
-    backgroundColor: "#ffffff30", 
+    backgroundColor: "#ffffff30",
     gap: 6,
   },
 
