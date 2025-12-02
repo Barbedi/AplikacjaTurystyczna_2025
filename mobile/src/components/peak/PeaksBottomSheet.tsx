@@ -16,9 +16,11 @@ import {
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { FontAwesome6 } from "@expo/vector-icons";
 import { Picker } from "@react-native-picker/picker";
+import * as ImagePicker from "expo-image-picker";
 
 import peaksService from "@/src/services/peaks.service";
 import userpeaksService from "@/src/services/userpeaks.service";
+import filesService from "@/src/services/file.service";
 import { Peaks } from "@/src/types";
 import { getAuthenticatedUser } from "@/src/config/api";
 import useGetUsers from "@/src/hooks/useGetUser";
@@ -37,6 +39,7 @@ const PeaksBottomSheet = forwardRef<BottomSheet, PeaksBottomSheetProps>(
     const [region, setRegion] = useState("Tatry");
     const [saving, setSaving] = useState(false);
     const [userId, setUserId] = useState<number | null>(null);
+    const [selectedImage, setSelectedImage] = useState<ImagePicker.ImagePickerAsset | null>(null);
 
     const { getUserByEmail, usersData } = useGetUsers();
 
@@ -119,9 +122,30 @@ const PeaksBottomSheet = forwardRef<BottomSheet, PeaksBottomSheetProps>(
       });
     };
 
+    const pickImage = async () => {
+      const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      
+      if (permissionResult.granted === false) {
+        toast.error("Brak uprawnień do dostępu do galerii");
+        return;
+      }
+
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 0.8,
+      });
+
+      if (!result.canceled && result.assets[0]) {
+        setSelectedImage(result.assets[0]);
+      }
+    };
+
     const clearForm = () => {
       setSearchTerm("");
       setRegion("Tatry");
+      setSelectedImage(null);
       setFormData({
         name: "",
         elevation: "",
@@ -179,11 +203,30 @@ const PeaksBottomSheet = forwardRef<BottomSheet, PeaksBottomSheetProps>(
 
         if (!peakId) throw new Error("Brak ID nowego szczytu");
 
+        let photoUrl = formData.photo_url;
+        
+        if (selectedImage) {
+          try {
+            const uploadRes = await filesService.uploadPeakImage({
+              uri: selectedImage.uri,
+              name: selectedImage.fileName || `peak_${Date.now()}.jpg`,
+              type: "image/jpeg",
+            });
+            
+            const filename = uploadRes?.data?.file?.filename;
+            if (filename) {
+              photoUrl = filename;
+            }
+          } catch (uploadErr) {
+            console.error("Błąd przesyłania zdjęcia:", uploadErr);
+          }
+        }
+
         await userpeaksService.addPeakUsers(
           peakId,
           userId,
           formData.description,
-          formData.photo_url,
+          photoUrl,
         );
 
         toast.success(
@@ -376,7 +419,23 @@ const PeaksBottomSheet = forwardRef<BottomSheet, PeaksBottomSheetProps>(
                     </Picker>
                   </View>
                 </View>
-
+                <Pressable 
+                  className="mb-3 bg-white/20 rounded-xl p-4 flex justify-center items-center"
+                  onPress={pickImage}
+                >
+                  <View className="flex-row items-center gap-2">
+                    <FontAwesome6 
+                      name={selectedImage ? "check-circle" : "image"} 
+                      size={16} 
+                      color={selectedImage ? "#22c55e" : "white"} 
+                    />
+                    <Text className="text-white font-medium text-sm">
+                      {selectedImage 
+                        ? `Wybrane: ${selectedImage.fileName || 'zdjecie.jpg'}` 
+                        : 'Dodaj zdjęcie'}
+                    </Text>
+                  </View>
+                </Pressable>
                 <View>
                   <Text className="text-white/70 text-xs mb-1 ml-1">
                     Opis (opcjonalnie)
@@ -397,8 +456,6 @@ const PeaksBottomSheet = forwardRef<BottomSheet, PeaksBottomSheetProps>(
                   </View>
                 </View>
               </View>
-
-              {/* Action Buttons */}
               <View className="flex-row gap-3">
                 <Pressable className="flex-1" onPress={clearForm}>
                   <View className="bg-white/15 p-4 rounded-2xl border border-white/20">

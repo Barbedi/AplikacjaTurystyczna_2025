@@ -4,6 +4,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useEffect, useState, useContext } from "react";
 import peaksService from "@/src/services/peaks.service";
 import userpeaksService from "@/src/services/userpeaks.service";
+import filesService from "@/src/services/file.service";
 import { SafeAreaView } from "react-native-safe-area-context";
 import FontAwesome6 from "@expo/vector-icons/build/FontAwesome6";
 import { Peaks, UserPeak } from "@/src/types";
@@ -148,10 +149,11 @@ const PeakDetails = () => {
                 </View>
               ) : userPeak?.photo_url ? (
                 <Image
-                  source={{ uri: userPeak.photo_url }}
+                  source={{ uri: filesService.getPeakImgUrl(userPeak.photo_url) }}
                   className="w-full h-full rounded-2xl"
                   resizeMode="cover"
                 />
+               
               ) : (
                 <View className="bg-white/10 p-5 rounded-2xl h-full justify-center items-center">
                   <Text className="text-white text-center">Nie dodano zdjęcia</Text>
