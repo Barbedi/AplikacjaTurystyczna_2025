@@ -97,14 +97,13 @@ const ActivityDetails = () => {
           }}
           showsVerticalScrollIndicator={false}
         >
-          {/* Header Icon */}
           <View className="items-center ">
-            <View className="bg-green-500/20 w-20 h-20 rounded-full items-center justify-center mb-3">
-              <FontAwesome6 name="person-hiking" size={40} color="#22c55e" />
+            <View className="bg-black/20 w-20 h-20 rounded-full items-center justify-center mb-3">
+              <FontAwesome6 name="person-hiking" size={40} color="#000" />
             </View>
-            <View className="flex-row bg-yellow-500/30 px-2 py-1.5 rounded-2xl items-center justify-center mb-3 gap-2">
-            <FontAwesome6 name="calendar" size={16} color="#fbbf24" />
-            <Text className="text-yellow-500 font-semibold text-sm mt-1">
+            <View className="flex-row bg-black/20 px-2 py-1.5 rounded-2xl items-center justify-center mb-3 gap-2">
+            <FontAwesome6 name="calendar" size={16} color="#000" />
+            <Text className="text-black font-semibold text-sm mt-1">
               {new Date(recording.created_at).toLocaleString("pl-PL")}
             </Text>
             </View>
@@ -146,7 +145,6 @@ const ActivityDetails = () => {
                     <Text className="text-white text-md ">Śr. prędkość</Text>
                   </View>
                   <Text className="text-white text-2xl font-bold">
-                {/* Calculate speed if backend returns 0 (it might if we just fixed it) */}
                 {recording.avg_speed 
                   ? Number(recording.avg_speed).toFixed(1) 
                   : ((recording.distance_m / 1000) / (recording.duration_ms / 1000 / 3600)).toFixed(1)
@@ -155,8 +153,6 @@ const ActivityDetails = () => {
                 </View>
               </View>
             </View>
-
-          {/* Map */}
           <View className="bg-white/10 rounded-2xl p-4 mb-6 backdrop-blur">
             <Text className="text-white text-lg font-semibold mb-3">
               Mapa trasy

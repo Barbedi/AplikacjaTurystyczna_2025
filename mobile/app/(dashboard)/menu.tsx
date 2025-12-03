@@ -43,7 +43,7 @@ export default function Menu() {
     {
       title: "Propozycje tras",
       route: "/(screen)/proposed",
-      icon: "person-hiking",
+      icon: "book-open",
       color: "#EAB308",
       bgColor: "bg-yellow-400/20",
       borderColor: "border-yellow-400",
@@ -76,6 +76,14 @@ export default function Menu() {
       title: "Statystyki",
       route: "/(screen)/stats",
       icon: "chart-simple",
+      color: "#06B6D4",
+      bgColor: "bg-cyan-500/20",
+      borderColor: "border-cyan-500",
+    },
+    {
+      title: "Społeczność",
+      route: "/(screen)/shared",
+      icon: "users",
       color: "#06B6D4",
       bgColor: "bg-cyan-500/20",
       borderColor: "border-cyan-500",

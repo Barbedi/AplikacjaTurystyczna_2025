@@ -163,7 +163,7 @@ const RecordSummaryScreen = () => {
                 }
               }
               setModalVisible(false);
-              router.push("/myRoutes");
+              router.push("/(screen)/activity");
             }}
           />
         </ScrollView>

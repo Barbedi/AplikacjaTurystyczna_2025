@@ -106,11 +106,11 @@ const MyRecordingsScreen = () => {
                 <Pressable
                   key={rec.id}
                   onPress={() => router.push(`/(screen)/activity/${rec.id}`)}
-                  className="w-full bg-white/10 rounded-2xl p-5 border-l-4 border-green-500 mb-4"
+                  className="w-full bg-white/10 rounded-2xl p-5 border-l-4 border-black mb-4"
                 >
                   <View className="flex-row items-center gap-3 mb-3">
-                    <View className="bg-green-500/30 w-12 h-12 rounded-full items-center justify-center">
-                      <FontAwesome6 name="person-hiking" size={22} color="#22c55e" />
+                    <View className="bg-black/20 w-12 h-12 rounded-full items-center justify-center">
+                      <FontAwesome6 name="person-hiking" size={22} color="#000" />
                     </View>
 
                     <View className="flex-1">

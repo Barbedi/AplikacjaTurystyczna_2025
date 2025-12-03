@@ -15,11 +15,8 @@ import Charts from "@/src/components/Route/Charts";
 import MapsRoute from "@/src/components/Route/MapsRoute";
 import Photo from "@/src/components/Route/Photo";
 import { getRouteTypeLabel } from "@/src/utils/routeTypeLabels";
-import communitytrailsService from "@/src/services/communitytrails.service";
-import ShareModal from "@/src/components/ShareModal";
-import { toast } from "@/src/utils/toast";
 
-const TrailsDetails = () => {
+const TrailView = () => {
   const navigation = useNavigation();
   const { id } = useLocalSearchParams();
   const router = useRouter();
@@ -27,17 +24,10 @@ const TrailsDetails = () => {
   const [isMapVisible, setIsMapVisible] = useState(true);
   const [isProfileVisible, setIsProfileVisible] = useState(false);
   const [isPhotosVisible, setIsPhotosVisible] = useState(false);
-// Delete Modal State
-  const [modalVisible, setModalVisible] = useState(false);
-  const [selectedTrailId, setSelectedTrailId] = useState<number | null>(null);
-
-  // Share Modal State
-  const [shareModalVisible, setShareModalVisible] = useState(false);
-  const [trailToShareId, setTrailToShareId] = useState<number | null>(null);
 
   useFocusEffect(
     useCallback(() => {
-      const fetchPeak = async () => {
+      const fetchTrail = async () => {
         try {
           const trailId = Array.isArray(id)
             ? parseInt(id[0])
@@ -51,22 +41,9 @@ const TrailsDetails = () => {
           console.error("Błąd pobierania trasy:", error);
         }
       };
-      if (id) fetchPeak();
+      if (id) fetchTrail();
     }, [id]),
   );
-  const handleShareTrail = async (description: string) => {
-    if (!trailToShareId) return;
-
-    try {
-      await communitytrailsService.addCommunityTrail(trailToShareId, description);
-      toast.success("Trasa została udostępniona!");
-      setShareModalVisible(false);
-      setTrailToShareId(null);
-    } catch (error) {
-      console.error("Error sharing trail:", error);
-      toast.error("Nie udało się udostępnić trasy");
-    }
-  };
 
   return (
     <LinearGradient colors={["#5996eb", "#050c28"]} className="flex-1">
@@ -237,47 +214,16 @@ const TrailsDetails = () => {
                   <Photo
                     trailId={trail?.id || 0}
                     initialPhotos={trail?.photos}
-                    onPhotosUpdate={(updatedTrail) => {
-                      if (updatedTrail) {
-                        setTrail(updatedTrail);
-                      } else if (id) {
-                        const trailId = Array.isArray(id)
-                          ? parseInt(id[0])
-                          : parseInt(id as string);
-                        trailsService
-                          .getTrailById(trailId)
-                          .then((res) => setTrail(res.data));
-                      }
-                    }}
+                    readOnly={true}
                   />
                 </View>
               )}
             </View>
-
-            <Pressable
-              onPress={() => {
-                if (trail?.id) {
-                  setTrailToShareId(trail.id);
-                  setShareModalVisible(true);
-                }
-              }}
-              className="mt-5 bg-white/20 w-full py-3 rounded-xl active:bg-white/30"
-            >
-              <View className="flex-row items-center gap-2 justify-center text-center">
-                <FontAwesome6 name="share" size={15} color="#ffffff" />
-                <Text className="text-white font-semibold text-center">Udostępnij</Text>
-              </View>
-            </Pressable>
           </View>
-          <ShareModal
-            visible={shareModalVisible}
-            onCancel={() => setShareModalVisible(false)}
-            onConfirm={handleShareTrail}
-          />
         </ScrollView>
       </SafeAreaView>
     </LinearGradient>
   );
 };
 
-export default TrailsDetails;
+export default TrailView;
