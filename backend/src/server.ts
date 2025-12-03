@@ -28,6 +28,7 @@ import statistics from "./routes/statistics";
 import routing from "./routes/routing";
 import FeaturesList from "./routes/FeaturesList";
 import test from "./routes/test";
+import tracking from "./routes/tracking";
 import { parseGeoJSON } from "./routing-graph/parseGeoJSON";
 
 const app = express();
@@ -41,6 +42,11 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+
+app.use((req, _res, next) => {
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+  next();
+});
 
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerSpec));
 
@@ -69,6 +75,7 @@ app.use("/statistics", statistics);
 app.use("/routing", routing);
 app.use("/features-list", FeaturesList);
 app.use("/test", test);
+app.use("/tracking", tracking);
 
 // Obsługa nieznalezionych endpointów
 app.use((_req: Request, res: Response) => {

@@ -60,9 +60,7 @@ const PeakDetails = () => {
           Number(id),
         );
         setUserPeak(res.data.data);
-      } catch (error) {
-        
-      }
+      } catch (error) {}
     };
 
     fetchUserPeak();
