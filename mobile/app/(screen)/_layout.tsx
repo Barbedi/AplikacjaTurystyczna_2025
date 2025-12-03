@@ -34,6 +34,12 @@ export default function ScreenLayout() {
         }}
       />
       <Stack.Screen
+        name="activity"
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
         name="notifications"
         options={{
           title: "Powiadomienia",

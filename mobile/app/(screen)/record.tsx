@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { View, StyleSheet, Pressable, Text } from "react-native";
 import {
   MapView,
@@ -29,7 +29,7 @@ const RecordScreen = () => {
   const router = useRouter();
   let timer: ReturnType<typeof setTimeout>;
 
-  React.useEffect(() => {
+  useEffect(() => {
     const fetchUser = async () => {
       try {
         const data = await getAuthenticatedUser();
@@ -43,7 +43,7 @@ const RecordScreen = () => {
     fetchUser();
   }, []);
 
-  React.useEffect(() => {
+  useEffect(() => {
     (async () => {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
@@ -53,7 +53,7 @@ const RecordScreen = () => {
     })();
   }, []);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (isPlaying && !isPaused) {
       timer = setInterval(() => {
         setDuration((prev) => prev + 1);
@@ -71,7 +71,7 @@ const RecordScreen = () => {
   }, [isPlaying, isPaused]);
 
   // Live Location Tracking for UI
-  React.useEffect(() => {
+  useEffect(() => {
     let subscription: Location.LocationSubscription | null = null;
 
     const startWatching = async () => {
@@ -193,6 +193,7 @@ const RecordScreen = () => {
           elevation_loss: summary.elevation_loss,
           duration: duration * 1000,
           avg_speed: summary.avg_speed,
+          routeId: summary.routeId,
           // We don't pass points here, they are in the file
         },
       });
@@ -213,7 +214,7 @@ const RecordScreen = () => {
 
   return (
     <View style={styles.container}>
-      {/* MAPA */}
+
       <MapView style={styles.map} logoEnabled={false}>
         <Camera
           followUserLocation={true}
@@ -230,8 +231,6 @@ const RecordScreen = () => {
         >
           <RasterLayer id="baseLayer" sourceID="base" />
         </RasterSource>
-
-        {/* Live Route Polyline */}
         {coordinates.length > 1 && (
           <ShapeSource id="routeSource" shape={routeGeoJSON}>
             <LineLayer
@@ -265,7 +264,6 @@ const RecordScreen = () => {
       </View>
 
       <View className="absolute bottom-10 w-full flex-row justify-center items-center gap-6">
-        {/* START BUTTON (Initial or Resume) */}
         {(!isPlaying || isPaused) && (
           <Pressable
             className="bg-black/40 rounded-full h-28 w-28 items-center justify-center"
@@ -275,7 +273,6 @@ const RecordScreen = () => {
           </Pressable>
         )}
 
-        {/* CONTROLS (Stop and Pause) */}
         {isPlaying && (
           <>
             <Pressable

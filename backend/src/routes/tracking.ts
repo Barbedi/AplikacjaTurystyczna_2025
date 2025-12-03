@@ -150,4 +150,21 @@ router.post("/:id/finish", async (req, res) => {
   }
 });
 
+router.put("/:id", async (req, res) => {
+  const { id } = req.params;
+  const { name } = req.body;
+  console.log(`[Backend] PUT /tracking/${id} - Updating route`, { name });
+
+  try {
+    await db.query(
+      `UPDATE routes SET name = $1 WHERE id = $2`,
+      [name, id]
+    );
+    res.json({ ok: true });
+  } catch (error) {
+    console.error(`[Backend] Error updating route ${id}:`, error);
+    res.status(500).json({ message: "Failed to update route", error: String(error) });
+  }
+});
+
 export default router;

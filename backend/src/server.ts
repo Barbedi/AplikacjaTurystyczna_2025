@@ -30,6 +30,7 @@ import FeaturesList from "./routes/FeaturesList";
 import test from "./routes/test";
 import tracking from "./routes/tracking";
 import { parseGeoJSON } from "./routing-graph/parseGeoJSON";
+import routesRecording from "./routes/routesRecording";
 
 const app = express();
 export const hikingGraph = parseGeoJSON("data/exportMain.geojson");
@@ -76,6 +77,7 @@ app.use("/routing", routing);
 app.use("/features-list", FeaturesList);
 app.use("/test", test);
 app.use("/tracking", tracking);
+app.use("/gps", routesRecording);
 
 // Obsługa nieznalezionych endpointów
 app.use((_req: Request, res: Response) => {

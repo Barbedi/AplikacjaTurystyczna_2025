@@ -35,4 +35,9 @@ export const TrackingService = {
     console.log(`[TrackingService] deleteRoute: DELETE /tracking/${routeId}`);
     await api.delete(`/tracking/${routeId}`);
   },
+
+  updateRoute: async (routeId: number, data: { name: string }) => {
+    console.log(`[TrackingService] updateRoute: PUT /tracking/${routeId}`, data);
+    await api.put(`/tracking/${routeId}`, data);
+  },
 };

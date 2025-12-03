@@ -124,7 +124,8 @@ export function useRouteRecorder() {
         elevation_loss: elevationLoss,
         points_count: points.length,
         duration,
-        avg_speed: avgSpeed
+        avg_speed: avgSpeed,
+        routeId: routeId ? Number(routeId) : undefined
     };
   };
 

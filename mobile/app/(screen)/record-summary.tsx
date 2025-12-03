@@ -7,6 +7,8 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import ModalAccept from "@/src/components/ModalAcpet";
 import MapInfo from "@/src/components/map/mapinfo";
 import * as FileSystem from "expo-file-system/legacy";
+import { TrackingService } from "@/src/services/tracking.service";
+import { toast } from "@/src/utils/toast";
 
 const RecordSummaryScreen = () => {
   const router = useRouter();
@@ -150,7 +152,16 @@ const RecordSummaryScreen = () => {
           <ModalAccept
             visible={modalVisible}
             onCancel={() => setModalVisible(false)}
-            onConfirm={() => {
+            onConfirm={async (name) => {
+              if (params.routeId) {
+                try {
+                  await TrackingService.updateRoute(Number(params.routeId), { name });
+                  toast.success("Sukces", "Trasa została zapisana");
+                } catch (e) {
+                  console.error("Failed to update route name", e);
+                  toast.error("Błąd", "Nie udało się zmienić nazwy trasy");
+                }
+              }
               setModalVisible(false);
               router.push("/myRoutes");
             }}

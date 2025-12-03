@@ -33,6 +33,14 @@ export default function Menu() {
       borderColor: "border-green-500",
     },
     {
+      title: "Moje aktywności",
+      route: "/(screen)/activity",
+      icon: "person-hiking",
+      color: "#000",
+      bgColor: "bg-black/20",
+      borderColor: "border-black",
+    },
+    {
       title: "Propozycje tras",
       route: "/(screen)/proposed",
       icon: "person-hiking",
