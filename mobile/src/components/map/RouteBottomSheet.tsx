@@ -21,6 +21,7 @@ interface RouteBottomSheetProps {
   onClearRoute: () => void;
   onRemovePoint: (index: number) => void;
   onSaveRoute: (routeData: any) => void;
+  onRouteTypeChange?: (type: "one-way" | "loop" | "back-and-forth") => void;
   saving?: boolean;
 }
 
@@ -37,6 +38,7 @@ const RouteBottomSheet = forwardRef<RouteBottomSheetRef, RouteBottomSheetProps>(
       onClearRoute,
       onRemovePoint,
       onSaveRoute,
+      onRouteTypeChange,
       saving = false,
     },
     ref,
@@ -226,11 +228,11 @@ const RouteBottomSheet = forwardRef<RouteBottomSheetRef, RouteBottomSheetProps>(
             <View className="mb-4">
               <View
                 className="flex-row gap-2 justify-between"
-                style={{ zIndex: 3000 }}
+                style={{ zIndex: openType || openRegion ? 7000 : 1 }}
               >
                 <View
                   className="flex-1"
-                  style={{ zIndex: openType ? 3000 : 1 }}
+                  style={{ zIndex: openType ? 9000 : 1 }}
                 >
                   <Text className="text-white/70 mb-2 text-sm font-semibold">
                     Typ trasy
@@ -246,6 +248,11 @@ const RouteBottomSheet = forwardRef<RouteBottomSheetRef, RouteBottomSheetProps>(
                     listMode="SCROLLVIEW"
                     scrollViewProps={{
                       nestedScrollEnabled: true,
+                    }}
+                    onChangeValue={(value) => {
+                      if (value && onRouteTypeChange) {
+                        onRouteTypeChange(value as "one-way" | "loop" | "back-and-forth");
+                      }
                     }}
                     style={{
                       backgroundColor: "rgba(255,255,255,0.1)",
@@ -284,7 +291,7 @@ const RouteBottomSheet = forwardRef<RouteBottomSheetRef, RouteBottomSheetProps>(
 
                 <View
                   className="flex-1"
-                  style={{ zIndex: openRegion ? 2000 : 1 }}
+                  style={{ zIndex: openRegion ? 8000 : 1 }}
                 >
                   <Text className="text-white/70 mb-2 text-sm font-semibold">
                     Region
@@ -338,7 +345,7 @@ const RouteBottomSheet = forwardRef<RouteBottomSheetRef, RouteBottomSheetProps>(
               </View>
             </View>
 
-            <View className="mb-4">
+            <View className="mb-4" style={{ zIndex: openDifficulty ? 6000 : 1 }}>
               <Text className="text-white/70 mb-2 text-sm font-semibold">
                 Cechy trasy
               </Text>
@@ -352,7 +359,6 @@ const RouteBottomSheet = forwardRef<RouteBottomSheetRef, RouteBottomSheetProps>(
                 setItems={setRouteDifficulties}
                 placeholder="Wybierz cechy trasy"
                 listMode="SCROLLVIEW"
-                zIndex={6000}
                 mode="BADGE"
                 badgeDotColors={["#eab308", "#f97316", "#ef4444"]}
                 scrollViewProps={{
