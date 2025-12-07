@@ -116,7 +116,7 @@ router.patch(
   async (req, res, next) => {
     try {
       const { userId, peakId } = req.params;
-      const { verified } = req.body;
+      const { verified, distance_from_peak } = req.body;
 
       if (!userId || !peakId) {
         res.status(400).json({ message: "User ID and Peak ID are required" });
@@ -127,6 +127,7 @@ router.patch(
         parseInt(userId),
         parseInt(peakId),
         verified,
+        distance_from_peak,
       );
 
       res.status(200).json({ data: result });

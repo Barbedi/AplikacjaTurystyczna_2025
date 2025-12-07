@@ -52,38 +52,28 @@ async function getStatisticsForUser(userId: number): Promise<Statistics> {
 
   const crownKGPUserQuery = await db.query(
     `
-    SELECT COUNT(*)
+    SELECT COUNT(DISTINCT up.peak_id)
     FROM user_peaks up
     JOIN peaks p ON up.peak_id = p.id
     JOIN peak_collection_peaks pcp ON p.id = pcp.peak_id
     JOIN peak_collections pc ON pcp.collection_id = pc.id
     WHERE up.user_id = $1
       AND pc.id = 1
-      AND up.visited_at = (
-          SELECT MAX(up2.visited_at)
-          FROM user_peaks up2
-          WHERE up2.user_id = up.user_id
-            AND up2.peak_id = up.peak_id
-      );
+      AND up.verified = true;
   `,
     [userId],
   );
 
   const crownKBSUserQuery = await db.query(
     `
-    SELECT COUNT(*)
+    SELECT COUNT(DISTINCT up.peak_id)
     FROM user_peaks up
     JOIN peaks p ON up.peak_id = p.id
     JOIN peak_collection_peaks pcp ON p.id = pcp.peak_id
     JOIN peak_collections pc ON pcp.collection_id = pc.id
     WHERE up.user_id = $1
       AND pc.id = 2
-      AND up.visited_at = (
-          SELECT MAX(up2.visited_at)
-          FROM user_peaks up2
-          WHERE up2.user_id = up.user_id
-            AND up2.peak_id = up.peak_id
-      );
+      AND up.verified = true;
   `,
     [userId],
   );

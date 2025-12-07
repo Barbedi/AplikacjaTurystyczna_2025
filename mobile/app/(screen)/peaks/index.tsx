@@ -10,6 +10,7 @@ import { UserPeak } from "@/src/types";
 import PeaksBottomSheet from "@/src/components/peak/PeaksBottomSheet";
 import BottomSheet from "@gorhom/bottom-sheet";
 import { useRef } from "react";
+import { router } from "expo-router";
 
 const PeaksScreen = () => {
   const { getUserByEmail, usersData, loading: userLoading } = useGetUsers();
@@ -85,30 +86,34 @@ const PeaksScreen = () => {
 
             {!loading && !error && myPeaks ? (
               myPeaks.map((peak: UserPeak, index: number) => (
-                <View
+                <Pressable
+                  onPress={() => router.push(`/peaks/${peak.peak_id}`)}
                   key={index}
                   className="w-full bg-white/10 rounded-2xl p-5 border-l-4 border-yellow-500"
                 >
-                  <View className="flex-row items-center justify-between mb-3">
-                    <View className="flex-row items-center gap-3">
-                      <View className="bg-yellow-500/20 w-12 h-12 rounded-full items-center justify-center">
-                        <FontAwesome6 name="crown" size={24} color="#eab308" />
-                        <Text className=" absolute top-5 right-4.1 text-white font-semibold text-xs">
-                          {peak.times_visited}
-                        </Text>
-                      </View>
-                      <View>
-                        <Text className="text-2xl font-bold text-white">
+                  <View className="flex-row items-start gap-3 mb-3">
+                    <View className="bg-yellow-500/20 w-12 h-12 rounded-full items-center justify-center">
+                      <FontAwesome6 name="crown" size={24} color="#eab308" />
+                      <Text className="absolute top-5 right-4.1 text-white font-semibold text-xs">
+                        {peak.times_visited}
+                      </Text>
+                    </View>
+                    <View className="flex-1">
+                      <View className="flex-row items-center justify-between mb-1">
+                        <Text
+                          className="text-2xl font-bold text-white flex-1 mr-2"
+                          numberOfLines={2}
+                        >
                           {peak.peak_name || "Nieznany szczyt"}
                         </Text>
-                        <Text className="text-sm text-white/70">
-                          {peak.peak_elevation || "?"} m n.p.m.
-                        </Text>
+                        <View className="bg-green-500/20 px-3 py-1 rounded-full">
+                          <Text className="text-green-400 font-semibold text-xs">
+                            ZDOBYTY
+                          </Text>
+                        </View>
                       </View>
-                    </View>
-                    <View className="bg-green-500/20 px-3 py-1 rounded-full">
-                      <Text className="text-green-400 font-semibold text-xs">
-                        ZDOBYTY
+                      <Text className="text-sm text-white/70">
+                        {peak.peak_elevation || "?"} m n.p.m.
                       </Text>
                     </View>
                   </View>
@@ -129,7 +134,10 @@ const PeaksScreen = () => {
                         : "Brak daty"}
                     </Text>
                   </View>
-                </View>
+                  <Text className="text-sm text-gray-400 text-center mt-2">
+                    Dotknij aby zobaczyć szczegóły trasy
+                  </Text>
+                </Pressable>
               ))
             ) : !loading && !error ? (
               <View className="flex-1 items-center justify-center py-10">

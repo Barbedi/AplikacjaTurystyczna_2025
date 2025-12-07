@@ -29,7 +29,7 @@ const MapScreen = () => {
   const [shelters, setShelters] = useState<Shelters[]>([]);
   const [peaks, setPeaks] = useState<Peaks[]>([]);
   const [routeGeoJson, setRouteGeoJson] = useState<any>(null);
-  const [routeType] = useState<"one-way" | "loop" | "back-and-forth">(
+  const [routeType, setRouteType] = useState<"one-way" | "loop" | "back-and-forth">(
     "one-way",
   );
   const [clickedPoints, setClickedPoints] = useState<
@@ -252,6 +252,9 @@ const MapScreen = () => {
         }}
         onRemovePoint={(index) => {
           setClickedPoints((prev) => prev.filter((_, i) => i !== index));
+        }}
+        onRouteTypeChange={(type) => {
+          setRouteType(type);
         }}
         onSaveRoute={async (routeData) => {
           console.log("Zapisywanie trasy:", routeData);

@@ -1,6 +1,5 @@
 import React from "react";
 import { Modal, View, Text, Pressable } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 
 interface ConfirmDeleteModalProps {
@@ -22,48 +21,50 @@ const ConfirmDeleteModal: React.FC<ConfirmDeleteModalProps> = ({
     <Modal
       transparent
       visible={visible}
-      animationType="slide"
+      animationType="fade"
       onRequestClose={onCancel}
     >
-      <View
-        className="flex-1 justify-center items-center p-6 "
-        style={{ backgroundColor: "rgba(0, 0, 0, 0.4)" }}
+      <Pressable
+        className="flex-1 justify-center items-center px-5 bg-black/50"
+        onPress={onCancel}
       >
-        <LinearGradient
-          colors={["#999999", "#5996eb"]}
-          className="rounded-2xl p-5 border-2 border-white/20 w-full max-w-sm"
-          style={{ borderRadius: 16 }}
+        <Pressable
+          className="bg-gray-900/95 rounded-3xl w-full max-w-sm overflow-hidden border border-white/10 shadow-2xl"
+          onPress={(e) => e.stopPropagation()}
         >
-          <View className="items-center mb-4">
-            <View className="bg-red-500/20 w-16 h-16 rounded-full items-center justify-center mb-3">
-              <FontAwesome6 name="trash-can" size={28} color="#ef4444" />
+          <View className="px-6 py-6">
+            <View className="items-center mb-6">
+              <View className="bg-red-500/20 w-16 h-16 rounded-full items-center justify-center mb-4">
+                <FontAwesome6 name="trash-can" size={28} color="#ef4444" />
+              </View>
+              <Text className="text-white text-2xl font-bold text-center mb-2">
+                {title}
+              </Text>
+              <Text className="text-gray-400 text-center text-sm">
+                {message}
+              </Text>
             </View>
-            <Text className="text-white text-xl font-bold text-center mb-2">
-              {title}
-            </Text>
-            <Text className="text-white/70 text-sm text-center">{message}</Text>
-          </View>
 
-          <View className="flex-row justify-between gap-3">
-            <Pressable
-              onPress={onCancel}
-              className="flex-1 bg-white/20 rounded-xl py-3 items-center border border-white/30"
-            >
-              <Text className="text-white font-bold">Anuluj</Text>
-            </Pressable>
+            <View className="flex-row gap-3">
+              <Pressable
+                onPress={onCancel}
+                className="flex-1 bg-gray-800 rounded-xl py-3.5 items-center border border-gray-700/50 active:bg-gray-700"
+              >
+                <Text className="text-gray-300 font-semibold text-base">
+                  Anuluj
+                </Text>
+              </Pressable>
 
-            <Pressable
-              onPress={onConfirm}
-              className="flex-1 bg-red-500 rounded-xl py-3 items-center"
-              style={({ pressed }) => ({
-                opacity: pressed ? 0.8 : 1,
-              })}
-            >
-              <Text className="text-white font-bold">Usuń</Text>
-            </Pressable>
+              <Pressable
+                onPress={onConfirm}
+                className="flex-1 bg-red-500 rounded-xl py-3.5 items-center active:bg-red-600"
+              >
+                <Text className="text-white font-bold text-base">Usuń</Text>
+              </Pressable>
+            </View>
           </View>
-        </LinearGradient>
-      </View>
+        </Pressable>
+      </Pressable>
     </Modal>
   );
 };

@@ -34,6 +34,18 @@ export default function ScreenLayout() {
         }}
       />
       <Stack.Screen
+        name="shared"
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="activity"
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
         name="notifications"
         options={{
           title: "Powiadomienia",
@@ -72,8 +84,7 @@ export default function ScreenLayout() {
       <Stack.Screen
         name="peaks"
         options={{
-          title: "Szczyty",
-          headerTitleAlign: "center",
+          headerShown: false,
         }}
       />
       <Stack.Screen

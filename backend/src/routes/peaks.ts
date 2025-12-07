@@ -1,6 +1,8 @@
 import express from "express";
 import peaksService from "../services/peaks";
 import { Err } from "../Types";
+import { verifyPeakPhoto } from "../utils/verifyPeakPhoto";
+import path from "path";
 
 const router = express.Router();
 
@@ -605,4 +607,118 @@ router.patch("/:id", async (req, res, next) => {
  *       500:
  *         description: Server error
  */
+
+/**
+ * @swagger
+ * /peaks/verify-photo:
+ *   post:
+ *     summary: Verify peak photo by GPS coordinates
+ *     tags:
+ *       - Peaks
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - filename
+ *               - peak_id
+ *             properties:
+ *               filename:
+ *                 type: string
+ *                 description: Uploaded image filename
+ *                 example: "peak_1234567890.jpg"
+ *               peak_id:
+ *                 type: number
+ *                 description: Peak ID to verify against
+ *                 example: 1
+ *     responses:
+ *       200:
+ *         description: Photo verification result
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 verified:
+ *                   type: boolean
+ *                   description: Whether photo is verified (within 1000m)
+ *                 distance:
+ *                   type: number
+ *                   description: Distance from peak in meters
+ *                 error:
+ *                   type: string
+ *                   description: Error message if verification failed
+ *       400:
+ *         description: Missing required parameters
+ *       404:
+ *         description: Peak not found or image file not found
+ *       500:
+ *         description: Server error
+ */
+router.post("/verify-photo", async (req, res, next) => {
+  console.log("🔍 POST /peaks/verify-photo HIT");
+  console.log("📦 Request body:", req.body);
+  
+  try {
+    const { filename, peak_id } = req.body;
+
+    if (!filename || !peak_id) {
+      console.log("❌ Missing parameters:", { filename, peak_id });
+      res.status(400).json({ 
+        message: "Missing required parameters: filename and peak_id" 
+      });
+      return;
+    }
+    
+    console.log("✅ Parameters OK:", { filename, peak_id });
+
+    // Pobierz dane szczytu
+    const peakResult = await peaksService.getPeakById(peak_id);
+    const peak = peakResult.data;
+    console.log("🏔️ Peak data:", { 
+      id: peak?.id, 
+      name: peak?.name, 
+      lat: peak?.latitude, 
+      lon: peak?.longitude 
+    });
+
+    if (!peak || !peak.latitude || !peak.longitude) {
+      console.log("❌ Peak missing coordinates");
+      res.status(404).json({ 
+        message: "Peak not found or missing GPS coordinates" 
+      });
+      return;
+    }
+
+    // Ścieżka do pliku zdjęcia (w kontenerze pliki są w dist/files/peaks)
+    const imagePath = path.join(__dirname, "../files/peaks", filename);
+    console.log("📁 Image path:", imagePath);
+
+    // Weryfikacja zdjęcia
+    console.log("🔍 Calling verifyPeakPhoto with:", {
+      imagePath,
+      peakLat: peak.latitude,
+      peakLon: peak.longitude,
+      maxDistance: 1000
+    });
+    const result = await verifyPeakPhoto(
+      imagePath,
+      peak.latitude,
+      peak.longitude,
+      1000 // max 1000m
+    );
+    console.log("📊 verifyPeakPhoto result:", result);
+
+    res.status(200).json(result);
+  } catch (error) {
+    if (error instanceof Err) {
+      res.status(error.statusCode || 500).json({ message: error.message });
+    } else {
+      next(error);
+    }
+  }
+});
+
 export default router;

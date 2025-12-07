@@ -32,9 +32,11 @@ class UserPeaksService {
     userId: number,
     peakId: number,
     verified: boolean,
+    distanceFromPeak?: number,
   ) => {
     return httpCommon.patch(`/user-peaks/${userId}/${peakId}/verification`, {
       verified,
+      distance_from_peak: distanceFromPeak,
     });
   };
 }

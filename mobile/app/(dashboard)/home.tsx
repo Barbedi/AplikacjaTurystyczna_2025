@@ -40,7 +40,7 @@ const Home = () => {
       };
 
       loadUser();
-    }, [getUserByEmail])
+    }, [getUserByEmail]),
   );
 
   const user = usersData?.[0]?.[0];
@@ -93,9 +93,9 @@ const Home = () => {
                 </View>
               </View>
               <Pressable onPress={() => router.push("/(screen)/notifications")}>
-              <View className="bg-white/20 w-12 h-12 rounded-full items-center justify-center">
-                <FontAwesome6 name="bell" size={20} color="#fff" />
-              </View>
+                <View className="bg-white/20 w-12 h-12 rounded-full items-center justify-center">
+                  <FontAwesome6 name="bell" size={20} color="#fff" />
+                </View>
               </Pressable>
             </View>
 

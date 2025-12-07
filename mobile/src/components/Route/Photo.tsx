@@ -11,9 +11,10 @@ interface PhotoProps {
   trailId: number;
   initialPhotos?: PhotoType[];
   onPhotosUpdate?: (updatedTrail?: Trails) => void;
+  readOnly?: boolean;
 }
 
-const Photo = ({ trailId, initialPhotos = [], onPhotosUpdate }: PhotoProps) => {
+const Photo = ({ trailId, initialPhotos = [], onPhotosUpdate, readOnly = false }: PhotoProps) => {
   const [photos, setPhotos] = useState<PhotoType[]>(initialPhotos);
 
   useEffect(() => {
@@ -107,56 +108,54 @@ const Photo = ({ trailId, initialPhotos = [], onPhotosUpdate }: PhotoProps) => {
   };
 
   const removeImage = (photoName: string) => {
-    Alert.alert(
-      "Usuń zdjęcie",
-      "Czy na pewno chcesz usunąć to zdjęcie?",
-      [
-        { text: "Anuluj", style: "cancel" },
-        {
-          text: "Usuń",
-          style: "destructive",
-          onPress: async () => {
-            try {
-              await trailsService.deleteTrailPhoto(trailId, photoName);
+    Alert.alert("Usuń zdjęcie", "Czy na pewno chcesz usunąć to zdjęcie?", [
+      { text: "Anuluj", style: "cancel" },
+      {
+        text: "Usuń",
+        style: "destructive",
+        onPress: async () => {
+          try {
+            await trailsService.deleteTrailPhoto(trailId, photoName);
 
-              const updatedTrail = await trailsService.getTrailById(trailId);
+            const updatedTrail = await trailsService.getTrailById(trailId);
 
-              setPhotos(updatedTrail.data.photos || []);
-              toast.success("Zdjęcie usunięte");
+            setPhotos(updatedTrail.data.photos || []);
+            toast.success("Zdjęcie usunięte");
 
-              onPhotosUpdate?.(updatedTrail.data);
-            } catch (error) {
-              toast.error("Nie udało się usunąć zdjęcia");
-            }
-          },
+            onPhotosUpdate?.(updatedTrail.data);
+          } catch (error) {
+            toast.error("Nie udało się usunąć zdjęcia");
+          }
         },
-      ]
-    );
+      },
+    ]);
   };
 
   return (
     <View className="w-full">
-      <View className="flex-row gap-4 mb-5">
-        <Pressable
-          className="flex-1 h-32 bg-white/20 rounded-2xl justify-center items-center"
-          onPress={takePhoto}
-        >
-          <FontAwesome6 name="camera" size={30} color="#ffffff" />
-          <Text className="text-white text-center text-sm mt-2">
-            Zrób zdjęcie
-          </Text>
-        </Pressable>
+      {!readOnly && (
+        <View className="flex-row gap-4 mb-5">
+          <Pressable
+            className="flex-1 h-32 bg-white/20 rounded-2xl justify-center items-center"
+            onPress={takePhoto}
+          >
+            <FontAwesome6 name="camera" size={30} color="#ffffff" />
+            <Text className="text-white text-center text-sm mt-2">
+              Zrób zdjęcie
+            </Text>
+          </Pressable>
 
-        <Pressable
-          className="flex-1 h-32 bg-white/20 rounded-2xl justify-center items-center"
-          onPress={pickImage}
-        >
-          <FontAwesome6 name="images" size={30} color="#ffffff" />
-          <Text className="text-white text-center text-sm mt-2">
-            Wybierz z galerii
-          </Text>
-        </Pressable>
-      </View>
+          <Pressable
+            className="flex-1 h-32 bg-white/20 rounded-2xl justify-center items-center"
+            onPress={pickImage}
+          >
+            <FontAwesome6 name="images" size={30} color="#ffffff" />
+            <Text className="text-white text-center text-sm mt-2">
+              Wybierz z galerii
+            </Text>
+          </Pressable>
+        </View>
+      )}
 
       {photos.length > 0 ? (
         <ScrollView
@@ -177,12 +176,14 @@ const Photo = ({ trailId, initialPhotos = [], onPhotosUpdate }: PhotoProps) => {
                   resizeMode="cover"
                 />
 
-                <Pressable
-                  onPress={() => removeImage(photo.image_name)}
-                  className="absolute top-2 right-2 bg-red-500 rounded-full w-8 h-8 justify-center items-center"
-                >
-                  <FontAwesome6 name="trash" size={14} color="#ffffff" />
-                </Pressable>
+                {!readOnly && (
+                  <Pressable
+                    onPress={() => removeImage(photo.image_name)}
+                    className="absolute top-2 right-2 bg-red-500 rounded-full w-8 h-8 justify-center items-center"
+                  >
+                    <FontAwesome6 name="trash" size={14} color="#ffffff" />
+                  </Pressable>
+                )}
               </View>
             );
           })}
@@ -191,7 +192,8 @@ const Photo = ({ trailId, initialPhotos = [], onPhotosUpdate }: PhotoProps) => {
         <View className="py-10 items-center">
           <FontAwesome6 name="image" size={50} color="#ffffff40" />
           <Text className="text-white/40 text-center mt-3">
-            Brak zdjęć. Dodaj pierwsze zdjęcie!
+            Brak zdjęć.
+            {!readOnly && " Dodaj pierwsze zdjęcie!"}
           </Text>
         </View>
       )}
