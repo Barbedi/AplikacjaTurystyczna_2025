@@ -18,6 +18,7 @@ const SharedScreen = () => {
   const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedSharedId, setSelectedSharedId] = useState<number | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const router = useRouter();
 
@@ -86,23 +87,77 @@ const SharedScreen = () => {
 
   return (
     <LinearGradient colors={["#5996eb", "#050c28"]} className="flex-1">
-      <SafeAreaView className="flex-1">
+      <SafeAreaView edges={["bottom", "left", "right"]} className="flex-1">
         <ScrollView
           contentContainerStyle={{
             paddingHorizontal: 20,
             paddingTop: 10,
             paddingBottom: 20,
             flexGrow: 1,
-            gap: 16,
           }}
           showsVerticalScrollIndicator={false}
         >
-          {loading && (
-            <Text className="text-white text-center">Ładowanie...</Text>
-          )}
+          <View className="flex-col gap-4">
+            {loading && (
+              <Text className="text-white text-center">
+                Ładowanie twoich tras...
+              </Text>
+            )}
 
-          {!loading && trails.length === 0 && (
-            <View className="items-center ">
+            {error && (
+              <View className="bg-red-500/20 p-4 rounded-xl">
+                <Text className="text-red-400 text-center">{error}</Text>
+              </View>
+            )}
+
+           {!loading && !error && trails && trails.length > 0 ? (
+            trails.map((trail) => (
+              <Pressable
+                key={trail.shared_id}
+                onPress={() => router.push(`/shared/${trail.shared_id}`)}
+                className="w-full bg-white/10 rounded-2xl p-5 border-l-4 border-blue-500"
+              >
+                <View className="flex-row items-center gap-3 mb-3">
+                  <Image
+                    source={{
+                      uri: filesService.getImgUrl(trail.user_image),
+                    }}
+                    className="w-12 h-12 rounded-full bg-white/20"
+                  />
+                  <View className="flex-1">
+                    <Text className="text-xl font-bold text-white">
+                      {trail.user_name}
+                    </Text>
+                    <Text className="text-white/60 text-sm">
+                      Udostępnił:{" "}
+                      {new Date(trail.created_at).toLocaleDateString("pl-PL")}
+                    </Text>
+                  </View>
+                  {currentUser?.id === trail.user_id && (
+                    <Pressable
+                      onPress={() => {
+                        setSelectedSharedId(trail.shared_id);
+                        setModalVisible(true);
+                      }}
+                    >
+                      <View className="bg-red-500/20 w-10 h-10 rounded-full items-center justify-center">
+                        <FontAwesome6 name="trash" size={16} color="#ef4444" />
+                      </View>
+                    </Pressable>
+                  )}
+                </View>
+                <View className="bg-white/20 px-4 py-2 rounded-xl">
+                  <Text className="text-white font-semibold text-base">
+                    {trail.name}
+                  </Text>
+                </View>
+                <Text className="text-sm text-gray-400 text-center mt-2">
+                  Dotknij aby zobaczyć wątek
+                </Text>
+              </Pressable>
+            ))
+          ) : !loading && !error ? (
+            <View className="flex-1 items-center justify-center py-10">
               <FontAwesome6 name="share-nodes" size={48} color="#ffffff40" />
               <Text className="text-white/70 mt-4 text-lg">
                 Brak udostępnionych tras
@@ -111,79 +166,7 @@ const SharedScreen = () => {
                 Udostępnij swoją pierwszą trasę!
               </Text>
             </View>
-          )}
-
-          {!loading &&
-            trails.map((trail, index) => (
-              <Pressable
-                key={trail.shared_id}
-                onPress={() => router.push(`/shared/${trail.shared_id}`)}
-                className="relative overflow-hidden bg-white/10 border border-white/20 rounded-2xl p-5"
-
-              >
-                <LinearGradient
-                  colors={["transparent", "rgba(255,255,255,0.05)"]}
-                  style={{
-                    position: "absolute",
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                  }}
-                />
-
-                
-                <View className="flex-row gap-4 items-center">
-                  <Image
-                    source={{
-                      uri: filesService.getImgUrl(trail.user_image),
-                    }}
-                    className="w-14 h-14 rounded-full bg-white/20"
-                  />
-
-                  <View className="flex-1">
-                    <Text className="text-white font-bold text-lg">
-                      {trail.user_name}
-                    </Text>
-                    <Text className="text-white/60 text-sm">
-                      Udostępnił:{" "}
-                      {new Date(trail.created_at).toLocaleDateString("pl-PL")}
-                    </Text>
-                  </View>
-
-                  
-                  {currentUser?.id === trail.user_id && (
-                    <Pressable
-                      onPress={() => {
-                        setSelectedSharedId(trail.shared_id);
-                        setModalVisible(true);
-                      }}
-                    >
-                      <View className="w-10 h-10 rounded-full bg-red-500/20 items-center justify-center">
-                        <FontAwesome6
-                          name="trash"
-                          size={15}
-                          color="#ef4444"
-                        />
-                      </View>
-                    </Pressable>
-                  )}
-                </View>
-                <View className="bg-white/10 rounded-xl px-4 py-3 mt-2 flex-row justify-between items-center">
-                  <Text className="text-white font-semibold text-base">
-                    {trail.name}
-                  </Text>
-                  <FontAwesome6
-                    name="chevron-right"
-                    size={14}
-                    color="#ffffff90"
-                  />
-                </View>
-                <Text className="text-center text-white/60 mt-2">
-                  Zobacz wątek
-                </Text>
-              </Pressable>
-            ))}
+          ) : null}
 
           {/* Delete modal */}
           <ConfirmDeleteModal
@@ -193,6 +176,7 @@ const SharedScreen = () => {
             onCancel={() => setModalVisible(false)}
             onConfirm={handleDelete}
           />
+          </View>
         </ScrollView>
       </SafeAreaView>
     </LinearGradient>
