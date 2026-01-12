@@ -56,6 +56,7 @@ export interface Trails {
   };
   created_by: string;
   created_at: string;
+  main_photo?: string;
   points?: TrailPoint[];
   photos?: Photo[];
   duration_minutes: number;
@@ -155,6 +156,8 @@ export interface UserPeak {
   description?: string;
   photo_url?: string;
   verified?: boolean;
+  peak_elevation?: number;
+  distance_from_peak?: number;
 }
 
 export interface UserPeaks {

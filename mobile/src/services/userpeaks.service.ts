@@ -28,13 +28,16 @@ class UserPeaksService {
       photoUrl,
     });
   };
+
   updateUserPeakVerification = async (
     userId: number,
     peakId: number,
     verified: boolean,
+    distanceFromPeak?: number,
   ) => {
     return api.patch(`/user-peaks/${userId}/${peakId}/verification`, {
       verified,
+      distance_from_peak: distanceFromPeak,
     });
   };
 }

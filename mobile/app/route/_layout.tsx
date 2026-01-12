@@ -1,17 +1,30 @@
-import { Stack } from "expo-router";
+import { Stack, useRouter } from "expo-router";
+import { Pressable } from "react-native";
+import { FontAwesome6 } from "@expo/vector-icons";
 
-export default function RouteLayout() {
+export default function CrownLayout() {
+  const router = useRouter();
+
   return (
     <Stack
       screenOptions={{
         headerShown: true,
-        headerTintColor: "#c084fc",
-        headerTitleStyle: {
-          fontWeight: "500",
-          color: "#c084fc",
-        },
-        headerTransparent: true,
+        headerStyle: { backgroundColor: "#5996eb" },
+        headerTintColor: "#fff",
+        headerTitleAlign: "center",
       }}
-    />
+    >
+      <Stack.Screen
+        name="[id]"
+        options={{
+          title: "Moje Trasy",
+          headerLeft: () => (
+            <Pressable onPress={() => router.back()} className="ml-2">
+              <FontAwesome6 name="arrow-left" size={20} color="#fff" />
+            </Pressable>
+          ),
+        }}
+      />
+    </Stack>
   );
 }

@@ -9,6 +9,7 @@ import trailsService from "@/src/services/trails.service";
 import { getAuthenticatedUser } from "@/src/config/api";
 import ConfirmDeleteModal from "@/src/components/ConfirmDeleteModal";
 import { useRouter } from "expo-router";
+import { toast } from "@/src/utils/toast";
 
 const MyRoutesScreen = () => {
   const router = useRouter();
@@ -61,10 +62,12 @@ const MyRoutesScreen = () => {
   const handleDeleteTrail = async (trailId: number) => {
     try {
       await trailsService.deleteTrail(trailId);
+      toast.success("Trasa została usunięta");
       setTrails(trails.filter((trail) => trail.id !== trailId));
       setModalVisible(false);
     } catch (error) {
       console.error("Error deleting trail:", error);
+      toast.error("Nie udało się usunąć trasy", "Spróbuj ponownie");
     }
   };
   return (
@@ -94,7 +97,7 @@ const MyRoutesScreen = () => {
 
             {!loading && !error && trails && trails.length > 0 ? (
               trails.map((trail) => (
-                <Pressable 
+                <Pressable
                   onPress={() => router.push(`/myRoutes/${trail.id}`)}
                   key={trail.id}
                   className="w-full bg-white/10 rounded-2xl p-5 border-l-4 border-green-500"

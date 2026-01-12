@@ -282,6 +282,20 @@ router.get("/region/:region", async (req, res, next) => {
     }
   }
 });
+router.get("/regionAll/:region", async (req, res, next) => {
+  try {
+    const region = req.params.region;
+
+    const result = await TrailsService.getTrailsByRegionAll(region);
+    res.status(200).json(result);
+  } catch (error) {
+    if (error instanceof Err) {
+      res.status(error.statusCode || 500).json({ message: error.message });
+    } else {
+      next(error);
+    }
+  }
+});
 
 /**
  * @swagger

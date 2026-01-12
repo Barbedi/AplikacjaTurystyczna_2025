@@ -121,6 +121,7 @@ interface Trails {
   photos?: Photo[];
   duration_minutes: number;
   public: boolean;
+  main_photo?: string;
 }
 
 interface TrailPoint {

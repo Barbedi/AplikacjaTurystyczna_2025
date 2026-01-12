@@ -22,12 +22,37 @@ export default function ScreenLayout() {
         }}
       />
       <Stack.Screen
+        name="proposed"
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
         name="myRoutes"
         options={{
           headerShown: false,
         }}
       />
-      
+      <Stack.Screen
+        name="shared"
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="activity"
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="notifications"
+        options={{
+          title: "Powiadomienia",
+          headerTitleAlign: "center",
+        }}
+      />
+
       <Stack.Screen
         name="stats"
         options={{
@@ -55,12 +80,11 @@ export default function ScreenLayout() {
           headerTitleAlign: "center",
         }}
       />
-      
+
       <Stack.Screen
         name="peaks"
         options={{
-          title: "Szczyty",
-          headerTitleAlign: "center",
+          headerShown: false,
         }}
       />
       <Stack.Screen

@@ -10,6 +10,7 @@ import { getAuthenticatedUser } from "@/src/config/api";
 import ConfirmDeleteModal from "@/src/components/ConfirmDeleteModal";
 import { FavoriteTrails } from "@/src/types";
 import { useRouter } from "expo-router";
+import { toast } from "@/src/utils/toast";
 
 const FavouritesScreen = () => {
   const { getUserByEmail, usersData, loading: userLoading } = useGetUsers();
@@ -86,10 +87,12 @@ const FavouritesScreen = () => {
   const handleDeleteTrail = async (trailId: number) => {
     try {
       await favouriteTrailsService.removeFavouriteTrail(trailId);
+      toast.success("Trasa została usunięta");
       setTrails(trails.filter((trail) => trail.id !== trailId));
       setModalVisible(false);
     } catch (error) {
       console.error("Error deleting trail:", error);
+      toast.error("Nie udało się usunąć trasy", "Twoje ulubione trasy");
     }
   };
   return (
@@ -120,7 +123,7 @@ const FavouritesScreen = () => {
             {!loading && !error && trails && trails.length > 0 ? (
               trails.map((trail) => (
                 <Pressable
-                onPress={() => router.push(`/favourites/${trail.id}`)}
+                  onPress={() => router.push(`/favourites/${trail.id}`)}
                   key={trail.id}
                   className="w-full bg-white/10 rounded-2xl p-5 border-l-4 border-red-500"
                 >

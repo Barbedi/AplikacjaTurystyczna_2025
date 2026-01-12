@@ -62,27 +62,23 @@ const MapsRoute = ({ trail, peakCoordinate, trailPoints }: MapInfoProps) => {
     const latSpan = Math.max(...lats) - Math.min(...lats);
     const maxSpan = Math.max(lngSpan, latSpan);
 
-   
     const spanWithPadding = maxSpan * 1.3;
 
-    if (spanWithPadding > 1.0) return 8;      
-    if (spanWithPadding > 0.5) return 9;      
-    if (spanWithPadding > 0.25) return 10;   
-    if (spanWithPadding > 0.12) return 11;    
-    if (spanWithPadding > 0.06) return 11.5;  
-    if (spanWithPadding > 0.03) return 12;    
-    if (spanWithPadding > 0.015) return 12.5; 
-    if (spanWithPadding > 0.007) return 13;   
-    return 13.5; 
+    if (spanWithPadding > 1.0) return 8;
+    if (spanWithPadding > 0.5) return 9;
+    if (spanWithPadding > 0.25) return 10;
+    if (spanWithPadding > 0.12) return 11;
+    if (spanWithPadding > 0.06) return 11.5;
+    if (spanWithPadding > 0.03) return 12;
+    if (spanWithPadding > 0.015) return 12.5;
+    if (spanWithPadding > 0.007) return 13;
+    return 13.5;
   };
 
   return (
     <View style={styles.container}>
       <MapView style={styles.map} logoEnabled={false}>
-        <Camera
-          centerCoordinate={getMapCenter()}
-          zoomLevel={getZoomLevel()}
-        />
+        <Camera centerCoordinate={getMapCenter()} zoomLevel={getZoomLevel()} />
 
         <RasterSource
           id="base"
