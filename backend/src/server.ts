@@ -36,7 +36,7 @@ const app = express();
 export const hikingGraph = parseGeoJSON("data/exportMain.geojson");
 const corsOptions = {
   credentials: true,
-  origin: "http://localhost:3000", // ← zmień z `true` na konkretny URL
+  origin: ["http://localhost:3000", "http://158.180.33.62:3000"],
 };
 
 app.use(cors(corsOptions));
