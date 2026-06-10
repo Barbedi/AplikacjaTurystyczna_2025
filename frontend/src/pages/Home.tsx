@@ -170,7 +170,7 @@ const Home = () => {
               onClick={handleClickPlanRoute}
               className="bg-secondary rounded-2xl px-10 py-3 text-2xl font-lora cursor-pointer"
             >
-              Planuj trasee
+              Planuj trasę
               <FontAwesomeIcon
                 icon={faChevronRight}
                 className="ml-4 group-hover:translate-x-1 duration-300 transition-all "
