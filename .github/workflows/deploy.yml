@@ -9,6 +9,34 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Build frontend
+        working-directory: ./frontend
+        run: |
+          npm install
+          npm run build
+        env:
+          VITE_CLIENT_API_URL: http://158.180.33.62:6868
+          VITE_OPENWEATHER_API_KEY: ${{ secrets.VITE_OPENWEATHER_API_KEY }}
+          VITE_WEATHER_CITY: ${{ secrets.VITE_WEATHER_CITY }}
+
+      - name: Copy dist to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "frontend/dist/*"
+          target: "~/AplikacjaTurystyczna_2025/frontend/dist/"
+          strip_components: 2
+
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.0.3
         with:
