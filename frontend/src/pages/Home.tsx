@@ -7,8 +7,8 @@ import {
   faTriangleExclamation,
 } from "@fortawesome/free-solid-svg-icons";
 import PlanRoute from "../components/PlanRoute";
-// import ProposedRoutes from "../components/ProposedRoutes";
-// import ExploreRoutes from "../components/ExploreRoutes";
+import ProposedRoutes from "../components/ProposedRoutes";
+import ExploreRoutes from "../components/ExploreRoutes";
 import Footer from "../components/Footer";
 import { useNavigate } from "react-router-dom";
 import { useContext, useState, useEffect } from "react";
@@ -185,7 +185,7 @@ const Home = () => {
             Proponowane trasy
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 w-full h-full">
-            {/* <ProposedRoutes /> */}
+            <ProposedRoutes />
           </div>
         </div>
       </div>
@@ -195,7 +195,7 @@ const Home = () => {
             Odkryj trasy w
           </div>
           <div className="flex flex-col items-start font-lora lg:gap-8 gap-5 w-full">
-            {/* <ExploreRoutes /> */}
+            <ExploreRoutes />
           </div>
         </div>
       </div>
