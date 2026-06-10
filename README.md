@@ -4,6 +4,8 @@ _APLIKACJA TURYSTYCZNA DO PLANOWANIA PODRÓŻY W GÓRACH WEDŁUG RÓŻNYCH POZIO
 
 [Dokumentacja projektowa](https://drive.google.com/file/d/1w6lGILBceVhF2-pBnC3qradM2XWm2F_Z/view?usp=sharing)
 
+[Demo](http://158.180.33.62:3000/)
+
 [Dokumentacja API](http://localhost:6868/api-docs/)
 
 ## Funkcjonalności
