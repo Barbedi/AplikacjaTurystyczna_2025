@@ -84,7 +84,9 @@ const MyPeaksAdd = () => {
       peaksService
         .searchPeaks(delayedSearchTerm)
         .then((response) => {
-          setResults(response.data.data || []);
+          setResults(
+            Array.isArray(response.data?.data) ? response.data.data : [],
+          );
           setShowResults(true);
         })
         .catch((error) => {

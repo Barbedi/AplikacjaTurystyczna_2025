@@ -8,7 +8,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import PlanRoute from "../components/PlanRoute";
 // import ProposedRoutes from "../components/ProposedRoutes";
-import ExploreRoutes from "../components/ExploreRoutes";
+// import ExploreRoutes from "../components/ExploreRoutes";
 import Footer from "../components/Footer";
 import { useNavigate } from "react-router-dom";
 import { useContext, useState, useEffect } from "react";
@@ -61,7 +61,9 @@ const Home = () => {
       peaksService
         .searchPeaks(delayedSearchTerm)
         .then((response) => {
-          const searchResults = response.data.data || [];
+          const searchResults = Array.isArray(response.data?.data)
+            ? response.data.data
+            : [];
           setResults(searchResults);
           setShowResults(true);
         })
