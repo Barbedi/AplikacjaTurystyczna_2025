@@ -51,6 +51,10 @@ services:
       - backend
     build:
       context: ./frontend
+      args:
+        VITE_CLIENT_API_URL: ${VITE_CLIENT_API_URL}
+        VITE_OPENWEATHER_API_KEY: ${VITE_OPENWEATHER_API_KEY}
+        VITE_WEATHER_CITY: ${VITE_WEATHER_CITY}
     env_file:
       - .env
     ports:
