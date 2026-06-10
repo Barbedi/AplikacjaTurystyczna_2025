@@ -193,7 +193,7 @@ const Home = () => {
             Odkryj trasy w
           </div>
           <div className="flex flex-col items-start font-lora lg:gap-8 gap-5 w-full">
-            <ExploreRoutes />
+            {/* <ExploreRoutes /> */}
           </div>
         </div>
       </div>
