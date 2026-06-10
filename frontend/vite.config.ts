@@ -4,8 +4,9 @@ import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  envDir: "../", // szuka .env w folderze nadrzędnym
   server: {
-    host: true, // Automatyczne wykrywanie hosta
+    host: true,
     port: 3000,
     strictPort: true,
     hmr: {
