@@ -37,7 +37,7 @@ jobs:
           target: "~/AplikacjaTurystyczna_2025/frontend/dist/"
           strip_components: 2
 
-       - name: Deploy via SSH
+      - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SSH_HOST }}
