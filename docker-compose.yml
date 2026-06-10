@@ -8,23 +8,12 @@ services:
       POSTGRES_PASSWORD: ${DB_PASS}
       POSTGRES_DB: ${DB_NAME}
     volumes:
-    - postgres_data:/var/lib/postgresql/data
-    - ./postgresql:/backup
-    ports:
-      - "5432:5432"
+      - postgres_data:/var/lib/postgresql/data
+      - ./postgresql:/backup
+    # ports - NIE wystawiamy bazy na zewnątrz, tylko backend ma dostęp
     networks:
       - backend
-  pgadmin:
-    image: dpage/pgadmin4
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@admin.com
-      PGADMIN_DEFAULT_PASSWORD: admin
-    ports:
-      - "5050:80"
-    depends_on:
-      - postgres
-    networks:
-      - backend
+    restart: unless-stopped
 
   backend:
     build: ./backend
@@ -35,7 +24,7 @@ services:
     volumes:
       - ./app/dist/files:/app/dist/files
       - ./app/dist/files/profiles:/app/dist/files/profiles
-      - ./app/dist/files/verifications:/app/dist/files/verifications  
+      - ./app/dist/files/verifications:/app/dist/files/verifications
       - ./app/dist/files/trails:/app/dist/files/trails
       - ./app/dist/files/peaks:/app/dist/files/peaks
       - ./backend/data/exportMain.geojson:/app/data/exportMain.geojson:ro
@@ -55,6 +44,7 @@ services:
     networks:
       - backend
       - frontend
+    restart: unless-stopped
 
   frontend:
     depends_on:
@@ -65,10 +55,6 @@ services:
       - .env
     ports:
       - "3000:3000"
-    volumes:
-      - ./frontend/src:/frontend/src
-      - ./frontend/public:/frontend/public
-      - ./frontend/index.html:/frontend/index.html
     environment:
       - TZ=Europe/Warsaw
       - VITE_CLIENT_API_URL=${VITE_CLIENT_API_URL}
@@ -76,7 +62,8 @@ services:
       - VITE_WEATHER_CITY=${VITE_WEATHER_CITY}
     networks:
       - frontend
-    command: npm run dev
+   
+
 volumes:
   postgres_data:
 
