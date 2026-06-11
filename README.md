@@ -6,7 +6,7 @@ _APLIKACJA TURYSTYCZNA DO PLANOWANIA PODRÓŻY W GÓRACH WEDŁUG RÓŻNYCH POZIO
 
 [Demo](http://158.180.33.62:3000/)
 
-[Dokumentacja API](http://localhost:6868/api-docs/)
+[Dokumentacja API](http://158.180.33.62:6868/api-docs/)
 
 ## Funkcjonalności
 - Zarządzanie użytkownikami
