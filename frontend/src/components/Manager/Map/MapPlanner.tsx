@@ -137,14 +137,14 @@ const MapPlanner = () => {
   }, [trailId]);
 
   useEffect(() => {
-    fetch("http://localhost:6868/shelters")
+    fetch("http://158.180.33.62:6868/shelters")
       .then((res) => res.json())
       .then((json) => setShelters(json.data))
       .catch(console.error);
   }, []);
 
   useEffect(() => {
-    fetch("http://localhost:6868/peaks")
+    fetch("http://158.180.33.62:6868/peaks")
       .then((res) => res.json())
       .then((json) => setPeaks(json.data))
       .catch(console.error);
@@ -167,7 +167,7 @@ const MapPlanner = () => {
           pointsCount: pointsPayload.length,
           routeType,
         });
-        const res = await fetch("http://localhost:6868/routing/local", {
+        const res = await fetch("http://158.180.33.62:6868/routing/local", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ points: pointsPayload, routeType }),
