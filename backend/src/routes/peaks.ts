@@ -4,6 +4,8 @@ import { Err } from "../Types";
 import { verifyPeakPhoto } from "../utils/verifyPeakPhoto";
 import path from "path";
 
+const FILES_DIR = process.env["FILES_DIR"] || path.join(__dirname, "../files");
+
 const router = express.Router();
 
 /**
@@ -692,8 +694,8 @@ router.post("/verify-photo", async (req, res, next) => {
       return;
     }
 
-    // Ścieżka do pliku zdjęcia (w kontenerze pliki są w dist/files/peaks)
-    const imagePath = path.join(__dirname, "../files/peaks", filename);
+    // Ścieżka do pliku zdjęcia zależna od środowiska uruchomieniowego.
+    const imagePath = path.join(FILES_DIR, "peaks", filename);
     console.log("📁 Image path:", imagePath);
 
     // Weryfikacja zdjęcia
