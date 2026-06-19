@@ -5,7 +5,7 @@ import { verifyUser } from "../middlewares/verifyUser";
 import fs from "fs";
 import path from "path";
 
-const FILES_DIR = path.join(__dirname, "../files");
+const FILES_DIR = process.env["FILES_DIR"] || path.join(__dirname, "../files");
 const PROFILES_DIR = path.join(FILES_DIR, "profiles");
 const PEAKS_DIR = path.join(FILES_DIR, "peaks");
 const TRAILS_DIR = path.join(FILES_DIR, "trails");

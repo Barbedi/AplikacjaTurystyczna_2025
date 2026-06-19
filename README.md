@@ -36,6 +36,20 @@ _APLIKACJA TURYSTYCZNA DO PLANOWANIA PODRÓŻY W GÓRACH WEDŁUG RÓŻNYCH POZIO
 - API pogodowe
 - API wysokościowe
 
+## Docker
+
+Development with hot reload:
+
+```bash
+docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build
+```
+
+Production:
+
+```bash
+docker compose --env-file .env.production up -d --build
+```
+
 ## Widoki apliakcji
 _Panel glówny_
 ![Panel_glówny](./images/panel.png)

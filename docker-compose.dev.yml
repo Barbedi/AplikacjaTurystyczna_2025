@@ -1,23 +1,12 @@
 services:
   postgres:
-    image: postgis/postgis:15-3.4
-    environment:
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASS}
-      POSTGRES_DB: ${DB_NAME}
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./postgresql:/backup
-    # ports - NIE wystawiamy bazy na zewnątrz, tylko backend ma dostęp
-    networks:
-      - backend
-    restart: unless-stopped
-
   backend:
-    build: ./backend
-    ports:
-      - "0.0.0.0:6868:6868"
+    build:
+      context: ./backend
+      target: dev
     volumes:
+      - ./backend:/app
+      - /app/node_modules
       - ./app/dist/files:/app/dist/files
       - ./app/dist/files/profiles:/app/dist/files/profiles
       - ./app/dist/files/verifications:/app/dist/files/verifications
@@ -35,37 +24,19 @@ services:
       - REFRESH_SECRET_TOKEN=${REFRESH_SECRET_TOKEN}
       - ORS_API_KEY=${ORS_API_KEY}
       - API_KEY=${API_KEY}
-    depends_on:
-      - postgres
-    networks:
-      - backend
-      - frontend
-    restart: unless-stopped
+      - FILES_DIR=/app/dist/files
+    command: npm run dev
 
   frontend:
-    depends_on:
-      - backend
     build:
       context: ./frontend
-      target: prod
-      args:
-        VITE_CLIENT_API_URL: ${VITE_CLIENT_API_URL}
-        VITE_OPENWEATHER_API_KEY: ${VITE_OPENWEATHER_API_KEY}
-        VITE_WEATHER_CITY: ${VITE_WEATHER_CITY}
-    ports:
-      - "3000:3000"
+      target: dev
+    volumes:
+      - ./frontend:/workspace/frontend
+      - /workspace/frontend/node_modules
     environment:
       - TZ=Europe/Warsaw
       - VITE_CLIENT_API_URL=${VITE_CLIENT_API_URL}
       - VITE_OPENWEATHER_API_KEY=${VITE_OPENWEATHER_API_KEY}
       - VITE_WEATHER_CITY=${VITE_WEATHER_CITY}
-    networks:
-      - frontend
-   
-
-volumes:
-  postgres_data:
-
-networks:
-  backend:
-  frontend:
+    command: npm run dev -- --host 0.0.0.0
