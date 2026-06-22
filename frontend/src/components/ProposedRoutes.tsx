@@ -9,12 +9,13 @@ import { useNavigate } from "react-router-dom";
 const ProposedRoutes = () => {
   const navigate = useNavigate();
   const [trails, setTrails] = useState<Trails[]>([]);
+  const [loadedImages, setLoadedImages] = useState<Record<number, boolean>>({});
+
   useEffect(() => {
     const fetchTrails = async () => {
       try {
         const response = await trailsService.getRandomTrails(3);
         setTrails(response.data);
-        console.log("Fetched trails:", response.data);
       } catch (error) {
         console.error("Error fetching trails:", error);
       }
@@ -26,6 +27,11 @@ const ProposedRoutes = () => {
   const handleTrailClick = (trailId: number) => {
     navigate(`trails/${trailId}`);
   };
+
+  const handleImageLoad = (trailId: number) => {
+    setLoadedImages((prev) => ({ ...prev, [trailId]: true }));
+  };
+
   return (
     <>
       {trails.map((trail) => (
@@ -33,16 +39,24 @@ const ProposedRoutes = () => {
           key={trail.id}
           className="relative w-full flex flex-col group hover:scale-105 duration-300 h-full xl:items-center xl:text-center pb-10 bg-accent/60 rounded-2xl shadow-2xl overflow-hidden"
         >
-          <img
-          loading="lazy"
-            className="w-full h-60 object-cover"
-            src={
-              trail.main_photo
-                ? filesService.getTrailImgUrl(trail.main_photo)
-                : "/assets/img/IMG_5962.jpg"
-            }
-            alt={trail.name}
-          />
+          <div className="relative w-full h-60">
+            {!loadedImages[trail.id] && (
+              <div className="absolute inset-0 bg-slate-700 animate-pulse" />
+            )}
+            <img
+              loading="lazy"
+              onLoad={() => handleImageLoad(trail.id)}
+              className={`w-full h-60 object-cover transition-opacity duration-500 ${
+                loadedImages[trail.id] ? "opacity-100" : "opacity-0"
+              }`}
+              src={
+                trail.main_photo
+                  ? filesService.getTrailImgUrl(trail.main_photo)
+                  : "/assets/img/IMG_5962.jpg"
+              }
+              alt={trail.name}
+            />
+          </div>
           <div className="flex flex-col items-center text-center px-4 py-6 font-lora text-white flex-grow">
             <h1 className="text-xl md:text-2xl xl:text-3xl font-lora leading-tight mb-4">
               {trail.name}

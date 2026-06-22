@@ -1,5 +1,17 @@
 services:
   postgres:
+    image: postgis/postgis:15-3.4
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./postgresql:/backup
+    networks:
+      - backend
+    restart: unless-stopped
+
   backend:
     build:
       context: ./backend
@@ -13,6 +25,8 @@ services:
       - ./app/dist/files/trails:/app/dist/files/trails
       - ./app/dist/files/peaks:/app/dist/files/peaks
       - ./backend/data/exportMain.geojson:/app/data/exportMain.geojson:ro
+    ports:
+      - "0.0.0.0:6868:6868"
     environment:
       - DB_HOST=${DB_HOST}
       - DB_PORT=${DB_PORT}
@@ -25,6 +39,11 @@ services:
       - ORS_API_KEY=${ORS_API_KEY}
       - API_KEY=${API_KEY}
       - FILES_DIR=/app/dist/files
+    depends_on:
+      - postgres
+    networks:
+      - backend
+      - frontend
     command: npm run dev
 
   frontend:
@@ -34,9 +53,22 @@ services:
     volumes:
       - ./frontend:/workspace/frontend
       - /workspace/frontend/node_modules
+    ports:
+      - "3000:3000"
     environment:
       - TZ=Europe/Warsaw
       - VITE_CLIENT_API_URL=${VITE_CLIENT_API_URL}
       - VITE_OPENWEATHER_API_KEY=${VITE_OPENWEATHER_API_KEY}
       - VITE_WEATHER_CITY=${VITE_WEATHER_CITY}
+    depends_on:
+      - backend
+    networks:
+      - frontend
     command: npm run dev -- --host 0.0.0.0
+
+volumes:
+  postgres_data:
+
+networks:
+  backend:
+  frontend:
